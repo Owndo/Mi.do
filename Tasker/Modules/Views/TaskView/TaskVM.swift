@@ -5,7 +5,6 @@
 //  Created by Rodion Akhmedov on 4/14/25.
 //
 
-// TaskVM.swift
 import Foundation
 import SwiftUI
 import Managers
@@ -33,6 +32,7 @@ final class TaskVM {
     var sliderValue = 0.0
     var isDragging = false
     var pause = false
+    var dateHasBeenChanged = false
     
     // MARK: - Confirmation dialog
     var confirmationDialogIsPresented = false
@@ -45,8 +45,12 @@ final class TaskVM {
     var notificationDate = Date() {
         didSet {
             checkTimeAfterSelected()
+            dateHasBeenChanged = true
         }
     }
+    
+    /// First notification Date for task with repeat
+    var sourseDateOfNotification = Double()
     
     var dateForAppearence: String {
         dateToString()
@@ -96,11 +100,13 @@ final class TaskVM {
     init(mainModel: MainModel) {
         self.mainModel = mainModel
         self.task = mainModel.value
+        sourseDateOfNotification = mainModel.value.notificationDate
         
         resetAudioProgress()
         
         let time = originalNotificationTimeComponents
         self.notificationDate = combineDateAndTime(timeComponents: time)
+        dateHasBeenChanged = false
         
         Task { [weak self] in
             await self?.loadTotalTimeIfNeeded()
@@ -124,9 +130,11 @@ final class TaskVM {
         shareViewIsShowing.toggle()
     }
     
+    //MARK: - Save task
     func saveTask() {
         task = preparedTask()
         mainModel.value = task
+        mainModel.value.notificationDate = dateHasBeenChanged ? notificationDate.timeIntervalSince1970 : sourseDateOfNotification
         casManager.saveModel(mainModel)
     }
     

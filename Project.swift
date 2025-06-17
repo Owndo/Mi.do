@@ -5,7 +5,7 @@ let project = Project(
     settings: .settings(base: .init().automaticCodeSigning(devTeam: "\(App.teamId)"), defaultSettings: .recommended),
     targets: [
         .target(
-            name: "Mi.dō",
+            name: "Tasker",
             destinations: .iOS,
             product: .app,
             bundleId: App.bundleId,
@@ -13,6 +13,7 @@ let project = Project(
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchStoryboardName": "LaunchScreen",
+                    "CFBundleDisplayName": "Mi.dō",
                     "NSUserNotificationsUsageDescription" : "Notifications may include alerts, sounds, and icon badges. You can configurate this in Setting.",
                     "NSMicrophoneUsageDescription": "This app uses microphone for recording your voice"
                 ]
@@ -89,12 +90,12 @@ let project = Project(
         Scheme.scheme(
             name: "Debug",
             shared: true,
-            buildAction: .buildAction(targets: ["Mi.dō"]),
+            buildAction: .buildAction(targets: ["Tasker"]),
             runAction:
                     .runAction(
                         configuration: .debug,
                         attachDebugger: false,
-                        expandVariableFromTarget: .target("Mi.dō"),
+                        expandVariableFromTarget: .target("Tasker"),
                         launchStyle: .automatically
                     ),
         )

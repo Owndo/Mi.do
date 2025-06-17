@@ -150,22 +150,18 @@ public struct TaskView: View {
                     },
                     set: { newValue in
                         vm.sliderValue = newValue
-                        if !vm.isDragging {
+                        if vm.isDragging {
+                            vm.seekAudio(newValue)
+                        } else {
                             vm.seekAudio(newValue)
                         }
                     }
                 ),
                 in: 0...vm.totalProgressTime,
                 onEditingChanged: { editing in
-                    if editing {
-                        vm.isDragging = true
-                    } else {
-                        vm.isDragging = false
-                        vm.seekAudio(vm.sliderValue)
-                    }
+                    vm.isDragging = editing
                 }
-            )
-            .tint(colorScheme.elementColor.hexColor())
+            )            .tint(colorScheme.elementColor.hexColor())
             
             Text(vm.currentTimeString())
                 .font(.system(size: 17, weight: .regular, design: .default))

@@ -43,6 +43,7 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         do {
             try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
             try session.setActive(true)
+            
             avAudioRecorder = try AVAudioRecorder(url: fileName, settings: setting)
             avAudioRecorder?.prepareToRecord()
             avAudioRecorder?.isMeteringEnabled = true

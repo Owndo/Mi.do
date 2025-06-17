@@ -5,7 +5,7 @@ let project = Project(
     settings: .settings(base: .init().automaticCodeSigning(devTeam: "\(App.teamId)"), defaultSettings: .recommended),
     targets: [
         .target(
-            name: "Tasker",
+            name: "Mi.dō",
             destinations: .iOS,
             product: .app,
             bundleId: App.bundleId,
@@ -14,10 +14,9 @@ let project = Project(
                 with: [
                     "UILaunchStoryboardName": "LaunchScreen",
                     "NSUserNotificationsUsageDescription" : "Notifications may include alerts, sounds, and icon badges. You can configurate this in Setting.",
-                    "NSMicrophoneUsageDescription": "This app use microphone for recording audio"
+                    "NSMicrophoneUsageDescription": "This app uses microphone for recording your voice"
                 ]
             ),
-            //.file(path: "Tasker/Resources/Info.plist"),
             sources: [.glob(
                 "Tasker/**",
                 excluding: [
@@ -84,6 +83,20 @@ let project = Project(
                 .target(name: "ListView"),
                 .target(name: "TaskView"),
             ]
+        )
+    ],
+    schemes: [
+        Scheme.scheme(
+            name: "Debug",
+            shared: true,
+            buildAction: .buildAction(targets: ["Mi.dō"]),
+            runAction:
+                    .runAction(
+                        configuration: .debug,
+                        attachDebugger: false,
+                        expandVariableFromTarget: .target("Mi.dō"),
+                        launchStyle: .automatically
+                    ),
         )
     ],
     

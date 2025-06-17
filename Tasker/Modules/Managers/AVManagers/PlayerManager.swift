@@ -5,6 +5,7 @@
 //  Created by Rodion Akhmedov on 4/11/25.
 //
 
+// PlayerManager.swift
 import AVFoundation
 import Foundation
 import Models
@@ -12,169 +13,153 @@ import Models
 @Observable
 final class PlayerManager: PlayerManagerProtocol, Sendable {
     
-    let audioSession = AVAudioSession.sharedInstance()
-    
-    //MARK: Properties
+    // MARK: - Public properties
     var isPlaying = false
-    var task: TaskModel?
-    
-    //MARK: - Private properties
-    private var player: AVAudioPlayer?
-    private var audioURL: URL?
-    private var playbackTimer: Timer?
-    
-    private var isSeeking = false
-    private var seekTimer: Timer?
-    
     var currentTime: TimeInterval = 0.0
     var totalTime: TimeInterval = 0.0
+    var task: TaskModel?
+
+    // MARK: - Private properties
+    private let audioSession = AVAudioSession.sharedInstance()
+    private var player: AVAudioPlayer?
+    private var playbackTimer: Timer?
+    private var seekTimer: Timer?
+
+    // Кэш: [audioHash: URL]
+    private var tempAudioCache: [String: URL] = [:]
+    
+    // MARK: - Playback
     
     func playAudioFromData(_ audio: Data, task: TaskModel) async {
-        
-        if task.audio != self.task?.audio {
-            stopToPlay()
-        }
-        
         self.task = task
         
         do {
-            try audioSession.setCategory(.playAndRecord, mode: .voiceChat, options: [.interruptSpokenAudioAndMixWithOthers, .allowAirPlay, .allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker, .duckOthers])
-            try audioSession.overrideOutputAudioPort(.speaker)
-            try audioSession.setActive(true)
+            try configureAudioSession()
+            let audioURL = await getOrCreateTempAudioFile(from: audio, audioHash: task.audio)
             
-            let audioURL = createTempAudioFileAsync(from: audio)
-            
-            do {
-                if player == nil {
+            await MainActor.run {
+                do {
                     player = try AVAudioPlayer(contentsOf: audioURL)
-                }
-                player?.play()
-                totalTime = player?.duration ?? 0.0
-                isPlaying = player?.isPlaying ?? false
-                await MainActor.run {
+                    player?.prepareToPlay()
+                    totalTime = player?.duration ?? 0
+                    player?.play()
+                    isPlaying = true
                     startPlaybackTimer()
+                } catch {
+                    print("Failed to initialize player: \(error)")
                 }
-            } catch {
-                print("Couldn't create player: \(error)")
             }
-            
         } catch {
-            print("Couldn't setup audio session: \(error)")
+            print("Audio session setup failed: \(error)")
         }
-        return
     }
     
     func pauseAudio() {
-        print("pause")
         player?.pause()
+        isPlaying = false
     }
     
     func stopToPlay() {
-        isPlaying = false
-        player = nil
         player?.stop()
+        player = nil
         stopPlaybackTimer()
-        currentTime = 00
+        currentTime = 0
+        isPlaying = false
     }
     
     func seekAudio(_ time: TimeInterval) {
-        guard let player = player else { return }
-        
-        isSeeking = true
-        
+        guard let player else { return }
+
         seekTimer?.invalidate()
-        
         currentTime = time
-        
-        seekTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { _ in
-            Task { @MainActor in
-                let wasPlaying = player.isPlaying
-                
-                if wasPlaying {
-                    player.pause()
-                }
-                
-                player.currentTime = time
-                
-                if wasPlaying {
-                    player.play()
-                }
-                
-                self.isSeeking = false
-                self.seekTimer = nil
+
+        seekTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
+            guard let self else { return }
+
+            let wasPlaying = player.isPlaying
+            if wasPlaying {
+                player.pause()
             }
+
+            player.currentTime = time
+
+            if wasPlaying {
+                player.play()
+            }
+
+            self.seekTimer = nil
         }
     }
-    
-    func returnTotalTime(_ audio: Data, task: TaskModel) -> Double {
-        self.task = task
-        
-        let audioURL = createTempAudioFileAsync(from: audio)
-        var duration: TimeInterval = 0
-        
+
+    func returnTotalTime(_ audio: Data, task: TaskModel) async -> Double {
+        let audioURL = await getOrCreateTempAudioFile(from: audio, audioHash: task.audio)
+
         do {
-            if player == nil {
-                player = try AVAudioPlayer(contentsOf: audioURL)
-            }
-            
-            duration = player?.duration ?? 00
+            let tempPlayer = try AVAudioPlayer(contentsOf: audioURL)
+            return tempPlayer.duration
         } catch {
-            print("Cannot create avAudioPlayer")
+            print("Failed to get duration from temp player: \(error)")
+            return 0
         }
-        return duration
     }
+
+    // MARK: - Helpers
     
+    private func configureAudioSession() throws {
+        try audioSession.setCategory(
+            .playAndRecord,
+            mode: .default,
+            options: [.allowAirPlay, .allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker, .duckOthers]
+        )
+        try audioSession.overrideOutputAudioPort(.speaker)
+    }
+
+    private func getOrCreateTempAudioFile(from data: Data, audioHash: String?) async -> URL {
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let hash = audioHash ?? UUID().uuidString
+        let fileName = "\(hash).wav"
+        let fileURL = tempDirectory.appendingPathComponent(fileName)
+
+        if let cached = tempAudioCache[hash], FileManager.default.fileExists(atPath: cached.path) {
+            return cached
+        }
+
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            tempAudioCache[hash] = fileURL
+            print("File already exists: \(fileURL.path)")
+            return fileURL
+        }
+
+        await MainActor.run {
+            do {
+                try data.write(to: fileURL)
+                print("Created temp file: \(fileURL.path)")
+                tempAudioCache[hash] = fileURL
+            } catch {
+                print("Failed to write audio data: \(error)")
+            }
+        }
+
+        return fileURL
+    }
+
     private func startPlaybackTimer() {
         stopPlaybackTimer()
-        
+
         playbackTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                guard let self = self, let player = self.player else { return }
-                
-                self.currentTime = player.currentTime
-                
-                if !player.isPlaying {
-                    self.isPlaying = false
-                    self.stopPlaybackTimer()
-                }
+            guard let self, let player = self.player else { return }
+
+            self.currentTime = player.currentTime
+
+            if !player.isPlaying {
+                self.isPlaying = false
+                self.stopPlaybackTimer()
             }
         }
     }
-    
+
     private func stopPlaybackTimer() {
         playbackTimer?.invalidate()
         playbackTimer = nil
-    }
-    
-    private func createTempAudioFileAsync(from data: Data) -> URL {
-        let tempDirectory = FileManager.default.temporaryDirectory
-        var name: String
-        
-        if let task = task, let audio = task.audio {
-            name = audio
-        } else {
-            name = UUID().uuidString
-        }
-        
-        let fileName = "\(name).wav"
-        let tempURL = tempDirectory.appendingPathComponent(fileName)
-        
-        guard audioURL != tempURL else {
-            return audioURL!
-        }
-        
-        if FileManager.default.fileExists(atPath: tempURL.path) {
-            return tempURL
-        }
-        
-        Task {
-            await MainActor.run {
-                try? data.write(to: tempURL)
-            }
-        }
-        
-        audioURL = tempURL
-        
-        return tempURL
     }
 }

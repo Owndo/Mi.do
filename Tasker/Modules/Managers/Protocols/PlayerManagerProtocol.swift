@@ -18,5 +18,5 @@ public protocol PlayerManagerProtocol: Sendable {
     func pauseAudio()
     func stopToPlay()
     func seekAudio(_ time: TimeInterval)
-    func returnTotalTime(_ audio: Data, task: TaskModel) -> Double
+    func returnTotalTime(_ audio: Data, task: TaskModel) async -> Double
 }

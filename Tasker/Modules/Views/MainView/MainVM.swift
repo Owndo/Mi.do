@@ -41,6 +41,10 @@ final class MainVM {
         recordManager.currentlyTime
     }
     
+    var selectedDate: Date {
+        dateManager.selectedDate
+    }
+    
     var progress: Double {
         recordManager.progress
     }

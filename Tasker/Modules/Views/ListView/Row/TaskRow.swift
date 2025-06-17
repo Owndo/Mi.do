@@ -86,7 +86,16 @@ struct TaskRow: View {
                 } label: {
                     Image(systemName: "trash")
                         .foregroundStyle(.labelSecondary)
-                        .tint(.red)
+                        .tint(.accentRed)
+                }
+            }
+            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                Button {
+                    vm.updateNotificationTimeForDueDateSwipped(task: task)
+                } label: {
+                    Image(systemName: "arrow.forward.circle.fill")
+                        .foregroundStyle(.labelSecondary)
+                        .tint(.green)
                 }
             }
         }

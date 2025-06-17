@@ -43,6 +43,10 @@ final class TaskRowVM {
     
     //MARK: Private Properties
     
+    private var currentTime: Date {
+        dateManager.currentTime
+    }
+    
     //MARK: Selected task
     func selectedTaskButtonTapped(_ task: MainModel) {
         selectedTask = task
@@ -79,6 +83,12 @@ final class TaskRowVM {
     func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) {
         let newModel = taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
         taskDeleteTrigger.toggle()
+        casManager.saveModel(newModel)
+    }
+    
+    //MARK: Change date for overdue task
+    func updateNotificationTimeForDueDateSwipped(task: MainModel) {
+        let newModel = taskManager.updateNotificationTimeForDueDate(task: task)
         casManager.saveModel(newModel)
     }
     

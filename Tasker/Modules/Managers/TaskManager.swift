@@ -17,7 +17,7 @@ final class TaskManager: TaskManagerProtocol {
         calendar.startOfDay(for: Date(timeIntervalSince1970: dateManager.selectedDate.timeIntervalSince1970)).timeIntervalSince1970
     }
     
-    private var nowDate: Double {
+    private var currentTime: Double {
         dateManager.currentTime.timeIntervalSince1970
     }
     
@@ -121,7 +121,7 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     private func createNewTaskCompletion(task: TaskModel) -> CompleteRecord {
-        CompleteRecord(completedFor: selectedDate, timeMark: nowDate)
+        CompleteRecord(completedFor: selectedDate, timeMark: currentTime)
     }
     
     // MARK: - Deletion
@@ -142,7 +142,20 @@ final class TaskManager: TaskManagerProtocol {
     
     func updateExistingTaskDeleted(task: TaskModel) -> [DeleteRecord] {
         var newDeletedRecords: [DeleteRecord] = task.deleted ?? []
-        newDeletedRecords.append(DeleteRecord(deletedFor: selectedDate, timeMark: nowDate))
+        newDeletedRecords.append(DeleteRecord(deletedFor: selectedDate, timeMark: currentTime))
         return newDeletedRecords
+    }
+    
+    func updateNotificationTimeForDueDate(task: MainModel) -> MainModel {
+        let model = task
+        
+        model.value.notificationDate = dateManager.updateNotificationDate(model.value.notificationDate)
+        
+        return model
+    }
+    
+    private func isAfter9PM(_ date: Date) -> Bool {
+        let hour = calendar.component(.hour, from: date)
+        return hour >= 21
     }
 }

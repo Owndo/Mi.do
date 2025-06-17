@@ -157,7 +157,7 @@ final class DateManager: DateManagerProtocol {
         
         return calendar.date(from: dateComponents)!
     }
-
+    
     
     func getDefaultNotificationTime() -> Date {
         func dateAt(_ date: Date, hour: Int, minute: Int = 0, second: Int = 0) -> Date {
@@ -184,6 +184,23 @@ final class DateManager: DateManagerProtocol {
         default:
             let tomorrow = calendar.date(byAdding: .day, value: 1, to: currentTime)!
             return dateAt(tomorrow, hour: 9)
+        }
+    }
+    
+    func updateNotificationDate(_ date: Double) -> Double {
+        let inputDate = Date(timeIntervalSince1970: date)
+        let now = currentTime
+        
+        if inputDate < now {
+            let tomorrow = calendar.date(byAdding: .day, value: 1, to: now)!
+            let hour = calendar.component(.hour, from: inputDate)
+            let minute = calendar.component(.minute, from: inputDate)
+            let second = calendar.component(.second, from: inputDate)
+            let tomorrowAtSameTime = calendar.date(bySettingHour: hour, minute: minute, second: second, of: tomorrow)!
+            return tomorrowAtSameTime.timeIntervalSince1970
+        } else {
+            let nextDay = calendar.date(byAdding: .day, value: 1, to: inputDate)!
+            return nextDay.timeIntervalSince1970
         }
     }
     

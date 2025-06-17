@@ -28,4 +28,6 @@ public protocol TaskManagerProtocol {
     
     /// Updates the list of deletion records for the given task by appending today's deletion record.
     func updateExistingTaskDeleted(task: TaskModel) -> [DeleteRecord]
+    
+    func updateNotificationTimeForDueDate(task: MainModel) -> MainModel
 }

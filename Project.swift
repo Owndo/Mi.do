@@ -2,7 +2,7 @@ import ProjectDescription
 
 let project = Project(
     name: "Tasker",
-    settings: .settings(base: .init().automaticCodeSigning(devTeam: "\(App.teamId)"), defaultSettings: .recommended),
+    settings: .settings(base: .init().automaticCodeSigning(devTeam: App.teamId), debug: SettingsDictionary().setProjectVersions(), release: SettingsDictionary().setProjectVersions(), defaultSettings: .recommended),
     targets: [
         .target(
             name: App.name,
@@ -14,6 +14,7 @@ let project = Project(
                 with: [
                     "UILaunchStoryboardName": "LaunchScreen",
                     "CFBundleDisplayName": "Mi.dō",
+                    "CFBundleShortVersionString": "\(App.version)",
                     "NSUserNotificationsUsageDescription" : "Notifications may include alerts, sounds, and icon badges. You can configurate this in Setting.",
                     "NSMicrophoneUsageDescription": "This app uses microphone for recording your voice"
                 ]
@@ -153,4 +154,18 @@ struct App {
     public static let bundleId = "com.kodi.mido"
     public static let teamId = "JMB8Y7C47R"
     public static let deploymentTargets = DeploymentTargets.iOS("17.0")
+    public static let version = "0.5.0"
+}
+
+
+extension SettingsDictionary {
+    func setProjectVersions() -> SettingsDictionary {
+        let currentProjectVersion = "0.5.0"
+        let markettingVersion = "0.5.0"
+        
+        return appleGenericVersioningSystem().merging([
+            "CURRENT_PROJECT_VERSION": SettingValue(stringLiteral: currentProjectVersion),
+            "MARKETING_VERSION": SettingValue(stringLiteral: markettingVersion)
+        ])
+    }
 }

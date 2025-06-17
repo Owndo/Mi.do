@@ -26,7 +26,10 @@ public protocol DateManagerProtocol {
     func dateToString(for date: Date, format: String?, useForWeekView: Bool) -> String
     /// Combine date from selected date and notification date
     func combineDateAndTime(timeComponents: DateComponents) -> Date
+    /// Defaul time for notification
     func getDefaultNotificationTime() -> Date
+    /// Change notification to next dat
+    func updateNotificationDate(_ date: Double) -> Double
     /// Reset selected day to current current
     func backToToday()
     /// Next day after swipe to left

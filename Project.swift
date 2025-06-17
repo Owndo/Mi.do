@@ -1,11 +1,11 @@
 import ProjectDescription
 
 let project = Project(
-    name: "Tasker-tuist",
+    name: "Tasker",
     settings: .settings(base: .init().automaticCodeSigning(devTeam: "\(App.teamId)"), defaultSettings: .recommended),
     targets: [
         .target(
-            name: "Tasker",
+            name: App.name,
             destinations: .iOS,
             product: .app,
             bundleId: App.bundleId,
@@ -125,7 +125,6 @@ extension Target {
             product: .framework,
             bundleId: App.bundleId + "." + name,
             deploymentTargets: App.deploymentTargets,
-            infoPlist: .default,
             sources: ["Tasker/Modules/\(name)/**"],
             resources: .resources(resources),
             dependencies: dependencies,
@@ -141,7 +140,6 @@ extension Target {
             product: .framework,
             bundleId: App.bundleId + "." + name,
             deploymentTargets: App.deploymentTargets,
-            infoPlist: .default,
             sources: ["Tasker/Modules/Views/\(name)/**"],
             dependencies: dependencies,
             settings: .settings(defaultSettings: .recommended)

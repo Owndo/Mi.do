@@ -13,10 +13,10 @@ public enum MicrophonePermission: Error {
     case microphoneIsNotAvalible
     
     
-    public func showingAlert() -> Alert {
+    public func showingAlert(action: @escaping () -> Void) -> Alert {
         switch self {
         case .microphoneIsNotAvalible:
-            Alert(title: Text("Microphone access denied"), message: Text("To record audio, please enable Microphone access in Settings."), primaryButton: .default(Text("Settings"), action: openSetting), secondaryButton: .cancel())
+            Alert(title: Text("Microphone access denied"), message: Text("To record audio, please enable Microphone access in Settings."), primaryButton: .default(Text("Settings"), action: openSetting), secondaryButton: .cancel(action))
         case .silentError: fatalError()
         }
     }

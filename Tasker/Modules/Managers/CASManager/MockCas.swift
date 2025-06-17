@@ -72,7 +72,13 @@ final class MockCas: CASManagerProtocol {
     }
     
     func fetchModels() -> [MainModel] {
-        let list = try! cas.listMutable()
+        var list = [Mutable]()
+        
+        do {
+            list = try cas.listMutable()
+        } catch {
+            print("Couldn't fetch list of mutable \(error)")
+        }
         
         return list.compactMap { mutable in
             do {

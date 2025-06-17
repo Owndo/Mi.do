@@ -18,6 +18,8 @@ public struct MainView: View {
     
     @State var showingAlert = false
     
+    @FocusState var focusState: Bool
+    
     public init() {}
     
     public var body: some View {
@@ -37,12 +39,14 @@ public struct MainView: View {
                 .ignoresSafeArea(edges: .bottom)
                 
                 VStack {
-                    
                     Spacer()
                     
                     RecordButton(isRecording: $vm.isRecording, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl) {
-                        vm.stopRecord()
+                        Task {
+                            await vm.handleButtonTap()
+                        }
                     }
+                    .disabled(vm.disabledButton)
                     .buttonStyle(.plain)
                     .simultaneousGesture(
                         LongPressGesture().onEnded({ _ in
@@ -52,6 +56,13 @@ public struct MainView: View {
                             }
                         })
                     )
+                    .onChange(of: vm.currentlyTime) { newValue, _ in
+                        if newValue > 15.0 && vm.recordingState == .recording {
+                            Task {
+                                await vm.stopRecord(isAutoStop: true)
+                            }
+                        }
+                    }
                     .padding(.bottom, 15)
                 }
             }
@@ -65,6 +76,9 @@ public struct MainView: View {
                 .tint(.black)
             } message: {
                 Text("We can't keep up with your speed. Let's slow it down a bit.")
+            }
+            .alert(item: $vm.alert) { alert in
+                alert.alert
             }
             .navigationBarTitleDisplayMode(.inline)
             .ignoresSafeArea(.keyboard)
@@ -95,8 +109,8 @@ public struct MainView: View {
                 }
             }
             .onChange(of: vm.currentlyTime) { newValue, oldValue in
-                if newValue > 15.0 {
-                    vm.stopRecord()
+                Task {
+                    await vm.stopAfterCheck(newValue)
                 }
             }
             .sheet(item: $vm.model) { model in

@@ -34,7 +34,18 @@ final class MainVM {
     //MARK: - UI States
     var isRecording = false
     var showDetailsScreen = false
-    var alert: Alert?
+    var alert: AlertModel?
+    var disabledButton = false
+    
+    var recordingState: RecordingState = .idle
+    
+    enum RecordingState {
+        case idle
+        case recording
+        case stopping
+    }
+    
+    private var isProcessingStop = false
     
     //MARK: Copmputed properties
     var currentlyTime: Double {
@@ -55,33 +66,37 @@ final class MainVM {
     
     func startAfterChek() async throws {
         
+        guard recordingState == .idle else { return }
+        
+        recordingState = .recording
+        
         playerManager.stopToPlay()
         
         do {
+            changeDisabledButton()
             try recordPermission.peremissionSessionForRecording()
             await startRecord()
+            changeDisabledButton()
         } catch let error as MicrophonePermission {
             switch error {
             case .silentError: return
             case .microphoneIsNotAvalible:
-                alert = error.showingAlert()
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
             }
         } catch let error as ErrorRecorder {
             switch error {
             case .cannotInterruptOthers, .cannotStartRecording, .insufficientPriority, .isBusy, .siriIsRecordign, .timeIsLimited:
-                alert = error.showingAlert()
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
             case .none:
                 return
             }
         }
     }
     
+    @MainActor
     func stopAfterCheck(_ newValue: Double?) async {
-        guard newValue ?? 0 >= 15.0 else {
-            return
-        }
-        
-        stopRecord()
+        guard let value = newValue, value >= 15.0 else { return }
+        await stopRecord()
     }
     
     func startRecord() async {
@@ -89,18 +104,47 @@ final class MainVM {
         await recordManager.startRecording()
     }
     
-    func stopRecord() {
+    func stopRecord(isAutoStop: Bool = false) async {
+        guard recordingState == .recording else {
+            return
+        }
+        
+        recordingState = .stopping
+        isRecording = false
+        
         var hashOfAudio: String?
         
-        if isRecording {
-            isRecording = false
-            
-            if let audioURLString = recordManager.stopRecording() {
-                hashOfAudio = casManager.saveAudio(url: audioURLString)
-            }
+        if let audioURLString = recordManager.stopRecording() {
+            hashOfAudio = casManager.saveAudio(url: audioURLString)
         }
-        model = MainModel.initial(TaskModel(id: UUID().uuidString, title: "", info: "", audio: hashOfAudio, notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970))
         
+        createTask(with: hashOfAudio)
         recordManager.clearFileFromDirectory()
+        
+        try? await Task.sleep(nanoseconds: 100_000_000)
+        recordingState = .idle
+    }
+    
+    func createTask(with audioHash: String? = nil) {
+        
+        model = MainModel.initial(TaskModel(
+            id: UUID().uuidString,
+            title: "",
+            info: "",
+            audio: audioHash,
+            notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970
+        ))
+    }
+    
+    func handleButtonTap() async {
+        if recordingState == .recording {
+            await stopRecord()
+        } else {
+            createTask()
+        }
+    }
+    
+    private func changeDisabledButton() {
+        disabledButton.toggle()
     }
 }

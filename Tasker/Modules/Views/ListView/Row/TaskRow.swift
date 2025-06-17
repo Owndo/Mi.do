@@ -93,7 +93,7 @@ struct TaskRow: View {
                 Button {
                     vm.updateNotificationTimeForDueDateSwipped(task: task)
                 } label: {
-                    Image(systemName: "arrow.forward.circle.fill")
+                    Image(systemName: "arrow.right.circle.dotted")
                         .foregroundStyle(.labelSecondary)
                         .tint(.green)
                 }

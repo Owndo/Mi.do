@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5FB5BDB10D5D91CDC5F67B4A"
-               BuildableName = "Tasker.app"
-               BlueprintName = "Tasker"
-               ReferencedContainer = "container:Tasker.xcodeproj">
+               BlueprintIdentifier = "BB6D80BDB0090E9315654F4B"
+               BuildableName = "Managers.framework"
+               BlueprintName = "Managers"
+               ReferencedContainer = "container:Tasker-tuist.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -41,16 +41,15 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5FB5BDB10D5D91CDC5F67B4A"
-            BuildableName = "Tasker.app"
-            BlueprintName = "Tasker"
-            ReferencedContainer = "container:Tasker.xcodeproj">
+            BlueprintIdentifier = "BB6D80BDB0090E9315654F4B"
+            BuildableName = "Managers.framework"
+            BlueprintName = "Managers"
+            ReferencedContainer = "container:Tasker-tuist.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -58,16 +57,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5FB5BDB10D5D91CDC5F67B4A"
-            BuildableName = "Tasker.app"
-            BlueprintName = "Tasker"
-            ReferencedContainer = "container:Tasker.xcodeproj">
+            BlueprintIdentifier = "BB6D80BDB0090E9315654F4B"
+            BuildableName = "Managers.framework"
+            BlueprintName = "Managers"
+            ReferencedContainer = "container:Tasker-tuist.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

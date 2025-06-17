@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MainView
 
 @main
 struct Tasker: App {

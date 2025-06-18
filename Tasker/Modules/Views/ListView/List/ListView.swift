@@ -144,20 +144,18 @@ public struct ListView: View {
             .gesture(
                 DragGesture(minimumDistance: 1)
                     .onChanged { _ in
-                        if !vm.startSwipping {
-                            vm.startSwipping = true
-                        }
+                        vm.startSwipping = true
                     }
                     .onEnded { value in
-                        if value.translation.width < -50 {
+                        if value.translation.width < -75 {
                             vm.nextDaySwiped()
-                        } else if value.translation.width > 50 {
+                        } else if value.translation.width > 75 {
                             vm.previousDaySwiped()
                         }
                         
-                        if value.translation.height < -10 {
+                        if value.translation.height < -75 {
                             
-                        } else if value.translation.height > 10 {
+                        } else if value.translation.height > 75 {
                             
                         }
                         vm.startSwipping = false

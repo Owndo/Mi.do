@@ -216,6 +216,10 @@ final class TaskVM {
         }
     }
     
+    func stopPlaying() {
+        playerManager.stopToPlay()
+    }
+    
     func seekAudio(_ time: TimeInterval) {
         playerManager.seekAudio(time)
     }

@@ -86,6 +86,9 @@ public struct TaskView: View {
                 SaveButton()
                 
             }
+            .onDisappear {
+                vm.stopPlaying()
+            }
             .taskDeleteDialog(
                 isPresented: $vm.confirmationDialogIsPresented,
                 task: vm.mainModel,
@@ -161,7 +164,8 @@ public struct TaskView: View {
                 onEditingChanged: { editing in
                     vm.isDragging = editing
                 }
-            )            .tint(colorScheme.elementColor.hexColor())
+            )
+            .tint(colorScheme.elementColor.hexColor())
             
             Text(vm.currentTimeString())
                 .font(.system(size: 17, weight: .regular, design: .default))

@@ -13,7 +13,7 @@ public protocol TaskManagerProtocol {
     
     var completedTasks: [MainModel] { get }
     
-    var thisWeekTasks: [MainModel] { get }
+    func thisWeekTasks(date: Double) async -> [MainModel]
     
     func preparedTask(task: TaskModel, date: Date) -> TaskModel
     

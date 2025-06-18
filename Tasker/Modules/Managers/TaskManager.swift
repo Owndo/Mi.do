@@ -31,36 +31,41 @@ final class TaskManager: TaskManagerProtocol {
         return allDates.max()?.timeIntervalSince1970
     }
     
-    var tasks: [MainModel] {
+    private var validModels: [MainModel] {
         casManager.models.filter { model in
-            model.value.markAsDeleted == false &&
-            model.value.deleted?.contains { $0.deletedFor == selectedDate } != true &&
-            model.value.isScheduledForDate(selectedDate, calendar: calendar) &&
-            (model.value.done == nil || !model.value.done!.contains { $0.completedFor == selectedDate })
-        }.sorted { $0.value.notificationDate < $1.value.notificationDate }
-    }
-    
-    var completedTasks: [MainModel] {
-        casManager.models.filter { model in
-            model.value.markAsDeleted == false &&
-            model.value.isScheduledForDate(selectedDate, calendar: calendar) &&
-            model.value.done?.contains { $0.completedFor == selectedDate } == true
-        }.sorted { $0.value.notificationDate < $1.value.notificationDate }
-    }
-    
-    var thisWeekTasks: [MainModel] {
-        guard let startDate = firstWeekDate,
-              let endDate = lastWeekDate else {
-            return []
-        }
-        
-        return casManager.models.filter { model in
             let task = model.value
+            return task.markAsDeleted == false
+        }
+    }
+
+    var tasks: [MainModel] {
+        validModels
+            .filter {
+                $0.value.isScheduledForDate(selectedDate, calendar: calendar) &&
+                ($0.value.deleted?.contains { $0.deletedFor == selectedDate } != true) &&
+                ($0.value.done?.contains { $0.completedFor == selectedDate } != true)
+            }
+            .sorted { $0.value.notificationDate < $1.value.notificationDate }
+    }
+
+    var completedTasks: [MainModel] {
+        validModels
+            .filter {
+                $0.value.isScheduledForDate(selectedDate, calendar: calendar) &&
+                ($0.value.done?.contains { $0.completedFor == selectedDate } == true)
+            }
+            .sorted { $0.value.notificationDate < $1.value.notificationDate }
+    }
+    
+    func thisWeekTasks(date: Double) async -> [MainModel] {
+            guard let start = firstWeekDate, let end = lastWeekDate else { return [] }
             
-            guard task.markAsDeleted == false else { return false }
-            
-            return isTaskInWeeksRange(task, startDate: startDate, endDate: endDate)
-        }.sorted { $0.value.notificationDate < $1.value.notificationDate }
+            return validModels
+                .filter { task in
+                    isTaskInWeeksRange(task.value, startDate: start, endDate: end) &&
+                    task.value.isScheduledForDate(date, calendar: calendar) &&
+                    (task.value.deleted?.contains { $0.deletedFor == date } != true)
+                }
     }
     
     private func isTaskInWeeksRange(_ task: TaskModel, startDate: Double, endDate: Double) -> Bool {

@@ -30,6 +30,7 @@ final class TaskRowVM {
     var taskDeleteTrigger = false
     var listRowHeight = CGFloat(52)
     var startPlay = false
+    var disabledScroll = false
     
     //MARK: Confirmation dialog
     var confirmationDialogIsPresented = false
@@ -45,6 +46,12 @@ final class TaskRowVM {
     
     private var currentTime: Date {
         dateManager.currentTime
+    }
+    
+    func onAppear(task: MainModel) {
+        if task.value.title.count < 25 {
+            disabledScroll = true
+        }
     }
     
     //MARK: Selected task

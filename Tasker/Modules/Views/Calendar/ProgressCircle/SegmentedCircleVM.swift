@@ -50,6 +50,7 @@ final class SegmentedCircleVM {
     
     func onAppear(date: Date) {
         currentDay = date
+        
         Task {
             await updateTasks()
         }
@@ -59,7 +60,7 @@ final class SegmentedCircleVM {
     func updateTasks() async {
         var filteredTasks: [MainModel] = []
         
-        let weekTasks = taskManager.thisWeekTasks
+        let weekTasks = await taskManager.thisWeekTasks(date: currentDay.timeIntervalSince1970)
         
         for task in weekTasks {
             let isScheduled = task.value.isScheduledForDate(
@@ -71,6 +72,6 @@ final class SegmentedCircleVM {
             }
         }
         
-        tasksForToday = filteredTasks
+        tasksForToday = filteredTasks.sorted { $0.value.notificationDate < $1.value.notificationDate }
     }
 }

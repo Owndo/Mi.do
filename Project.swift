@@ -56,6 +56,7 @@ let project = Project(
             dependencies: [
                 .target(name: "Models"),
                 .target(name: "Managers"),
+                .target(name: "UIComponents")
             ]
         ),
         .moduleView(

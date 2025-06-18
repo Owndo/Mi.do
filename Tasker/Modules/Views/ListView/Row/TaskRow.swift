@@ -30,6 +30,9 @@ struct TaskRow: View {
                 isSingleTask: vm.singleTask,
                 onDelete: vm.deleteButtonTapped
             )
+            .onAppear {
+                vm.onAppear(task: task)
+            }
             .sensoryFeedback(.selection, trigger: vm.selectedTask)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.decrease, trigger: vm.taskDeleteTrigger)
@@ -53,6 +56,7 @@ struct TaskRow: View {
                                 .font(.callout)
                                 .lineLimit(1)
                         }
+                        .scrollDisabled(vm.disabledScroll)
                         .scrollIndicators(.hidden)
                     }
                     
@@ -93,7 +97,7 @@ struct TaskRow: View {
                 Button {
                     vm.updateNotificationTimeForDueDateSwipped(task: task)
                 } label: {
-                    Image(systemName: "arrow.right.circle.dotted")
+                    Image(systemName: "arrow.forward.circle.fill")
                         .foregroundStyle(.labelSecondary)
                         .tint(.green)
                 }
@@ -136,4 +140,11 @@ struct TaskRow: View {
 
 #Preview {
     TaskRow(task: mockModel())
+}
+
+struct ContentSizePreferenceKey: PreferenceKey {
+    static var defaultValue: CGSize = .zero
+    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+        value = nextValue()
+    }
 }

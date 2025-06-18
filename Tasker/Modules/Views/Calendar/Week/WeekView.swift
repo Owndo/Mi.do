@@ -29,7 +29,7 @@ public struct WeekView: View {
                     ForEach(1..<8) { index in
                         if vm.isSelectedDayOfWeek(index) {
                             shape
-                                .fill(Color.labelTertiary.opacity(colorScheme == .dark ? 0.08 : 0.04))
+                                .fill(Color.backgroundTertiary)
                                 .frame(maxWidth: .infinity)
                         } else {
                             Color.clear.frame(maxWidth: .infinity)
@@ -41,7 +41,9 @@ public struct WeekView: View {
                     HStack {
                         ForEach(vm.orderedWeekdaySymbols(), id: \.self) { symbol in
                             Text(symbol)
-                                .foregroundStyle(Color.labelSecondary.opacity(0.8))
+                                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                                .fontDesign(.default)
+                                .foregroundStyle(Color.labelSecondary)
                                 .frame(maxWidth: .infinity)
                         }
                     }
@@ -96,18 +98,19 @@ public struct WeekView: View {
             HStack {
                 if vm.selectedDayIsToday() {
                     Image(systemName: "arrow.uturn.backward")
-                        .foregroundStyle(Color.labelSecondary.opacity(0.8))
+                        .foregroundStyle(Color.labelSecondary)
                 }
                 
                 Text(vm.dateToString())
-                    .foregroundStyle(Color.labelSecondary.opacity(0.8))
+                    .font(.system(.subheadline, design: .rounded, weight: .medium))
+                    .foregroundStyle(Color.labelSecondary)
             }
             .padding(.vertical, 7)
             .padding(.horizontal, 14)
             .background(
                 RoundedRectangle(cornerRadius: 14)
                     .fill(
-                        Color.labelTertiary.opacity(colorScheme == .dark ? 0.08 : 0.04)
+                        Color.backgroundTertiary
                     )
             )
         }

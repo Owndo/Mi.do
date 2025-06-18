@@ -94,7 +94,7 @@ public struct MainView: View {
                 
                 ToolbarItem(placement: .principal) {
                     TextField("", text: $vm.textForYourSelf)
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.system(.headline, design: .default, weight: .semibold))
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.center)
                 }

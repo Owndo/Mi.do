@@ -51,6 +51,7 @@ struct TaskRow: View {
                         
                         ScrollView(.horizontal) {
                             Text(task.value.title)
+                                .font(.system(.body, design: .rounded, weight: .regular))
                                 .multilineTextAlignment(.leading)
                                 .foregroundStyle(.labelPrimary)
                                 .font(.callout)
@@ -62,8 +63,8 @@ struct TaskRow: View {
                     
                     HStack(spacing: 12) {
                         Text("\(Date(timeIntervalSince1970: task.value.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))")
-                            .font(.subheadline)
-                            .foregroundStyle(.labelTertiary.opacity(0.6))
+                            .font(.system(.subheadline, design: .rounded, weight: .regular))
+                            .foregroundStyle(.labelTertiary)
                             .padding(.leading, 6)
                             .lineLimit(1)
                         

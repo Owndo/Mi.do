@@ -116,14 +116,14 @@ struct SegmentedCircleView: View {
     private func CircleBackgroundFill(colors: [Color], completed: Bool) -> some View {
         if vm.useTaskColors {
             let gradient = AngularGradient(colors: colors, center: .center)
-            let baseOpacity = completed ? 0.32 : 0.05
+            let baseOpacity = completed ? 0.32 : 0.00
             
             Circle()
                 .fill(gradient)
                 .opacity(baseOpacity)
         } else {
             let baseColor = completed
-            ? colorScheme.elementColor.hexColor().opacity(0.12)
+            ? colorScheme.elementColor.hexColor().opacity(0.22)
             : .clear
             
             Circle()

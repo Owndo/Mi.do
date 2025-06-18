@@ -117,6 +117,7 @@ public struct TaskView: View {
                 vm.deleteTaskButtonTapped()
             } label: {
                 Text("Delete")
+                    .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(Color.accentRed)
             }
             
@@ -168,7 +169,7 @@ public struct TaskView: View {
             .tint(colorScheme.elementColor.hexColor())
             
             Text(vm.currentTimeString())
-                .font(.system(size: 17, weight: .regular, design: .default))
+                .font(.system(.callout, design: .rounded, weight: .regular))
                 .foregroundStyle(.labelPrimary)
                 .monospacedDigit()
                 .contentTransition(.numericText())
@@ -193,7 +194,7 @@ public struct TaskView: View {
             
             Toggle(isOn: $vm.task.voiceMode) {
                 Text("Play your voice in notification")
-                    .font(.system(size: 17, weight: .regular, design: .default))
+                    .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelPrimary)
             }
         }
@@ -215,7 +216,7 @@ public struct TaskView: View {
                 EqualizerView(decibelLevel: vm.decibelLVL)
             } else {
                 Text("Add voice recording")
-                    .font(.system(size: 17, weight: .regular, design: .default))
+                    .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelPrimary)
             }
             
@@ -255,7 +256,7 @@ public struct TaskView: View {
         VStack(spacing: 0) {
             TextField("New task", text: $vm.task.title)
                 .font(.title2)
-                .fontWeight(.semibold)
+                .fontWeight(.bold)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
                 .focused($sectionInFocuse, equals: .title)
@@ -264,7 +265,7 @@ public struct TaskView: View {
             
             VStack {
                 TextField("Add more information", text: $vm.task.info, axis: .vertical)
-                    .font(.system(size: 17, weight: .regular, design: .default))
+                    .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)
                     .padding(.vertical, 13)
                     .padding(.horizontal, 16)
@@ -296,14 +297,15 @@ public struct TaskView: View {
                         .foregroundStyle(colorScheme.elementColor.hexColor())
                     
                     Text("Date")
+                        .font(.system(.body, design: .rounded, weight: .regular))
                         .foregroundStyle(Color.primary)
                         .padding(.vertical, 13)
                     
                     Spacer()
                     
                     Text(vm.dateForAppearence)
-                        .foregroundStyle(Color.secondary)
-                        .opacity(0.80)
+                        .font(.system(.body, design: .rounded, weight: .regular))
+                        .foregroundStyle(Color.labelSecondary)
                 }
             }
             .padding(.leading, 17)
@@ -336,6 +338,7 @@ public struct TaskView: View {
                         .foregroundStyle(colorScheme.elementColor.hexColor())
                     
                     Text("Time")
+                        .font(.system(.body, design: .rounded, weight: .regular))
                         .foregroundStyle(Color.primary)
                         .padding(.vertical, 13)
                     
@@ -343,8 +346,8 @@ public struct TaskView: View {
                     Spacer()
                     
                     Text("\(vm.notificationDate, format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))")
-                        .foregroundStyle(Color.secondary)
-                        .opacity(0.80)
+                        .font(.system(.body, design: .rounded, weight: .regular))
+                        .foregroundStyle(Color.labelSecondary)
                 }
             }
             .padding(.leading, 17)
@@ -370,6 +373,7 @@ public struct TaskView: View {
                     .foregroundStyle(colorScheme.elementColor.hexColor())
                 
                 Text("Repeat")
+                    .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(Color.primary)
                     .padding(.vertical, 13)
                 
@@ -378,14 +382,15 @@ public struct TaskView: View {
                 Picker(selection: $vm.task.repeatTask, content: {
                     ForEach(RepeatTask.allCases, id: \.self) { type in
                         Text("\(type.description)")
+                            .font(.system(.body, design: .rounded, weight: .regular))
                     }
                 }, label: {
                     HStack {
                         Text("\(vm.task.repeatTask.description)")
+                            .font(.system(.body, design: .rounded, weight: .regular))
                     }
                 })
-                .tint(Color.secondary)
-                .opacity(0.80)
+                .tint(Color.labelSecondary)
                 .pickerStyle(.menu)
             }
             .padding(.leading, 17)
@@ -409,8 +414,8 @@ public struct TaskView: View {
                         day.value.toggle()
                     } label: {
                         Text(day.name)
-                            .font(.system(size: 17, weight: .regular, design: .default))
-                            .foregroundStyle(day.value ? colorScheme.elementColor.hexColor() : .labelSecondary.opacity(0.8))
+                            .font(.system(.body, design: .rounded, weight: .regular))
+                            .foregroundStyle(day.value ? colorScheme.elementColor.hexColor() : .labelSecondary)
                             .padding(.vertical, 13)
                     }
                 }
@@ -418,12 +423,13 @@ public struct TaskView: View {
             }
             .padding(.horizontal)
             
-            HStack(spacing: 4) {
+            HStack(alignment: .center,spacing: 4) {
                 Image(systemName: "info.circle")
-                    .foregroundStyle(.labelSecondary.opacity(0.8))
+                    .foregroundStyle(.labelSecondary)
                 
                 Text("Pick the days of the week to repeat")
-                    .foregroundStyle(.labelSecondary.opacity(0.8))
+                    .font(.system(.footnote, design: .rounded, weight: .regular))
+                    .foregroundStyle(.labelSecondary)
             }
             .padding(.bottom, 13)
         }
@@ -436,7 +442,8 @@ public struct TaskView: View {
         VStack {
             HStack {
                 Text("Color task")
-                    .foregroundStyle(.labelSecondary.opacity(0.8))
+                    .font(.system(.callout, design: .rounded, weight: .regular))
+                    .foregroundStyle(.labelSecondary)
                 
                 Spacer()
             }
@@ -499,6 +506,7 @@ public struct TaskView: View {
                 }
             } label: {
                 Text("Close")
+                    .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(.white)
                     .padding(.vertical, 15)
                     .frame(maxWidth: .infinity)
@@ -517,14 +525,17 @@ public struct TaskView: View {
     //MARK: - Created Date
     @ViewBuilder
     private func CreatedDate() -> some View {
-        HStack(spacing: 4) {
+        HStack(alignment: .center, spacing: 4) {
             Image(systemName: "calendar")
+                .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(.labelTertiary)
             
             Text("Created:")
+                .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(.labelTertiary)
             
             Text(Date(timeIntervalSince1970:vm.task.createDate).formatted(.dateTime.month().day().hour().minute().year()))
+                .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(.labelSecondary)
         }
     }

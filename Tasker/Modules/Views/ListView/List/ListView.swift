@@ -61,8 +61,8 @@ public struct ListView: View {
         if !vm.tasks.isEmpty {
             HStack {
                 Text("Tasks")
-                    .foregroundStyle(.labelTertiary.opacity(0.6))
-                    .bold()
+                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .foregroundStyle(.labelTertiary)
                 
                 Spacer()
             }
@@ -98,13 +98,13 @@ public struct ListView: View {
         if !vm.completedTasks.isEmpty {
             HStack {
                 Text("Completed task")
-                    .foregroundStyle(.labelTertiary.opacity(0.6))
-                    .bold()
+                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .foregroundStyle(.labelTertiary)
                 
                 Spacer()
                 
                 Image(systemName: completedTasksHidden ? "chevron.up" : "chevron.down")
-                    .foregroundStyle(.labelTertiary.opacity(0.6))
+                    .foregroundStyle(.labelTertiary)
                     .bold()
             }
             .onTapGesture {

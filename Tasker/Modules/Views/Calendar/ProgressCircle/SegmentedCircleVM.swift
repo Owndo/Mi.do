@@ -19,19 +19,19 @@ final class SegmentedCircleVM {
     
     var useTaskColors = true
     
+    var completedFlags: [Bool] = []
+    var allCompleted: Bool = false
+    
     var currentDay: Date = Date()
     var tasksForToday: [MainModel] = []
     var isLoading = false
     
     var completedFlagsForToday: [Bool] {
-        tasksForToday.map { task in
-            guard let doneArray = task.value.done else { return false }
-            return doneArray.contains { $0.completedFor == currentDay.timeIntervalSince1970 }
-        }
+        completedFlags
     }
-    
+
     var allTaskCompletedForToday: Bool {
-        !tasksForToday.isEmpty && completedFlagsForToday.allSatisfy { $0 }
+        allCompleted
     }
     
     var updateWeek: Int {
@@ -58,20 +58,25 @@ final class SegmentedCircleVM {
     
     @MainActor
     func updateTasks() async {
-        var filteredTasks: [MainModel] = []
-        
+        isLoading = true
+
         let weekTasks = await taskManager.thisWeekTasks(date: currentDay.timeIntervalSince1970)
-        
-        for task in weekTasks {
-            let isScheduled = task.value.isScheduledForDate(
-                currentDay.timeIntervalSince1970,
-                calendar: dateManager.calendar
-            )
-            if isScheduled {
-                filteredTasks.append(task)
-            }
+
+        let filtered = weekTasks.filter {
+            $0.value.isScheduledForDate(currentDay.timeIntervalSince1970, calendar: dateManager.calendar)
         }
+
+        let sorted = filtered.sorted { $0.value.notificationDate < $1.value.notificationDate }
+        tasksForToday = sorted
+
+        let timeKey = currentDay.timeIntervalSince1970
         
-        tasksForToday = filteredTasks.sorted { $0.value.notificationDate < $1.value.notificationDate }
+        completedFlags = sorted.map {
+            $0.value.done?.contains { $0.completedFor == timeKey } ?? false
+        }
+
+        allCompleted = !sorted.isEmpty && completedFlags.allSatisfy { $0 }
+
+        isLoading = false
     }
 }

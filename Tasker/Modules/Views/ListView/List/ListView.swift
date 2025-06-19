@@ -103,7 +103,7 @@ public struct ListView: View {
                 
                 Spacer()
                 
-                Image(systemName: completedTasksHidden ? "chevron.up" : "chevron.down")
+                Image(systemName: completedTasksHidden ? "chevron.down" : "chevron.up")
                     .foregroundStyle(.labelTertiary)
                     .bold()
             }

@@ -8,6 +8,9 @@ final class TaskManager: TaskManagerProtocol {
     @ObservationIgnored
     @Injected(\.dateManager) private var dateManager
     
+    
+    private var weekTasksCache: [Double: [MainModel]] = [:] // key: startOfWeek timestamp
+
     //MARK: Computer properties
     private var calendar: Calendar {
         dateManager.calendar
@@ -21,6 +24,9 @@ final class TaskManager: TaskManagerProtocol {
         dateManager.currentTime.timeIntervalSince1970
     }
     
+    private func startOfWeek(for date: Date) -> Double {
+        calendar.dateInterval(of: .weekOfYear, for: date)?.start.timeIntervalSince1970 ?? 0
+    }
     private var firstWeekDate: Double? {
         let allDates = dateManager.allWeeks.flatMap { $0.date }
         return allDates.min()?.timeIntervalSince1970
@@ -58,15 +64,16 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     func thisWeekTasks(date: Double) async -> [MainModel] {
-            guard let start = firstWeekDate, let end = lastWeekDate else { return [] }
-            
-            return validModels
-                .filter { task in
-                    isTaskInWeeksRange(task.value, startDate: start, endDate: end) &&
-                    task.value.isScheduledForDate(date, calendar: calendar) &&
-                    (task.value.deleted?.contains { $0.deletedFor == date } != true)
-                }
+        guard let start = firstWeekDate, let end = lastWeekDate else { return [] }
+
+        return validModels
+            .filter { task in
+                let taskValue = task.value
+                return isTaskInWeeksRange(taskValue, startDate: start, endDate: end) &&
+                       (taskValue.deleted?.contains { $0.deletedFor == date } != true)
+            }
     }
+
     
     private func isTaskInWeeksRange(_ task: TaskModel, startDate: Double, endDate: Double) -> Bool {
         var currentInterval = startDate

@@ -76,6 +76,7 @@ final class DateManager: DateManagerProtocol {
         }
     }
     
+    
     func startOfWeek(for date: Date) -> Date {
         calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)) ?? date
     }
@@ -243,7 +244,16 @@ final class DateManager: DateManagerProtocol {
     
     func backToToday() {
         selectedDate = currentTime
-        indexForWeek = 1
+        if indexForWeek > 1 {
+            while indexForWeek > 1 {
+                
+                indexForWeek -= 1
+            }
+        } else if indexForWeek < 1 {
+            while indexForWeek < 1 {
+                indexForWeek += 1
+            }
+        }
     }
     
     private func updateWeekIndex(for date: Date) {

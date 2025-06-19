@@ -30,16 +30,13 @@ final class DateManager: DateManagerProtocol {
     
     var indexForWeek = 1 {
         didSet {
-            Task { @MainActor in
-                try await Task.sleep(nanoseconds: 350000000)
-                let weeksDate = allWeeks.first(where: { $0.id == indexForWeek})!.date
-                if let sameWeekDay = weeksDate.first(where: {
-                    calendar.component(.weekday, from: $0) == selectedWeekDay
-                }) {
-                    selectedDate = sameWeekDay
-                } else {
-                    selectedDate = allWeeks[1].date.first!
-                }
+            let weeksDate = allWeeks.first(where: { $0.id == indexForWeek})!.date
+            if let sameWeekDay = weeksDate.first(where: {
+                calendar.component(.weekday, from: $0) == selectedWeekDay
+            }) {
+                selectedDate = sameWeekDay
+            } else {
+                selectedDate = allWeeks[1].date.first!
             }
         }
     }
@@ -243,18 +240,12 @@ final class DateManager: DateManagerProtocol {
     }
     
     func backToToday() {
+        initializeWeek()
         selectedDate = currentTime
-        if indexForWeek > 1 {
-            while indexForWeek > 1 {
-                
-                indexForWeek -= 1
-            }
-        } else if indexForWeek < 1 {
-            while indexForWeek < 1 {
-                indexForWeek += 1
-            }
-        }
+        initializeWeek()
+        indexForWeek = 1
     }
+    
     
     private func updateWeekIndex(for date: Date) {
         let newWeekStart = startOfWeek(for: date)

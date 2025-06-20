@@ -13,12 +13,12 @@ import TaskView
 
 public struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
-    
+
     @State private var vm = MainVM()
     
     @State var showingAlert = false
     
-    @FocusState var focusState: Bool
+    @FocusState var focusState: Bool    
     
     public init() {}
     
@@ -28,60 +28,49 @@ public struct MainView: View {
                 Color(colorScheme.backgroundColor.hexColor())
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    WeekView()
+                NotesView(mainViewIsOpen: $vm.mainViewIsOpen)
+            }
+            .sheet(isPresented: $vm.mainViewIsOpen) {
+                ZStack {
+                    Color(colorScheme.backgroundColor.hexColor())
+                        .ignoresSafeArea()
                     
-                    ListView()
-                        .padding(.horizontal, 16)
-                    
-                    Spacer()
-                }
-                .ignoresSafeArea(edges: .bottom)
-                
-                VStack {
-                    Spacer()
-                    
-                    RecordButton(isRecording: $vm.isRecording, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl) {
-                        Task {
-                            await vm.handleButtonTap()
-                        }
+                    VStack(spacing: 0) {
+                        WeekView()
+                            .padding(.top, 17)
+                        
+                        ListView()
+                            .padding(.horizontal, 16)
+                        
+                        Spacer()
                     }
-                    .disabled(vm.disabledButton)
-                    .buttonStyle(.plain)
-                    .simultaneousGesture(
-                        LongPressGesture().onEnded({ _ in
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                            Task {
-                                try await vm.startAfterChek()
-                            }
-                        })
-                    )
-                    .onChange(of: vm.currentlyTime) { newValue, _ in
-                        if newValue > 15.0 && vm.recordingState == .recording {
-                            Task {
-                                await vm.stopRecord(isAutoStop: true)
-                            }
-                        }
+                    .ignoresSafeArea(edges: .bottom)
+                    
+                    CreateButton()
+      
+                }
+                .sheet(item: $vm.model) { model in
+                    TaskView(mainModel: model)
+                }
+                .alert("Easy there!", isPresented: $showingAlert) {
+                    Button {
+                        showingAlert = false
+                    } label: {
+                        Text("OKAAAAY🤬")
+                            .tint(.black)
                     }
-                    .padding(.bottom, 15)
+                    .tint(.black)
+                } message: {
+                    Text("We can't keep up with your speed. Let's slow it down a bit.")
                 }
-            }
-            .alert("Easy there!", isPresented: $showingAlert) {
-                Button {
-                    showingAlert = false
-                } label: {
-                    Text("OKAAAAY🤬")
-                        .tint(.black)
+                .alert(item: $vm.alert) { alert in
+                    alert.alert
                 }
-                .tint(.black)
-            } message: {
-                Text("We can't keep up with your speed. Let's slow it down a bit.")
+                .presentationDetents([.fraction(0.96)])
+                .presentationDragIndicator(.visible)
+                .presentationBackgroundInteraction(.enabled)
+                .presentationCornerRadius(0)
             }
-            .alert(item: $vm.alert) { alert in
-                alert.alert
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .ignoresSafeArea(.keyboard)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -113,12 +102,42 @@ public struct MainView: View {
                     await vm.stopAfterCheck(newValue)
                 }
             }
-            .sheet(item: $vm.model) { model in
-                TaskView(mainModel: model)
-            }
+            .navigationBarTitleDisplayMode(.inline)
+            .animation(.default, value: vm.isRecording)
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .animation(.default, value: vm.isRecording)
+    }
+    
+    //MARK: - Create Button
+    @ViewBuilder
+    private func CreateButton() -> some View {
+        VStack {
+            Spacer()
+            
+            RecordButton(isRecording: $vm.isRecording, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl) {
+                Task {
+                    await vm.handleButtonTap()
+                }
+            }
+            .disabled(vm.disabledButton)
+            .buttonStyle(.plain)
+            .simultaneousGesture(
+                LongPressGesture().onEnded({ _ in
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    Task {
+                        try await vm.startAfterChek()
+                    }
+                })
+            )
+            .onChange(of: vm.currentlyTime) { newValue, _ in
+                if newValue > 15.0 && vm.recordingState == .recording {
+                    Task {
+                        await vm.stopRecord(isAutoStop: true)
+                    }
+                }
+            }
+            .padding(.bottom, 15)
+        }
+        .ignoresSafeArea(.keyboard)
     }
 }
 

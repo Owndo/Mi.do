@@ -32,6 +32,7 @@ final class MainVM {
     var model: MainModel?
     
     //MARK: - UI States
+    var mainViewIsOpen = true
     var isRecording = false
     var showDetailsScreen = false
     var alert: AlertModel?

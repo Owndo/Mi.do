@@ -5,11 +5,17 @@
 //  Created by Rodion Akhmedov on 6/12/25.
 //
 
+//
+//  TaskDeleteDialog.swift
+//  Tasker
+//
+//  Created by Rodion Akhmedov on 6/12/25.
+//
+
 import SwiftUI
 import Models
 
 public struct TaskDeleteDialog: ViewModifier {
-    @Environment(\.dismiss) var dismissButton
     
     @Binding var isPresented: Bool
     
@@ -17,6 +23,7 @@ public struct TaskDeleteDialog: ViewModifier {
     let message: String
     let isSingleTask: Bool
     let onDelete: (MainModel, Bool) -> Void
+    let dismissAction: DismissAction?
     
     public func body(content: Content) -> some View {
         content
@@ -24,8 +31,7 @@ public struct TaskDeleteDialog: ViewModifier {
                 if isSingleTask {
                     Button(role: .destructive) {
                         Task {
-                            dismissButton()
-                            
+                            dismissAction?()
                             try await Task.sleep(nanoseconds: 50_000_000)
                             onDelete(task, true)
                         }
@@ -35,8 +41,7 @@ public struct TaskDeleteDialog: ViewModifier {
                 } else {
                     Button(role: .destructive) {
                         Task {
-                            dismissButton()
-                            
+                            dismissAction?()
                             try await Task.sleep(nanoseconds: 50_000_000)
                             onDelete(task, false)
                         }
@@ -46,8 +51,7 @@ public struct TaskDeleteDialog: ViewModifier {
                     
                     Button(role: .destructive) {
                         Task {
-                            dismissButton()
-                            
+                            dismissAction?()
                             try await Task.sleep(nanoseconds: 50_000_000)
                             onDelete(task, true)
                         }
@@ -63,14 +67,15 @@ public struct TaskDeleteDialog: ViewModifier {
 
 public extension View {
     /// Confirmation dialog
-    func taskDeleteDialog(isPresented: Binding<Bool>, task: MainModel, message: String, isSingleTask: Bool, onDelete: @escaping (MainModel, Bool) -> Void) -> some View {
+    func taskDeleteDialog(isPresented: Binding<Bool>, task: MainModel, message: String, isSingleTask: Bool, onDelete: @escaping (MainModel, Bool) -> Void, dismissButton: DismissAction? = nil) -> some View {
         modifier(
             TaskDeleteDialog(
                 isPresented: isPresented,
                 task: task,
                 message: message,
                 isSingleTask: isSingleTask,
-                onDelete: onDelete
+                onDelete: onDelete,
+                dismissAction: dismissButton
             )
         )
     }

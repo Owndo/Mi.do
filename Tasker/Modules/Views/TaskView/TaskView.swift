@@ -11,6 +11,7 @@ import UIComponents
 
 public struct TaskView: View {
     @Environment(\.colorScheme) var colorScheme
+    
     @Environment(\.dismiss) var dismissButton
     
     @State private var vm: TaskVM
@@ -94,7 +95,8 @@ public struct TaskView: View {
                 task: vm.mainModel,
                 message: vm.messageForDelete,
                 isSingleTask: vm.singleTask,
-                onDelete: vm.deleteButtonTapped
+                onDelete: vm.deleteButtonTapped,
+                dismissButton: dismissButton
             )
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.selection, trigger: vm.notificationDate)

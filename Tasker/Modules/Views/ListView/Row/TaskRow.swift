@@ -94,13 +94,12 @@ struct TaskRow: View {
                         .tint(.accentRed)
                 }
             }
-            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            .swipeActions(edge: .leading, allowsFullSwipe: false) {
                 Button {
                     vm.updateNotificationTimeForDueDateSwipped(task: task)
                 } label: {
                     Image(systemName: "arrow.forward.circle.fill")
-                        .foregroundStyle(.labelSecondary)
-                        .tint(.green)
+                        .tint(colorTheme.elementColor.hexColor())
                 }
             }
         }

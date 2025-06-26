@@ -40,7 +40,6 @@ public struct MainView: View {
                             .padding(.top, 17)
                         
                         ListView()
-                            .padding(.horizontal, 16)
                         
                         Spacer()
                     }

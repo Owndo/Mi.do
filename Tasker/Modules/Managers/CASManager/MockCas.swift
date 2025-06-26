@@ -29,9 +29,8 @@ final class MockCas: CASManagerProtocol {
         
         cas = MultiCas(local: localCas, remote: iCas)
         models = fetchModels()
-        if models.isEmpty {
-            models.append(mockModel())
-        }
+        
+        models.append(mockModel())
     }
     
     //MARK: Actions for work with CAS

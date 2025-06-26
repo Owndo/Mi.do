@@ -80,6 +80,11 @@ final class TaskVM {
         recorderManager.decibelLevel
     }
     
+    /// Time for check how many seconds recording goes
+    var currentlyRecordTime: Double {
+        recorderManager.currentlyTime
+    }
+    
     @ObservationIgnored
     var color = Color.black {
         didSet {
@@ -261,6 +266,12 @@ final class TaskVM {
         } else {
             await startRecord()
         }
+    }
+    
+    @MainActor
+    func stopAfterCheck(_ newValue: Double?) {
+        guard let value = newValue, value >= 15.0 else { return }
+        stopRecord()
     }
     
     private func startRecord() async {

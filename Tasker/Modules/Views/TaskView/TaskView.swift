@@ -87,6 +87,9 @@ public struct TaskView: View {
                 SaveButton()
                 
             }
+            .onChange(of: vm.currentlyRecordTime) { newValue, _ in
+                vm.stopAfterCheck(newValue)
+            }
             .onDisappear {
                 vm.stopPlaying()
             }

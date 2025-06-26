@@ -46,11 +46,11 @@ public struct ListView: View {
                 }
             }
             .scrollIndicators(.hidden)
-            .scrollDisabled(vm.startSwipping)
             .onPreferenceChange(ContentHeightPreferenceKey.self) { height in
                 vm.contentHeight = height
             }
         }
+        .padding(.horizontal, 16)
         .customBlurForContainer(colorScheme: colorScheme)
         .animation(.linear, value: completedTasksHidden)
         .sensoryFeedback(.impact, trigger: completedTasksHidden)
@@ -143,9 +143,6 @@ public struct ListView: View {
             .contentShape(Rectangle())
             .gesture(
                 DragGesture(minimumDistance: 1)
-                    .onChanged { _ in
-                        vm.startSwipping = true
-                    }
                     .onEnded { value in
                         if value.translation.width < -75 {
                             vm.nextDaySwiped()
@@ -158,7 +155,6 @@ public struct ListView: View {
                         } else if value.translation.height > 75 {
                             
                         }
-                        vm.startSwipping = false
                     }
             )
             .onTapGesture(count: 2) {

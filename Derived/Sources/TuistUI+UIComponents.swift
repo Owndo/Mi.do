@@ -165,6 +165,37 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 #endif
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
 public extension UIComponentsColors.Color {
+    static var backgroundQuintuple: UIComponentsColors.Color {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsColors.Color(named: "backgroundQuintuple", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return UIComponentsColors.Color(named: NSColor.Name("backgroundQuintuple"), bundle: bundle)!
+        #elseif os(watchOS)
+        return UIComponentsColors.Color(named: "backgroundQuintuple")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Color {
+    static var backgroundQuintuple: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("backgroundQuintuple", bundle: bundle)
+    }
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
+    static var backgroundQuintuple: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("backgroundQuintuple", bundle: bundle)
+    }
+}
+#endif
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
+public extension UIComponentsColors.Color {
     static var backgroundTertiary: UIComponentsColors.Color {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
@@ -196,14 +227,14 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 #endif
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
 public extension UIComponentsColors.Color {
-    static var custombackground: UIComponentsColors.Color {
+    static var customBackground: UIComponentsColors.Color {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
-        return UIComponentsColors.Color(named: "custombackground", in: bundle, compatibleWith: nil)!
+        return UIComponentsColors.Color(named: "customBackground", in: bundle, compatibleWith: nil)!
         #elseif os(macOS)
-        return UIComponentsColors.Color(named: NSColor.Name("custombackground"), bundle: bundle)!
+        return UIComponentsColors.Color(named: NSColor.Name("customBackground"), bundle: bundle)!
         #elseif os(watchOS)
-        return UIComponentsColors.Color(named: "custombackground")!
+        return UIComponentsColors.Color(named: "customBackground")!
         #endif
     }
 }
@@ -211,17 +242,17 @@ public extension UIComponentsColors.Color {
 #if canImport(SwiftUI)
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
 public extension SwiftUI.Color {
-    static var custombackground: SwiftUI.Color {
+    static var customBackground: SwiftUI.Color {
         let bundle = Bundle.module
-        return SwiftUI.Color("custombackground", bundle: bundle)
+        return SwiftUI.Color("customBackground", bundle: bundle)
     }
 }
 
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
 public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
-    static var custombackground: SwiftUI.Color {
+    static var customBackground: SwiftUI.Color {
         let bundle = Bundle.module
-        return SwiftUI.Color("custombackground", bundle: bundle)
+        return SwiftUI.Color("customBackground", bundle: bundle)
     }
 }
 #endif

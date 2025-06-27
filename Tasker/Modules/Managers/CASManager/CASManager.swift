@@ -11,14 +11,25 @@ import Models
 
 @Observable
 final class CASManager: CASManagerProtocol {
-    
     let cas: MultiCas
     let remoteDirectory = "iCloud.com.KodiMaberek.Tasker"
     
     var localDirectory: URL
+    var taskUpdateTrigger = false
     
     var models: [MainModel] = []
-    var taskUpdateTrigger = false
+    
+    var activeTasks: [MainModel] {
+        models.filter { $0.value.markAsDeleted == false }
+    }
+    
+    var completedTasks: [MainModel] {
+        models.filter { $0.value.markAsDeleted == false && $0.value.done != nil }
+    }
+    
+    var deletedTasks: [MainModel] {
+        models.filter { $0.value.markAsDeleted == true }
+    }
     
     init() {
         let localDirectory = CASManager.createMainDirectory()!

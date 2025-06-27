@@ -41,9 +41,8 @@ struct SegmentedCircleView: View {
         .frame(width: 36, height: 36)
         .task(id: date) {
             segmentProgress = 0
-            vm.currentDay = date
             
-            await vm.updateTasks()
+            vm.onAppear(date: date)
             
             withAnimation(.easeOut(duration: 0.4)) {
                 segmentProgress = 1.0

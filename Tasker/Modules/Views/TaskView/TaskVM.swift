@@ -103,18 +103,33 @@ final class TaskVM {
     
     // MARK: - Init
     init(mainModel: MainModel) {
+        setUPViewModel(mainModel)
+    }
+    
+    private func setUPViewModel(_ mainModel: MainModel) {
+        preSetTask(mainModel)
+        setUpTime()
+        setUpColor()
+    }
+    
+    private func preSetTask(_ mainModel: MainModel) {
         self.mainModel = mainModel
-        self.task = mainModel.value
-        sourseDateOfNotification = mainModel.value.notificationDate
-        
-        resetAudioProgress()
-        
+        task = mainModel.value
+    }
+    
+    private func setUpTime() {
         let time = originalNotificationTimeComponents
-        self.notificationDate = combineDateAndTime(timeComponents: time)
-        dateHasBeenChanged = false
+        notificationDate = combineDateAndTime(timeComponents: time)
         
-        Task { [weak self] in
-            await self?.loadTotalTimeIfNeeded()
+        sourseDateOfNotification = mainModel.value.notificationDate
+        dateHasBeenChanged = false
+    }
+    
+    private func setUpColor() {
+        switch task.taskColor {
+        case .custom(let customColor):
+            color = customColor.hexColor()
+        default: break
         }
     }
     

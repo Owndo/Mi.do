@@ -12,6 +12,11 @@ public struct RecordButton: View {
     
     @Binding var isRecording: Bool
     
+    @State private var shadowXOffset: CGFloat = 0
+    @State private var shadowYOffset: CGFloat = 0
+    @State private var shadowRadius: CGFloat = 5
+    @State private var shadowAngle: Double = 0
+    
     var progress: Double
     var countOfSec: Double
     var animationAmount: Float
@@ -48,11 +53,27 @@ public struct RecordButton: View {
             .padding(13)
             .background(
                 Circle()
-                    .fill(
-                        .white
+                    .fill(.white)
+                    .shadow(
+                        color: colorScheme.elementColor.hexColor(),
+                        radius: shadowRadius,
+                        x: shadowXOffset,
+                        y: shadowYOffset
                     )
-                    .shadow(color: colorScheme.elementColor.hexColor(), radius: 3)
             )
+            .onAppear {
+                Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+                    withAnimation(.easeInOut(duration: 0.7)) {
+                        shadowXOffset = CGFloat.random(in: -4...4)
+                        shadowYOffset = CGFloat.random(in: -4...4)
+                        shadowRadius = CGFloat.random(in: 4...8)
+                    }
+                }
+            }
+            .onDisappear {
+                shadowYOffset = 0
+                shadowXOffset = 0
+            }
     }
     
     @ViewBuilder

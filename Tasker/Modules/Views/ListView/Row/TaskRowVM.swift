@@ -66,9 +66,13 @@ final class TaskRowVM {
     }
     
     func checkMarkTapped(task: MainModel) {
-        let model = taskManager.checkMarkTapped(task: task)
+        let model = task
+        let task = taskManager.checkMarkTapped(task: model.value)
+        
         taskDoneTrigger.toggle()
         stopToPlay()
+        
+        model.value = task
         
         casManager.saveModel(model)
     }

@@ -13,12 +13,25 @@ import TaskView
 
 public struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
-
+    
     @State private var vm = MainVM()
     
     @State var showingAlert = false
     
-    @FocusState var focusState: Bool    
+    @State var presentationPosition: PresentationDetent = PresentationMode.base.detent
+    
+    @FocusState var focusState: Bool
+    
+    enum PresentationMode: CGFloat, CaseIterable {
+        case base = 0.96
+        case bottom = 0.20
+        
+        var detent: PresentationDetent {
+            .fraction(rawValue)
+        }
+        
+        static let detents = Set(PresentationMode.allCases.map { $0.detent })
+    }
     
     public init() {}
     
@@ -31,44 +44,7 @@ public struct MainView: View {
                 NotesView(mainViewIsOpen: $vm.mainViewIsOpen)
             }
             .sheet(isPresented: $vm.mainViewIsOpen) {
-                ZStack {
-                    Color(colorScheme.backgroundColor.hexColor())
-                        .ignoresSafeArea()
-                    
-                    VStack(spacing: 0) {
-                        WeekView()
-                            .padding(.top, 17)
-                        
-                        ListView()
-                        
-                        Spacer()
-                    }
-                    .ignoresSafeArea(edges: .bottom)
-                    
-                    CreateButton()
-      
-                }
-                .sheet(item: $vm.model) { model in
-                    TaskView(mainModel: model)
-                }
-                .alert("Easy there!", isPresented: $showingAlert) {
-                    Button {
-                        showingAlert = false
-                    } label: {
-                        Text("OKAAAAY🤬")
-                            .tint(.black)
-                    }
-                    .tint(.black)
-                } message: {
-                    Text("We can't keep up with your speed. Let's slow it down a bit.")
-                }
-                .alert(item: $vm.alert) { alert in
-                    alert.alert
-                }
-                .presentationDetents([.fraction(0.96)])
-                .presentationDragIndicator(.visible)
-                .presentationBackgroundInteraction(.enabled)
-                .presentationCornerRadius(0)
+                MainViewBase()
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -106,6 +82,61 @@ public struct MainView: View {
         }
     }
     
+    //MARK: - MainViewBase
+    @ViewBuilder
+    private func MainViewBase() -> some View {
+        ZStack {
+            Color(colorScheme.backgroundColor.hexColor())
+                .ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                WeekView()
+                    .padding(.top, 17)
+                
+                ListView()
+                
+                Spacer()
+                
+                
+            }
+            .ignoresSafeArea(edges: .bottom)
+            
+            VStack {
+                
+                Spacer()
+                
+                if presentationPosition == PresentationMode.base.detent {
+                    withAnimation {
+                        CreateButton()
+                            .fixedSize()
+                    }
+                }
+            }
+        }
+        .sheet(item: $vm.model) { model in
+            TaskView(mainModel: model)
+        }
+        .alert("Easy there!", isPresented: $showingAlert) {
+            Button {
+                showingAlert = false
+            } label: {
+                Text("OKAAAAY🤬")
+                    .tint(.black)
+            }
+            .tint(.black)
+        } message: {
+            Text("We can't keep up with your speed. Let's slow it down a bit.")
+        }
+        .alert(item: $vm.alert) { alert in
+            alert.alert
+        }
+        .presentationDetents(PresentationMode.detents, selection: $presentationPosition)
+        .presentationDragIndicator(.visible)
+        .presentationBackgroundInteraction(.enabled)
+        .interactiveDismissDisabled(true)
+        .presentationCornerRadius(30)
+    }
+    
     //MARK: - Create Button
     @ViewBuilder
     private func CreateButton() -> some View {
@@ -136,6 +167,8 @@ public struct MainView: View {
             }
             .padding(.bottom, 15)
         }
+        .frame(maxWidth: .infinity)
+        .blendMode(.darken)
         .ignoresSafeArea(.keyboard)
     }
 }

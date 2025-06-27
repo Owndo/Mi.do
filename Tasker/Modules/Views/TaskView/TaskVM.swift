@@ -198,11 +198,13 @@ final class TaskVM {
         taskManager.checkCompletedTaskForToday(task: task)
     }
     
+    //MARK: - Complete tasks
     func checkMarkTapped() {
-        task = taskManager.checkMarkTapped(task: mainModel).value
+        task = taskManager.checkMarkTapped(task: task)
         taskDoneTrigger.toggle()
         saveTask()
     }
+    
     
     func deleteTaskButtonTapped() {
         if task.repeatTask == .never {

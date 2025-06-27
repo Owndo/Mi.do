@@ -120,9 +120,9 @@ func checkCompletedTaskForToday(task: TaskModel) -> Bool {
     return task.done?.contains(where: { $0.completedFor == selectedDate }) ?? false
 }
 
-func checkMarkTapped(task: MainModel) -> MainModel {
-    let model = task
-    model.value.done = updateExistingTaskCompletion(task: model.value)
+func checkMarkTapped(task: TaskModel) -> TaskModel {
+    var model = task
+    model.done = updateExistingTaskCompletion(task: task)
     return model
 }
 

@@ -24,7 +24,7 @@ public protocol TaskManagerProtocol {
     func checkCompletedTaskForToday(task: TaskModel) -> Bool
     
     /// Toggles the task's completion state and saves the updated model.
-    func checkMarkTapped(task: MainModel) -> MainModel
+    func checkMarkTapped(task: TaskModel) -> TaskModel
     
     /// Updates the list of deletion records for the given task by appending today's deletion record.
     func updateExistingTaskDeleted(task: TaskModel) -> [DeleteRecord]

@@ -143,7 +143,7 @@ public struct MainView: View {
         VStack {
             Spacer()
             
-            RecordButton(isRecording: $vm.isRecording, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl) {
+            RecordButton(isRecording: $vm.isRecording, showTips: vm.showTips, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl) {
                 Task {
                     await vm.handleButtonTap()
                 }
@@ -168,7 +168,7 @@ public struct MainView: View {
             .padding(.bottom, 15)
         }
         .frame(maxWidth: .infinity)
-        .blendMode(.darken)
+        .blendMode(colorScheme == .dark ? .normal : .darken)
         .ignoresSafeArea(.keyboard)
     }
 }

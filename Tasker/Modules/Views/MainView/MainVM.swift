@@ -27,6 +27,8 @@ final class MainVM {
     @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
     @ObservationIgnored
     @Injected(\.dateManager) private var dateManager: DateManagerProtocol
+    @ObservationIgnored
+    @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     
     //MARK: - Model
     var model: MainModel?
@@ -63,6 +65,10 @@ final class MainVM {
     
     var decibelLvl: Float {
         recordManager.decibelLevel
+    }
+    
+    var showTips: Bool {
+        taskManager.tasks.isEmpty && taskManager.completedTasks.isEmpty
     }
     
     func startAfterChek() async throws {

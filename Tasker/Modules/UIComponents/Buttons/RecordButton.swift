@@ -71,7 +71,7 @@ public struct RecordButton: View {
             .background(
                 PopoverBubbleShape()
                     .fill(.tipsBackground)
-                    .shadow(color: .black.opacity(0.12), radius: 30, y: 10)
+                    .shadow(color: .black.opacity(0.22), radius: 30, y: 10)
             )
         }
     }

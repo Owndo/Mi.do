@@ -13,9 +13,11 @@ public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
     case purple
     case red
     case teal
+    case aquamarine
     case orange
     case blue
     case green
+    case mint
     case pink
     case peach
     case lime
@@ -30,9 +32,11 @@ public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
         case .purple: return "purple"
         case .red: return "red"
         case .teal: return "teal"
+        case .aquamarine: return "aquamarine"
         case .orange: return "orange"
         case .blue: return "blue"
         case .green: return "green"
+        case .mint: return "mint"
         case .pink: return "pink"
         case .peach: return "peach"
         case .lime: return "lime"
@@ -53,12 +57,16 @@ public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
             return colorScheme == .light ? "#FFE0E0".hexColor() : "#C66266".hexColor()
         case .teal:
             return colorScheme == .light ? "#D9F6EC".hexColor() : "#4FB99B".hexColor()
+        case .aquamarine:
+            return colorScheme == .light ? "#C9FAFF".hexColor() : "#56C4D0".hexColor()
         case .orange:
             return colorScheme == .light ? "#FFD3C2".hexColor() : "#D46E41".hexColor()
         case .blue:
             return colorScheme == .light ? "#DCF0FF".hexColor() : "#4D95C6".hexColor()
         case .green:
             return colorScheme == .light ? "#E4F9D6".hexColor() : "#7EAF59".hexColor()
+        case .mint:
+            return colorScheme == .light ? "#C8FFC1".hexColor() : "#7DCD72".hexColor()
         case .pink:
             return colorScheme == .light ? "#FFE8F0".hexColor() : "#C95E91".hexColor()
         case .peach:
@@ -77,7 +85,7 @@ public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
     }
     
     public static var allCases: [TaskColor] {
-         return [.yellow, .purple, .red, .teal, .orange, .blue,
-                 .green, .pink, .peach, .lime, .steelBlue, .brown, .sand]
-     }
+        return [.yellow, .purple, .red, .teal, .aquamarine,.orange, .blue,
+                .green, .mint, .pink, .peach, .lime, .steelBlue, .brown, .sand]
+    }
 }

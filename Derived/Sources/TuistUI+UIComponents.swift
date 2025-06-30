@@ -227,6 +227,37 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 #endif
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
 public extension UIComponentsColors.Color {
+    static var backgroundTertiaryInverted: UIComponentsColors.Color {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsColors.Color(named: "backgroundTertiaryInverted", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return UIComponentsColors.Color(named: NSColor.Name("backgroundTertiaryInverted"), bundle: bundle)!
+        #elseif os(watchOS)
+        return UIComponentsColors.Color(named: "backgroundTertiaryInverted")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Color {
+    static var backgroundTertiaryInverted: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("backgroundTertiaryInverted", bundle: bundle)
+    }
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
+    static var backgroundTertiaryInverted: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("backgroundTertiaryInverted", bundle: bundle)
+    }
+}
+#endif
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
+public extension UIComponentsColors.Color {
     static var customBackground: UIComponentsColors.Color {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
@@ -382,6 +413,37 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 #endif
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
 public extension UIComponentsColors.Color {
+    static var labelPrimaryInvertedInvariably: UIComponentsColors.Color {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsColors.Color(named: "labelPrimaryInvertedInvariably", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return UIComponentsColors.Color(named: NSColor.Name("labelPrimaryInvertedInvariably"), bundle: bundle)!
+        #elseif os(watchOS)
+        return UIComponentsColors.Color(named: "labelPrimaryInvertedInvariably")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Color {
+    static var labelPrimaryInvertedInvariably: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("labelPrimaryInvertedInvariably", bundle: bundle)
+    }
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
+    static var labelPrimaryInvertedInvariably: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("labelPrimaryInvertedInvariably", bundle: bundle)
+    }
+}
+#endif
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
+public extension UIComponentsColors.Color {
     static var labelQuaternary: UIComponentsColors.Color {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
@@ -475,6 +537,37 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 #endif
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
 public extension UIComponentsColors.Color {
+    static var labelSecondaryInverted: UIComponentsColors.Color {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsColors.Color(named: "labelSecondaryInverted", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return UIComponentsColors.Color(named: NSColor.Name("labelSecondaryInverted"), bundle: bundle)!
+        #elseif os(watchOS)
+        return UIComponentsColors.Color(named: "labelSecondaryInverted")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Color {
+    static var labelSecondaryInverted: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("labelSecondaryInverted", bundle: bundle)
+    }
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
+    static var labelSecondaryInverted: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("labelSecondaryInverted", bundle: bundle)
+    }
+}
+#endif
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
+public extension UIComponentsColors.Color {
     static var labelTertiary: UIComponentsColors.Color {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
@@ -501,6 +594,37 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
     static var labelTertiary: SwiftUI.Color {
         let bundle = Bundle.module
         return SwiftUI.Color("labelTertiary", bundle: bundle)
+    }
+}
+#endif
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
+public extension UIComponentsColors.Color {
+    static var labelTertiaryInverted: UIComponentsColors.Color {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsColors.Color(named: "labelTertiaryInverted", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return UIComponentsColors.Color(named: NSColor.Name("labelTertiaryInverted"), bundle: bundle)!
+        #elseif os(watchOS)
+        return UIComponentsColors.Color(named: "labelTertiaryInverted")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Color {
+    static var labelTertiaryInverted: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("labelTertiaryInverted", bundle: bundle)
+    }
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
+    static var labelTertiaryInverted: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("labelTertiaryInverted", bundle: bundle)
     }
 }
 #endif
@@ -594,6 +718,37 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
     static var separatorSecondary: SwiftUI.Color {
         let bundle = Bundle.module
         return SwiftUI.Color("separatorSecondary", bundle: bundle)
+    }
+}
+#endif
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
+public extension UIComponentsColors.Color {
+    static var separatorSecondaryInverted: UIComponentsColors.Color {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsColors.Color(named: "separatorSecondaryInverted", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return UIComponentsColors.Color(named: NSColor.Name("separatorSecondaryInverted"), bundle: bundle)!
+        #elseif os(watchOS)
+        return UIComponentsColors.Color(named: "separatorSecondaryInverted")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Color {
+    static var separatorSecondaryInverted: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("separatorSecondaryInverted", bundle: bundle)
+    }
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
+    static var separatorSecondaryInverted: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("separatorSecondaryInverted", bundle: bundle)
     }
 }
 #endif

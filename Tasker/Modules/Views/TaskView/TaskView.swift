@@ -63,7 +63,7 @@ public struct TaskView: View {
                         .background(
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(
-                                    .backgroundTertiary
+                                    vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme)
                                 )
                         )
                         
@@ -71,7 +71,7 @@ public struct TaskView: View {
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(
-                                        .backgroundTertiary
+                                        vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme)
                                     )
                             )
                         
@@ -262,16 +262,21 @@ public struct TaskView: View {
             TextField("New task", text: $vm.task.title)
                 .font(.title2)
                 .fontWeight(.bold)
+                .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
                 .focused($sectionInFocuse, equals: .title)
             
-            CustomDivider()
+            RoundedRectangle(cornerRadius: 1)
+                .fill(.separatorPrimary)
+                .frame(height: 1)
+                .padding(.leading, 16)
             
             VStack {
                 TextField("Add more information", text: $vm.task.info, axis: .vertical)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)
+                    .foregroundStyle(.labelPrimary)
                     .padding(.vertical, 13)
                     .padding(.horizontal, 16)
                     .focused($sectionInFocuse, equals: .description)
@@ -303,14 +308,14 @@ public struct TaskView: View {
                     
                     Text("Date")
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(Color.primary)
+                        .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                         .padding(.vertical, 13)
                     
                     Spacer()
                     
                     Text(vm.dateForAppearence)
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(Color.labelSecondary)
+                        .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
                 }
             }
             .padding(.leading, 17)
@@ -344,7 +349,7 @@ public struct TaskView: View {
                     
                     Text("Time")
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(Color.primary)
+                        .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                         .padding(.vertical, 13)
                     
                     
@@ -352,7 +357,7 @@ public struct TaskView: View {
                     
                     Text("\(vm.notificationDate, format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))")
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(Color.labelSecondary)
+                        .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
                 }
             }
             .padding(.leading, 17)
@@ -379,7 +384,7 @@ public struct TaskView: View {
                 
                 Text("Repeat")
                     .font(.system(.body, design: .rounded, weight: .regular))
-                    .foregroundStyle(Color.primary)
+                    .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                     .padding(.vertical, 13)
                 
                 Spacer()
@@ -395,7 +400,7 @@ public struct TaskView: View {
                             .font(.system(.body, design: .rounded, weight: .regular))
                     }
                 })
-                .tint(Color.labelSecondary)
+                .tint(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
                 .pickerStyle(.menu)
             }
             .padding(.leading, 17)
@@ -420,7 +425,7 @@ public struct TaskView: View {
                     } label: {
                         Text(day.name)
                             .font(.system(.body, design: .rounded, weight: .regular))
-                            .foregroundStyle(day.value ? colorScheme.elementColor.hexColor() : .labelSecondary)
+                            .foregroundStyle(day.value ? colorScheme.elementColor.hexColor() : vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                             .padding(.vertical, 13)
                     }
                 }
@@ -430,11 +435,11 @@ public struct TaskView: View {
             
             HStack(alignment: .center,spacing: 4) {
                 Image(systemName: "info.circle")
-                    .foregroundStyle(.labelSecondary)
+                    .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                 
                 Text("Pick the days of the week to repeat")
                     .font(.system(.footnote, design: .rounded, weight: .regular))
-                    .foregroundStyle(.labelSecondary)
+                    .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
             }
             .padding(.bottom, 13)
         }
@@ -448,7 +453,7 @@ public struct TaskView: View {
             HStack {
                 Text("Color task")
                     .font(.system(.callout, design: .rounded, weight: .regular))
-                    .foregroundStyle(.labelSecondary)
+                    .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
                 
                 Spacer()
             }
@@ -486,7 +491,7 @@ public struct TaskView: View {
     @ViewBuilder
     private func SaveButton() -> some View {
         HStack {
-            TaskCheckMark(complete: vm.checkCompletedTaskForToday()) {
+            TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task) {
                 Task {
                     dismissButton()
                     
@@ -497,9 +502,7 @@ public struct TaskView: View {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(
-                        .backgroundTertiary
-                    )
+                    .fill(vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
             )
             
             Button {
@@ -533,15 +536,15 @@ public struct TaskView: View {
         HStack(alignment: .center, spacing: 4) {
             Image(systemName: "calendar")
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
-                .foregroundStyle(.labelTertiary)
+                .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
             
             Text("Created:")
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
-                .foregroundStyle(.labelTertiary)
+                .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
             
             Text(Date(timeIntervalSince1970:vm.task.createDate).formatted(.dateTime.month().day().hour().minute().year()))
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
-                .foregroundStyle(.labelSecondary)
+                .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
         }
     }
     
@@ -549,14 +552,10 @@ public struct TaskView: View {
     @ViewBuilder
     private func CustomDivider() -> some View {
         RoundedRectangle(cornerRadius: 1)
-            .fill(
-                .separatorPrimary
-            )
+            .fill(vm.task.taskColor.color(for: colorScheme).invertedSeparartorPrimary(colorScheme))
             .frame(height: 1)
             .padding(.leading, 16)
     }
-    
-    
 }
 
 #Preview {

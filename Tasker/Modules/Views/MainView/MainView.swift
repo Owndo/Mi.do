@@ -134,7 +134,7 @@ public struct MainView: View {
         .presentationDragIndicator(.visible)
         .presentationBackgroundInteraction(.enabled)
         .interactiveDismissDisabled(true)
-        .presentationCornerRadius(30)
+        .presentationCornerRadius(16)
     }
     
     //MARK: - Create Button

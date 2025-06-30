@@ -6,28 +6,33 @@
 //
 
 import SwiftUI
+import Models
 
 public struct TaskCheckMark: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     var complete: Bool
+    var task: TaskModel
     var action: () -> Void
     
-    public init(complete: Bool, action: @escaping () -> Void) {
+    public init(complete: Bool, task: TaskModel, action: @escaping () -> Void) {
         self.complete = complete
+        self.task = task
         self.action = action
     }
     
     public var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 6)
-                .fill(.backgroundTertiary)
+                .fill(task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
-                        .stroke(.black.opacity(0.20), lineWidth: 1)
+                        .stroke(task.taskColor.color(for: colorScheme).invertedSeparartorSecondary(colorScheme), lineWidth: 1)
                 )
             if complete {
                 Image(systemName: "checkmark")
-                    .foregroundStyle(.labelSecondary)
+                    .foregroundStyle(task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
                     .bold()
             }
         }
@@ -39,5 +44,5 @@ public struct TaskCheckMark: View {
 }
 
 #Preview {
-    TaskCheckMark(complete: true, action: {})
+    TaskCheckMark(complete: true, task: mockModel().value, action: {})
 }

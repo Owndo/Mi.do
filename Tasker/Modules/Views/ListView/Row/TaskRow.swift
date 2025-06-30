@@ -11,7 +11,7 @@ import TaskView
 import UIComponents
 
 struct TaskRow: View {
-    @Environment(\.colorScheme) var colorTheme
+    @Environment(\.colorScheme) var colorScheme
     
     @State private var vm = TaskRowVM()
     
@@ -45,7 +45,7 @@ struct TaskRow: View {
             ForEach(0..<1) { _ in
                 HStack(spacing: 0) {
                     HStack(spacing: 12) {
-                        TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task)) {
+                        TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task), task: task.value) {
                             vm.checkMarkTapped(task: task)
                         }
                         
@@ -53,7 +53,7 @@ struct TaskRow: View {
                             Text(task.value.title)
                                 .font(.system(.body, design: .rounded, weight: .regular))
                                 .multilineTextAlignment(.leading)
-                                .foregroundStyle(.labelPrimary)
+                                .foregroundStyle(task.value.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                                 .font(.callout)
                                 .lineLimit(1)
                         }
@@ -64,7 +64,7 @@ struct TaskRow: View {
                     HStack(spacing: 12) {
                         Text("\(Date(timeIntervalSince1970: task.value.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))")
                             .font(.system(.subheadline, design: .rounded, weight: .regular))
-                            .foregroundStyle(.labelTertiary)
+                            .foregroundStyle(task.value.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
                             .padding(.leading, 6)
                             .lineLimit(1)
                         
@@ -78,7 +78,7 @@ struct TaskRow: View {
                 .padding(.vertical, 12)
                 .padding(.horizontal, 11)
                 .background(
-                    task.value.taskColor.color(for: colorTheme)
+                    task.value.taskColor.color(for: colorScheme)
                 )
                 .frame(maxWidth: .infinity)
                 .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
@@ -99,7 +99,7 @@ struct TaskRow: View {
                     vm.updateNotificationTimeForDueDateSwipped(task: task)
                 } label: {
                     Image(systemName: "arrow.forward.circle.fill")
-                        .tint(colorTheme.elementColor.hexColor())
+                        .tint(colorScheme.elementColor.hexColor())
                 }
             }
         }
@@ -114,9 +114,7 @@ struct TaskRow: View {
     private func PlayButton() -> some View {
         ZStack {
             Circle()
-                .fill(
-                    .labelTertiary.opacity(0.2)
-                )
+                .fill(task.value.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
             
             if task.value.audio != nil {
                 Image(systemName: vm.playing ? "pause.fill" : "play.fill")

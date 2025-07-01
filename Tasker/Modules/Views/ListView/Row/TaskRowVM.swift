@@ -105,21 +105,11 @@ final class TaskRowVM {
     
     //MARK: Play sound function
     func playButtonTapped(task: MainModel) async {
-        var data: Data?
-        
-        if let audio = task.value.audio {
-            data = casManager.getData(audio)
-            
-            if !playing {
-                if let data = data {
-                    playingTask = task.value
-                    await playerManager.playAudioFromData(data, task: task.value)
-                }
-            } else {
-                stopToPlay()
-            }
+        if !playing {
+            playingTask = task.value
+            await playerManager.playAudioFromData(task: task.value)
         } else {
-            selectedTask = task
+            stopToPlay()
         }
     }
     

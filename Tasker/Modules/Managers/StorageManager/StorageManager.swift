@@ -17,7 +17,7 @@ final class StorageManager: StorageManagerProtocol {
         FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!.appending(path: "Sounds")
     }
     
-    func createFileInSoundsDirectory(hash: String) {
+    func createFileInSoundsDirectory(hash: String) -> URL? {
         let soundsDirectory = createSoundsDirectory()
         
         let pathToAudio = casManager.pathToAudio(hash)
@@ -26,7 +26,7 @@ final class StorageManager: StorageManagerProtocol {
         
         do {
             guard FileManager.default.fileExists(atPath: pathToAudio.path) else {
-                return
+                return tempUrl
             }
             
             if FileManager.default.fileExists(atPath: tempUrl.path) {
@@ -35,8 +35,10 @@ final class StorageManager: StorageManagerProtocol {
             
             try FileManager.default.copyItem(at: pathToAudio, to: tempUrl)
             
+            return tempUrl
         } catch {
             print("Cannot work with file: \(error.localizedDescription)")
+            return nil
         }
     }
     

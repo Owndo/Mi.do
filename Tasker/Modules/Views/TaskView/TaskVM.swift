@@ -235,10 +235,10 @@ final class TaskVM {
             return
         }
         
-        if let data = getDataFromAudio() {
+        
             await loadTotalTimeIfNeeded()
-            await playerManager.playAudioFromData(data, task: task)
-        }
+            await playerManager.playAudioFromData(task: task)
+        
     }
     
     func stopPlaying() {
@@ -257,8 +257,8 @@ final class TaskVM {
     }
     
     func loadTotalTimeIfNeeded() async {
-        guard totalProgressTime == 0, let data = getDataFromAudio() else { return }
-        let duration = await playerManager.returnTotalTime(data, task: task)
+        guard totalProgressTime == 0 else { return }
+        let duration = playerManager.returnTotalTime(task: task)
         playerManager.totalTime = duration
     }
     

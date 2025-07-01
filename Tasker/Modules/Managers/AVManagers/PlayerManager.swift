@@ -12,6 +12,8 @@ import Models
 
 @Observable
 final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
+    @ObservationIgnored
+    @Injected(\.storageManager) var storageManager
     
     // MARK: - Public properties
     var isPlaying = false
@@ -31,12 +33,17 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     
     // MARK: - Playback
     
-    func playAudioFromData(_ audio: Data, task: TaskModel) async {
+    func playAudioFromData(task: TaskModel) async {
         self.task = task
         
         do {
             try configureAudioSession()
-            let audioURL = await getOrCreateTempAudioFile(from: audio, audioHash: task.audio)
+            
+            guard let audio = task.audio else {
+                return
+            }
+            
+            let audioURL = getOrCreateTempAudioFile(audioHash: audio)
             
             await MainActor.run {
                 do {
@@ -96,8 +103,11 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
-    func returnTotalTime(_ audio: Data, task: TaskModel) async -> Double {
-        let audioURL = await getOrCreateTempAudioFile(from: audio, audioHash: task.audio)
+    func returnTotalTime(task: TaskModel) -> Double {
+        
+        guard let audio = task.audio else { return 0 }
+        
+        let audioURL = getOrCreateTempAudioFile(audioHash: audio)
         
         do {
             let tempPlayer = try AVAudioPlayer(contentsOf: audioURL)
@@ -119,33 +129,8 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         try audioSession.overrideOutputAudioPort(.speaker)
     }
     
-    private func getOrCreateTempAudioFile(from data: Data, audioHash: String?) async -> URL {
-        let tempDirectory = FileManager.default.temporaryDirectory
-        let hash = audioHash ?? UUID().uuidString
-        let fileName = "\(hash).wav"
-        let fileURL = tempDirectory.appendingPathComponent(fileName)
-        
-        if let cached = tempAudioCache[hash], FileManager.default.fileExists(atPath: cached.path) {
-            return cached
-        }
-        
-        if FileManager.default.fileExists(atPath: fileURL.path) {
-            tempAudioCache[hash] = fileURL
-            print("File already exists: \(fileURL.path)")
-            return fileURL
-        }
-        
-        await MainActor.run {
-            do {
-                try data.write(to: fileURL)
-                print("Created temp file: \(fileURL.path)")
-                tempAudioCache[hash] = fileURL
-            } catch {
-                print("Failed to write audio data: \(error)")
-            }
-        }
-        
-        return fileURL
+    private func getOrCreateTempAudioFile(audioHash: String) -> URL {
+        storageManager.createFileInSoundsDirectory(hash: audioHash)!
     }
     
     private func startPlaybackTimer() {

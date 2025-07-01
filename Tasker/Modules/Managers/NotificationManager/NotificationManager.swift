@@ -49,7 +49,7 @@ final class NotificationManager: NotificationManagerProtocol {
             notificationContent.sound = .default
         } else {
             if let audio = task.audio {
-                storageManager.createFileInSoundsDirectory(hash: audio)
+                _ = storageManager.createFileInSoundsDirectory(hash: audio)
                 notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
             }
         }

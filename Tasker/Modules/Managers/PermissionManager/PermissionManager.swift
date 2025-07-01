@@ -14,7 +14,8 @@ import SwiftUI
 @Observable
 final class PermissionManager: PermissionProtocol {
     var allowedMicro = false
-
+    var allowedNotification = false
+    
     //MARK: Function for install session setup
     func peremissionSessionForRecording() throws {
         

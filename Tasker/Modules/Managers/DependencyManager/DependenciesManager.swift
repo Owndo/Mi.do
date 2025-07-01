@@ -20,6 +20,8 @@ final class DependenciesManager: DependenciesManagerProtocol {
     lazy var recorderManager: RecorderManagerProtocol = RecorderManager()
     lazy var dateManager: DateManagerProtocol = DateManager()
     lazy var permissionManager: PermissionProtocol = PermissionManager()
+    lazy var notificationManager: NotificationManagerProtocol = NotificationManager()
+    lazy var storageManager: StorageManagerProtocol = StorageManager()
     lazy var taskManager: TaskManagerProtocol = TaskManager()
 }
 
@@ -29,6 +31,8 @@ public protocol DependenciesManagerProtocol {
     var recorderManager: RecorderManagerProtocol { get }
     var dateManager: DateManagerProtocol { get }
     var permissionManager: PermissionProtocol { get }
+    var notificationManager: NotificationManagerProtocol { get }
+    var storageManager: StorageManagerProtocol { get }
     var taskManager: TaskManagerProtocol { get }
 }
 

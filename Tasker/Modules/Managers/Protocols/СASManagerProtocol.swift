@@ -17,6 +17,7 @@ public protocol CASManagerProtocol {
     
     func saveModel(_ task: MainModel)
     func saveAudio(url: URL) -> String?
+    func pathToAudio(_ hash: String) -> URL
     func fetchModels() -> [MainModel]
     func getData(_ hash: String) -> Data?
     func deleteModel(_ model: MainModel)

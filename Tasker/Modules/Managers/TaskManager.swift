@@ -7,6 +7,8 @@ final class TaskManager: TaskManagerProtocol {
     @Injected(\.casManager) private var casManager
     @ObservationIgnored
     @Injected(\.dateManager) private var dateManager
+    @ObservationIgnored
+    @Injected(\.storageManager) var storageManager
     
     
     private var weekTasksCache: [Double: [MainModel]] = [:] // key: startOfWeek timestamp

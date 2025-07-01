@@ -13,11 +13,12 @@ import Models
 @Observable
 final class TaskVM {
     // MARK: - Managers
-    @ObservationIgnored @Injected(\.casManager) private var casManager: CASManagerProtocol
+    @ObservationIgnored @Injected(\.casManager) var casManager: CASManagerProtocol
     @ObservationIgnored @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
     @ObservationIgnored @Injected(\.recorderManager) private var recorderManager: RecorderManagerProtocol
     @ObservationIgnored @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-    @ObservationIgnored @Injected(\.taskManager) private var taskManager
+    @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
+    @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     
     // MARK: - Model
     var mainModel: MainModel = mockModel()
@@ -153,8 +154,10 @@ final class TaskVM {
     //MARK: - Save task
     func saveTask() {
         task = preparedTask()
+        task.notificationDate = dateHasBeenChanged ? notificationDate.timeIntervalSince1970 : sourseDateOfNotification
         mainModel.value = task
-        mainModel.value.notificationDate = dateHasBeenChanged ? notificationDate.timeIntervalSince1970 : sourseDateOfNotification
+        
+        notificationManager.createNotification(task)
         casManager.saveModel(mainModel)
     }
     

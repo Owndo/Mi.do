@@ -22,11 +22,11 @@ final class MockCas: CASManagerProtocol {
     var models: [MainModel] = []
     
     var activeTasks: [MainModel] {
-        models.filter { $0.value.markAsDeleted == false && $0.value.done != nil }
+        models.filter { $0.value.markAsDeleted == false }
     }
     
     var completedTasks: [MainModel] {
-        models.filter { $0.value.done != nil}
+        models.filter { $0.value.markAsDeleted == false && $0.value.done != nil }
     }
     
     var deletedTasks: [MainModel] {
@@ -44,8 +44,6 @@ final class MockCas: CASManagerProtocol {
         
         cas = MultiCas(local: localCas, remote: iCas)
         models = fetchModels()
-        
-        models.append(mockModel())
     }
     
     //MARK: Actions for work with CAS
@@ -85,14 +83,14 @@ final class MockCas: CASManagerProtocol {
         }
     }
     
+    func pathToAudio(_ hash: String) -> URL {
+        let url = cas.path(hash)
+        print(url)
+        return url
+    }
+    
     func fetchModels() -> [MainModel] {
-        var list = [Mutable]()
-        
-        do {
-            list = try cas.listMutable()
-        } catch {
-            print("Couldn't fetch list of mutable \(error)")
-        }
+        let list = try! cas.listMutable()
         
         return list.compactMap { mutable in
             do {

@@ -28,6 +28,8 @@ final class MainVM {
     @ObservationIgnored
     @Injected(\.dateManager) private var dateManager: DateManagerProtocol
     @ObservationIgnored
+    @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
+    @ObservationIgnored
     @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     
     //MARK: - Model
@@ -69,6 +71,10 @@ final class MainVM {
     
     var showTips: Bool {
         taskManager.tasks.isEmpty && taskManager.completedTasks.isEmpty
+    }
+    
+    init() {
+        checkNotificationPermission()
     }
     
     func startAfterChek() async throws {
@@ -153,5 +159,12 @@ final class MainVM {
     
     private func changeDisabledButton() {
         disabledButton.toggle()
+    }
+    
+    private func checkNotificationPermission() {
+        Task {
+            await notificationManager.checkPermission()
+            alert = notificationManager.alert
+        }
     }
 }

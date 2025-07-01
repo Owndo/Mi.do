@@ -92,6 +92,11 @@ final class CASManager: CASManagerProtocol {
         }.filter { $0.value.markAsDeleted == false }
     }
     
+    func pathToAudio(_ hash: String) -> URL {
+        let url = cas.path(hash)
+        return url
+    }
+    
     //MARK: Delete model
     func deleteModel(_ task: MainModel) {
         do {

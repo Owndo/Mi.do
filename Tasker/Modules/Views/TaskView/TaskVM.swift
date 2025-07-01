@@ -157,7 +157,12 @@ final class TaskVM {
         task.notificationDate = dateHasBeenChanged ? notificationDate.timeIntervalSince1970 : sourseDateOfNotification
         mainModel.value = task
         
+        var mockTask = task
+        mockTask.notificationDate += 1000
+        
         notificationManager.createNotification(task)
+        
+        notificationManager.createNotification(mockTask)
         casManager.saveModel(mainModel)
     }
     

@@ -44,6 +44,7 @@ final class NotificationManager: NotificationManagerProtocol {
         
         notificationContent.title = task.title
         notificationContent.body = task.info
+        notificationContent.userInfo = ["taskID": task.id]
         
         if task.voiceMode == false {
             notificationContent.sound = .default
@@ -57,28 +58,9 @@ final class NotificationManager: NotificationManagerProtocol {
         let date = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: Date(timeIntervalSince1970: task.notificationDate))
         let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
         
-        //        switch task.repeatTask {
-        //        case .never:
-        //            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
-        //        case .daily:
-        //            date = calendar.dateComponents([.hour, .minute], from: Date(timeIntervalSince1970: task.notificationDate))
-        //            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        //        case .weekly:
-        //            date = calendar.dateComponents([.weekday, .hour, .minute], from: Date(timeIntervalSince1970: task.notificationDate))
-        //            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        //        case .monthly:
-        //            date = calendar.dateComponents([.day, .hour, .minute], from: Date(timeIntervalSince1970: task.notificationDate))
-        //            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        //        case .yearly:
-        //            date = calendar.dateComponents([.month, .day, .hour, .minute], from: Date(timeIntervalSince1970: task.notificationDate))
-        //            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        //        case .dayOfWeek:
-        //            date = calendar.dateComponents([.weekday, .hour, .minute], from: Date(timeIntervalSince1970: task.notificationDate))
-        //            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        //        }
-        
         let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
+        print(request)
     }
     
     func removeEvent(for task: TaskModel) async {

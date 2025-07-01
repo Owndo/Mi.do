@@ -10,11 +10,12 @@ import UIComponents
 import Calendar
 import ListView
 import TaskView
+import Combine
 
 public struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var vm = MainVM()
+    @Bindable var vm: MainVM
     
     @State var showingAlert = false
     
@@ -33,7 +34,9 @@ public struct MainView: View {
         static let detents = Set(PresentationMode.allCases.map { $0.detent })
     }
     
-    public init() {}
+    public init(vm: MainVM) {
+        self._vm = Bindable(wrappedValue: vm)
+    }
     
     public var body: some View {
         NavigationStack {
@@ -96,8 +99,6 @@ public struct MainView: View {
                 ListView()
                 
                 Spacer()
-                
-                
             }
             .ignoresSafeArea(edges: .bottom)
             
@@ -174,5 +175,5 @@ public struct MainView: View {
 }
 
 #Preview {
-    MainView()
+    MainView(vm: MainVM())
 }

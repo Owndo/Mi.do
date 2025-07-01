@@ -12,7 +12,7 @@ import Models
 
 @MainActor
 @Observable
-final class MainVM {
+public final class MainVM {
     @ObservationIgnored
     @AppStorage("textForYourSelf", store: .standard) var textForYourSelf = "Write your title 🎯"
     
@@ -73,7 +73,7 @@ final class MainVM {
         taskManager.tasks.isEmpty && taskManager.completedTasks.isEmpty
     }
     
-    init() {
+    public init() {
         checkNotificationPermission()
     }
     
@@ -154,6 +154,19 @@ final class MainVM {
             await stopRecord()
         } else {
             createTask()
+        }
+    }
+    
+    public func selectedTask(by notification: Notification? = nil, taskId: String? = nil) {
+        guard taskId == nil else {
+            let task = taskManager.tasks.first { $0.value.id == taskId }
+            model = task
+            return
+        }
+        
+        if let taskId = notification?.userInfo?["taskId"] as? String {
+            let task = taskManager.tasks.first { $0.value.id == taskId }
+            model = task
         }
     }
     

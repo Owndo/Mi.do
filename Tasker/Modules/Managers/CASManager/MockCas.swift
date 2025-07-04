@@ -26,7 +26,7 @@ final class MockCas: CASManagerProtocol {
     }
     
     var completedTasks: [MainModel] {
-        models.filter { $0.value.markAsDeleted == false && $0.value.done != nil }
+        models.filter { $0.value.markAsDeleted == false && !$0.value.done.isEmpty }
     }
     
     var deletedTasks: [MainModel] {

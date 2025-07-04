@@ -23,6 +23,7 @@ let project = Project(
                 "Tasker/**",
                 excluding: [
                     "Tasker/Modules/**",
+                    "Tasker/Tests/**",
                 ]
             )],
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
@@ -43,6 +44,20 @@ let project = Project(
         .module(name: "Models", dependencies: [.target(name: "BlockSet")]),
         .module(name: "UIComponents", dependencies: [.target(name: "Models")]),
         .module(name: "Managers", dependencies: [.target(name: "Models")]),
+        .target(
+            name: "ManagersTests",
+            destinations: App.destinations,
+            product: .unitTests,
+            bundleId: App.bundleId + ".ManagersTests",
+            deploymentTargets: App.deploymentTargets,
+            infoPlist: .default,
+            sources: ["Tasker/Tests/ManagersTests/**"],
+            //            resources: [],
+            dependencies: [
+                .target(name: "Managers"),
+                .target(name: "Models")
+            ]
+        ),
         .module(
             name: "Views",
             dependencies: [

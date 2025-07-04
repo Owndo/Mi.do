@@ -13,6 +13,8 @@ public protocol TaskManagerProtocol {
     
     var completedTasks: [MainModel] { get }
     
+    func sortedTasks(tasks: [MainModel]) -> [MainModel]
+    
     func thisWeekTasks(date: Double) async -> [MainModel]
     
     func preparedTask(task: TaskModel, date: Date) -> TaskModel
@@ -30,4 +32,11 @@ public protocol TaskManagerProtocol {
     func updateExistingTaskDeleted(task: TaskModel) -> [DeleteRecord]
     
     func updateNotificationTimeForDueDate(task: MainModel) -> MainModel
+    
+    func createNotification(_ task: TaskModel)
+//    /// Simple func for check case where task has complete or delete record
+//    func hasTaskCompleteOrDeleteMarkers(task: TaskModel) -> Bool
+//    
+//    /// Simple func for check case where task has complete or delete record in future
+//    func hasTaskCompleteOrDeleteMarkersInFuture(task: TaskModel) -> Bool
 }

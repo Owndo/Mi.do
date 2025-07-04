@@ -28,8 +28,6 @@ struct NotesView: View {
                 }
                 .padding(.horizontal)
             
-            BackButton()
-            
             MockView()
             
         }
@@ -76,34 +74,6 @@ struct NotesView: View {
                 colorScheme.backgroundColor.hexColor()
             )
         }
-    }
-    
-    //MARK: - Back Button
-    @ViewBuilder
-    private func BackButton() -> some View {
-        VStack {
-            
-            Spacer()
-            
-            Button {
-                mainViewIsOpen = true
-            } label: {
-                VStack {
-                    Image(systemName: "arrow.up")
-                        .font(.system(size: 42))
-                        .foregroundStyle(colorScheme.elementColor.hexColor())
-                        .frame(width: 64, height: 64)
-                        .padding(13)
-                        .background(
-                            Circle()
-                                .fill(.white)
-                                .shadow(color: colorScheme.elementColor.hexColor(), radius: 3)
-                        )
-                }
-            }
-            
-        }
-        .ignoresSafeArea(.keyboard)
     }
 }
 

@@ -11,7 +11,7 @@ import Models
 
 public protocol DateManagerProtocol {
     var calendar: Calendar { get }
-    var currentTime: Date { get set }
+    var currentTime: Date { get }
     var selectedDate: Date { get set }
     var indexForWeek: Int { get set }
     var allWeeks: [PeriodModel] { get set }

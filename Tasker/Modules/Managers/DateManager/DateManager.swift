@@ -18,11 +18,14 @@ final class DateManager: DateManagerProtocol {
     
     var calendar = Calendar.current
     
-    var currentTime = Date()
     var selectedDate = Date()
     
     var allWeeks: [PeriodModel] = []
     var allMonths: [PeriodModel] = []
+    
+    var currentTime: Date {
+        Date()
+    }
     
     var selectedWeekDay: Int {
         calendar.component(.weekday, from: selectedDate)

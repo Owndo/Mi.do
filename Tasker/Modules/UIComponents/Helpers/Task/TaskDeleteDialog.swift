@@ -22,7 +22,7 @@ public struct TaskDeleteDialog: ViewModifier {
     let task: MainModel
     let message: String
     let isSingleTask: Bool
-    let onDelete: (MainModel, Bool) -> Void
+    let onDelete: (MainModel, Bool) async -> Void
     let dismissAction: DismissAction?
     
     public func body(content: Content) -> some View {
@@ -33,7 +33,7 @@ public struct TaskDeleteDialog: ViewModifier {
                         Task {
                             dismissAction?()
                             try await Task.sleep(nanoseconds: 50_000_000)
-                            onDelete(task, true)
+                            await onDelete(task, true)
                         }
                     } label: {
                         Text("Delete this task")
@@ -43,7 +43,7 @@ public struct TaskDeleteDialog: ViewModifier {
                         Task {
                             dismissAction?()
                             try await Task.sleep(nanoseconds: 50_000_000)
-                            onDelete(task, false)
+                            await onDelete(task, false)
                         }
                     } label: {
                         Text("Delete only this task")
@@ -53,7 +53,7 @@ public struct TaskDeleteDialog: ViewModifier {
                         Task {
                             dismissAction?()
                             try await Task.sleep(nanoseconds: 50_000_000)
-                            onDelete(task, true)
+                            await onDelete(task, true)
                         }
                     } label: {
                         Text("Delete all of these tasks")
@@ -67,7 +67,7 @@ public struct TaskDeleteDialog: ViewModifier {
 
 public extension View {
     /// Confirmation dialog
-    func taskDeleteDialog(isPresented: Binding<Bool>, task: MainModel, message: String, isSingleTask: Bool, onDelete: @escaping (MainModel, Bool) -> Void, dismissButton: DismissAction? = nil) -> some View {
+    func taskDeleteDialog(isPresented: Binding<Bool>, task: MainModel, message: String, isSingleTask: Bool, onDelete: @escaping (MainModel, Bool) async -> Void, dismissButton: DismissAction? = nil) -> some View {
         modifier(
             TaskDeleteDialog(
                 isPresented: isPresented,

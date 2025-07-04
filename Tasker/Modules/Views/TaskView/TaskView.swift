@@ -496,7 +496,7 @@ public struct TaskView: View {
                     dismissButton()
                     
                     try await Task.sleep(nanoseconds: 50_000_000)
-                    vm.checkMarkTapped()
+                    await vm.checkMarkTapped()
                 }
             }
             .padding(12)
@@ -510,7 +510,7 @@ public struct TaskView: View {
                     dismissButton()
                     
                     try await Task.sleep(nanoseconds: 50_000_000)
-                    vm.saveTask()
+                    await vm.saveTask()
                 }
             } label: {
                 Text("Close")

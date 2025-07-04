@@ -28,7 +28,7 @@ public final class MainVM {
     @ObservationIgnored
     @Injected(\.dateManager) private var dateManager: DateManagerProtocol
     @ObservationIgnored
-    @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
+    @Injected(\.notificationManager) var notificationManager: NotificationManagerProtocol
     @ObservationIgnored
     @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     
@@ -145,7 +145,9 @@ public final class MainVM {
             title: "",
             info: "",
             audio: audioHash,
-            notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970
+            notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
+            done: [],
+            deleted: []
         ))
     }
     

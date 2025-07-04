@@ -8,8 +8,7 @@ final class TaskManager: TaskManagerProtocol {
     @ObservationIgnored
     @Injected(\.dateManager) private var dateManager
     @ObservationIgnored
-    @Injected(\.storageManager) var storageManager
-    
+    @Injected(\.notificationManager) var notificationManager
     
     private var weekTasksCache: [Double: [MainModel]] = [:] // key: startOfWeek timestamp
     
@@ -42,16 +41,16 @@ final class TaskManager: TaskManagerProtocol {
     var tasks: [MainModel] {
         activeTasks
             .filter {
-                ($0.value.deleted?.contains { $0.deletedFor == selectedDate } != true) &&
-                ($0.value.done?.contains { $0.completedFor == selectedDate } != true)
+                $0.value.deleted.contains { $0.deletedFor == selectedDate } != true &&
+                $0.value.done.contains { $0.completedFor == selectedDate } != true
             }
     }
     
     var completedTasks: [MainModel] {
         activeTasks
             .filter {
-                ($0.value.deleted?.contains { $0.deletedFor == selectedDate } != true) &&
-                ($0.value.done?.contains { $0.completedFor == selectedDate } == true)
+                $0.value.deleted.contains { $0.deletedFor == selectedDate } != true &&
+                $0.value.done.contains { $0.completedFor == selectedDate } == true
             }
     }
     
@@ -71,11 +70,11 @@ final class TaskManager: TaskManagerProtocol {
             .filter { task in
                 let taskValue = task.value
                 return isTaskInWeeksRange(taskValue, startDate: start, endDate: end) &&
-                (taskValue.deleted?.contains { $0.deletedFor == date } != true)
+                taskValue.deleted.contains { $0.deletedFor == date } != true
             }
     }
     
-    private func sortedTasks(tasks: [MainModel]) -> [MainModel] {
+    func sortedTasks(tasks: [MainModel]) -> [MainModel] {
         tasks.sorted {
             let hour1 = calendar.component(.hour, from: Date(timeIntervalSince1970: $0.value.notificationDate))
             let hour2 = calendar.component(.hour, from: Date(timeIntervalSince1970: $1.value.notificationDate))
@@ -86,100 +85,150 @@ final class TaskManager: TaskManagerProtocol {
             return hour1 < hour2 || (hour1 == hour2 && minutes1 < minutes2)
         }
     }
-
-private func isTaskInWeeksRange(_ task: TaskModel, startDate: Double, endDate: Double) -> Bool {
-    var currentInterval = startDate
     
-    while currentInterval <= endDate {
-        if task.isScheduledForDate(currentInterval, calendar: calendar) {
-            return true
+    private func isTaskInWeeksRange(_ task: TaskModel, startDate: Double, endDate: Double) -> Bool {
+        var currentInterval = startDate
+        
+        while currentInterval <= endDate {
+            if task.isScheduledForDate(currentInterval, calendar: calendar) {
+                return true
+            }
+            
+            currentInterval += 86400
         }
         
-        currentInterval += 86400
+        return false
     }
     
-    return false
-}
-
-func preparedTask(task: TaskModel, date: Date) -> TaskModel {
-    var filledTask = TaskModel(id: task.id, title: task.title.isEmpty ? "New Task" : task.title, info: task.info, createDate: task.createDate)
-    filledTask.notificationDate = date.timeIntervalSince1970
-    filledTask.done = task.done
-    filledTask.taskColor = task.taskColor
-    filledTask.repeatTask = task.repeatTask
-    filledTask.audio = task.audio
-    filledTask.voiceMode = task.voiceMode
-    filledTask.deleted = task.deleted
-    filledTask.markAsDeleted = task.markAsDeleted
-    filledTask.endDate = task.endDate
-    filledTask.secondNotificationDate = task.secondNotificationDate
-    filledTask.dayOfWeek = task.dayOfWeek
-    return filledTask
-}
-
-// MARK: - Completion Management
-func checkCompletedTaskForToday(task: TaskModel) -> Bool {
-    return task.done?.contains(where: { $0.completedFor == selectedDate }) ?? false
-}
-
-func checkMarkTapped(task: TaskModel) -> TaskModel {
-    var model = task
-    model.done = updateExistingTaskCompletion(task: task)
-    return model
-}
-
-private func updateExistingTaskCompletion(task: TaskModel) -> [CompleteRecord] {
-    guard let existingRecords = task.done else {
-        return [createNewTaskCompletion(task: task)]
+    func preparedTask(task: TaskModel, date: Date) -> TaskModel {
+        var filledTask = TaskModel(
+            id: task.id,
+            title: task.title.isEmpty ? "New Task" : task.title,
+            info: task.info,
+            createDate: task.createDate,
+            done: [],
+            deleted: []
+        )
+        
+        filledTask.notificationDate = date.timeIntervalSince1970
+        filledTask.done = task.done
+        filledTask.taskColor = task.taskColor
+        filledTask.repeatTask = task.repeatTask
+        filledTask.audio = task.audio
+        filledTask.voiceMode = task.voiceMode
+        filledTask.deleted = task.deleted
+        filledTask.markAsDeleted = task.markAsDeleted
+        filledTask.endDate = task.endDate
+        filledTask.secondNotificationDate = task.secondNotificationDate
+        filledTask.dayOfWeek = task.dayOfWeek
+        return filledTask
     }
     
-    if let existingIndex = existingRecords.firstIndex(where: { $0.completedFor == selectedDate }) {
-        var updatedRecords = existingRecords
-        updatedRecords.remove(at: existingIndex)
-        return updatedRecords
-    } else {
-        var updatedRecords = existingRecords
-        updatedRecords.append(createNewTaskCompletion(task: task))
-        return updatedRecords
-    }
-}
-
-private func createNewTaskCompletion(task: TaskModel) -> CompleteRecord {
-    CompleteRecord(completedFor: selectedDate, timeMark: currentTime)
-}
-
-// MARK: - Deletion
-func deleteTask(task: MainModel, deleteCompletely: Bool = false) -> MainModel {
-    guard task.value.markAsDeleted == false else {
-        return task
+    //MARK: - Create Notifications
+    func createNotification(_ task: TaskModel) {
+        guard task.repeatTask != .never else {
+            
+            return
+        }
+        
+        createCustomScheduleForNotification(task)
     }
     
-    let model = task
-    if deleteCompletely {
-        model.value.markAsDeleted = true
-    } else {
-        model.value.deleted = updateExistingTaskDeleted(task: model.value)
+    private func createCustomScheduleForNotification(_ task: TaskModel) {
+        var date = Date(timeIntervalSince1970: task.notificationDate)
+        var mockTasks = task
+        
+        date = calendar.date(byAdding: .day, value: 1, to: date)!
+        
     }
     
-    return model
-}
-
-func updateExistingTaskDeleted(task: TaskModel) -> [DeleteRecord] {
-    var newDeletedRecords: [DeleteRecord] = task.deleted ?? []
-    newDeletedRecords.append(DeleteRecord(deletedFor: selectedDate, timeMark: currentTime))
-    return newDeletedRecords
-}
-
-func updateNotificationTimeForDueDate(task: MainModel) -> MainModel {
-    let model = task
+    //MARK: Releated IDs
+    private func createReletedIDs(_ task: TaskModel) -> [String]? {
+        
+        
+        
+        let datesBeforeSkip = task.done.map { Date(timeIntervalSince1970: $0.completedFor )}
+            .filter { $0.timeIntervalSince1970 > currentTime }
+            .sorted()
+        
+        var relatedIDs = [String]()
+        
+        let dayBeforeSkip = calendar.dateComponents([.day], from: Date(timeIntervalSince1970: currentTime), to: datesBeforeSkip.first!,).day! + 1
+        
+        guard dayBeforeSkip < 5 else {
+            return nil
+        }
+        
+        for _ in 0..<dayBeforeSkip {
+            relatedIDs.append(UUID().uuidString)
+        }
+        
+        return relatedIDs
+    }
     
-    model.value.notificationDate = dateManager.updateNotificationDate(model.value.notificationDate)
+    // MARK: - Completion Management
+    func checkCompletedTaskForToday(task: TaskModel) -> Bool {
+        task.done.contains(where: { $0.completedFor == selectedDate })
+    }
     
-    return model
-}
-
-private func isAfter9PM(_ date: Date) -> Bool {
-    let hour = calendar.component(.hour, from: date)
-    return hour >= 21
-}
+    func checkMarkTapped(task: TaskModel) -> TaskModel {
+        var model = task
+        model.done = updateExistingTaskCompletion(task: task)
+        return model
+    }
+    
+    private func updateExistingTaskCompletion(task: TaskModel) -> [CompleteRecord] {
+        guard !task.done.isEmpty else {
+            return [createNewTaskCompletion(task: task)]
+        }
+        
+        if let existingIndex = task.done.firstIndex(where: { $0.completedFor == selectedDate }) {
+            var updatedRecords = task.done
+            updatedRecords.remove(at: existingIndex)
+            return updatedRecords
+        } else {
+            var updatedRecords = task.done
+            updatedRecords.append(createNewTaskCompletion(task: task))
+            return updatedRecords
+        }
+    }
+    
+    private func createNewTaskCompletion(task: TaskModel) -> CompleteRecord {
+        CompleteRecord(completedFor: selectedDate, timeMark: currentTime)
+    }
+    
+    // MARK: - Deletion
+    func deleteTask(task: MainModel, deleteCompletely: Bool = false) -> MainModel {
+        guard task.value.markAsDeleted == false else {
+            return task
+        }
+        
+        let model = task
+        if deleteCompletely {
+            model.value.markAsDeleted = true
+        } else {
+            model.value.deleted = updateExistingTaskDeleted(task: model.value)
+        }
+        
+        return model
+    }
+    
+    func updateExistingTaskDeleted(task: TaskModel) -> [DeleteRecord] {
+        var newDeletedRecords: [DeleteRecord] = task.deleted
+        newDeletedRecords.append(DeleteRecord(deletedFor: selectedDate, timeMark: currentTime))
+        return newDeletedRecords
+    }
+    
+    func updateNotificationTimeForDueDate(task: MainModel) -> MainModel {
+        let model = task
+        
+        model.value.notificationDate = dateManager.updateNotificationDate(model.value.notificationDate)
+        
+        return model
+    }
+    
+    private func isAfter9PM(_ date: Date) -> Bool {
+        let hour = calendar.component(.hour, from: date)
+        return hour >= 21
+    }
 }

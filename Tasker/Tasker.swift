@@ -13,19 +13,19 @@ import Managers
 struct Tasker: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
-    @State private var mainVM = MainVM()
+    private static let mainVM = MainVM()
     
     var body: some Scene {
         WindowGroup {
-            MainView(vm: mainVM)
+            MainView(vm: Self.mainVM)
                 .onAppear {
                     if let pendingId = UserDefaults.standard.string(forKey: "pendingTaskID") {
-                        mainVM.selectedTask(taskId: pendingId)
+                        Self.mainVM.selectedTask(taskId: pendingId)
                         UserDefaults.standard.removeObject(forKey: "pendingTaskID")
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .openTaskFromNotification)) { notification in
-                    mainVM.selectedTask(by: notification)
+                    Self.mainVM.selectedTask(by: notification)
                 }
         }
     }

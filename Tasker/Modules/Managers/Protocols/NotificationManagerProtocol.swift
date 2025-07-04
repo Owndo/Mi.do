@@ -7,11 +7,13 @@
 
 import Foundation
 import Models
+import UserNotifications
 
 public protocol NotificationManagerProtocol {
     var alert: AlertModel? { get }
+    var notificationCenter: UNUserNotificationCenter { get set }
     
-    func createNotification(_ task: TaskModel)
+    func createNotification() async
     func removeAllEvents()
     func checkPermission() async
 }

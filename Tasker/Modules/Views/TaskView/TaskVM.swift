@@ -152,18 +152,14 @@ final class TaskVM {
     }
     
     //MARK: - Save task
-    func saveTask() {
+    func saveTask() async {
         task = preparedTask()
         task.notificationDate = dateHasBeenChanged ? notificationDate.timeIntervalSince1970 : sourseDateOfNotification
         mainModel.value = task
         
-        var mockTask = task
-        mockTask.notificationDate += 1000
-        
-        notificationManager.createNotification(task)
-        
-        notificationManager.createNotification(mockTask)
         casManager.saveModel(mainModel)
+        
+        await notificationManager.createNotification()
     }
     
     private func preparedTask() -> TaskModel {
@@ -207,10 +203,10 @@ final class TaskVM {
     }
     
     //MARK: - Complete tasks
-    func checkMarkTapped() {
+    func checkMarkTapped() async {
         task = taskManager.checkMarkTapped(task: task)
         taskDoneTrigger.toggle()
-        saveTask()
+        await saveTask()
     }
     
     
@@ -225,9 +221,9 @@ final class TaskVM {
         confirmationDialogIsPresented.toggle()
     }
     
-    func deleteButtonTapped(model: MainModel, deleteCompletely: Bool = false) {
+    func deleteButtonTapped(model: MainModel, deleteCompletely: Bool = false) async {
         task = taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely).value
-        saveTask()
+        await saveTask()
     }
     
     // MARK: - Playback
@@ -241,8 +237,8 @@ final class TaskVM {
         }
         
         
-            await loadTotalTimeIfNeeded()
-            await playerManager.playAudioFromData(task: task)
+        await loadTotalTimeIfNeeded()
+        await playerManager.playAudioFromData(task: task)
         
     }
     

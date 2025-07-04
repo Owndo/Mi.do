@@ -29,11 +29,11 @@ public struct TaskModel: Identifiable, Codable {
     
     public var markAsDeleted = false
     
-    public var repeatTask = RepeatTask.never
+    public var repeatTask: RepeatTask = .never
     public var dayOfWeek: [DayOfWeek]
     
-    public var done: [CompleteRecord]?
-    public var deleted: [DeleteRecord]?
+    public var done: [CompleteRecord] = []
+    public var deleted: [DeleteRecord] = []
     
     public var taskColor = TaskColor.yellow
     
@@ -51,8 +51,8 @@ public struct TaskModel: Identifiable, Codable {
         markAsDeleted: Bool = false,
         repeatTask: RepeatTask = RepeatTask.never,
         dayOfWeek: [DayOfWeek] = .default,
-        done: [CompleteRecord]? = nil,
-        deleted: [DeleteRecord]? = nil,
+        done: [CompleteRecord],
+        deleted: [DeleteRecord],
         taskColor: TaskColor = .yellow
     ) {
         self.id = id
@@ -72,33 +72,60 @@ public struct TaskModel: Identifiable, Codable {
         self.deleted = deleted
         self.taskColor = taskColor
     }
+    
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        id = try container.decode(String.self, forKey: .id)
+        title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
+        info = try container.decodeIfPresent(String.self, forKey: .info) ?? ""
+        audio = try container.decodeIfPresent(String.self, forKey: .audio)
+        repeatModel = try container.decodeIfPresent(Bool.self, forKey: .repeatModel) ?? false
+        
+        createDate = try container.decodeIfPresent(Double.self, forKey: .createDate) ?? Date.now.timeIntervalSince1970
+        endDate = try container.decodeIfPresent(Double.self, forKey: .endDate)
+        notificationDate = try container.decode(Double.self, forKey: .notificationDate)
+        secondNotificationDate = try container.decodeIfPresent(Double.self, forKey: .secondNotificationDate)
+        voiceMode = try container.decodeIfPresent(Bool.self, forKey: .voiceMode) ?? true
+        
+        markAsDeleted = try container.decodeIfPresent(Bool.self, forKey: .markAsDeleted) ?? false
+        
+        repeatTask = try container.decodeIfPresent(RepeatTask.self, forKey: .repeatTask) ?? .never
+        dayOfWeek = try container.decode([DayOfWeek].self, forKey: .dayOfWeek)
+        
+        done = try container.decodeIfPresent([CompleteRecord].self, forKey: .done) ?? []
+        deleted = try container.decodeIfPresent([DeleteRecord].self, forKey: .deleted) ?? []
+        
+        taskColor = try container.decodeIfPresent(TaskColor.self, forKey: .taskColor) ?? .yellow
+    }
 }
 
 public func mockModel() -> MainModel {
-    #if targetEnvironment(simulator)
-    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970))
-    #else
-    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970))
-    #endif
+#if targetEnvironment(simulator)
+    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970, done: [], deleted: []))
+#else
+    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, done: [], deleted: []))
+#endif
 }
 
 
 
 public struct CompleteRecord: Codable, Equatable {
-    public var completedFor: Double?
-    public var timeMark: Double?
+    public var completedFor: Double
+    public var timeMark: Double
     
-    public init(completedFor: Double? = nil, timeMark: Double? = nil) {
+    public init(completedFor: Double, timeMark: Double) {
         self.completedFor = completedFor
         self.timeMark = timeMark
     }
 }
 
 public struct DeleteRecord: Codable {
-    public var deletedFor: Double?
-    public var timeMark: Double?
+    public var deletedFor: Double
+    public var timeMark: Double
     
-    public init(deletedFor: Double? = nil, timeMark: Double? = nil) {
+    public init(deletedFor: Double, timeMark: Double) {
         self.deletedFor = deletedFor
         self.timeMark = timeMark
     }

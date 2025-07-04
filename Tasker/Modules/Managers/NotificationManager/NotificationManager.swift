@@ -67,7 +67,6 @@ final class NotificationManager: NotificationManagerProtocol {
         }
         
         guard uniqueID.contains(task.id) == false else {
-            print(task.id)
             return
         }
         
@@ -95,7 +94,17 @@ final class NotificationManager: NotificationManagerProtocol {
             return
         }
         
-        createSpecificSingleNotification(task, date: selectedDay)
+        guard task.repeatTask == .dayOfWeek else {
+            createSpecificSingleNotification(task, date: selectedDay)
+            return
+        }
+        
+        guard checkTaskInCorrectRange(task: task) else {
+            createSpecificSingleNotification(task, date: selectedDay)
+            return
+        }
+        
+        createRepeatNotification(task)
     }
     
     //MARK: - Single notification
@@ -121,46 +130,76 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
-        print(request)
+        //        print(request)
         removeDeliveredNotification()
     }
     
     //MARK: - Create repeat notification
     private func createRepeatNotification(_ task: TaskModel) {
+        var uniqueNotificationID = task.id
+        
         notificationContent.title = task.title
         notificationContent.body = task.info
         notificationContent.userInfo = ["taskID": task.id]
         
-        uniqueID.append(task.id)
-        
-        let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
-        
-        var date = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: notificationDate)
-        var trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
-        
-        switch task.repeatTask {
-        case .never:
-            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
-        case .daily:
-            date = calendar.dateComponents([.hour, .minute], from: notificationDate)
-            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        case .weekly:
-            date = calendar.dateComponents([.weekday, .hour, .minute], from: notificationDate)
-            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        case .monthly:
-            date = calendar.dateComponents([.day, .hour, .minute], from: notificationDate)
-            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        case .yearly:
-            date = calendar.dateComponents([.month, .day, .hour, .minute], from: notificationDate)
-            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-        case .dayOfWeek:
-            date = calendar.dateComponents([.weekday, .hour, .minute], from: notificationDate)
-            trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+        if task.repeatTask == .dayOfWeek {
+            let selectedDays = task.dayOfWeek.filter { $0.value }
+            
+            for day in selectedDays {
+                
+                uniqueNotificationID = "\(task.id).\(day.name)"
+                
+                guard !uniqueID.contains(uniqueNotificationID) else { continue }
+                
+                uniqueID.append(uniqueNotificationID)
+                
+                let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
+                
+                let weekdayValue = getWeekdayValue(for: day.name)
+                
+                var date = calendar.dateComponents([.hour, .minute], from: notificationDate)
+                date.weekday = weekdayValue
+                
+                
+                let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+                let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
+                
+                notificationCenter.add(request)
+                print(request)
+            }
+        } else {
+            guard !uniqueID.contains(uniqueNotificationID) else { return }
+            
+            uniqueID.append(uniqueNotificationID)
+            
+            let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
+            var date = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: notificationDate)
+            var trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
+            
+            switch task.repeatTask {
+            case .never:
+                trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
+            case .daily:
+                date = calendar.dateComponents([.hour, .minute], from: notificationDate)
+                trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+            case .weekly:
+                date = calendar.dateComponents([.weekday, .hour, .minute], from: notificationDate)
+                trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+            case .monthly:
+                date = calendar.dateComponents([.day, .hour, .minute], from: notificationDate)
+                trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+            case .yearly:
+                date = calendar.dateComponents([.month, .day, .hour, .minute], from: notificationDate)
+                trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+            case .dayOfWeek:
+                break
+            }
+            
+            let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
+            notificationCenter.add(request)
+            print(request)
         }
         
-        let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
-        notificationCenter.add(request)
-        print(request)
         removeDeliveredNotification()
     }
     
@@ -282,18 +321,18 @@ final class NotificationManager: NotificationManagerProtocol {
                 $0.value
                     .isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) &&
                 isTaskTimeAfterCurrent($0.value, for: day) }
-            .map {
-                $0.value
-            }
-            .sorted {
-                let taskHour = calendar.component(.hour, from: Date(timeIntervalSince1970: $0.notificationDate))
-                let taskMinutes = calendar.component(.minute, from: Date(timeIntervalSince1970: $0.notificationDate))
-                
-                let taskHour1 = calendar.component(.hour, from: Date(timeIntervalSince1970: $1.notificationDate))
-                let taskMinute1 = calendar.component(.minute, from: Date(timeIntervalSince1970: $1.notificationDate))
-                
-                return taskHour < taskHour1 || (taskHour == taskHour1 && taskMinutes < taskMinute1)
-            }
+            .map { $0.value }
+            .sorted { sortedTasksForCurrentTime(task1: $0, task2: $1) }
+    }
+    
+    private func sortedTasksForCurrentTime(task1: TaskModel, task2: TaskModel) -> Bool {
+        let taskHour = calendar.component(.hour, from: Date(timeIntervalSince1970: task1.notificationDate))
+        let taskMinutes = calendar.component(.minute, from: Date(timeIntervalSince1970: task1.notificationDate))
+        
+        let taskHour1 = calendar.component(.hour, from: Date(timeIntervalSince1970: task2.notificationDate))
+        let taskMinute1 = calendar.component(.minute, from: Date(timeIntervalSince1970: task2.notificationDate))
+        
+        return taskHour < taskHour1 || (taskHour == taskHour1 && taskMinutes < taskMinute1)
     }
     
     /// Days before task completed or deleted
@@ -344,7 +383,6 @@ final class NotificationManager: NotificationManagerProtocol {
         task.deleted.contains { $0.deletedFor > now.timeIntervalSince1970 }
     }
     
-    
     //MARK: Task's in correct range
     private func checkTaskInCorrectRange(task: TaskModel) -> Bool {
         switch task.repeatTask {
@@ -375,7 +413,24 @@ final class NotificationManager: NotificationManagerProtocol {
                 return false
             }
         case .dayOfWeek:
-            return false
+            if now.timeIntervalSince1970 + 604_800 > task.notificationDate {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+    
+    private func getWeekdayValue(for dayName: String) -> Int {
+        switch dayName {
+        case "Sun": return 1
+        case "Mon": return 2
+        case "Tue": return 3
+        case "Wed": return 4
+        case "Thu": return 5
+        case "Fri": return 6
+        case "Sat": return 7
+        default: return 1
         }
     }
 }

@@ -65,6 +65,7 @@ public extension TaskModel {
         }
     }
     
+    
     func hexToCGColor(hex: String) -> CGColor {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
         hexSanitized = hexSanitized.hasPrefix("#") ? String(hexSanitized.dropFirst()) : hexSanitized

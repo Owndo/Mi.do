@@ -33,7 +33,6 @@ public protocol TaskManagerProtocol {
     
     func updateNotificationTimeForDueDate(task: MainModel) -> MainModel
     
-    func createNotification(_ task: TaskModel)
 //    /// Simple func for check case where task has complete or delete record
 //    func hasTaskCompleteOrDeleteMarkers(task: TaskModel) -> Bool
 //    

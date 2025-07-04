@@ -20,6 +20,8 @@ final class TaskRowVM {
     @Injected(\.casManager) private var casManager: CASManagerProtocol
     @ObservationIgnored
     @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
+    @ObservationIgnored
+    @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
     
     //MARK: - Properties
     var playingTask: TaskModel?
@@ -66,15 +68,19 @@ final class TaskRowVM {
     }
     
     func checkMarkTapped(task: MainModel) {
-        let model = task
-        let task = taskManager.checkMarkTapped(task: model.value)
-        
-        taskDoneTrigger.toggle()
-        stopToPlay()
-        
-        model.value = task
-        
-        casManager.saveModel(model)
+        Task {
+            let model = task
+            let task = taskManager.checkMarkTapped(task: model.value)
+            
+            taskDoneTrigger.toggle()
+            stopToPlay()
+            
+            model.value = task
+            
+            casManager.saveModel(model)
+            
+            await notificationManager.createNotification()
+        }
     }
     
     //MARK: - Delete functions
@@ -92,9 +98,14 @@ final class TaskRowVM {
     }
     
     func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) {
-        let newModel = taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
-        taskDeleteTrigger.toggle()
-        casManager.saveModel(newModel)
+        Task {
+            let newModel = taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+            taskDeleteTrigger.toggle()
+            casManager.saveModel(newModel)
+            
+            
+            await notificationManager.createNotification()
+        }
     }
     
     //MARK: Change date for overdue task

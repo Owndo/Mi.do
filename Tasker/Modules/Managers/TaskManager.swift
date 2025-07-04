@@ -124,48 +124,6 @@ final class TaskManager: TaskManagerProtocol {
         return filledTask
     }
     
-    //MARK: - Create Notifications
-    func createNotification(_ task: TaskModel) {
-        guard task.repeatTask != .never else {
-            
-            return
-        }
-        
-        createCustomScheduleForNotification(task)
-    }
-    
-    private func createCustomScheduleForNotification(_ task: TaskModel) {
-        var date = Date(timeIntervalSince1970: task.notificationDate)
-        var mockTasks = task
-        
-        date = calendar.date(byAdding: .day, value: 1, to: date)!
-        
-    }
-    
-    //MARK: Releated IDs
-    private func createReletedIDs(_ task: TaskModel) -> [String]? {
-        
-        
-        
-        let datesBeforeSkip = task.done.map { Date(timeIntervalSince1970: $0.completedFor )}
-            .filter { $0.timeIntervalSince1970 > currentTime }
-            .sorted()
-        
-        var relatedIDs = [String]()
-        
-        let dayBeforeSkip = calendar.dateComponents([.day], from: Date(timeIntervalSince1970: currentTime), to: datesBeforeSkip.first!,).day! + 1
-        
-        guard dayBeforeSkip < 5 else {
-            return nil
-        }
-        
-        for _ in 0..<dayBeforeSkip {
-            relatedIDs.append(UUID().uuidString)
-        }
-        
-        return relatedIDs
-    }
-    
     // MARK: - Completion Management
     func checkCompletedTaskForToday(task: TaskModel) -> Bool {
         task.done.contains(where: { $0.completedFor == selectedDate })

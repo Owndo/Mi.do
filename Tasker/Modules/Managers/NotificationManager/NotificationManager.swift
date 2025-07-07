@@ -81,6 +81,8 @@ final class NotificationManager: NotificationManagerProtocol {
                 return
                 
             }
+            
+            print("here")
             createRepeatNotification(task)
             return
         }
@@ -104,6 +106,7 @@ final class NotificationManager: NotificationManagerProtocol {
             return
         }
         
+        print("Here's")
         createRepeatNotification(task)
     }
     
@@ -143,30 +146,39 @@ final class NotificationManager: NotificationManagerProtocol {
         notificationContent.userInfo = ["taskID": task.id]
         
         if task.repeatTask == .dayOfWeek {
-            let selectedDays = task.dayOfWeek.filter { $0.value }
             
-            for day in selectedDays {
-                
-                uniqueNotificationID = "\(task.id).\(day.name)"
-                
-                guard !uniqueID.contains(uniqueNotificationID) else { continue }
-                
-                uniqueID.append(uniqueNotificationID)
-                
-                let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
-                
-                let weekdayValue = getWeekdayValue(for: day.name)
-                
-                var date = calendar.dateComponents([.hour, .minute], from: notificationDate)
-                date.weekday = weekdayValue
-                
-                
-                let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
-                let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
-                
-                notificationCenter.add(request)
-                print(request)
+            let selectedDayWeekday = calendar.dateComponents([.weekday], from: selectedDay).weekday!
+            
+            guard !checkIsTaskActualyForThisDay(task: task) else { return }
+            
+            guard let matchingDay = task.dayOfWeek.first(where: { day in
+                let dayWeekdayValue = getWeekdayValue(for: day.name)
+                return dayWeekdayValue == selectedDayWeekday && day.value == true
+            }) else {
+                return
             }
+            
+            uniqueNotificationID = "\(task.id).\(matchingDay.name)"
+            
+            guard !uniqueID.contains(uniqueNotificationID) else { return }
+            
+            guard checkDiffBetweenDayOfWeek(dataFromCurrentWeek: now, dateFromSelectedWeek: selectedDay, task: task) else {
+                createSpecificSingleNotification(task, date: selectedDay)
+                return
+            }
+            
+            uniqueID.append(uniqueNotificationID)
+            
+            let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
+            
+            var date = calendar.dateComponents([.hour, .minute], from: notificationDate)
+            date.weekday = selectedDayWeekday
+            
+            let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+            let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
+            
+            notificationCenter.add(request)
+            print(request)
         } else {
             guard !uniqueID.contains(uniqueNotificationID) else { return }
             
@@ -348,6 +360,47 @@ final class NotificationManager: NotificationManagerProtocol {
         let dayBeforeSkip = calendar.dateComponents([.day], from: now, to: datesBeforeSkip.first ?? dateBeforDelete.first!).day! + 1
         
         return dayBeforeSkip
+    }
+    
+    /// Check diff between day of week on current and selected week
+    private func checkDiffBetweenDayOfWeek(dataFromCurrentWeek: Date, dateFromSelectedWeek: Date, task: TaskModel) -> Bool {
+        let currentWeek = calendar.component(.weekOfYear, from: dataFromCurrentWeek)
+        let selectedWeek = calendar.component(.weekOfYear, from: dateFromSelectedWeek)
+        
+        let dayForCurrentWeek = DateComponents(weekday: currentWeek)
+        
+        let dayForSelectedWeek = DateComponents(weekday: currentWeek)
+        
+        if currentWeek == selectedWeek {
+            return true
+        } else if currentWeek + 1 == selectedWeek {
+            if dayForCurrentWeek.weekday! < dayForSelectedWeek.weekday! {
+                return true
+            } else if dayForCurrentWeek.weekday! == dayForSelectedWeek.weekday! {
+                let currentHour = calendar.component(.hour, from: now)
+                let currentMinutes = calendar.component(.minute, from: now)
+                
+                let taskHour = calendar.component(.hour, from: Date(timeIntervalSince1970: task.notificationDate))
+                let taskMinute = calendar.component(.minute, from: Date(timeIntervalSince1970: task.notificationDate))
+                
+                if currentHour > taskHour {
+                    return true
+                } else if currentHour == taskHour {
+                    if currentMinutes > taskMinute {
+                        return true
+                    } else {
+                        return false
+                    }
+                } else {
+                    return false
+                }
+            }
+            else {
+                return false
+            }
+        } else {
+            return false
+        }
     }
     
     /// Check that's task's hours and minutes components more than now for today, not for future

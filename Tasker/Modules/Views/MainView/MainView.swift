@@ -75,16 +75,6 @@ public struct MainView: View {
                     }
                 }
             }
-            .onAppear {
-                vm.notificationManager.notificationCenter.getPendingNotificationRequests { requests in
-                    for request in requests {
-                        print("🛎 Уведомление ID: \(request.identifier)")
-                        print("📄 Title: \(request.content.title)")
-                        print("📅 Trigger: \(String(describing: request.trigger))")
-                        print("---")
-                    }
-                }
-            }
             .onChange(of: vm.currentlyTime) { newValue, oldValue in
                 Task {
                     await vm.stopAfterCheck(newValue)

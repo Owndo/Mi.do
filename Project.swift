@@ -105,13 +105,25 @@ let project = Project(
     ],
     schemes: [
         Scheme.scheme(
-            name: "Debug",
+            name: "Tasker",
             shared: true,
             buildAction: .buildAction(targets: ["Tasker"]),
             runAction:
                     .runAction(
                         configuration: .debug,
                         attachDebugger: false,
+                        expandVariableFromTarget: .target("Tasker"),
+                        launchStyle: .automatically
+                    ),
+        ),
+        Scheme.scheme(
+            name: "Debug",
+            shared: true,
+            buildAction: .buildAction(targets: ["Tasker"]),
+            runAction:
+                    .runAction(
+                        configuration: .debug,
+                        attachDebugger: true,
                         expandVariableFromTarget: .target("Tasker"),
                         launchStyle: .automatically
                     ),

@@ -11,6 +11,9 @@ import Models
 
 @Observable
 final class CASManager: CASManagerProtocol {
+    
+    var firstTimeOpened = UserDefaults.standard.bool(forKey: "firstTimeOpened")
+    
     let cas: MultiCas
     let remoteDirectory = "iCloud.com.KodiMaberek.Tasker"
     
@@ -39,6 +42,9 @@ final class CASManager: CASManagerProtocol {
         let iCas = FileCas(FileManager.default.url(forUbiquityContainerIdentifier: remoteDirectory) ?? localDirectory)
         
         cas = MultiCas(local: localCas, remote: iCas)
+        
+        firstTimeOpen()
+        
         models = fetchModels()
     }
     
@@ -132,7 +138,24 @@ final class CASManager: CASManagerProtocol {
             models.remove(at: index)
         }
     }
+    
+    private func firstTimeOpen() {
+        guard !firstTimeOpened else {
+            return
+        }
+        
+        print("here")
+        
+        let factory = ModelsFactory()
+        
+        saveModel(factory.create(.bestApp))
+        saveModel(factory.create(.clearMind))
+        saveModel(factory.create(.drinkWater))
+        saveModel(factory.create(.planForTommorow))
+        saveModel(factory.create(.randomHours))
+        saveModel(factory.create(.readSomething))
+        saveModel(factory.create(.withoutPhone))
+        
+        UserDefaults.standard.set(true, forKey: "firstTimeOpened")
+    }
 }
-
-
-

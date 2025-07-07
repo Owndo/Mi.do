@@ -259,7 +259,7 @@ public struct TaskView: View {
     @ViewBuilder
     private func MainSection() -> some View {
         VStack(spacing: 0) {
-            TextField("New task", text: $vm.task.title)
+            TextField("New task", text: $vm.task.title, axis: .vertical)
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundStyle(.labelPrimary)
@@ -469,15 +469,31 @@ public struct TaskView: View {
                                 .fill(color.color(for: colorScheme))
                                 .frame(width: 28, height: 28)
                                 .overlay(
-                                    Circle()
-                                        .stroke(.separatorPrimary, lineWidth: vm.task.taskColor.id == color.id ? 1.5 : 0.3)
-                                        .shadow(radius: 8, y: 4)
+                                    ZStack {
+                                        Circle()
+                                            .stroke(.separatorPrimary, lineWidth: vm.task.taskColor.id == color.id ? 1.5 : 0.3)
+                                            .shadow(radius: 8, y: 4)
+                                        
+                                        if vm.task.taskColor.id == color.id {
+                                            Image(systemName: "checkmark")
+                                                .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
+                                        }
+                                    }
                                 )
                         }
                     }
                     
-                    ColorPicker("", selection: $vm.color)
-                        .padding(.leading, -10)
+                    ZStack {
+                        ColorPicker("", selection: $vm.color)
+                            .padding(.leading, -10)
+                        
+                        if vm.task.taskColor == .custom(vm.color.toHex()) {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
+                                .scaleEffect(0.8)
+                                .offset(x: -2)
+                        }
+                    }
                 }
                 .padding(.horizontal, 17)
                 .padding(.vertical, 1)

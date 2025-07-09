@@ -75,6 +75,30 @@ final class DateManager: DateManagerProtocol {
         }
     }
     
+    func initializeMonth() {
+        allMonths.removeAll()
+        //MARK: Previous 4 weeks
+        for i in (1...4).reversed() {
+            let month = calendar.date(byAdding: .month, value: -i, to: selectedDate)!
+            let newMonth = generateMonth(for: month)
+            let name = getMonthName(from: month)
+            allMonths.append(PeriodModel(id: -i, date: newMonth, name: name))
+        }
+        
+        let name = getMonthName(from: selectedDate)
+        allMonths.append(PeriodModel(id: 1, date: generateMonth(for: selectedDate), name: name))
+        
+        var idNumber = 2
+        
+        for i in 1...4 {
+            let month = calendar.date(byAdding: .month, value: i, to: selectedDate)!
+            let newMonth = generateMonth(for: month)
+            let name = getMonthName(from: month)
+            allMonths.append(PeriodModel(id: idNumber, date: newMonth, name: name))
+            idNumber += 1
+        }
+    }
+    
     
     func startOfWeek(for date: Date) -> Date {
         calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)) ?? date
@@ -84,12 +108,42 @@ final class DateManager: DateManagerProtocol {
         indexForWeek = index
     }
     
+    func selectedDayIsToday() -> Bool {
+        !calendar.isDate(selectedDate, inSameDayAs: currentTime)
+    }
+    
     private func generateWeek(for date: Date) -> [Date] {
         let startOfWeek = startOfWeek(for: date)
         return (0..<7).map { dayOffset in
             calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)!
         }
     }
+    
+    private func generateMonth(for date: Date) -> [Date] {
+        var dates: [Date] = []
+
+        guard let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
+              let range = calendar.range(of: .day, in: .month, for: startOfMonth) else {
+            return []
+        }
+
+        for day in range {
+            if let dayDate = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth) {
+                dates.append(dayDate)
+            }
+        }
+
+        return dates
+    }
+    
+    private func getMonthName(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.calendar = calendar
+        formatter.dateFormat = "LLLL"
+        return formatter.string(from: date).capitalized
+    }
+
     
     func appendWeeksForward() {
         guard let lastWeekStart = allWeeks.last?.date.first else { return }

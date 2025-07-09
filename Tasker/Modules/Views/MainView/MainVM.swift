@@ -42,7 +42,16 @@ public final class MainVM {
     var alert: AlertModel?
     var disabledButton = false
     
-    var presentationPosition: PresentationDetent = PresentationMode.base.detent
+    
+    var presentationPosition: PresentationDetent = PresentationMode.base.detent {
+        didSet {
+            if presentationPosition == .fraction(0.96) {
+                if path.count > 0 {
+                    path.removeLast()
+                }
+            }
+        }
+    }
     
     var recordingState: RecordingState = .idle
     
@@ -50,6 +59,13 @@ public final class MainVM {
         case idle
         case recording
         case stopping
+    }
+    
+    var path = NavigationPath()
+    
+    enum Destination: CaseIterable, Hashable {
+        case main
+        case calendar
     }
     
     private var isProcessingStop = false
@@ -165,6 +181,12 @@ public final class MainVM {
         } else {
             createTask()
         }
+    }
+    
+    //MARK: - Calendar
+    func calendarButtonTapped() {
+        path.append(Destination.calendar)
+        presentationPosition = .fraction(0.20)
     }
     
     private func extractBaseId(from fullId: String) -> String {

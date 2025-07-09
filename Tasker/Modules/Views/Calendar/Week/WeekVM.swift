@@ -50,7 +50,7 @@ final class WeekVM {
     }
     
     func selectedDayIsToday() -> Bool {
-        !calendar.isDate(selectedDate, inSameDayAs: today)
+        dateManager.selectedDayIsToday()
     }
     
     func isSelectedDayOfWeek(_ index: Int) -> Bool {

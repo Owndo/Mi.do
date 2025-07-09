@@ -26,7 +26,7 @@ public struct MainView: View {
     }
     
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: $vm.path) {
             ZStack {
                 Color(colorScheme.backgroundColor.hexColor())
                     .ignoresSafeArea()
@@ -36,10 +36,18 @@ public struct MainView: View {
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
             }
+            .navigationDestination(for: MainVM.Destination.self) { destination in
+                switch destination {
+                case .main:
+                    MainView(vm: vm)
+                case .calendar:
+                    MonthView(presentationDetents: $vm.presentationPosition, path: $vm.path)
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        showingAlert = true
+                        vm.calendarButtonTapped()
                     } label: {
                         Image(systemName: "calendar")
                             .foregroundStyle(colorScheme.elementColor.hexColor())

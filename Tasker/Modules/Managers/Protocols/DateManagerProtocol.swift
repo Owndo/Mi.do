@@ -18,6 +18,7 @@ public protocol DateManagerProtocol {
     var allMonths: [PeriodModel] { get set }
     
     func initializeWeek()
+    func initializeMonth()
     func startOfWeek(for date: Date) -> Date
     func selectedDateChange(_ day: Date)
     func appendWeeksForward()
@@ -32,6 +33,7 @@ public protocol DateManagerProtocol {
     func updateNotificationDate(_ date: Double) -> Double
     /// Reset selected day to current current
     func backToToday()
+    func selectedDayIsToday() -> Bool
     /// Next day after swipe to left
     func addOneDay()
     /// Previous day after swip to right

@@ -10,9 +10,11 @@ import Foundation
 public struct PeriodModel: Identifiable {
     public var id: Int
     public var date: [Date]
+    public var name: String?
     
-    public init(id: Int, date: [Date]) {
+    public init(id: Int, date: [Date], name: String? = nil) {
         self.id = id
         self.date = date
+        self.name = name
     }
 }

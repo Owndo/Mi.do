@@ -164,15 +164,25 @@ public final class MainVM {
         }
     }
     
+    private func extractBaseId(from fullId: String) -> String {
+        return fullId.components(separatedBy: ".").first ?? fullId
+    }
+
     public func selectedTask(by notification: Notification? = nil, taskId: String? = nil) {
         guard taskId == nil else {
-            let task = taskManager.tasks.first { $0.value.id == taskId }
+            let baseSearchId = extractBaseId(from: taskId!)
+            let task = taskManager.tasks.first { task in
+                extractBaseId(from: task.value.id) == baseSearchId
+            }
             model = task
             return
         }
         
         if let taskId = notification?.userInfo?["taskId"] as? String {
-            let task = taskManager.tasks.first { $0.value.id == taskId }
+            let baseSearchId = extractBaseId(from: taskId)
+            let task = taskManager.tasks.first { task in
+                extractBaseId(from: task.value.id) == baseSearchId
+            }
             model = task
         }
     }

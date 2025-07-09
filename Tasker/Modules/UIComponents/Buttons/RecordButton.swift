@@ -23,15 +23,15 @@ public struct RecordButton: View {
     var countOfSec: Double
     var animationAmount: Float
     
-    var action: () -> Void
+    //    var action: () -> Void
     
-    public init(isRecording: Binding<Bool>, showTips: Bool, progress: Double, countOfSec: Double, animationAmount: Float, action: @escaping () -> Void) {
+    public init(isRecording: Binding<Bool>, showTips: Bool, progress: Double, countOfSec: Double, animationAmount: Float/*, action: @escaping () -> Void*/) {
         self._isRecording = isRecording
         self.showTips = showTips
         self.progress = progress
         self.countOfSec = countOfSec
         self.animationAmount = animationAmount
-        self.action = action
+        //        self.action = action
     }
     
     public var body: some View {
@@ -39,15 +39,10 @@ public struct RecordButton: View {
             
             CustomPopOver()
             
-            Button {
-                action()
-                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            } label: {
-                if isRecording {
-                    StopRecording()
-                } else {
-                    StartRecording()
-                }
+            if isRecording {
+                StopRecording()
+            } else {
+                StartRecording()
             }
         }
         .animation(.default, value: showTips)
@@ -164,7 +159,7 @@ public struct RecordButton: View {
 }
 
 #Preview {
-    RecordButton(isRecording: .constant(false), showTips: true, progress: 0.7, countOfSec: 23.1, animationAmount: 1.1, action: {})
+    RecordButton(isRecording: .constant(false), showTips: true, progress: 0.7, countOfSec: 23.1, animationAmount: 1.1)
 }
 
 struct PopoverBubbleShape: Shape {

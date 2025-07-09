@@ -42,6 +42,8 @@ public final class MainVM {
     var alert: AlertModel?
     var disabledButton = false
     
+    var presentationPosition: PresentationDetent = PresentationMode.base.detent
+
     var recordingState: RecordingState = .idle
     
     enum RecordingState {
@@ -200,4 +202,15 @@ public final class MainVM {
             alert = notificationManager.alert
         }
     }
+}
+
+enum PresentationMode: CGFloat, CaseIterable {
+    case base = 0.96
+    case bottom = 0.20
+    
+    var detent: PresentationDetent {
+        .fraction(rawValue)
+    }
+    
+    static let detents = Set(PresentationMode.allCases.map { $0.detent })
 }

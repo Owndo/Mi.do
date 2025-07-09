@@ -19,20 +19,7 @@ public struct MainView: View {
     
     @State var showingAlert = false
     
-    @State var presentationPosition: PresentationDetent = PresentationMode.base.detent
-    
     @FocusState var focusState: Bool
-    
-    enum PresentationMode: CGFloat, CaseIterable {
-        case base = 0.96
-        case bottom = 0.20
-        
-        var detent: PresentationDetent {
-            .fraction(rawValue)
-        }
-        
-        static let detents = Set(PresentationMode.allCases.map { $0.detent })
-    }
     
     public init(vm: MainVM) {
         self._vm = Bindable(wrappedValue: vm)
@@ -82,6 +69,7 @@ public struct MainView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .animation(.default, value: vm.isRecording)
+            
         }
     }
     
@@ -106,13 +94,14 @@ public struct MainView: View {
                 
                 Spacer()
                 
-                if presentationPosition == PresentationMode.base.detent {
+                if vm.presentationPosition == PresentationMode.base.detent {
                     withAnimation {
                         CreateButton()
                             .fixedSize()
                     }
                 }
             }
+            .ignoresSafeArea(.keyboard)
         }
         .sheet(item: $vm.model) { model in
             TaskView(mainModel: model)
@@ -131,7 +120,7 @@ public struct MainView: View {
         .alert(item: $vm.alert) { alert in
             alert.alert
         }
-        .presentationDetents(PresentationMode.detents, selection: $presentationPosition)
+        .presentationDetents(PresentationMode.detents, selection: $vm.presentationPosition)
         .presentationDragIndicator(.visible)
         .presentationBackgroundInteraction(.enabled)
         .interactiveDismissDisabled(true)
@@ -144,29 +133,31 @@ public struct MainView: View {
         VStack {
             Spacer()
             
-            RecordButton(isRecording: $vm.isRecording, showTips: vm.showTips, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl) {
-                Task {
-                    await vm.handleButtonTap()
-                }
-            }
-            .disabled(vm.disabledButton)
-            .buttonStyle(.plain)
-            .simultaneousGesture(
-                LongPressGesture().onEnded({ _ in
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            RecordButton(isRecording: $vm.isRecording, showTips: vm.showTips, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl)
+                .disabled(vm.disabledButton)
+                .onTapGesture {
                     Task {
-                        try await vm.startAfterChek()
-                    }
-                })
-            )
-            .onChange(of: vm.currentlyTime) { newValue, _ in
-                if newValue > 15.0 && vm.recordingState == .recording {
-                    Task {
-                        await vm.stopRecord(isAutoStop: true)
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        await vm.handleButtonTap()
                     }
                 }
-            }
-            .padding(.bottom, 15)
+                .simultaneousGesture(
+                    LongPressGesture().onEnded({ _ in
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        Task {
+                            try await vm.startAfterChek()
+                        }
+                    })
+                )
+                .onChange(of: vm.currentlyTime) { newValue, _ in
+                    if newValue > 15.0 && vm.recordingState == .recording {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                        Task {
+                            await vm.stopRecord(isAutoStop: true)
+                        }
+                    }
+                }
+                .padding(.bottom, 15)
         }
         .frame(maxWidth: .infinity)
         .blendMode(colorScheme == .dark ? .normal : .darken)

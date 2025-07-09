@@ -87,9 +87,6 @@ public struct TaskView: View {
                 SaveButton()
                 
             }
-            .onAppear {
-                print(vm.task)
-            }
             .onChange(of: vm.currentlyRecordTime) { newValue, _ in
                 vm.stopAfterCheck(newValue)
             }

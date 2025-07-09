@@ -162,16 +162,31 @@ final class TaskVM {
         await notificationManager.createNotification()
     }
     
+ 
+    
     private func preparedTask() -> TaskModel {
         taskManager.preparedTask(task: task, date: notificationDate)
     }
     
+    //MARK: - Date and time
     private func dateToString() -> String {
         dateManager.dateToString(for: notificationDate, format: "MMMM d", useForWeekView: false)
     }
     
     private func combineDateAndTime(timeComponents: DateComponents) -> Date {
-        dateManager.combineDateAndTime(timeComponents: timeComponents)
+        if setUpDefaultTime(task) {
+            return dateManager.combineDateAndTime(timeComponents: timeComponents)
+        } else {
+            return Date(timeIntervalSince1970: task.notificationDate)
+        }
+    }
+    
+    private func setUpDefaultTime(_ task: TaskModel) -> Bool {
+        if taskManager.tasks.contains(where: { $0.value.id == task.id }) {
+            return false
+        } else {
+            return true
+        }
     }
     
     private func dateHasBeenSelected() {

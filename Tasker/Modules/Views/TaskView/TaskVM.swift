@@ -19,6 +19,7 @@ final class TaskVM {
     @ObservationIgnored @Injected(\.dateManager) private var dateManager: DateManagerProtocol
     @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
     @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
+    @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
     
     // MARK: - Model
     var mainModel: MainModel = mockModel()
@@ -158,11 +159,12 @@ final class TaskVM {
         mainModel.value = task
         
         casManager.saveModel(mainModel)
+        createTempAudioFile(audioHash: task.audio ?? "")
         
         await notificationManager.createNotification()
     }
     
- 
+    
     
     private func preparedTask() -> TaskModel {
         taskManager.preparedTask(task: task, date: notificationDate)
@@ -324,5 +326,9 @@ final class TaskVM {
         Task { [weak self] in
             await self?.loadTotalTimeIfNeeded()
         }
+    }
+    
+    private func createTempAudioFile(audioHash: String) {
+        _ = storageManager.createFileInSoundsDirectory(hash: audioHash)
     }
 }

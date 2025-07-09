@@ -14,8 +14,10 @@
 
 import SwiftUI
 import Models
+import Managers
 
 public struct TaskDeleteDialog: ViewModifier {
+    @Injected(\.storageManager) private var storageManager
     
     @Binding var isPresented: Bool
     
@@ -32,6 +34,7 @@ public struct TaskDeleteDialog: ViewModifier {
                     Button(role: .destructive) {
                         Task {
                             dismissAction?()
+                            storageManager.deleteAudiFromDirectory(hash: task.value.audio ?? "")
                             try await Task.sleep(nanoseconds: 50_000_000)
                             await onDelete(task, true)
                         }
@@ -52,6 +55,7 @@ public struct TaskDeleteDialog: ViewModifier {
                     Button(role: .destructive) {
                         Task {
                             dismissAction?()
+                            storageManager.deleteAudiFromDirectory(hash: task.value.audio ?? "")
                             try await Task.sleep(nanoseconds: 50_000_000)
                             await onDelete(task, true)
                         }

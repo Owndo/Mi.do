@@ -78,7 +78,10 @@ public final class MainVM {
     }
     
     public init() {
-        checkNotificationPermission()
+        Task {
+            checkNotificationPermission()
+            await notificationManager.createNotification()
+        }
     }
     
     func startAfterChek() async throws {

@@ -182,14 +182,14 @@ struct App {
     public static let bundleId = "com.kodi.mido"
     public static let teamId = "JMB8Y7C47R"
     public static let deploymentTargets = DeploymentTargets.iOS("17.0")
-    public static let version = "0.5.0"
+    public static let version = "0.7.0"
 }
 
 
 extension SettingsDictionary {
     func setProjectVersions() -> SettingsDictionary {
-        let currentProjectVersion = "0.5.0"
-        let markettingVersion = "0.5.0"
+        let currentProjectVersion = "0.7.0"
+        let markettingVersion = "0.7.0"
         
         return appleGenericVersioningSystem().merging([
             "CURRENT_PROJECT_VERSION": SettingValue(stringLiteral: currentProjectVersion),

@@ -43,7 +43,7 @@ public final class MainVM {
     var disabledButton = false
     
     var presentationPosition: PresentationDetent = PresentationMode.base.detent
-
+    
     var recordingState: RecordingState = .idle
     
     enum RecordingState {
@@ -87,8 +87,6 @@ public final class MainVM {
     }
     
     func startAfterChek() async throws {
-        
-        guard recordingState == .idle else { return }
         
         recordingState = .recording
         
@@ -172,7 +170,7 @@ public final class MainVM {
     private func extractBaseId(from fullId: String) -> String {
         return fullId.components(separatedBy: ".").first ?? fullId
     }
-
+    
     public func selectedTask(by notification: Notification? = nil, taskId: String? = nil) {
         guard taskId == nil else {
             let baseSearchId = extractBaseId(from: taskId!)

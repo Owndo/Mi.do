@@ -14,6 +14,8 @@ final class WeekVM {
     @ObservationIgnored
     @Injected(\.dateManager) var dateManager: DateManagerProtocol
     
+    var selectedDayOfWeek = Date()
+    
     var calendar: Calendar {
         dateManager.calendar
     }
@@ -34,12 +36,9 @@ final class WeekVM {
         dateManager.allWeeks
     }
     
-    var selectedWeekDay: Int {
-        calendar.component(.weekday, from: dateManager.selectedDate)
-    }
-    
     func selectedDateButtonTapped(_ day: Date) {
         dateManager.selectedDateChange(day)
+        selectedDayOfWeek = day
     }
     
     func backToTodayButtonTapped() {
@@ -55,16 +54,20 @@ final class WeekVM {
     }
     
     func isSelectedDayOfWeek(_ index: Int) -> Bool {
-        return index == selectedWeekDay
+        let weekday = calendar.component(.weekday, from: selectedDate)
+        let firstWeekday = calendar.firstWeekday
+        
+        let adjustedWeekday = (weekday - firstWeekday + 7) % 7
+        
+        return index == adjustedWeekday
     }
     
     func orderedWeekdaySymbols() -> [String] {
-        let weekdaySymbols = calendar.shortWeekdaySymbols
-        let firstWeekday = calendar.firstWeekday - 1
-        
-        let orderedSymbols = Array(weekdaySymbols[firstWeekday..<weekdaySymbols.count] + weekdaySymbols[0..<firstWeekday])
-        
-        return orderedSymbols
+        if calendar.firstWeekday == 2 {
+            return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        } else {
+            return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        }
     }
     
     func dateToString() -> String {

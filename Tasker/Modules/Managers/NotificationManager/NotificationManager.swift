@@ -82,7 +82,6 @@ final class NotificationManager: NotificationManagerProtocol {
                 
             }
             
-            print("here")
             createRepeatNotification(task)
             return
         }
@@ -162,7 +161,7 @@ final class NotificationManager: NotificationManagerProtocol {
             
             guard !uniqueID.contains(uniqueNotificationID) else { return }
             
-            guard checkDiffBetweenDayOfWeek(dataFromCurrentWeek: now, dateFromSelectedWeek: selectedDay, task: task) else {
+            guard checkDiffBetweenDayOfWeek(dateFromCurrentWeek: now, dateFromSelectedWeek: selectedDay, task: task) else {
                 createSpecificSingleNotification(task, date: selectedDay)
                 return
             }
@@ -363,18 +362,25 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     /// Check diff between day of week on current and selected week
-    private func checkDiffBetweenDayOfWeek(dataFromCurrentWeek: Date, dateFromSelectedWeek: Date, task: TaskModel) -> Bool {
-        let currentWeek = calendar.component(.weekOfYear, from: dataFromCurrentWeek)
+    private func checkDiffBetweenDayOfWeek(dateFromCurrentWeek: Date, dateFromSelectedWeek: Date, task: TaskModel) -> Bool {
+        
+        guard !checkIsTaskActualyForThisDay(task: task) else {
+            return false
+        }
+        
+        let currentWeek = calendar.component(.weekOfYear, from: dateFromCurrentWeek)
         let selectedWeek = calendar.component(.weekOfYear, from: dateFromSelectedWeek)
         
-        let dayForCurrentWeek = DateComponents(weekday: currentWeek)
+        var dayForCurrentWeek = DateComponents()
+        dayForCurrentWeek.weekday = calendar.component(.weekday, from: dateFromCurrentWeek)
         
-        let dayForSelectedWeek = DateComponents(weekday: currentWeek)
+        var dayForSelectedWeek = DateComponents()
+        dayForSelectedWeek.weekday = calendar.component(.weekday, from: dateFromSelectedWeek)
         
         if currentWeek == selectedWeek {
             return true
         } else if currentWeek + 1 == selectedWeek {
-            if dayForCurrentWeek.weekday! < dayForSelectedWeek.weekday! {
+            if dayForCurrentWeek.weekday! > dayForSelectedWeek.weekday! {
                 return true
             } else if dayForCurrentWeek.weekday! == dayForSelectedWeek.weekday! {
                 let currentHour = calendar.component(.hour, from: now)
@@ -394,8 +400,7 @@ final class NotificationManager: NotificationManagerProtocol {
                 } else {
                     return false
                 }
-            }
-            else {
+            } else {
                 return false
             }
         } else {
@@ -475,15 +480,28 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     private func getWeekdayValue(for dayName: String) -> Int {
-        switch dayName {
-        case "Sun": return 1
-        case "Mon": return 2
-        case "Tue": return 3
-        case "Wed": return 4
-        case "Thu": return 5
-        case "Fri": return 6
-        case "Sat": return 7
-        default: return 1
+        if calendar.firstWeekday == 1 {
+            switch dayName {
+            case "Sun": return 1
+            case "Mon": return 2
+            case "Tue": return 3
+            case "Wed": return 4
+            case "Thu": return 5
+            case "Fri": return 6
+            case "Sat": return 7
+            default: return 1
+            }
+        } else {
+            switch dayName {
+            case "Mon": return 1
+            case "Tue": return 2
+            case "Wed": return 3
+            case "Thu": return 4
+            case "Fri": return 5
+            case "Sat": return 6
+            case "Sun": return 7
+            default: return 1
+            }
         }
     }
 }

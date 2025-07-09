@@ -50,7 +50,7 @@ public struct TaskModel: Identifiable, Codable {
         voiceMode: Bool = true,
         markAsDeleted: Bool = false,
         repeatTask: RepeatTask = RepeatTask.never,
-        dayOfWeek: [DayOfWeek] = .default,
+        dayOfWeek: [DayOfWeek],
         done: [CompleteRecord],
         deleted: [DeleteRecord],
         taskColor: TaskColor = .yellow
@@ -103,9 +103,9 @@ public struct TaskModel: Identifiable, Codable {
 
 public func mockModel() -> MainModel {
 #if targetEnvironment(simulator)
-    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970, done: [], deleted: []))
+    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
 #else
-    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, done: [], deleted: []))
+    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
 #endif
 }
 
@@ -163,5 +163,37 @@ public struct DayOfWeek: Codable, Hashable, Identifiable {
         self.id = id
         self.name = name
         self.value = value
+    }
+}
+
+
+public enum DayOfWeekEnum: CaseIterable, Codable {
+    case monday
+    case sunday
+    
+    public static func dayOfWeekArray(for calendar: Calendar) -> [DayOfWeek] {
+        let weekdayEnum: DayOfWeekEnum = calendar.firstWeekday == 1 ? .sunday : .monday
+        switch weekdayEnum {
+        case .monday:
+            return [
+                DayOfWeek(name: "Mon", value: false),
+                DayOfWeek(name: "Tue", value: false),
+                DayOfWeek(name: "Wed", value: false),
+                DayOfWeek(name: "Thu", value: false),
+                DayOfWeek(name: "Fri", value: false),
+                DayOfWeek(name: "Sat", value: false),
+                DayOfWeek(name: "Sun", value: false)
+            ]
+        case .sunday:
+            return [
+                DayOfWeek(name: "Sun", value: false),
+                DayOfWeek(name: "Mon", value: false),
+                DayOfWeek(name: "Tue", value: false),
+                DayOfWeek(name: "Wed", value: false),
+                DayOfWeek(name: "Thu", value: false),
+                DayOfWeek(name: "Fri", value: false),
+                DayOfWeek(name: "Sat", value: false)
+            ]
+        }
     }
 }

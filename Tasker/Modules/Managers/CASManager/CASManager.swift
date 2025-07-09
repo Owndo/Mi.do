@@ -144,8 +144,6 @@ final class CASManager: CASManagerProtocol {
             return
         }
         
-        print("here")
-        
         let factory = ModelsFactory()
         
         saveModel(factory.create(.bestApp))

@@ -30,9 +30,10 @@ final class ModelsFactory {
                     createDate: Date.now.timeIntervalSince1970,
                     notificationDate: Double(calendar.date(bySetting: .hour, value: 9, of: now)!.timeIntervalSince1970),
                     repeatTask: .daily,
+                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                     done: [],
                     deleted: [],
-                    taskColor: .blue
+                    taskColor: .blue,
                 )
             )
         case .clearMind:
@@ -44,6 +45,7 @@ final class ModelsFactory {
                     createDate: Date.now.timeIntervalSince1970,
                     notificationDate: Double(calendar.date(bySetting: .hour, value: 21, of: now)!.timeIntervalSince1970),
                     repeatTask: .daily,
+                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                     done: [],
                     deleted: [],
                     taskColor: .lime
@@ -57,6 +59,7 @@ final class ModelsFactory {
                     info: "Mega task. Install the one app to rule them all. So... you did it",
                     createDate: Date.now.timeIntervalSince1970,
                     notificationDate: Date.now.timeIntervalSince1970,
+                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                     done: [CompleteRecord(completedFor: selectedDate, timeMark: Date.now.timeIntervalSince1970)],
                     deleted: [],
                     taskColor: .purple
@@ -71,6 +74,7 @@ final class ModelsFactory {
                     createDate: Date.now.timeIntervalSince1970,
                     notificationDate: Double(calendar.date(bySettingHour: 20, minute: 30, second: 0, of: now)!.timeIntervalSince1970),
                     repeatTask: .daily,
+                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                     done: [],
                     deleted: [],
                     taskColor: .mint
@@ -85,6 +89,7 @@ final class ModelsFactory {
                     createDate: Date.now.timeIntervalSince1970,
                     notificationDate: Double(calendar.date(bySetting: .hour, value: 14, of: now)!.timeIntervalSince1970),
                     repeatTask: .daily,
+                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                     done: [],
                     deleted: [],
                     taskColor: .red
@@ -100,6 +105,7 @@ final class ModelsFactory {
                     createDate: Date.now.timeIntervalSince1970,
                     notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: wedensday())!.timeIntervalSince1970),
                     repeatTask: .weekly,
+                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                     done: [],
                     deleted: [],
                     taskColor: .steelBlue
@@ -114,6 +120,7 @@ final class ModelsFactory {
                     createDate: Date.now.timeIntervalSince1970,
                     notificationDate: Double(calendar.date(bySetting: .hour, value: 7, of: saturday())!.timeIntervalSince1970),
                     repeatTask: .weekly,
+                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                     done: [],
                     deleted: [],
                     taskColor: .brown

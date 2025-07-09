@@ -46,7 +46,6 @@ final class DateManager: DateManagerProtocol {
     
     //MARK: - Init
     init() {
-        calendar.firstWeekday = firstDay
         initializeWeek()
     }
     

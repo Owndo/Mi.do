@@ -26,7 +26,7 @@ public struct WeekView: View {
         VStack {
             ZStack {
                 HStack {
-                    ForEach(1..<8) { index in
+                    ForEach(0..<7) { index in
                         if vm.isSelectedDayOfWeek(index) {
                             shape
                                 .fill(Color.backgroundTertiary)

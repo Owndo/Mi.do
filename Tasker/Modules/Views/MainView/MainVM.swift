@@ -53,6 +53,10 @@ public final class MainVM {
     private var isProcessingStop = false
     
     //MARK: Copmputed properties
+    
+    var calendar: Calendar {
+        dateManager.calendar
+    }
     var currentlyTime: Double {
         recordManager.currentlyTime
     }
@@ -146,6 +150,7 @@ public final class MainVM {
             info: "",
             audio: audioHash,
             notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
+            dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
             done: [],
             deleted: []
         ))

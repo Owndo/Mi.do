@@ -106,8 +106,9 @@ final class TaskManager: TaskManagerProtocol {
             title: task.title.isEmpty ? "New Task" : task.title,
             info: task.info,
             createDate: task.createDate,
+            dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
             done: [],
-            deleted: []
+            deleted: [],
         )
         
         filledTask.notificationDate = date.timeIntervalSince1970

@@ -37,14 +37,14 @@ final class MonthVM {
         dateManager.allMonths
     }
     
-    init() {
-        dateManager.initializeMonth()
-        scrollID = 1
-    }
-    
     func selectedDateChange(_ day: Date) {
         dateManager.selectedDateChange(day)
         dateManager.initializeWeek()
+    }
+    
+    func onAppear() {
+        dateManager.initializeMonth()
+        scrollID = 1
     }
     
     func calculateEmptyDay(for month: PeriodModel) -> Int {
@@ -65,16 +65,28 @@ final class MonthVM {
         calendar.isDate(day, inSameDayAs: today)
     }
     
+    func isSelectedDay(_ day: Date) -> Bool {
+        calendar.isDate(day, inSameDayAs: selectedDate)
+    }
+    
     func selectedDayIsToday() -> Bool {
         dateManager.selectedDayIsToday()
     }
     
     func backToTodayButtonTapped() {
         dateManager.backToToday()
+        scrollID = 1
+        dateManager.initializeMonth()
     }
     
     func closeScreenButtonTapped(path: inout NavigationPath, presentationDetens: inout PresentationDetent) {
         path.removeLast()
         presentationDetens = .fraction(0.96)
+    }
+    
+    func handleMonthAppeared(_ month: PeriodModel) {
+        if let last = allMonths.last, month.id >= last.id - 5 {
+            dateManager.appendMonthsForward()
+        }
     }
 }

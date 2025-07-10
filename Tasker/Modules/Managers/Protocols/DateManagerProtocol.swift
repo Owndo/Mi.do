@@ -23,6 +23,8 @@ public protocol DateManagerProtocol {
     func selectedDateChange(_ day: Date)
     func appendWeeksForward()
     func prependWeeksBackward()
+    func appendMonthsForward()
+    func appendMonthsBackward()
     /// Converte date to string
     func dateToString(for date: Date, format: String?, useForWeekView: Bool) -> String
     /// Combine date from selected date and notification date

@@ -54,6 +54,9 @@ public struct MonthView: View {
                                 }
                                 .padding(.top)
                             }
+                            .onAppear {
+                                vm.handleMonthAppeared(month)
+                            }
                             .padding(.top, 32)
                             .padding(.bottom, 12)
                             
@@ -72,13 +75,24 @@ public struct MonthView: View {
                                             vm.selectedDateChange(day)
                                             vm.closeScreenButtonTapped(path: &path, presentationDetens: &presentationDetens)
                                         } label: {
-                                            Text("\(day, format: .dateTime.day())")
-                                                .font(.system(.body, design: .rounded, weight: .medium))
-                                                .foregroundStyle(vm.isSameDay(day) ? .labelPrimary : .labelQuaternary)
-                                                .frame(maxWidth: .infinity)
-                                                .multilineTextAlignment(.center)
+                                            ZStack {
+                                                if vm.isSelectedDay(day) {
+                                                    Circle()
+                                                        .fill(.backgroundTertiary)
+                                                }
+                                                
+                                                SegmentedCircleView(date: day)
+                                                    .frame(width: 40, height: 40)
+                                                
+                                                Text("\(day, format: .dateTime.day())")
+                                                    .font(.system(.body, design: .rounded, weight: .medium))
+                                                    .foregroundStyle(vm.isSameDay(day) ? .labelPrimary : .labelQuaternary)
+                                                    .frame(maxWidth: .infinity)
+                                                    .multilineTextAlignment(.center)
+                                            }
                                         }
                                     }
+                                    .frame(width: 45, height: 45)
                                     .padding(.vertical, 14)
                                 }
                             }
@@ -86,9 +100,13 @@ public struct MonthView: View {
                     }
                     .scrollTargetLayout()
                 }
-                .scrollPosition(id: $vm.scrollID, anchor: .top)
+                .customBlurForContainer(colorScheme: colorScheme)
                 .scrollIndicators(.hidden)
                 .navigationBarBackButtonHidden()
+                .scrollPosition(id: $vm.scrollID, anchor: .top)
+            }
+            .onAppear {
+                vm.onAppear()
             }
         }
     }

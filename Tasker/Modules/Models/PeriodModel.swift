@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PeriodModel: Identifiable {
+public struct PeriodModel: Identifiable, Equatable, Hashable {
     public var id: Int
     public var date: [Date]
     public var name: String?

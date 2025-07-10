@@ -78,12 +78,7 @@ final class DateManager: DateManagerProtocol {
     func initializeMonth() {
         allMonths.removeAll()
         //MARK: Previous 4 weeks
-        for i in (1...4).reversed() {
-            let month = calendar.date(byAdding: .month, value: -i, to: selectedDate)!
-            let newMonth = generateMonth(for: month)
-            let name = getMonthName(from: month)
-            allMonths.append(PeriodModel(id: -i, date: newMonth, name: name))
-        }
+        initPreviousMonths()
         
         let name = getMonthName(from: selectedDate)
         allMonths.append(PeriodModel(id: 1, date: generateMonth(for: selectedDate), name: name))
@@ -97,6 +92,15 @@ final class DateManager: DateManagerProtocol {
             allMonths.append(PeriodModel(id: idNumber, date: newMonth, name: name))
             idNumber += 1
         }
+    }
+    
+    func initPreviousMonths() {
+            for i in (1...120).reversed() {
+                let month = calendar.date(byAdding: .month, value: -i, to: selectedDate)!
+                let newMonth = generateMonth(for: month)
+                let name = getMonthName(from: month)
+                allMonths.append(PeriodModel(id: -i, date: newMonth, name: name))
+            }
     }
     
     
@@ -121,18 +125,18 @@ final class DateManager: DateManagerProtocol {
     
     private func generateMonth(for date: Date) -> [Date] {
         var dates: [Date] = []
-
+        
         guard let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
               let range = calendar.range(of: .day, in: .month, for: startOfMonth) else {
             return []
         }
-
+        
         for day in range {
             if let dayDate = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth) {
                 dates.append(dayDate)
             }
         }
-
+        
         return dates
     }
     
@@ -143,7 +147,7 @@ final class DateManager: DateManagerProtocol {
         formatter.dateFormat = "LLLL"
         return formatter.string(from: date).capitalized
     }
-
+    
     
     func appendWeeksForward() {
         guard let lastWeekStart = allWeeks.last?.date.first else { return }
@@ -160,6 +164,36 @@ final class DateManager: DateManagerProtocol {
             let weekStart = calendar.date(byAdding: .weekOfYear, value: -i, to: firstWeekStart)!
             let newWeek = generateWeek(for: weekStart)
             allWeeks.insert(PeriodModel(id: allWeeks.first!.id - 1, date: newWeek), at: 0)
+        }
+    }
+    
+    func appendMonthsBackward() {
+        guard let firstMonthStart = allMonths.first?.date.first,
+              let firstID = allMonths.first?.id else { return }
+        
+        var newMonths: [PeriodModel] = []
+        
+        for i in (1...24).reversed() {
+            let offset = -i
+            let monthStart = calendar.date(byAdding: .month, value: offset, to: firstMonthStart)!
+            let newMonth = generateMonth(for: monthStart)
+            let nameOfMonth = getMonthName(from: monthStart)
+            let newID = firstID + offset
+            newMonths.append(PeriodModel(id: newID, date: newMonth, name: nameOfMonth))
+        }
+        
+        allMonths.insert(contentsOf: newMonths, at: 0)
+    }
+    
+    
+    func appendMonthsForward() {
+        guard let lastMonthStart = allMonths.last?.date.first else { return }
+        for i in 1...24 {
+            let monthStart = calendar.date(byAdding: .month, value: i, to: lastMonthStart)!
+            let newMonth = generateMonth(for: monthStart)
+            let nameOfMonth = getMonthName(from: monthStart)
+            let nextID = (allMonths.last?.id ?? 0) + 1
+            allMonths.append(PeriodModel(id: nextID, date: newMonth, name: nameOfMonth))
         }
     }
     

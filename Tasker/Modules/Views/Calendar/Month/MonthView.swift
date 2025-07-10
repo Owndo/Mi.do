@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct MonthView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) var dismissButton
     
     @State private var vm = MonthVM()
     

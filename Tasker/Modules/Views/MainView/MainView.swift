@@ -35,6 +35,9 @@ public struct MainView: View {
             }
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
+                    .sheet(isPresented: $showingAlert) {
+                        Text("Profile view")
+                    }
             }
             .navigationDestination(for: MainVM.Destination.self) { destination in
                 switch destination {
@@ -114,17 +117,17 @@ public struct MainView: View {
         .sheet(item: $vm.model) { model in
             TaskView(mainModel: model)
         }
-        .alert("Easy there!", isPresented: $showingAlert) {
-            Button {
-                showingAlert = false
-            } label: {
-                Text("OKAAAAY🤬")
-                    .tint(.black)
-            }
-            .tint(.black)
-        } message: {
-            Text("We can't keep up with your speed. Let's slow it down a bit.")
-        }
+        //        .alert("Easy there!", isPresented: $showingAlert) {
+        //            Button {
+        //                showingAlert = false
+        //            } label: {
+        //                Text("OKAAAAY🤬")
+        //                    .tint(.black)
+        //            }
+        //            .tint(.black)
+        //        } message: {
+        //            Text("We can't keep up with your speed. Let's slow it down a bit.")
+        //        }
         .alert(item: $vm.alert) { alert in
             alert.alert
         }

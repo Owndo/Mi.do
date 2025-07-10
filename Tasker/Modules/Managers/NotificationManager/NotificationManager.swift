@@ -54,6 +54,7 @@ final class NotificationManager: NotificationManagerProtocol {
             for task in tasks {
                 scheduleNotification(task)
             }
+            
             selectedDay = calendar.date(byAdding: .day, value: 1, to: selectedDay)!
             countOfDay += 1
         }
@@ -105,7 +106,6 @@ final class NotificationManager: NotificationManagerProtocol {
             return
         }
         
-        print("Here's")
         createRepeatNotification(task)
     }
     
@@ -145,7 +145,6 @@ final class NotificationManager: NotificationManagerProtocol {
         notificationContent.userInfo = ["taskID": task.id]
         
         if task.repeatTask == .dayOfWeek {
-            
             let selectedDayWeekday = calendar.dateComponents([.weekday], from: selectedDay).weekday!
             
             guard !checkIsTaskActualyForThisDay(task: task) else { return }
@@ -363,51 +362,24 @@ final class NotificationManager: NotificationManagerProtocol {
     
     /// Check diff between day of week on current and selected week
     private func checkDiffBetweenDayOfWeek(dateFromCurrentWeek: Date, dateFromSelectedWeek: Date, task: TaskModel) -> Bool {
+        var dateComponents = DateComponents()
+        dateComponents.year = calendar.component(.year, from: dateFromSelectedWeek)
+        dateComponents.month = calendar.component(.month, from: dateFromSelectedWeek)
+        dateComponents.day = calendar.component(.day, from: dateFromSelectedWeek)
+        dateComponents.hour = calendar.component(.hour, from: Date(timeIntervalSince1970: task.notificationDate))
+        dateComponents.minute = calendar.component(.minute, from: Date(timeIntervalSince1970: task.notificationDate))
         
-        guard !checkIsTaskActualyForThisDay(task: task) else {
-            return false
-        }
+        let dateFromSelectedWeek = calendar.date(from: dateComponents)!
         
-        let currentWeek = calendar.component(.weekOfYear, from: dateFromCurrentWeek)
-        let selectedWeek = calendar.component(.weekOfYear, from: dateFromSelectedWeek)
         
-        var dayForCurrentWeek = DateComponents()
-        dayForCurrentWeek.weekday = calendar.component(.weekday, from: dateFromCurrentWeek)
-        
-        var dayForSelectedWeek = DateComponents()
-        dayForSelectedWeek.weekday = calendar.component(.weekday, from: dateFromSelectedWeek)
-        
-        if currentWeek == selectedWeek {
+        if dateFromCurrentWeek.timeIntervalSince1970 + 604_800 > dateFromSelectedWeek.timeIntervalSince1970 {
+            print(dateFromCurrentWeek.timeIntervalSince1970 + 604_800)
+            print(dateFromSelectedWeek.timeIntervalSince1970)
             return true
-        } else if currentWeek + 1 == selectedWeek {
-            if dayForCurrentWeek.weekday! > dayForSelectedWeek.weekday! {
-                return true
-            } else if dayForCurrentWeek.weekday! == dayForSelectedWeek.weekday! {
-                let currentHour = calendar.component(.hour, from: now)
-                let currentMinutes = calendar.component(.minute, from: now)
-                
-                let taskHour = calendar.component(.hour, from: Date(timeIntervalSince1970: task.notificationDate))
-                let taskMinute = calendar.component(.minute, from: Date(timeIntervalSince1970: task.notificationDate))
-                
-                if currentHour > taskHour {
-                    return true
-                } else if currentHour == taskHour {
-                    if currentMinutes > taskMinute {
-                        return true
-                    } else {
-                        return false
-                    }
-                } else {
-                    return false
-                }
-            } else {
-                return false
-            }
         } else {
             return false
         }
     }
-    
     /// Check that's task's hours and minutes components more than now for today, not for future
     private func isTaskTimeAfterCurrent(_ task: TaskModel, for day: Date) -> Bool {
         

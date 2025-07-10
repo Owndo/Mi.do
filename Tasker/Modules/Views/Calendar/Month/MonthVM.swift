@@ -43,7 +43,6 @@ final class MonthVM {
     }
     
     func onAppear() {
-        dateManager.initializeMonth()
         scrollID = 1
     }
     

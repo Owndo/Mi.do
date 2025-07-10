@@ -95,7 +95,7 @@ final class DateManager: DateManagerProtocol {
     }
     
     func initPreviousMonths() {
-            for i in (1...120).reversed() {
+            for i in (1...60).reversed() {
                 let month = calendar.date(byAdding: .month, value: -i, to: selectedDate)!
                 let newMonth = generateMonth(for: month)
                 let name = getMonthName(from: month)

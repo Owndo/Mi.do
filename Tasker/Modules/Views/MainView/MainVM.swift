@@ -186,7 +186,7 @@ public final class MainVM {
     //MARK: - Calendar
     func calendarButtonTapped() {
         path.append(Destination.calendar)
-        presentationPosition = .fraction(0.20)
+        mainViewIsOpen = false
     }
     
     private func extractBaseId(from fullId: String) -> String {

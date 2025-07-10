@@ -28,7 +28,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     let notificationContent = UNMutableNotificationContent()
     var notificationCenter = UNUserNotificationCenter.current()
-    let authorizationOption: UNAuthorizationOptions = [.alert, .badge, .carPlay, .sound, .providesAppNotificationSettings, .provisional]
+    let authorizationOption: UNAuthorizationOptions = [.alert, .badge, .carPlay, .sound, .providesAppNotificationSettings]
     
     var alert: AlertModel?
     

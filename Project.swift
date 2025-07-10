@@ -42,7 +42,7 @@ let project = Project(
         ),
         .module(name: "BlockSet", dependencies: []),
         .module(name: "Models", dependencies: [.target(name: "BlockSet")]),
-        .module(name: "UIComponents", dependencies: [.target(name: "Models")]),
+        .module(name: "UIComponents", dependencies: [.target(name: "Models"), .target(name: "Managers")]),
         .module(name: "Managers", dependencies: [.target(name: "Models")]),
         .target(
             name: "ManagersTests",

@@ -41,7 +41,7 @@ public struct MainView: View {
                 case .main:
                     MainView(vm: vm)
                 case .calendar:
-                    MonthView(presentationDetents: $vm.presentationPosition, path: $vm.path)
+                    MonthView(mainViewIsOpen: $vm.mainViewIsOpen, path: $vm.path)
                 }
             }
             .toolbar {

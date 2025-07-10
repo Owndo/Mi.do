@@ -79,9 +79,9 @@ final class MonthVM {
         dateManager.initializeMonth()
     }
     
-    func closeScreenButtonTapped(path: inout NavigationPath, presentationDetens: inout PresentationDetent) {
+    func closeScreenButtonTapped(path: inout NavigationPath, mainViewIsOpen: inout Bool) {
         path.removeLast()
-        presentationDetens = .fraction(0.96)
+        mainViewIsOpen = true
     }
     
     func handleMonthAppeared(_ month: PeriodModel) {

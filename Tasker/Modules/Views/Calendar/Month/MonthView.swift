@@ -12,11 +12,11 @@ public struct MonthView: View {
     
     @State private var vm = MonthVM()
     
-    @Binding var presentationDetens: PresentationDetent
+    @Binding var mainViewIsOpen: Bool
     @Binding var path: NavigationPath
     
-    public init(presentationDetents: Binding<PresentationDetent>, path: Binding<NavigationPath>) {
-        self._presentationDetens = presentationDetents
+    public init(mainViewIsOpen: Binding<Bool>, path: Binding<NavigationPath>) {
+        self._mainViewIsOpen = mainViewIsOpen
         self._path = path
     }
     
@@ -73,7 +73,7 @@ public struct MonthView: View {
                                     VStack {
                                         Button {
                                             vm.selectedDateChange(day)
-                                            vm.closeScreenButtonTapped(path: &path, presentationDetens: &presentationDetens)
+                                            vm.closeScreenButtonTapped(path: &path, mainViewIsOpen: &mainViewIsOpen)
                                         } label: {
                                             ZStack {
                                                 if vm.isSelectedDay(day) {
@@ -116,7 +116,7 @@ public struct MonthView: View {
     private func CustomToolBar() -> some View {
         HStack {
             Button {
-                vm.closeScreenButtonTapped(path: &path, presentationDetens: &presentationDetens)
+                vm.closeScreenButtonTapped(path: &path, mainViewIsOpen: &mainViewIsOpen)
             } label: {
                 HStack {
                     Image(systemName: "chevron.left")
@@ -156,5 +156,5 @@ public struct MonthView: View {
 }
 
 #Preview {
-    MonthView(presentationDetents: .constant(.fraction(0.20)), path: .constant(NavigationPath()))
+    MonthView(mainViewIsOpen: .constant(true), path: .constant(NavigationPath()))
 }

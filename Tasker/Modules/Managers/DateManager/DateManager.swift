@@ -47,6 +47,7 @@ final class DateManager: DateManagerProtocol {
     //MARK: - Init
     init() {
         initializeWeek()
+        initializeMonth()
     }
     
     func selectedDateChange( _ day: Date) {

@@ -185,8 +185,8 @@ public final class MainVM {
     
     //MARK: - Calendar
     func calendarButtonTapped() {
-        path.append(Destination.calendar)
         presentationPosition = .fraction(0.20)
+        path.append(Destination.calendar)
     }
     
     private func extractBaseId(from fullId: String) -> String {
@@ -217,6 +217,7 @@ public final class MainVM {
     }
     
     private func checkNotificationPermission() {
+        print("here")
         Task {
             await notificationManager.checkPermission()
             alert = notificationManager.alert

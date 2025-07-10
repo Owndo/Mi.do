@@ -55,6 +55,9 @@ public struct WeekView: View {
             TodayButton()
                 .padding(.top, 8)
         }
+        .onAppear {
+            vm.dateManager.initializeWeek()
+        }
         .padding(.bottom, 2)
         .animation(.default, value: vm.indexForWeek)
         .animation(.default, value: vm.selectedDate)

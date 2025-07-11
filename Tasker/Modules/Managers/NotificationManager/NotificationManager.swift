@@ -77,6 +77,8 @@ final class NotificationManager: NotificationManagerProtocol {
         }
         
         guard hasTaskCompleteOrDeleteMarkersInFuture(task: task) else {
+            print("here")
+            
             guard checkTaskInCorrectRange(task: task) else {
                 createSpecificSingleNotification(task, date: selectedDay)
                 return
@@ -144,10 +146,10 @@ final class NotificationManager: NotificationManagerProtocol {
         notificationContent.body = task.info
         notificationContent.userInfo = ["taskID": task.id]
         
+        guard !checkIsTaskActualyForThisDay(task: task) else { return }
+        
         if task.repeatTask == .dayOfWeek {
             let selectedDayWeekday = calendar.dateComponents([.weekday], from: selectedDay).weekday!
-            
-            guard !checkIsTaskActualyForThisDay(task: task) else { return }
             
             guard let matchingDay = task.dayOfWeek.first(where: { day in
                 let dayWeekdayValue = getWeekdayValue(for: day.name)
@@ -242,7 +244,7 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let dateForNotification = calendar.date(from: dateComponents)!
         
-        let updatedID = task.id + ".\(task.createDate)"
+        let updatedID = task.id + ".\(UUID().uuidString)"
         
         notificationContent.title = task.title
         notificationContent.body = task.info
@@ -431,35 +433,47 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: Task's in correct range
     private func checkTaskInCorrectRange(task: TaskModel) -> Bool {
+        var dateComponents = DateComponents()
+        dateComponents.year = calendar.component(.year, from: selectedDay)
+        dateComponents.month = calendar.component(.month, from: selectedDay)
+        dateComponents.day = calendar.component(.day, from: selectedDay)
+        dateComponents.hour = calendar.component(.hour, from: Date(timeIntervalSince1970: task.notificationDate))
+        dateComponents.minute = calendar.component(.minute, from: Date(timeIntervalSince1970: task.notificationDate))
+        
+        let notificationDate = calendar.date(from: dateComponents)!.timeIntervalSince1970
+        
+        print("Notification date - \(Date(timeIntervalSince1970: notificationDate))")
+        print("Current date - \(now)")
+        
         switch task.repeatTask {
         case .never:
             return true
         case .daily:
-            if now.timeIntervalSince1970 + 86_400 > task.notificationDate {
+            if now.timeIntervalSince1970 + 86_400 > notificationDate {
                 return true
             } else {
                 return false
             }
         case .weekly:
-            if  now.timeIntervalSince1970 + 604_800 > task.notificationDate {
+            if  now.timeIntervalSince1970 + 604_800 > notificationDate {
                 return true
             } else {
                 return false
             }
         case .monthly:
-            if now.timeIntervalSince1970 + 2_592_000 > task.notificationDate {
+            if now.timeIntervalSince1970 + 2_592_000 > notificationDate {
                 return true
             } else {
                 return false
             }
         case .yearly:
-            if now.timeIntervalSince1970 + 31_536_000 > task.notificationDate {
+            if now.timeIntervalSince1970 + 31_536_000 > notificationDate {
                 return true
             } else {
                 return false
             }
         case .dayOfWeek:
-            if now.timeIntervalSince1970 + 604_800 > task.notificationDate {
+            if now.timeIntervalSince1970 + 604_800 > notificationDate {
                 return true
             } else {
                 return false

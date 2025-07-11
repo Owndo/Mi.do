@@ -18,6 +18,7 @@ import Managers
 
 public struct TaskDeleteDialog: ViewModifier {
     @Injected(\.storageManager) private var storageManager
+    @Injected(\.notificationManager) private var notificationManager
     
     @Binding var isPresented: Bool
     
@@ -33,10 +34,7 @@ public struct TaskDeleteDialog: ViewModifier {
                 if isSingleTask {
                     Button(role: .destructive) {
                         Task {
-                            dismissAction?()
-                            storageManager.deleteAudiFromDirectory(hash: task.value.audio ?? "")
-                            try await Task.sleep(nanoseconds: 50_000_000)
-                            await onDelete(task, true)
+                          await deleteTask()
                         }
                     } label: {
                         Text("Delete this task")
@@ -47,6 +45,7 @@ public struct TaskDeleteDialog: ViewModifier {
                             dismissAction?()
                             try await Task.sleep(nanoseconds: 50_000_000)
                             await onDelete(task, false)
+                            await notificationManager.createNotification()
                         }
                     } label: {
                         Text("Delete only this task")
@@ -54,10 +53,7 @@ public struct TaskDeleteDialog: ViewModifier {
                     
                     Button(role: .destructive) {
                         Task {
-                            dismissAction?()
-                            storageManager.deleteAudiFromDirectory(hash: task.value.audio ?? "")
-                            try await Task.sleep(nanoseconds: 50_000_000)
-                            await onDelete(task, true)
+                            await deleteTask()
                         }
                     } label: {
                         Text("Delete all of these tasks")
@@ -66,6 +62,14 @@ public struct TaskDeleteDialog: ViewModifier {
             } message: {
                 Text(message)
             }
+    }
+    
+    private func deleteTask() async {
+        dismissAction?()
+        storageManager.deleteAudiFromDirectory(hash: task.value.audio ?? "")
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        await onDelete(task, true)
+        await notificationManager.createNotification()
     }
 }
 

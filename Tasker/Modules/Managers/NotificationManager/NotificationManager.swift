@@ -373,8 +373,6 @@ final class NotificationManager: NotificationManagerProtocol {
         
         
         if dateFromCurrentWeek.timeIntervalSince1970 + 604_800 > dateFromSelectedWeek.timeIntervalSince1970 {
-            print(dateFromCurrentWeek.timeIntervalSince1970 + 604_800)
-            print(dateFromSelectedWeek.timeIntervalSince1970)
             return true
         } else {
             return false

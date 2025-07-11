@@ -38,19 +38,13 @@ public struct MonthView: View {
                             MonthInfoView(month)
                             
                             LazyVGrid(columns: vm.columns) {
-                                let weekday = vm.calculateEmptyDay(for: month)
-                                
-                                ForEach(0..<weekday, id: \.self) { _ in
-                                    Text("")
-                                }
-                                .padding(.vertical, 14)
+                                EmptyDays(month)
                                 
                                 MonthRowView(month.date)
                                 
                             }
                         }
                     }
-                    .scrollTargetLayout()
                 }
                 .customBlurForContainer(colorScheme: colorScheme)
                 .scrollIndicators(.hidden)
@@ -119,6 +113,10 @@ public struct MonthView: View {
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelSecondary)
                 
+                Text(vm.currentYear(month) ?? "")
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(.labelSecondary)
+                
                 Spacer()
             }
             .padding(.leading, 16)
@@ -140,6 +138,19 @@ public struct MonthView: View {
         .padding(.bottom, 12)
     }
     
+    
+    //MARK: - Empty Days
+    @ViewBuilder
+    private func EmptyDays(_ month: PeriodModel) -> some View {
+        let weekday = vm.calculateEmptyDay(for: month)
+        
+        ForEach(0..<weekday, id: \.self) { _ in
+            Text("")
+        }
+        .padding(.vertical, 14)
+    }
+    
+    //MARK: - Days at month
     @ViewBuilder
     private func MonthRowView(_ dates: [Date]) -> some View {
         ForEach(dates, id: \.self) { day in

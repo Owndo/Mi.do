@@ -172,6 +172,15 @@ final class NotificationManager: NotificationManagerProtocol {
             var date = calendar.dateComponents([.hour, .minute], from: notificationDate)
             date.weekday = selectedDayWeekday
             
+            if task.voiceMode == false {
+                notificationContent.sound = .default
+            } else {
+                if let audio = task.audio {
+                    _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                    notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                }
+            }
+            
             let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             
@@ -203,6 +212,15 @@ final class NotificationManager: NotificationManagerProtocol {
                 trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
             case .dayOfWeek:
                 break
+            }
+            
+            if task.voiceMode == false {
+                notificationContent.sound = .default
+            } else {
+                if let audio = task.audio {
+                    _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                    notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                }
             }
             
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)

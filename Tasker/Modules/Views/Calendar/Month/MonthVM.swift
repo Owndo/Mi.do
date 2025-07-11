@@ -78,6 +78,17 @@ final class MonthVM {
         dateManager.initializeMonth()
     }
     
+    func currentYear(_ month: PeriodModel) -> String? {
+        let day = month.date.first!
+        let year = calendar.component(.year, from: day)
+        
+        if year == calendar.component(.year, from: today) {
+            return nil
+        } else {
+            return String(year)
+        }
+    }
+    
     func closeScreenButtonTapped(path: inout NavigationPath, mainViewIsOpen: inout Bool) {
         path.removeLast()
         mainViewIsOpen = true

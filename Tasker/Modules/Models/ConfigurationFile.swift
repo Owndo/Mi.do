@@ -8,7 +8,7 @@
 import Foundation
 
 public struct ConfigurationFile {
-    public var appVersion = "1.0.0"
+    public var appVersion = "0.7.0"
     
     public init() {}
 }

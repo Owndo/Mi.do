@@ -118,7 +118,7 @@ final class ModelsFactory {
                     title: "📚 Read Something That’s Not a Screen",
                     info: "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge.",
                     createDate: Date.now.timeIntervalSince1970,
-                    notificationDate: Double(calendar.date(bySetting: .hour, value: 7, of: saturday())!.timeIntervalSince1970),
+                    notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: saturday())!.timeIntervalSince1970),
                     repeatTask: .weekly,
                     dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                     done: [],

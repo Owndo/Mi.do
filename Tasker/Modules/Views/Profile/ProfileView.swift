@@ -20,55 +20,72 @@ public struct ProfileView: View {
     public init() {}
     
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: $vm.path) {
             ZStack {
                 colorScheme.backgroundColor.hexColor()
                     .ignoresSafeArea()
                 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        
-                        ProfilePhoto()
-                            .padding(.bottom, 14)
-                        
-                        TextField("Enter your name here", text: $profileName)
-                            .font(.system(.title2, design: .rounded, weight: .semibold))
-                            .foregroundStyle(.labelPrimary)
-                            .multilineTextAlignment(.center)
-                            .tint(colorScheme.elementColor.hexColor())
-                        
-                        TaskStatic()
-                            .padding(.top, 20)
-                            .padding(.bottom, 28)
-                        
-                        ButtonsList()
-                            .padding(.bottom, 28)
-                        
-                        Text("App Version \(ConfigurationFile().appVersion)")
-                            .font(.system(.subheadline, design: .default, weight: .regular))
-                            .foregroundStyle(.labelTertiary)
-                            .padding(.bottom, 37)
-                        
-                    }
-                    .padding(.top, 25)
-                    .padding(.horizontal, 16)
-                }
-                .scrollDismissesKeyboard(.immediately)
-                .scrollIndicators(.hidden)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            dismissButton()
-                        } label: {
-                            Text("Close")
-                                .foregroundStyle(colorScheme.elementColor.hexColor())
-                                .fixedSize()
-                        }
-                    }
-                }
-                .toolbarBackground(colorScheme.backgroundColor.hexColor())
+                ScrollViewContent()
             }
+            .navigationDestination(for: ProfileVM.ProfileDestination.self) { desctination in
+                switch desctination {
+                case .articles:
+                    ArticlesView()
+                case .history:
+                    HistoryView()
+                case .appearance:
+                    AppearanceView(path: $vm.path)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismissButton()
+                    } label: {
+                        Text("Close")
+                            .font(.system(.body, design: .rounded, weight: .medium))
+                            .foregroundStyle(colorScheme.elementColor.hexColor())
+                            .fixedSize()
+                    }
+                }
+            }
+            .toolbarBackground(colorScheme.backgroundColor.hexColor())
         }
+    }
+    
+    //MARK: - Scroll View
+    @ViewBuilder
+    private func ScrollViewContent() -> some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                
+                ProfilePhoto()
+                    .padding(.bottom, 14)
+                
+                TextField("Enter your name here", text: $profileName)
+                    .font(.system(.title2, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.labelPrimary)
+                    .multilineTextAlignment(.center)
+                    .tint(colorScheme.elementColor.hexColor())
+                
+                TaskStatic()
+                    .padding(.top, 20)
+                    .padding(.bottom, 28)
+                
+                ButtonsList()
+                    .padding(.bottom, 28)
+                
+                Text("App Version \(ConfigurationFile().appVersion)")
+                    .font(.system(.subheadline, design: .default, weight: .regular))
+                    .foregroundStyle(.labelTertiary)
+                    .padding(.bottom, 37)
+                
+            }
+            .padding(.top, 25)
+            .padding(.horizontal, 16)
+        }
+        .scrollDismissesKeyboard(.immediately)
+        .scrollIndicators(.hidden)
     }
     
     //MARK: - Photo
@@ -204,7 +221,7 @@ public struct ProfileView: View {
     private func ButtonsList() -> some View {
         VStack {
             ButtonRow(icon: "text.rectangle.page", title: "Productivity articles") {
-                
+                vm.goTo(.articles)
             }
             
             CustomDivider()
@@ -212,7 +229,7 @@ public struct ProfileView: View {
                 .padding(.leading, 38)
             
             ButtonRow(icon: "clock.arrow.circlepath", title: "Task history") {
-                
+                vm.goTo(.history)
             }
             
             CustomDivider()
@@ -220,7 +237,7 @@ public struct ProfileView: View {
                 .padding(.leading, 38)
             
             ButtonRow(icon: "swirl.circle.righthalf.filled", title: "Appearance") {
-                
+                vm.goTo(.appearance)
             }
             
             CustomDivider()
@@ -288,7 +305,7 @@ public struct ProfileView: View {
                 
             } else {
                 Button {
-                    
+                    action()
                 } label: {
                     Image(systemName: actionIcon)
                         .padding(.vertical, 12)

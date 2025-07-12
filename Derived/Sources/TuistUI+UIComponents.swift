@@ -67,6 +67,70 @@ public extension SwiftUI.Color {
 }
 #endif
 
+public struct UIComponentsImages: Sendable {
+  public let name: String
+
+  #if os(macOS)
+  public typealias Image = NSImage
+  #elseif os(iOS) || os(tvOS) || os(watchOS) || os(visionOS)
+  public typealias Image = UIImage
+  #endif
+
+  public var image: Image {
+    let bundle = Bundle.module
+    #if os(iOS) || os(tvOS) || os(visionOS)
+    let image = Image(named: name, in: bundle, compatibleWith: nil)
+    #elseif os(macOS)
+    let image = bundle.image(forResource: NSImage.Name(name))
+    #elseif os(watchOS)
+    let image = Image(named: name)
+    #endif
+    guard let result = image else {
+      fatalError("Unable to load image asset named \\(name).")
+    }
+    return result
+  }
+
+  #if canImport(SwiftUI)
+  @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+  public var swiftUIImage: SwiftUI.Image {
+    SwiftUI.Image(self)
+  }
+  #endif
+}
+
+public extension UIImage {
+    convenience init(resource asset: UIComponentsImages) {
+        let bundle = Bundle.module
+        self.init(named: asset.name, in: bundle, compatibleWith: nil)!
+    }
+    
+    convenience init?(assetName: String) {
+        let bundle = Bundle.module
+        self.init(named: assetName, in: bundle, compatibleWith: nil)
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+  init(_ asset: UIComponentsImages) {
+    let bundle = Bundle.module
+    self.init(asset.name, bundle: bundle)
+  }
+
+  init(_ asset: UIComponentsImages, label: Text) {
+    let bundle = Bundle.module
+    self.init(asset.name, bundle: bundle, label: label)
+  }
+
+  init(decorative asset: UIComponentsImages) {
+    let bundle = Bundle.module
+    self.init(decorative: asset.name, bundle: bundle)
+  }
+}
+#endif
+
 
 
 // MARK: - Colors
@@ -784,6 +848,117 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 }
 #endif
 
+// MARK: - Images
+public extension UIComponentsImages.Image {
+    static var colorful: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Appearance/colorful", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Appearance/colorful"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Appearance/colorful")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var colorful: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Appearance/colorful", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
+    static var dark: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Appearance/dark", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Appearance/dark"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Appearance/dark")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var dark: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Appearance/dark", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
+    static var light: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Appearance/light", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Appearance/light"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Appearance/light")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var light: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Appearance/light", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
+    static var minimal: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Appearance/minimal", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Appearance/minimal"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Appearance/minimal")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var minimal: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Appearance/minimal", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
+    static var system: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Appearance/system", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Appearance/system"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Appearance/system")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var system: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Appearance/system", bundle: bundle)
+    }
+}
+#endif
 
 
 // swiftlint:enable all

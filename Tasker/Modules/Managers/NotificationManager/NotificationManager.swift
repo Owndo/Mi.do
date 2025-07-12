@@ -134,7 +134,6 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
-        //        print(request)
         removeDeliveredNotification()
     }
     
@@ -187,7 +186,6 @@ final class NotificationManager: NotificationManagerProtocol {
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             
             notificationCenter.add(request)
-            print(request)
         } else {
             guard !uniqueID.contains(uniqueNotificationID) else { return }
             
@@ -316,7 +314,7 @@ final class NotificationManager: NotificationManagerProtocol {
             }
         case .notDetermined:
             do {
-                try await notificationCenter.requestAuthorization(options: [authorizationOption])
+                try await notificationCenter.requestAuthorization(options: authorizationOption)
             } catch {
                 print("Couldn't ask for notification permission")
             }

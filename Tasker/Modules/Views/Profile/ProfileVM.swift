@@ -21,6 +21,25 @@ final class ProfileVM {
     @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
     
+    var path = NavigationPath()
+    
+    enum ProfileDestination: Hashable {
+        case articles
+        case history
+        case appearance
+    }
+    
+    func goTo(_ destination: ProfileDestination) {
+        switch destination {
+        case .articles:
+            path.append(destination)
+        case .history:
+            path.append(destination)
+        case .appearance:
+            path.append(destination)
+        }
+    }
+    
     var calendar: Calendar {
         dateManager.calendar
     }

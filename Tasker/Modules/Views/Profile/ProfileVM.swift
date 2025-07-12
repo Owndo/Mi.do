@@ -29,6 +29,9 @@ final class ProfileVM {
         dateManager.currentTime
     }
     
+    var firstWeekday: String {
+        calendar.firstWeekday == 1 ? "Sunday" : "Monday"
+    }
     
     func tasksState(of type: TypeOfTask) -> String {
         
@@ -72,5 +75,9 @@ final class ProfileVM {
         case today
         case week
         case completed
+    }
+    
+    func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
+        dateManager.calendar.firstWeekday = firstDayOfWeek
     }
 }

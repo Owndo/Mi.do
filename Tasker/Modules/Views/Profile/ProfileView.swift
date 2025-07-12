@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Models
 import UIComponents
 
 public struct ProfileView: View {
@@ -24,27 +25,36 @@ public struct ProfileView: View {
                 colorScheme.backgroundColor.hexColor()
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    
-                    ProfilePhoto()
-                        .padding(.bottom, 14)
-                    
-                    TextField("Enter your name here", text: $profileName)
-                        .font(.system(.title2, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelPrimary)
-                        .multilineTextAlignment(.center)
-                        .tint(colorScheme.elementColor.hexColor())
-                    
-                    TaskStatic()
-                        .padding(.top, 20)
-                    
-                    
-                    
-                    Spacer()
-                    
+                ScrollView {
+                    VStack(spacing: 0) {
+                        
+                        ProfilePhoto()
+                            .padding(.bottom, 14)
+                        
+                        TextField("Enter your name here", text: $profileName)
+                            .font(.system(.title2, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.labelPrimary)
+                            .multilineTextAlignment(.center)
+                            .tint(colorScheme.elementColor.hexColor())
+                        
+                        TaskStatic()
+                            .padding(.top, 20)
+                            .padding(.bottom, 28)
+                        
+                        ButtonsList()
+                            .padding(.bottom, 28)
+                        
+                        Text("App Version \(ConfigurationFile().appVersion)")
+                            .font(.system(.subheadline, design: .default, weight: .regular))
+                            .foregroundStyle(.labelTertiary)
+                            .padding(.bottom, 37)
+                        
+                    }
+                    .padding(.top, 25)
+                    .padding(.horizontal, 16)
                 }
-                .padding(.top, 25)
-                .padding(.horizontal, 16)
+                .scrollDismissesKeyboard(.immediately)
+                .scrollIndicators(.hidden)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button {
@@ -52,19 +62,21 @@ public struct ProfileView: View {
                         } label: {
                             Text("Close")
                                 .foregroundStyle(colorScheme.elementColor.hexColor())
+                                .fixedSize()
                         }
                     }
                 }
+                .toolbarBackground(colorScheme.backgroundColor.hexColor())
             }
         }
     }
-    
     
     //MARK: - Photo
     @ViewBuilder
     private func ProfilePhoto() -> some View {
         ZStack {
             Image(systemName: "person.crop.circle.badge.plus")
+                .font(.system(size: 28))
                 .foregroundStyle(.labelQuaternary)
                 .background(
                     Circle()
@@ -146,8 +158,7 @@ public struct ProfileView: View {
             
             Spacer()
             
-            RoundedRectangle(cornerRadius: 1)
-                .fill(.labelQuaternary)
+            CustomDivider()
                 .frame(maxWidth: 1, maxHeight: .infinity)
                 .ignoresSafeArea()
             
@@ -157,8 +168,7 @@ public struct ProfileView: View {
             
             Spacer()
             
-            RoundedRectangle(cornerRadius: 1)
-                .fill(.labelQuaternary)
+            CustomDivider()
                 .frame(maxWidth: 1, maxHeight: .infinity)
                 .ignoresSafeArea()
             
@@ -168,8 +178,7 @@ public struct ProfileView: View {
             
             Spacer()
         }
-        .padding(.top, 18)
-        .padding(.bottom, 12)
+        .padding(.vertical, 18)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(.backgroundTertiary)
@@ -188,6 +197,112 @@ public struct ProfileView: View {
                 .font(.system(.caption2, design: .rounded, weight: .regular))
                 .foregroundStyle(.labelSecondary)
         }
+    }
+    
+    //MARK: - Active buttons
+    @ViewBuilder
+    private func ButtonsList() -> some View {
+        VStack {
+            ButtonRow(icon: "text.rectangle.page", title: "Productivity articles") {
+                
+            }
+            
+            CustomDivider()
+                .frame(height: 1)
+                .padding(.leading, 38)
+            
+            ButtonRow(icon: "clock.arrow.circlepath", title: "Task history") {
+                
+            }
+            
+            CustomDivider()
+                .frame(height: 1)
+                .padding(.leading, 38)
+            
+            ButtonRow(icon: "swirl.circle.righthalf.filled", title: "Appearance") {
+                
+            }
+            
+            CustomDivider()
+                .frame(height: 1)
+                .padding(.leading, 38)
+            
+            ButtonRow(icon: "calendar.badge.checkmark", title: "The day the week started", actionIcon: "chevron.up.chevron.down") {
+            }
+            
+            CustomDivider()
+                .frame(height: 1)
+                .padding(.leading, 38)
+            
+            ButtonRow(icon: "lock.shield", title: "Privacy Policy") {
+                
+            }
+            
+            CustomDivider()
+                .frame(height: 1)
+                .padding(.leading, 38)
+            
+            ButtonRow(icon: "doc", title: "Terms of Use") {
+                
+            }
+        }
+    }
+    
+    //MARK: - Button Row
+    @ViewBuilder
+    private func ButtonRow(icon: String, title: String, actionIcon: String = "chevron.right", action: @escaping () -> Void) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundStyle(colorScheme.elementColor.hexColor())
+                .frame(width: 32, height: 32)
+            
+            Text(title)
+                .font(.system(.callout, design: .rounded, weight: .regular))
+            
+            Spacer()
+            
+            if actionIcon != "chevron.right" {
+                Menu {
+                    Button {
+                        vm.changeFirstDayOfWeek(1)
+                    } label: {
+                        Text("Sunday")
+                    }
+                    
+                    Button {
+                        vm.changeFirstDayOfWeek(2)
+                    } label: {
+                        Text("Monday")
+                    }
+                    
+                } label: {
+                    HStack {
+                        Text(vm.firstWeekday)
+                            .font(.system(.callout, design: .rounded, weight: .regular))
+                        
+                        Image(systemName: actionIcon)
+                            .padding(.vertical, 12)
+                    }
+                }
+                .tint(.labelQuaternary)
+                
+            } else {
+                Button {
+                    
+                } label: {
+                    Image(systemName: actionIcon)
+                        .padding(.vertical, 12)
+                }
+                .tint(.labelQuaternary)
+            }
+        }
+    }
+    
+    //MARK: - Custom divider
+    @ViewBuilder
+    private func CustomDivider() -> some View {
+        RoundedRectangle(cornerRadius: 1)
+            .fill(.separatorSecondary)
     }
 }
 

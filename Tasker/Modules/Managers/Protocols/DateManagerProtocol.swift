@@ -10,7 +10,7 @@ import Foundation
 import Models
 
 public protocol DateManagerProtocol {
-    var calendar: Calendar { get }
+    var calendar: Calendar { get set }
     var currentTime: Date { get }
     var selectedDate: Date { get set }
     var indexForWeek: Int { get set }

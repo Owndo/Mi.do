@@ -13,6 +13,7 @@ public protocol CASManagerProtocol {
     var activeTasks: [MainModel] { get }
     var completedTasks: [MainModel] { get }
     var deletedTasks: [MainModel] { get }
+    var allCompletedTasks: [MainModel] { get }
     var taskUpdateTrigger: Bool { get }
     
     func saveModel(_ task: MainModel)

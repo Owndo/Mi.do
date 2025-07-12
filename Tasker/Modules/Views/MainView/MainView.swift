@@ -10,7 +10,7 @@ import UIComponents
 import Calendar
 import ListView
 import TaskView
-import Combine
+import Profile
 
 public struct MainView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -36,7 +36,7 @@ public struct MainView: View {
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
                     .sheet(isPresented: $showingAlert) {
-                        Text("Profile view")
+                        ProfileView()
                     }
             }
             .navigationDestination(for: MainVM.Destination.self) { destination in

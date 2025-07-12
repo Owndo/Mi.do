@@ -67,6 +67,14 @@ let project = Project(
             ]
         ),
         .moduleView(
+            name: "Profile",
+            dependencies: [
+                .target(name: "Models"),
+                .target(name: "Managers"),
+                .target(name: "UIComponents")
+            ]
+        ),
+        .moduleView(
             name: "Calendar",
             dependencies: [
                 .target(name: "Models"),
@@ -100,6 +108,7 @@ let project = Project(
                 .target(name: "Calendar"),
                 .target(name: "ListView"),
                 .target(name: "TaskView"),
+                .target(name: "Profile"),
             ]
         )
     ],

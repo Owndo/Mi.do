@@ -34,6 +34,10 @@ final class CASManager: CASManagerProtocol {
         models.filter { $0.value.markAsDeleted == true }
     }
     
+    var allCompletedTasks: [MainModel] {
+        models.filter { !$0.value.done.isEmpty }
+    }
+    
     init() {
         let localDirectory = CASManager.createMainDirectory()!
         self.localDirectory = localDirectory

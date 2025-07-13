@@ -25,7 +25,7 @@ public struct TaskModel: Identifiable, Codable {
     public var endDate: Double?
     public var notificationDate: Double
     public var secondNotificationDate: Double?
-    public var voiceMode = true
+    public var voiceMode = false
     
     public var markAsDeleted = false
     

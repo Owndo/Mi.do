@@ -44,7 +44,13 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     //update cash
-    func createNotification() {
+    func createNotification() async {
+        let settings = await notificationCenter.notificationSettings()
+        
+        if settings.authorizationStatus != .authorized {
+            await checkPermission()
+        }
+        
         removeAllEvents()
         var countOfDay = 0
         
@@ -113,14 +119,13 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Single notification
     private func createSingleNotification(_ task: TaskModel) {
-        
         notificationContent.title = task.title
         notificationContent.body = task.info
         notificationContent.userInfo = ["taskID": task.id]
         
         uniqueID.append(task.id)
         
-        if task.voiceMode == false {
+        if task.voiceMode == false  {
             notificationContent.sound = .default
         } else {
             if let audio = task.audio {

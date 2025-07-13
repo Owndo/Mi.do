@@ -323,6 +323,7 @@ final class TaskVM {
             hashOfAudio = casManager.saveAudio(url: audioURLString)
         }
         task.audio = hashOfAudio
+        task.voiceMode = true
         
         Task { [weak self] in
             await self?.loadTotalTimeIfNeeded()

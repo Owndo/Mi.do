@@ -219,6 +219,7 @@ public final class MainVM {
             info: "",
             audio: audioHash,
             notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
+            voiceMode: audioHash != nil ? true : false,
             dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
             done: [],
             deleted: []

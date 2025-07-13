@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Managers
 import Models
+import PhotosUI
 
 @Observable
 final class ProfileVM {
@@ -24,23 +25,34 @@ final class ProfileVM {
     
     var profileModel: ProfileData = mockProfileData()
     
+    var showLibrary = false
+    
+    var selecteImage: UIImage?
+    
+    @ObservationIgnored
+    var pickerSelection: PhotosPickerItem? {
+        didSet {
+            Task {
+                if let imageData = try await pickerSelection?.loadTransferable(type: Data.self) {
+                    addPhotoToProfile(image: imageData)
+                    selecteImage = UIImage(data: imageData)
+                }
+            }
+        }
+    }
+    
+    
+    private func addPhotoToProfile(image: Data) {
+        profileModel.value.photo = casManager.saveImage(image) ?? ""
+        casManager.saveProfileData(profileModel)
+    }
+    
     var path = NavigationPath()
     
     enum ProfileDestination: Hashable {
         case articles
         case history
         case appearance
-    }
-    
-    func goTo(_ destination: ProfileDestination) {
-        switch destination {
-        case .articles:
-            path.append(destination)
-        case .history:
-            path.append(destination)
-        case .appearance:
-            path.append(destination)
-        }
     }
     
     var calendar: Calendar {
@@ -62,8 +74,22 @@ final class ProfileVM {
     
     init() {
         profileModel = casManager.profileModel ?? mockProfileData()
+        selecteImage = UIImage(data: casManager.getData(profileModel.value.photo) ?? Data())
     }
     
+    //MARK: - Navigation to
+    func goTo(_ destination: ProfileDestination) {
+        switch destination {
+        case .articles:
+            path.append(destination)
+        case .history:
+            path.append(destination)
+        case .appearance:
+            path.append(destination)
+        }
+    }
+    
+    //MARK: Task's statistics
     func tasksState(of type: TypeOfTask) -> String {
         
         var tasks = [TaskModel]()

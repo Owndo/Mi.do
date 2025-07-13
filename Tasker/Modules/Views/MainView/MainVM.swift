@@ -45,6 +45,7 @@ public final class MainVM {
     
     //MARK: - UI States
     var mainViewIsOpen = true
+    var profileViewIsOpen = false
     var isRecording = false
     var showDetailsScreen = false
     var alert: AlertModel?
@@ -129,7 +130,7 @@ public final class MainVM {
         } catch let error as MicrophonePermission {
             switch error {
             case .silentError: return
-            case .microphoneIsNotAvalible:
+            case .microphoneIsNotAvailable:
                 alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
             }
         } catch let error as ErrorRecorder {
@@ -156,6 +157,10 @@ public final class MainVM {
             profileModel = model
             profileModelSave()
         }
+    }
+    
+    func profileViewButtonTapped() {
+        profileViewIsOpen = true
     }
     
     //MARK: - Appearance

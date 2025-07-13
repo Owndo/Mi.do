@@ -19,7 +19,7 @@ public enum NotificationsAlert {
             return Alert(
                 title: Text("Notifications are off 🫣"),
                 message: Text("Guess we’ll just sit here... quietly."),
-                primaryButton: .default(Text("Go to Settings"), action: openSetting),
+                primaryButton: .default(Text("Go to Settings"), action: openSettings),
                 secondaryButton: .cancel(Text("OK"), action: action ?? {})
             )
             

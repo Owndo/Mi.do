@@ -17,8 +17,6 @@ public struct MainView: View {
     
     @Bindable var vm: MainVM
     
-    @State var showingAlert = false
-    
     @FocusState var focusState: Bool
     
     public init(vm: MainVM) {
@@ -35,7 +33,7 @@ public struct MainView: View {
             }
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
-                    .sheet(isPresented: $showingAlert) {
+                    .sheet(isPresented: $vm.profileViewIsOpen) {
                         ProfileView()
                     }
             }
@@ -69,7 +67,7 @@ public struct MainView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        showingAlert = true
+                        vm.profileViewButtonTapped()
                     } label: {
                         Image(systemName: "person.circle")
                             .foregroundStyle(colorScheme.elementColor.hexColor())
@@ -83,7 +81,7 @@ public struct MainView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .animation(.default, value: vm.isRecording)
-            
+            .sensoryFeedback(.selection, trigger: vm.profileViewIsOpen)
         }
     }
     

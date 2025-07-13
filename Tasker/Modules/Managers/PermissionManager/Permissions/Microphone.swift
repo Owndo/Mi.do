@@ -10,19 +10,25 @@ import Foundation
 
 public enum MicrophonePermission: Error {
     case silentError
-    case microphoneIsNotAvalible
-    
+    case microphoneIsNotAvailable
     
     public func showingAlert(action: @escaping () -> Void) -> Alert {
         switch self {
-        case .microphoneIsNotAvalible:
-            Alert(title: Text("Microphone access denied"), message: Text("To record audio, please enable Microphone access in Settings."), primaryButton: .default(Text("Settings"), action: openSetting), secondaryButton: .cancel(action))
-        case .silentError: fatalError()
+        case .microphoneIsNotAvailable:
+            return Alert(
+                title: Text("Can't hear you 😢"),
+                message: Text("I'd love to hear your voice... but the microphone is off. You can fix it in Settings!"),
+                primaryButton: .default(Text("Maybe later"), action: action),
+                secondaryButton: .default(Text("Go to Settings"), action: openSettings)
+            )
+            
+        case .silentError:
+            fatalError("Silent error occurred")
         }
     }
 }
 
-func openSetting() {
+func openSettings() {
     if let url = URL(string: UIApplication.openSettingsURLString) {
         if UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)

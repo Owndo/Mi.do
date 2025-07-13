@@ -26,6 +26,7 @@ public struct ProfileView: View {
                     .ignoresSafeArea()
                 
                 ScrollViewContent()
+                    .photosPicker(isPresented: $vm.showLibrary, selection: $vm.pickerSelection)
             }
             .navigationDestination(for: ProfileVM.ProfileDestination.self) { desctination in
                 switch desctination {
@@ -95,16 +96,28 @@ public struct ProfileView: View {
     @ViewBuilder
     private func ProfilePhoto() -> some View {
         ZStack {
-            Image(systemName: "person.crop.circle.badge.plus")
-                .font(.system(size: 28))
-                .foregroundStyle(.labelQuaternary)
-                .background(
-                    Circle()
-                        .fill(
-                            .backgroundTertiary
-                        )
+            VStack {
+                if let image = vm.selecteImage {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
                         .frame(width: 128, height: 128)
-                )
+                        .clipShape(
+                            Circle()
+                        )
+                } else {
+                    Image(systemName: "person.crop.circle.badge.plus")
+                        .font(.system(size: 28))
+                        .foregroundStyle(.labelQuaternary)
+                        .background(
+                            Circle()
+                                .fill(
+                                    .backgroundTertiary
+                                )
+                        )
+                }
+            }
+            .frame(width: 128, height: 128)
             
             VStack(spacing: 0) {
                 
@@ -127,7 +140,7 @@ public struct ProfileView: View {
         Menu {
             
             Button {
-                
+                vm.showLibrary = true
             } label: {
                 HStack {
                     Text("Edit avatar")

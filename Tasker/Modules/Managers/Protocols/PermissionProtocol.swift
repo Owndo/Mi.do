@@ -6,10 +6,14 @@
 //
 
 import Foundation
+import SwiftUI
 
 public protocol PermissionProtocol {
     var allowedMicro: Bool { get set }
+    var alert: Alert? { get }
     
     func peremissionSessionForRecording() throws
     func requestRecordPermission()
+    
+    func permissionForGallery() async -> Bool
 }

@@ -79,6 +79,10 @@ final class MockCas: CASManagerProtocol {
         }
     }
     
+    func saveImage(_ photo: Data) -> String? {
+        return nil
+    }
+    
     func getData(_ hash: String) -> Data? {
         do {
             if let data = try cas.get(hash) {

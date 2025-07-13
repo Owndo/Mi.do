@@ -21,6 +21,7 @@ public protocol CASManagerProtocol {
     func saveModel(_ task: MainModel)
     func saveProfileData(_ data: ProfileData)
     func saveAudio(url: URL) -> String?
+    func saveImage(_ photo: Data) -> String?
     func pathToAudio(_ hash: String) -> URL
     func fetchModels() -> [MainModel]
     func fetchProfileData() -> ProfileData?

@@ -89,6 +89,15 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
+    func saveImage(_ photo: Data) -> String? {
+        do {
+            return try cas.add(photo)
+        } catch {
+            print("Couldn't save the photo")
+            return nil
+        }
+    }
+    
     func getData(_ hash: String) -> Data? {
         do {
             if let data = try cas.get(hash) {

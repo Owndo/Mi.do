@@ -22,12 +22,14 @@ final class ProfileVM {
     @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
     @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
+    @ObservationIgnored @Injected(\.permissionManager) private var permissionManager: PermissionProtocol
     
     var profileModel: ProfileData = mockProfileData()
     
     var showLibrary = false
+    var alert: AlertModel?
     
-    var selecteImage: UIImage?
+    var photoPosition = CGSize.zero
     
     @ObservationIgnored
     var pickerSelection: PhotosPickerItem? {
@@ -35,16 +37,10 @@ final class ProfileVM {
             Task {
                 if let imageData = try await pickerSelection?.loadTransferable(type: Data.self) {
                     addPhotoToProfile(image: imageData)
-                    selecteImage = UIImage(data: imageData)
+                    photoPosition = .zero
                 }
             }
         }
-    }
-    
-    
-    private func addPhotoToProfile(image: Data) {
-        profileModel.value.photo = casManager.saveImage(image) ?? ""
-        casManager.saveProfileData(profileModel)
     }
     
     var path = NavigationPath()
@@ -67,14 +63,9 @@ final class ProfileVM {
         calendar.firstWeekday == 1 ? "Sunday" : "Monday"
     }
     
-    /// Save profile to cas
-    func profileModelSave() {
-        casManager.saveProfileData(profileModel)
-    }
-    
     init() {
         profileModel = casManager.profileModel ?? mockProfileData()
-        selecteImage = UIImage(data: casManager.getData(profileModel.value.photo) ?? Data())
+        photoPosition = profileModel.value.photoPosition
     }
     
     //MARK: - Navigation to
@@ -133,6 +124,41 @@ final class ProfileVM {
         case week
         case completed
     }
+    
+    func editAvatarButtonTapped() async {
+        
+        let premissionStatus = await permissionManager.permissionForGallery()
+        
+        guard premissionStatus else {
+            if let attentionAlert = permissionManager.alert {
+                alert = AlertModel(alert: attentionAlert)
+            }
+            return
+        }
+        
+        showLibrary = true
+    }
+    
+    func getPhotoFromCAS() -> Data? {
+        let hash = profileModel.value.photo
+        
+        return casManager.getData(hash)
+    }
+    
+    private func addPhotoToProfile(image: Data) {
+        profileModel.value.photo = casManager.saveImage(image) ?? ""
+        casManager.saveProfileData(profileModel)
+    }
+    
+    /// Save profile to cas
+    func profileModelSave() {
+        casManager.saveProfileData(profileModel)
+    }
+    
+    func savePhotoPosition() {
+        profileModel.value.photoPosition = photoPosition
+    }
+    
     
     func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
         dateManager.calendar.firstWeekday = firstDayOfWeek

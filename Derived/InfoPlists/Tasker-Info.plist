@@ -23,9 +23,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>This app uses microphone for recording your voice</string>
+	<string>Microphone access is needed to record voice.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Photo library access allows adding images from the device gallery.</string>
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>Notifications may include alerts, sounds, and icon badges. You can configurate this in Setting.</string>
+	<string>Notifications may include alerts, sounds, or badges. Can be adjusted anytime in Settings.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

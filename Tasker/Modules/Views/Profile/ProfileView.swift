@@ -10,8 +10,6 @@ import Models
 import UIComponents
 
 public struct ProfileView: View {
-    @AppStorage("profileName") var profileName = ""
-    
     @State private var vm = ProfileVM()
     
     @Environment(\.colorScheme) var colorScheme
@@ -26,7 +24,11 @@ public struct ProfileView: View {
                     .ignoresSafeArea()
                 
                 ScrollViewContent()
-                    .photosPicker(isPresented: $vm.showLibrary, selection: $vm.pickerSelection)
+                    .photosPicker(
+                        isPresented: $vm.showLibrary,
+                        selection: $vm.pickerSelection,
+                        matching: .images
+                    )
             }
             .navigationDestination(for: ProfileVM.ProfileDestination.self) { desctination in
                 switch desctination {
@@ -37,6 +39,9 @@ public struct ProfileView: View {
                 case .appearance:
                     AppearanceView(path: $vm.path)
                 }
+            }
+            .alert(item: $vm.alert) { alert in
+                alert.alert
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -51,6 +56,9 @@ public struct ProfileView: View {
                 }
             }
             .toolbarBackground(colorScheme.backgroundColor.hexColor())
+            .onDisappear {
+                vm.profileModelSave()
+            }
         }
     }
     
@@ -97,26 +105,39 @@ public struct ProfileView: View {
     private func ProfilePhoto() -> some View {
         ZStack {
             VStack {
-                if let image = vm.selecteImage {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 128, height: 128)
-                        .clipShape(
-                            Circle()
-                        )
+                if let data = vm.getPhotoFromCAS() {
+                    if let image = UIImage(data: data) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .offset(vm.photoPosition)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        vm.photoPosition = value.translation
+                                    }
+                                    .onEnded { _ in
+                                        vm.savePhotoPosition()
+                                    }
+                            )
+                    }
                 } else {
                     Image(systemName: "person.crop.circle.badge.plus")
                         .font(.system(size: 28))
                         .foregroundStyle(.labelQuaternary)
+                        .padding(50)
                         .background(
-                            Circle()
-                                .fill(
-                                    .backgroundTertiary
-                                )
+                            RoundedRectangle(cornerRadius: 1)
+                                .fill(.backgroundTertiary)
                         )
                 }
             }
+            .clipShape(Circle())
+            .overlay(
+                Circle()
+                    .stroke(colorScheme.backgroundColor.hexColor(), lineWidth: 1)
+                    .shadow(color: colorScheme.elementColor.hexColor().opacity(0.8), radius: 5, x: 0, y: 3)
+            )
             .frame(width: 128, height: 128)
             
             VStack(spacing: 0) {
@@ -132,6 +153,7 @@ public struct ProfileView: View {
             }
         }
         .frame(width: 128, height: 128)
+        .sensoryFeedback(.selection, trigger: vm.showLibrary)
     }
     
     //MARK: - Context menu
@@ -140,7 +162,9 @@ public struct ProfileView: View {
         Menu {
             
             Button {
-                vm.showLibrary = true
+                Task {
+                    await vm.editAvatarButtonTapped()
+                }
             } label: {
                 HStack {
                     Text("Edit avatar")

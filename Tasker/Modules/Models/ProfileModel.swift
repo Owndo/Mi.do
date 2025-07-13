@@ -15,6 +15,7 @@ public struct ProfileModel: Codable {
     public var notes: String
     public var name: String
     public var photo: String
+    public var photoPosition: CGSize
     public var settings: SettingsModel
     
     public init(
@@ -22,12 +23,14 @@ public struct ProfileModel: Codable {
         notes: String,
         name: String,
         photo: String,
+        photoPosition: CGSize,
         settings: SettingsModel
     ) {
         self.customTitle = customTitle
         self.notes = notes
         self.name = name
         self.photo = photo
+        self.photoPosition = photoPosition
         self.settings = settings
     }
 }
@@ -55,5 +58,5 @@ public struct SettingsModel: Codable {
 }
 
 public func mockProfileData() -> ProfileData {
-    ProfileData.initial(ProfileModel(customTitle: "", notes: "", name: "", photo: "", settings: SettingsModel(firstDayOfWeek: 1, colorScheme: "System", accentColor: "#0EBC7C", background: "#F2F5EE")))
+    ProfileData.initial(ProfileModel(customTitle: "", notes: "", name: "", photo: "", photoPosition: .zero, settings: SettingsModel(firstDayOfWeek: 1, colorScheme: "System", accentColor: "#0EBC7C", background: "#F2F5EE")))
 }

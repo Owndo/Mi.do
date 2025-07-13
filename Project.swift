@@ -15,8 +15,9 @@ let project = Project(
                     "UILaunchStoryboardName": "LaunchScreen",
                     "CFBundleDisplayName": "Mi.dō",
                     "CFBundleShortVersionString": "\(App.version)",
-                    "NSUserNotificationsUsageDescription" : "Notifications may include alerts, sounds, and icon badges. You can configurate this in Setting.",
-                    "NSMicrophoneUsageDescription": "This app uses microphone for recording your voice"
+                    "NSUserNotificationsUsageDescription": "Notifications may include alerts, sounds, or badges. Can be adjusted anytime in Settings.",
+                    "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",
+                    "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery."
                 ]
             ),
             sources: [.glob(
@@ -206,3 +207,4 @@ extension SettingsDictionary {
         ])
     }
 }
+

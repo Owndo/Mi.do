@@ -72,7 +72,7 @@ struct SegmentedCircleView: View {
                     .opacity(baseOpacity)
             } else {
                 let baseColor = completed
-                ? colorScheme.elementColor.hexColor().opacity(0.22)
+                ? colorScheme.elementColor.hexColor().opacity(0.42)
                 : .clear
                 Circle()
                     .fill(baseColor)
@@ -92,7 +92,7 @@ struct SegmentedCircleView: View {
         
         let segmentColor = vm.useTaskColors
         ? task.value.taskColor.color(for: colorScheme)
-        : colorScheme.elementColor.hexColor()
+        : isCompleted ? colorScheme.elementColor.hexColor() : .separatorSecondary
         
         let appear = min(segmentProgress * 2, 1.0)
         let scale = 0.8 + 0.2 * appear
@@ -100,8 +100,8 @@ struct SegmentedCircleView: View {
         AnimatedArcShape(startAngle: startAngle, endAngle: dynamicEnd)
             .stroke(
                 segmentColor.opacity(vm.useTaskColors
-                                     ? isCompleted ? 0.7 : 0.3
-                                     : isCompleted ? 0.7 : 0.3),
+                                     ? isCompleted ? 0.8 : 0.3
+                                     : isCompleted ? 0.8 : 1),
                 style: StrokeStyle(lineWidth: 3, lineCap: .round)
             )
             .scaleEffect(scale)

@@ -7,51 +7,42 @@
 
 import Foundation
 import SwiftUI
+import Managers
+import Models
 
 @Observable
 final class AppearanceVM {
     @ObservationIgnored
-    @AppStorage("colorSchemeMode") private var storedColorSchemeMode: String?
+    @Injected(\.appearanceManager) var appearanceManager
+    @ObservationIgnored
+    @Injected(\.casManager) var casManager
     
-    var colorSchemeMode: ColorSchemeMode = .light {
-        didSet {
-            storedColorSchemeMode = colorSchemeMode.description
-        }
-    }
+    var profileData: ProfileData = mockProfileData()
+    var progressModeTrigger = false
     
     init() {
-        onAppear()
+        profileData = casManager.profileModel ?? mockProfileData()
     }
     
-    func onAppear() {
-        switch storedColorSchemeMode {
-        case "Light":
-            colorSchemeMode = .light
-        case "Dark":
-            colorSchemeMode = .dark
-        default:
-            colorSchemeMode = .system
-        }
+    func colorScheme() -> String {
+        appearanceManager.colorScheme()
     }
     
-    func changeColorSchemeMode(scheme: ColorSchemeMode) {
-        colorSchemeMode = scheme
+    func backgroundColor() -> Color {
+        appearanceManager.backgroundColor()
     }
     
-    enum ColorSchemeMode: CaseIterable {
-        case light
-        case dark
-        case system
-        
-        var description: String {
-            switch self {
-            case .light:
-                return "Light"
-            case .dark:
-                return "Dark"
-            case .system:
-                return "System"
-            }
-        }
+    func accentColor() -> Color {
+        appearanceManager.accentColor()
+    }
+    
+    func changeScheme(_ colorScheme: ColorSchemeMode) {
+        appearanceManager.changeColorSchemeMode(scheme: colorScheme)
+    }
+    
+    func changeProgressMode(_ progressMode: Bool) {
+        progressModeTrigger.toggle()
+        appearanceManager.changeProgressMode(progressMode)
+        profileData = casManager.profileModel ?? mockProfileData()
     }
 }

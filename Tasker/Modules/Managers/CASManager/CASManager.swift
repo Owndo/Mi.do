@@ -19,8 +19,10 @@ final class CASManager: CASManagerProtocol {
     
     var localDirectory: URL
     var taskUpdateTrigger = false
+    var profileUpdateTriger = false
     
     var models: [MainModel] = []
+    var profileModel: ProfileData?
     
     var activeTasks: [MainModel] {
         models.filter { $0.value.markAsDeleted == false }
@@ -50,6 +52,7 @@ final class CASManager: CASManagerProtocol {
         firstTimeOpen()
         
         models = fetchModels()
+        profileModel = fetchProfileData()
     }
     
     //MARK: Actions for work with CAS
@@ -62,6 +65,16 @@ final class CASManager: CASManagerProtocol {
             taskUpdateTrigger.toggle()
         } catch {
             print("Couldn't save daat inside CAS")
+        }
+    }
+    
+    func saveProfileData(_ data: ProfileData) {
+        do {
+            try cas.saveJsonModel(data)
+            profileModel = data
+            profileUpdateTriger.toggle()
+        } catch {
+            print("Couldn't save profile data inside CAS")
         }
     }
     
@@ -89,6 +102,7 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
+    //MARK: - Task models
     func fetchModels() -> [MainModel] {
         let list = try! cas.listMutable()
         
@@ -100,6 +114,19 @@ final class CASManager: CASManagerProtocol {
                 return nil
             }
         }.filter { $0.value.markAsDeleted == false }
+    }
+    
+    //MARK: - Profile data
+    func fetchProfileData() -> ProfileData? {
+        let list = try! cas.listMutable()
+        
+        return list.compactMap { mutable in
+            do {
+                return try cas.loadJsonModel(mutable)
+            } catch {
+                return nil
+            }
+        }.first
     }
     
     func pathToAudio(_ hash: String) -> URL {

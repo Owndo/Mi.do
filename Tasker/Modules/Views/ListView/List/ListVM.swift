@@ -18,6 +18,8 @@ final class ListVM {
     @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
     @ObservationIgnored
     @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
+    @ObservationIgnored
+    @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
     
     //MARK: UI State
     var startSwipping = false
@@ -44,8 +46,6 @@ final class ListVM {
     }
     
     //MARK: - Check for visible
-    
-    
     func backToTodayButtonTapped() {
         dateManager.backToToday()
     }
@@ -56,6 +56,19 @@ final class ListVM {
     
     func previousDaySwiped() {
         dateManager.subtractOneDay()
+    }
+    
+    //MARK: Appearance
+    func colorScheme() -> String {
+        appearanceManager.colorScheme()
+    }
+    
+    func backgroundColor() -> Color {
+        appearanceManager.backgroundColor()
+    }
+    
+    func accentColor() -> Color {
+        appearanceManager.accentColor()
     }
     
     //MARK: - Calculate size for gestureView

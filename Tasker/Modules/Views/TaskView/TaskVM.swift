@@ -20,6 +20,7 @@ final class TaskVM {
     @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
     @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
+    @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
     
     // MARK: - Model
     var mainModel: MainModel = mockModel()
@@ -330,5 +331,18 @@ final class TaskVM {
     
     private func createTempAudioFile(audioHash: String) {
         _ = storageManager.createFileInSoundsDirectory(hash: audioHash)
+    }
+    
+    //MARK: Appearance
+    func colorScheme() -> String {
+        appearanceManager.colorScheme()
+    }
+    
+    func backgroundColor() -> Color {
+        appearanceManager.backgroundColor()
+    }
+    
+    func accentColor() -> Color {
+        appearanceManager.accentColor()
     }
 }

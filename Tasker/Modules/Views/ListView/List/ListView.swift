@@ -73,10 +73,6 @@ public struct ListView: View {
                 ForEach(Array(vm.tasks.enumerated()), id: \.element) { index, task in
                     TaskRow(task: task)
                         .foregroundStyle(.primary)
-                    //                        .transition(.asymmetric(
-                    //                            insertion: .move(edge: .top).combined(with: .opacity),
-                    //                            removal: .move(edge: .leading).combined(with: .opacity)
-                    //                        ))
                     
                     if index != vm.tasks.count - 1 {
                         RoundedRectangle(cornerRadius: 0.5)

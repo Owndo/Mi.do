@@ -58,10 +58,13 @@ public struct MainView: View {
                 }
                 
                 ToolbarItem(placement: .principal) {
-                    TextField("", text: $vm.textForYourSelf)
+                    TextField("Write your title here 🎯", text: $vm.profileModel.value.customTitle)
                         .font(.system(.headline, design: .default, weight: .semibold))
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.center)
+                        .onSubmit {
+                            vm.profileModelSave()
+                        }
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
@@ -117,17 +120,6 @@ public struct MainView: View {
         .sheet(item: $vm.model) { model in
             TaskView(mainModel: model)
         }
-        //        .alert("Easy there!", isPresented: $showingAlert) {
-        //            Button {
-        //                showingAlert = false
-        //            } label: {
-        //                Text("OKAAAAY🤬")
-        //                    .tint(.black)
-        //            }
-        //            .tint(.black)
-        //        } message: {
-        //            Text("We can't keep up with your speed. Let's slow it down a bit.")
-        //        }
         .alert(item: $vm.alert) { alert in
             alert.alert
         }

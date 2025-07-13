@@ -14,6 +14,8 @@ import SwiftUI
 final class MonthVM {
     @ObservationIgnored
     @Injected(\.dateManager) var dateManager
+    @ObservationIgnored
+    @Injected(\.appearanceManager) var appearanceManager
     
     var scrollID: Int?
     
@@ -98,5 +100,18 @@ final class MonthVM {
         if let last = allMonths.last, month.id >= last.id - 5 {
             dateManager.appendMonthsForward()
         }
+    }
+    
+    //MARK: Appearance
+    func colorScheme() -> String {
+        appearanceManager.colorScheme()
+    }
+    
+    func backgroundColor() -> Color {
+        appearanceManager.backgroundColor()
+    }
+    
+    func accentColor() -> Color {
+        appearanceManager.accentColor()
     }
 }

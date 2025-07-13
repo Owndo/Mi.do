@@ -23,6 +23,7 @@ final class DependenciesManager: DependenciesManagerProtocol {
     lazy var notificationManager: NotificationManagerProtocol = NotificationManager()
     lazy var storageManager: StorageManagerProtocol = StorageManager()
     lazy var taskManager: TaskManagerProtocol = TaskManager()
+    lazy var appearanceManager: AppearanceManagerProtocol = AppearanceManager()
 }
 
 public protocol DependenciesManagerProtocol {
@@ -34,6 +35,7 @@ public protocol DependenciesManagerProtocol {
     var notificationManager: NotificationManagerProtocol { get }
     var storageManager: StorageManagerProtocol { get }
     var taskManager: TaskManagerProtocol { get }
+    var appearanceManager: AppearanceManagerProtocol { get }
 }
 
 public protocol DependencyRegister {

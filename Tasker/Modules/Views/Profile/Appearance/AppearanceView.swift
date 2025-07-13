@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Managers
 import UIComponents
 
 struct AppearanceView: View {
@@ -24,15 +25,18 @@ struct AppearanceView: View {
                 ScrollView {
                     
                     HStack(spacing: 29) {
-                        ForEach(AppearanceVM.ColorSchemeMode.allCases, id: \.self) { scheme in
+                        ForEach(ColorSchemeMode.allCases, id: \.self) { scheme in
                             SchemeSelector(scheme)
                         }
                     }
                     .padding(.top, 27)
-                    .padding(.horizontal, 16)
+                    .padding(.bottom, 28)
+                    
+                    ProgressMode()
                 }
                 .scrollIndicators(.hidden)
             }
+            .padding(.horizontal, 16)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -45,7 +49,7 @@ struct AppearanceView: View {
                             Text("Profile")
                                 .font(.system(.body, design: .rounded, weight: .medium))
                         }
-                        .tint(colorScheme.elementColor.hexColor())
+                        .tint(vm.accentColor())
                     }
                 }
             }
@@ -56,7 +60,7 @@ struct AppearanceView: View {
     
     //MARK: - Scheme selector
     @ViewBuilder
-    private func SchemeSelector(_ scheme: AppearanceVM.ColorSchemeMode) -> some View {
+    private func SchemeSelector(_ scheme: ColorSchemeMode) -> some View {
         VStack(spacing: 12) {
             switch scheme {
             case .light:
@@ -78,9 +82,9 @@ struct AppearanceView: View {
                 .foregroundStyle(.labelPrimary)
             
             Button {
-                vm.changeColorSchemeMode(scheme: scheme)
+                vm.changeScheme(scheme)
             } label: {
-                if scheme == vm.colorSchemeMode {
+                if scheme.description == vm.profileData.value.settings.colorScheme {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(.body, design: .rounded, weight: .semibold))
                         .foregroundStyle(.labelPrimary)
@@ -91,8 +95,59 @@ struct AppearanceView: View {
                 }
             }
         }
-        .animation(.default, value: vm.colorSchemeMode)
-        .sensoryFeedback(.selection, trigger: vm.colorSchemeMode)
+        .animation(.default, value: vm.profileData)
+        .sensoryFeedback(.selection, trigger: vm.profileData)
+    }
+    
+    //MARK: - Progress mode
+    @ViewBuilder
+    private func ProgressMode() -> some View {
+        VStack(alignment: .leading) {
+            
+            Text("Progress task design")
+                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .foregroundStyle(.labelPrimary)
+            
+            HStack {
+                ProgressRowButton(.minimal, text: "Minimal", value: true) {
+                    vm.changeProgressMode(true)
+                }
+                
+                ProgressRowButton(.colorful, text: "Colorful", value: false) {
+                    vm.changeProgressMode(false)
+                }
+            }
+        }
+        .sensoryFeedback(.selection, trigger: vm.progressModeTrigger)
+    }
+    
+    @ViewBuilder
+    private func ProgressRowButton(_ image: UIImage, text: String, value: Bool, action: @escaping () -> Void) -> some View {
+        Button {
+            action()
+        } label: {
+            VStack {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+                    .padding(.bottom, 4)
+                
+                Text(text)
+                    .font(.system(.headline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.labelPrimary)
+                    .padding(.bottom, 4)
+                
+                if value == vm.profileData.value.settings.minimalProgressMode {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.labelPrimary)
+                } else {
+                    Image(systemName: "circle")
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.labelQuaternary)
+                }
+            }
+        }
     }
 }
 

@@ -17,7 +17,10 @@ final class SegmentedCircleVM {
     @ObservationIgnored
     @Injected(\.casManager) var casManager
     
-    var useTaskColors = true
+    var useTaskColors: Bool {
+        let minimal = casManager.profileModel?.value.settings.minimalProgressMode ?? true
+        return !minimal
+    }
     
     var completedFlags: [Bool] = []
     var allCompleted: Bool = false

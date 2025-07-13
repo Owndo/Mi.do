@@ -31,9 +31,17 @@ public final class MainVM {
     @Injected(\.notificationManager) var notificationManager: NotificationManagerProtocol
     @ObservationIgnored
     @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
+    @ObservationIgnored
+    @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
     
     //MARK: - Model
     var model: MainModel?
+    
+    var profileModel: ProfileData = mockProfileData()
+    
+    public var colorSchemeFromSettings: String?  {
+        casManager.profileModel?.value.settings.colorScheme
+    }
     
     //MARK: - UI States
     var mainViewIsOpen = true
@@ -95,7 +103,12 @@ public final class MainVM {
         taskManager.tasks.isEmpty && taskManager.completedTasks.isEmpty
     }
     
+    public var profileUpdateTrigger: Bool {
+        casManager.profileUpdateTriger
+    }
+    
     public init() {
+        createCustomProfileModel()
         Task {
             checkNotificationPermission()
             await notificationManager.createNotification()
@@ -127,6 +140,43 @@ public final class MainVM {
                 return
             }
         }
+    }
+    
+    //MARK: - Profile model save
+    func profileModelSave() {
+        casManager.saveProfileData(profileModel)
+    }
+    
+    public func createCustomProfileModel() {
+        if let model = casManager.profileModel {
+            profileModel = model
+        } else {
+            let model = mockProfileData()
+            
+            profileModel = model
+            profileModelSave()
+        }
+    }
+    
+    //MARK: - Appearance
+    public func changeColorScheme() -> ColorScheme {
+        if profileModel.value.settings.colorScheme == "Light" {
+            return .light
+        } else {
+            return .dark
+        }
+    }
+    
+    func colorScheme() -> String {
+        appearanceManager.colorScheme()
+    }
+    
+    func backgroundColor() -> Color {
+        appearanceManager.backgroundColor()
+    }
+    
+    func accentColor() -> Color {
+        appearanceManager.accentColor()
     }
     
     @MainActor

@@ -11,7 +11,8 @@ import Models
 
 @Observable
 final class MockCas: CASManagerProtocol {
-  
+
+    var profileModel: ProfileData?
     
     let cas: MultiCas
     let remoteDirectory = "iCloud.com.KodiMaberek.Tasker"
@@ -37,6 +38,7 @@ final class MockCas: CASManagerProtocol {
     }
     
     var taskUpdateTrigger = false
+    var profileUpdateTriger = false
     
     init() {
         let localDirectory = MockCas.createMainDirectory()!
@@ -60,6 +62,10 @@ final class MockCas: CASManagerProtocol {
         } catch {
             print("Couldn't save daat inside CAS")
         }
+    }
+    
+    func saveProfileData(_ data: Models.ProfileData) {
+        
     }
     
     func saveAudio(url: URL) -> String? {
@@ -103,6 +109,21 @@ final class MockCas: CASManagerProtocol {
                 return nil
             }
         }.filter { $0.value.markAsDeleted == false }
+    }
+    
+    
+    
+    func fetchProfileData() -> ProfileData? {
+        let list = try! cas.listMutable()
+        
+        return list.compactMap { mutable in
+            do {
+                return try cas.loadJsonModel(mutable)
+            } catch {
+                
+                return nil
+            }
+        }.first
     }
     
     //MARK: Delete model

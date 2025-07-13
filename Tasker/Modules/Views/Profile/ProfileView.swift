@@ -62,11 +62,14 @@ public struct ProfileView: View {
                 ProfilePhoto()
                     .padding(.bottom, 14)
                 
-                TextField("Enter your name here", text: $profileName)
+                TextField("Enter your name here", text: $vm.profileModel.value.name)
                     .font(.system(.title2, design: .rounded, weight: .semibold))
                     .foregroundStyle(.labelPrimary)
                     .multilineTextAlignment(.center)
                     .tint(colorScheme.elementColor.hexColor())
+                    .onSubmit {
+                        vm.profileModelSave()
+                    }
                 
                 TaskStatic()
                     .padding(.top, 20)

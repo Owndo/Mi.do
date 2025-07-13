@@ -20,6 +20,9 @@ final class ProfileVM {
     @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
     @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
+    @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
+    
+    var profileModel: ProfileData = mockProfileData()
     
     var path = NavigationPath()
     
@@ -50,6 +53,15 @@ final class ProfileVM {
     
     var firstWeekday: String {
         calendar.firstWeekday == 1 ? "Sunday" : "Monday"
+    }
+    
+    /// Save profile to cas
+    func profileModelSave() {
+        casManager.saveProfileData(profileModel)
+    }
+    
+    init() {
+        profileModel = casManager.profileModel ?? mockProfileData()
     }
     
     func tasksState(of type: TypeOfTask) -> String {
@@ -98,5 +110,17 @@ final class ProfileVM {
     
     func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
         dateManager.calendar.firstWeekday = firstDayOfWeek
+    }
+    
+    func colorScheme() -> String {
+        appearanceManager.colorScheme()
+    }
+    
+    func backgroundColor() -> Color {
+        appearanceManager.backgroundColor()
+    }
+    
+    func accentColor() -> Color {
+        appearanceManager.accentColor()
     }
 }

@@ -9,20 +9,24 @@ import SwiftUI
 
 struct NotesView: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("notes") var notes = ""
     
     @Binding var mainViewIsOpen: Bool
     
     @FocusState var notesFocusState: Bool
     
+    @State private var vm = NotesVM()
+    
     var body: some View {
         ZStack {
-            TextEditor(text: $notes)
+            TextEditor(text: $vm.profileModel.value.notes)
                 .font(.system(.callout, design: .rounded, weight: .semibold))
                 .foregroundStyle(.labelPrimary)
                 .focused($notesFocusState)
                 .scrollDismissesKeyboard(.immediately)
                 .textEditorStyle(.plain)
+                .onSubmit {
+                    vm.saveNotes()
+                }
                 .safeAreaInset(edge: .bottom) {
                     KeyboardSafeAreaInset()
                 }
@@ -31,13 +35,16 @@ struct NotesView: View {
             MockView()
             
         }
+        .onChange(of: notesFocusState) { _, _ in
+            vm.saveNotes()
+        }
         .sensoryFeedback(.selection, trigger: mainViewIsOpen)
     }
     
     //MARK: - Mock View
     @ViewBuilder
     private func MockView() -> some View {
-        if notes.isEmpty && notesFocusState == false {
+        if vm.profileModel.value.notes.isEmpty && notesFocusState == false {
             VStack {
                 Image(systemName: "note.text.badge.plus")
                     .foregroundStyle(.labelQuintuple)
@@ -63,6 +70,7 @@ struct NotesView: View {
                 
                 Button {
                     notesFocusState = false
+                    vm.saveNotes()
                 } label: {
                     Text("Done")
                         .foregroundStyle(colorScheme.elementColor.hexColor())

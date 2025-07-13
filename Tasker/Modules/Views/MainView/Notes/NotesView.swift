@@ -54,9 +54,7 @@ struct NotesView: View {
                     .font(.system(.callout, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.labelQuaternary)
-                    .font(.system(.callout, design: .rounded, weight: .regular))
                     .padding(.top, 3)
-                
             }
         }
     }

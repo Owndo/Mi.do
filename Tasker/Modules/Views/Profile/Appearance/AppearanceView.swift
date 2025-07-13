@@ -16,6 +16,8 @@ struct AppearanceView: View {
     
     @State private var vm = AppearanceVM()
     
+    @State private var showAlert = false
+    
     var body: some View {
         ZStack {
             colorScheme.backgroundColor.hexColor()
@@ -36,6 +38,15 @@ struct AppearanceView: View {
                 }
                 .scrollIndicators(.hidden)
             }
+            .alert("Easy there", isPresented: $showAlert) {
+                Button {
+                    
+                } label: {
+                    Text("Piss me off 🤬")
+                }
+            } message: {
+                Text("Comming soon...")
+            }
             .padding(.horizontal, 16)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -49,12 +60,13 @@ struct AppearanceView: View {
                             Text("Profile")
                                 .font(.system(.body, design: .rounded, weight: .medium))
                         }
-                        .tint(vm.accentColor())
+                        .tint(colorScheme.elementColor.hexColor())
                     }
                 }
             }
             .navigationBarBackButtonHidden()
             .navigationTitle("Appearance")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
     
@@ -82,7 +94,7 @@ struct AppearanceView: View {
                 .foregroundStyle(.labelPrimary)
             
             Button {
-                vm.changeScheme(scheme)
+                showAlert.toggle()
             } label: {
                 if scheme.description == vm.profileData.value.settings.colorScheme {
                     Image(systemName: "checkmark.circle.fill")
@@ -121,6 +133,7 @@ struct AppearanceView: View {
         .sensoryFeedback(.selection, trigger: vm.progressModeTrigger)
     }
     
+    //MARK: - Progress row Button
     @ViewBuilder
     private func ProgressRowButton(_ image: UIImage, text: String, value: Bool, action: @escaping () -> Void) -> some View {
         Button {

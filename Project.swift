@@ -108,7 +108,7 @@ let project = Project(
                 .target(name: "Calendar"),
                 .target(name: "ListView"),
                 .target(name: "TaskView"),
-                .target(name: "Profile"),
+                .target(name: "Profile`"),
             ]
         )
     ],

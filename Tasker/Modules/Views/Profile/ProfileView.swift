@@ -30,9 +30,9 @@ public struct ProfileView: View {
             .navigationDestination(for: ProfileVM.ProfileDestination.self) { desctination in
                 switch desctination {
                 case .articles:
-                    ArticlesView()
+                    ArticlesView(path: $vm.path)
                 case .history:
-                    HistoryView()
+                    HistoryView(path: $vm.path)
                 case .appearance:
                     AppearanceView(path: $vm.path)
                 }

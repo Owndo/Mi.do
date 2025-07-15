@@ -231,7 +231,7 @@ public struct ProfileView: View {
             
             Spacer()
             
-            StaticRow(count: vm.tasksState(of: .completed), text: "Completed")
+            StaticRow(count: vm.tasksState(of: .completed), text: "Completed tasks")
             
             Spacer()
         }

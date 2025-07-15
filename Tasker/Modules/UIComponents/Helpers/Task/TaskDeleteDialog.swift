@@ -30,7 +30,7 @@ public struct TaskDeleteDialog: ViewModifier {
     
     public func body(content: Content) -> some View {
         content
-            .confirmationDialog("", isPresented: $isPresented) {
+            .confirmationDialog(String(""), isPresented: $isPresented) {
                 if isSingleTask {
                     Button(role: .destructive) {
                         Task {
@@ -56,7 +56,7 @@ public struct TaskDeleteDialog: ViewModifier {
                             await deleteTask()
                         }
                     } label: {
-                        Text("Delete all of these tasks")
+                        Text("Delete all of these tasks", bundle: .module)
                     }
                 }
             } message: {

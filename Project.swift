@@ -154,7 +154,7 @@ extension Target {
     static func module(name: String, dependencies: [TargetDependency]) -> ProjectDescription.Target {
         var resources: [ResourceFileElement] = []
         
-        if name == "UIComponents" {
+        if name != "BlockSet" || name != "Models" {
             resources.append("Tasker/Modules/\(name)/Resources/**")
         }
         
@@ -173,6 +173,10 @@ extension Target {
     
     static func moduleView(name: String, dependencies: [TargetDependency]) -> ProjectDescription.Target {
         
+        var resources: [ResourceFileElement] = []
+        
+        resources.append("Tasker/Modules/Views/\(name)/Resources/**")
+        
         return .target(
             name: name,
             destinations: App.destinations,
@@ -180,6 +184,7 @@ extension Target {
             bundleId: App.bundleId + "." + name,
             deploymentTargets: App.deploymentTargets,
             sources: ["Tasker/Modules/Views/\(name)/**"],
+            resources: .resources(resources),
             dependencies: dependencies,
             settings: .settings(defaultSettings: .recommended)
         )

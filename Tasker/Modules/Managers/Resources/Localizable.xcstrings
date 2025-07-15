@@ -1,0 +1,72 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Can't hear you 😢" : {
+
+    },
+    "Cannot Interrupt Others" : {
+
+    },
+    "Cannot start record" : {
+
+    },
+    "Cannot start recording" : {
+
+    },
+    "Go to Settings" : {
+
+    },
+    "Guess we’ll just sit here... quietly." : {
+
+    },
+    "I'd love to hear your voice... but the microphone is off. You can fix it in Settings!" : {
+
+    },
+    "I’d love to see your masterpieces… but I can’t. Photo access is off. Flip the switch in Settings?" : {
+
+    },
+    "Maybe later" : {
+
+    },
+    "No photos for you 📸😢" : {
+
+    },
+    "Not now" : {
+
+    },
+    "Notifications are off 🫣" : {
+
+    },
+    "OK" : {
+
+    },
+    "Please end the call to start recording." : {
+
+    },
+    "Recording has finished" : {
+
+    },
+    "Recording is unavailable" : {
+
+    },
+    "Siri is currently recording. Please wait until Siri has finished." : {
+
+    },
+    "Siri is Recording" : {
+
+    },
+    "The microphone is currently busy, please stop use it and try again." : {
+
+    },
+    "This operation cannot interrupt other processes. Please try again later." : {
+
+    },
+    "Unable to start recording. Please try again later." : {
+
+    },
+    "Unfortunately we are currently unable to record task longer then 15 seconds." : {
+
+    }
+  },
+  "version" : "1.0"
+}

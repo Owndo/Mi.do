@@ -1,0 +1,39 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@" : {
+
+    },
+    "Add voice recording" : {
+
+    },
+    "Close" : {
+
+    },
+    "Color task" : {
+
+    },
+    "Created:" : {
+
+    },
+    "Date" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Pick the days of the week to repeat" : {
+
+    },
+    "Play your voice in notification" : {
+
+    },
+    "Repeat" : {
+
+    },
+    "Time" : {
+
+    }
+  },
+  "version" : "1.0"
+}

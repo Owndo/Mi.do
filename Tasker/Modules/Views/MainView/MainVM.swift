@@ -13,9 +13,6 @@ import Models
 @MainActor
 @Observable
 public final class MainVM {
-    @ObservationIgnored
-    @AppStorage("textForYourSelf", store: .standard) var textForYourSelf = "Write your title 🎯"
-    
     //MARK: - Depencies
     @ObservationIgnored
     @Injected(\.casManager) private var casManager: CASManagerProtocol

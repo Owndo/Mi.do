@@ -1,0 +1,21 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Delete all of these tasks" : {
+
+    },
+    "Delete only this task" : {
+
+    },
+    "Delete this task" : {
+
+    },
+    "Just say our task" : {
+
+    },
+    "Tap or hold the plus button\nto get started" : {
+
+    }
+  },
+  "version" : "1.0"
+}

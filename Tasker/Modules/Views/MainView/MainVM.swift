@@ -106,7 +106,10 @@ public final class MainVM {
     }
     
     public init() {
-        createCustomProfileModel()
+        Task {
+            createCustomProfileModel()
+            await updateNotifications()
+        }
     }
     
     public func updateNotifications() async {
@@ -123,12 +126,15 @@ public final class MainVM {
         do {
             changeDisabledButton()
             try recordPermission.peremissionSessionForRecording()
+            try await recordPermission.permissionForSpeechRecognition()
             await startRecord()
             changeDisabledButton()
         } catch let error as MicrophonePermission {
             switch error {
             case .silentError: return
             case .microphoneIsNotAvailable:
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
+            case .speechRecognitionIsNotAvailable:
                 alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
             }
         } catch let error as ErrorRecorder {
@@ -219,7 +225,7 @@ public final class MainVM {
         model = MainModel.initial(TaskModel(
             id: UUID().uuidString,
             title: "",
-            info: "",
+            info: recordManager.recognizedText,
             audio: audioHash,
             notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
             voiceMode: audioHash != nil ? true : false,

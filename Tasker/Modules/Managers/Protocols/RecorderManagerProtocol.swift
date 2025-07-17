@@ -14,6 +14,7 @@ public protocol RecorderManagerProtocol {
     var maxDuration: Double { get }
     var decibelLevel: Float { get }
     var fileName: URL? { get }
+    var recognizedText: String { get set }
     var isRecording: Bool { get set }
     
     func startRecording() async

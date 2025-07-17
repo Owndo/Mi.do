@@ -26,6 +26,8 @@
 	<string>Microphone access is needed to record voice.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photo library access allows adding images from the device gallery.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Speech recognize access is needed to fill your tasks.</string>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Notifications may include alerts, sounds, or badges. Can be adjusted anytime in Settings.</string>
 	<key>UIApplicationSceneManifest</key>

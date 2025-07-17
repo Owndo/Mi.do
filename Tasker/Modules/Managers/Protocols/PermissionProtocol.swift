@@ -10,10 +10,11 @@ import SwiftUI
 
 public protocol PermissionProtocol {
     var allowedMicro: Bool { get set }
+    var allowedSpeechRecognition: Bool { get }
     var alert: Alert? { get }
     
     func peremissionSessionForRecording() throws
     func requestRecordPermission()
-    
+    func permissionForSpeechRecognition() async throws
     func permissionForGallery() async -> Bool
 }

@@ -17,6 +17,7 @@ let project = Project(
                     "CFBundleShortVersionString": "\(App.version)",
                     "NSUserNotificationsUsageDescription": "Notifications may include alerts, sounds, or badges. Can be adjusted anytime in Settings.",
                     "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",
+                    "NSSpeechRecognitionUsageDescription": "Speech recognize access is needed to fill your tasks.",
                     "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery."
                 ]
             ),
@@ -37,7 +38,7 @@ let project = Project(
                         "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "NO",
                         "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "NO"
                     ]
-                ) ,
+                ),
                 defaultSettings: .recommended
             ),
         ),

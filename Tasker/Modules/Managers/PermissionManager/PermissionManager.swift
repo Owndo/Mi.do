@@ -11,11 +11,13 @@ import Observation
 import UIKit
 import SwiftUI
 import Photos
+import Speech
 
 @Observable
 final class PermissionManager: PermissionProtocol {
     var allowedMicro = false
     var allowedNotification = false
+    var allowedSpeechRecognition = false
     
     var alert: Alert?
     
@@ -70,6 +72,22 @@ final class PermissionManager: PermissionProtocol {
         }
     }
     
+    func permissionForSpeechRecognition() async throws {
+        let status = SFSpeechRecognizer.authorizationStatus()
+        
+        switch status {
+        case .notDetermined:
+            let newStatus = await SFSpeechRecognizer.requestAuthorizationAsync()
+            let isAuthorized = newStatus == .authorized
+            allowedSpeechRecognition = isAuthorized
+        case .authorized:
+            allowedSpeechRecognition = true
+        default:
+            allowedSpeechRecognition = false
+            throw MicrophonePermission.speechRecognitionIsNotAvailable
+        }
+    }
+
     
     func permissionForGallery() async -> Bool {
         let readWriteStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
@@ -85,6 +103,16 @@ final class PermissionManager: PermissionProtocol {
         default:
             alert = GalleryPermissions.galleryIsNotAvailable.showingAlert()
             return false
+        }
+    }
+}
+
+extension SFSpeechRecognizer {
+    static func requestAuthorizationAsync() async -> SFSpeechRecognizerAuthorizationStatus {
+        await withCheckedContinuation { continuation in
+            requestAuthorization { status in
+                continuation.resume(returning: status)
+            }
         }
     }
 }

@@ -872,6 +872,28 @@ public extension SwiftUI.Image {
 }
 #endif
 public extension UIComponentsImages.Image {
+    static var colorfulDark: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Appearance/colorfulDark", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Appearance/colorfulDark"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Appearance/colorfulDark")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var colorfulDark: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Appearance/colorfulDark", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
     static var dark: UIComponentsImages.Image {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
@@ -934,6 +956,28 @@ public extension SwiftUI.Image {
     static var minimal: SwiftUI.Image {
         let bundle = Bundle.module
         return SwiftUI.Image("Appearance/minimal", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
+    static var minimalDark: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Appearance/minimalDark", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Appearance/minimalDark"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Appearance/minimalDark")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var minimalDark: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Appearance/minimalDark", bundle: bundle)
     }
 }
 #endif

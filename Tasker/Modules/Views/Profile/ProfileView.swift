@@ -308,49 +308,48 @@ public struct ProfileView: View {
     //MARK: - Button Row
     @ViewBuilder
     private func ButtonRow(icon: String, title: String, actionIcon: String = "chevron.right", action: @escaping () -> Void) -> some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundStyle(colorScheme.elementColor.hexColor())
-                .frame(width: 32, height: 32)
-            
-            Text(title)
-                .font(.system(.callout, design: .rounded, weight: .regular))
-            
-            Spacer()
-            
-            if actionIcon != "chevron.right" {
-                Menu {
-                    Button {
-                        vm.changeFirstDayOfWeek(1)
-                    } label: {
-                        Text("Sunday")
-                    }
-                    
-                    Button {
-                        vm.changeFirstDayOfWeek(2)
-                    } label: {
-                        Text("Monday")
-                    }
-                    
-                } label: {
-                    HStack {
-                        Text(vm.firstWeekday)
-                            .font(.system(.callout, design: .rounded, weight: .regular))
-                        
-                        Image(systemName: actionIcon)
-                            .padding(.vertical, 12)
-                    }
-                }
-                .tint(.labelQuaternary)
+        Button {
+            action()
+        } label: {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundStyle(colorScheme.elementColor.hexColor())
+                    .frame(width: 32, height: 32)
                 
-            } else {
-                Button {
-                    action()
-                } label: {
+                Text(title)
+                    .font(.system(.callout, design: .rounded, weight: .regular))
+                    .foregroundStyle(.labelPrimary)
+                
+                Spacer()
+                
+                if actionIcon != "chevron.right" {
+                    Menu {
+                        Button {
+                            vm.changeFirstDayOfWeek(1)
+                        } label: {
+                            Text("Sunday")
+                        }
+                        
+                        Button {
+                            vm.changeFirstDayOfWeek(2)
+                        } label: {
+                            Text("Monday")
+                        }
+                    } label: {
+                        HStack {
+                            Text(vm.firstWeekday)
+                                .font(.system(.callout, design: .rounded, weight: .regular))
+                            
+                            Image(systemName: actionIcon)
+                                .padding(.vertical, 12)
+                        }
+                    }
+                    .tint(.labelQuaternary)
+                } else {
                     Image(systemName: actionIcon)
                         .padding(.vertical, 12)
+                        .tint(.labelQuaternary)
                 }
-                .tint(.labelQuaternary)
             }
         }
     }

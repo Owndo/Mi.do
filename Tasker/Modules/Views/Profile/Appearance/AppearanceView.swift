@@ -120,12 +120,12 @@ struct AppearanceView: View {
                 .font(.system(.headline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.labelPrimary)
             
-            HStack {
-                ProgressRowButton(.minimal, text: "Minimal", value: true) {
+            HStack(spacing: 16) {
+                ProgressRowButton(colorScheme == .dark ? .minimalDark : .minimal, text: "Minimal", value: true) {
                     vm.changeProgressMode(true)
                 }
                 
-                ProgressRowButton(.colorful, text: "Colorful", value: false) {
+                ProgressRowButton(colorScheme == .dark ? .colorfulDark : .colorful, text: "Colorful", value: false) {
                     vm.changeProgressMode(false)
                 }
             }

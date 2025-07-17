@@ -124,9 +124,9 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .default,
-            options: [.allowAirPlay, .allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker, .duckOthers]
+            options: [.allowAirPlay, .allowBluetooth, .allowBluetoothA2DP, .duckOthers]
         )
-        try audioSession.overrideOutputAudioPort(.speaker)
+        try audioSession.setActive(true)
     }
     
     private func getOrCreateTempAudioFile(audioHash: String) -> URL {

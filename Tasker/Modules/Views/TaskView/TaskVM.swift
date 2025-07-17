@@ -185,7 +185,7 @@ final class TaskVM {
     }
     
     private func setUpDefaultTime(_ task: TaskModel) -> Bool {
-        if taskManager.tasks.contains(where: { $0.value.id == task.id }) {
+        if taskManager.activeTasks.contains(where: { $0.value.id == task.id }) {
             return false
         } else {
             return true

@@ -83,8 +83,6 @@ final class NotificationManager: NotificationManagerProtocol {
         }
         
         guard hasTaskCompleteOrDeleteMarkersInFuture(task: task) else {
-            print("here")
-            
             guard checkTaskInCorrectRange(task: task) else {
                 createSpecificSingleNotification(task, date: selectedDay)
                 return
@@ -230,7 +228,6 @@ final class NotificationManager: NotificationManagerProtocol {
             
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             notificationCenter.add(request)
-            print(request)
         }
         
         removeDeliveredNotification()
@@ -270,7 +267,6 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: updatedID, content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
-        print(request)
         removeDeliveredNotification()
     }
     
@@ -444,9 +440,6 @@ final class NotificationManager: NotificationManagerProtocol {
         dateComponents.minute = calendar.component(.minute, from: Date(timeIntervalSince1970: task.notificationDate))
         
         let notificationDate = calendar.date(from: dateComponents)!.timeIntervalSince1970
-        
-        print("Notification date - \(Date(timeIntervalSince1970: notificationDate))")
-        print("Current date - \(now)")
         
         switch task.repeatTask {
         case .never:

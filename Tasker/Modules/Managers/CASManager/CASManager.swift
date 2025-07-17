@@ -18,19 +18,21 @@ final class CASManager: CASManagerProtocol {
     let remoteDirectory = "iCloud.com.KodiMaberek.Tasker"
     
     var localDirectory: URL
-    var taskUpdateTrigger = false
+    
+    var taskUpdateTrigger = false {
+        didSet {
+            updateTask()
+        }
+    }
+    
     var profileUpdateTriger = false
     
     var models: [MainModel] = []
     var profileModel: ProfileData?
     
-    var activeTasks: [MainModel] {
-        models.filter { $0.value.markAsDeleted == false }
-    }
+    var activeTasks = [MainModel]()
     
-    var completedTasks: [MainModel] {
-        models.filter { $0.value.markAsDeleted == false && !$0.value.done.isEmpty }
-    }
+    var completedTasks = [MainModel]()
     
     var deletedTasks: [MainModel] {
         models.filter { $0.value.markAsDeleted == true }
@@ -53,6 +55,14 @@ final class CASManager: CASManagerProtocol {
         
         models = fetchModels()
         profileModel = fetchProfileData()
+        
+        updateTask()
+    }
+    
+    func updateTask() {
+        activeTasks = models.filter { $0.value.markAsDeleted == false }
+        completedTasks = models.filter { $0.value.markAsDeleted == false && !$0.value.done.isEmpty }
+        NotificationCenter.default.post(name: NSNotification.Name("updateTasks"), object: nil)
     }
     
     //MARK: Actions for work with CAS
@@ -122,7 +132,7 @@ final class CASManager: CASManagerProtocol {
                 print("Error while loading model: \(error)")
                 return nil
             }
-        }.filter { $0.value.markAsDeleted == false }
+        }
     }
     
     //MARK: - Profile data

@@ -10,7 +10,7 @@ import Models
 
 public protocol TaskManagerProtocol {
     var tasks: [MainModel] { get }
-    
+    var activeTasks: [MainModel] { get }
     var completedTasks: [MainModel] { get }
     
     func sortedTasks(tasks: [MainModel]) -> [MainModel]

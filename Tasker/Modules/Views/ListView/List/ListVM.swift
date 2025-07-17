@@ -26,7 +26,7 @@ final class ListVM {
     var contentHeight: CGFloat = 0
     
     var tasks: [MainModel] {
-        taskManager.tasks
+        taskManager.activeTasks
     }
     
     var completedTasks: [MainModel] {

@@ -45,12 +45,6 @@ final class SegmentedCircleVM {
         casManager.taskUpdateTrigger
     }
     
-    init() {
-        Task { [weak self] in
-            await self?.updateTasks()
-        }
-    }
-    
     func onAppear(date: Date) {
         currentDay = date
         

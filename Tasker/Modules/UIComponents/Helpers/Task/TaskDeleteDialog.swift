@@ -18,7 +18,6 @@ import Managers
 
 public struct TaskDeleteDialog: ViewModifier {
     @Injected(\.storageManager) private var storageManager
-    @Injected(\.notificationManager) private var notificationManager
     
     @Binding var isPresented: Bool
     
@@ -45,7 +44,6 @@ public struct TaskDeleteDialog: ViewModifier {
                             dismissAction?()
                             try await Task.sleep(nanoseconds: 50_000_000)
                             await onDelete(task, false)
-                            await notificationManager.createNotification()
                         }
                     } label: {
                         Text("Delete only this task")
@@ -69,7 +67,6 @@ public struct TaskDeleteDialog: ViewModifier {
         storageManager.deleteAudiFromDirectory(hash: task.value.audio ?? "")
         try? await Task.sleep(nanoseconds: 50_000_000)
         await onDelete(task, true)
-        await notificationManager.createNotification()
     }
 }
 

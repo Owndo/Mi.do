@@ -38,35 +38,40 @@ final class TaskManager: TaskManagerProtocol {
         return allDates.max()?.timeIntervalSince1970
     }
     
-    var tasks: [MainModel] {
-        activeTasks
-            .filter {
-                $0.value.deleted.contains { $0.deletedFor == selectedDate } != true &&
-                $0.value.done.contains { $0.completedFor == selectedDate } != true
-            }
-    }
+    var tasks = [MainModel]()
     
     var completedTasks: [MainModel] {
-        activeTasks
+        tasks
             .filter {
-                $0.value.deleted.contains { $0.deletedFor == selectedDate } != true &&
                 $0.value.done.contains { $0.completedFor == selectedDate } == true
             }
     }
     
-    private var activeTasks: [MainModel] {
-        let tasks = casManager.activeTasks.filter { $0.value.isScheduledForDate(selectedDate, calendar: calendar) }
-        return sortedTasks(tasks: tasks)
+    var activeTasks: [MainModel] {
+        tasks.filter {
+            $0.value.done.contains { $0.completedFor == selectedDate } != true
+        }
     }
     
-    private var tasksForProgress: [MainModel] {
-        casManager.activeTasks
+    init() {
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTasks), name: Notification.Name("updateTasks"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTasks), name: Notification.Name("selectedDateChange"), object: nil)
+        updateTasks()
+    }
+    
+    @objc private func updateTasks() {
+        let tasksFromCAS = casManager.activeTasks.filter {
+            $0.value.deleted.contains { $0.deletedFor == selectedDate } != true &&
+            $0.value.isScheduledForDate(selectedDate, calendar: calendar)
+        }
+        
+        tasks = sortedTasks(tasks: tasksFromCAS)
     }
     
     func thisWeekTasks(date: Double) async -> [MainModel] {
         guard let start = firstWeekDate, let end = lastWeekDate else { return [] }
         
-        return tasksForProgress
+        return casManager.activeTasks
             .filter { task in
                 let taskValue = task.value
                 return isTaskInWeeksRange(taskValue, startDate: start, endDate: end) &&

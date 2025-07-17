@@ -37,9 +37,9 @@ final class DateManager: DateManagerProtocol {
             if let sameWeekDay = weeksDate.first(where: {
                 calendar.component(.weekday, from: $0) == selectedWeekDay
             }) {
-                selectedDate = sameWeekDay
+                selectedDateChange(sameWeekDay)
             } else {
-                selectedDate = allWeeks[1].date.first!
+                selectedDateChange(allWeeks[1].date.first!)
             }
         }
     }
@@ -52,6 +52,7 @@ final class DateManager: DateManagerProtocol {
     
     func selectedDateChange( _ day: Date) {
         selectedDate = day
+        NotificationCenter.default.post(name: NSNotification.Name("selectedDateChange"), object: nil)
     }
     
     //MARK: - Logic for week
@@ -96,12 +97,12 @@ final class DateManager: DateManagerProtocol {
     }
     
     func initPreviousMonths() {
-            for i in (1...60).reversed() {
-                let month = calendar.date(byAdding: .month, value: -i, to: selectedDate)!
-                let newMonth = generateMonth(for: month)
-                let name = getMonthName(from: month)
-                allMonths.append(PeriodModel(id: -i, date: newMonth, name: name))
-            }
+        for i in (1...60).reversed() {
+            let month = calendar.date(byAdding: .month, value: -i, to: selectedDate)!
+            let newMonth = generateMonth(for: month)
+            let name = getMonthName(from: month)
+            allMonths.append(PeriodModel(id: -i, date: newMonth, name: name))
+        }
     }
     
     
@@ -302,7 +303,7 @@ final class DateManager: DateManagerProtocol {
             appendWeeksForward()
         }
         
-        selectedDate = newDate
+        selectedDateChange(newDate)
         
         let currentWeek = calendar.component(.weekOfYear, from: currentDate)
         let newWeek = calendar.component(.weekOfYear, from: newDate)
@@ -320,7 +321,7 @@ final class DateManager: DateManagerProtocol {
             prependWeeksBackward()
         }
         
-        selectedDate = newDate
+        selectedDateChange(newDate)
         
         let currentWeek = calendar.component(.weekOfYear, from: currentDate)
         let newWeek = calendar.component(.weekOfYear, from: newDate)

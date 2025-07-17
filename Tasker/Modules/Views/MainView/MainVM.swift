@@ -98,7 +98,7 @@ public final class MainVM {
     }
     
     var showTips: Bool {
-        taskManager.tasks.isEmpty && taskManager.completedTasks.isEmpty
+        taskManager.activeTasks.isEmpty && taskManager.completedTasks.isEmpty
     }
     
     public var profileUpdateTrigger: Bool {
@@ -109,8 +109,12 @@ public final class MainVM {
         createCustomProfileModel()
         Task {
             checkNotificationPermission()
-            await notificationManager.createNotification()
+            await updateNotifications()
         }
+    }
+    
+    public func updateNotifications() async {
+        await notificationManager.createNotification()
     }
     
     func startAfterChek() async throws {
@@ -249,7 +253,7 @@ public final class MainVM {
     public func selectedTask(by notification: Notification? = nil, taskId: String? = nil) {
         guard taskId == nil else {
             let baseSearchId = extractBaseId(from: taskId!)
-            let task = taskManager.tasks.first { task in
+            let task = taskManager.activeTasks.first { task in
                 extractBaseId(from: task.value.id) == baseSearchId
             }
             model = task
@@ -258,7 +262,7 @@ public final class MainVM {
         
         if let taskId = notification?.userInfo?["taskId"] as? String {
             let baseSearchId = extractBaseId(from: taskId)
-            let task = taskManager.tasks.first { task in
+            let task = taskManager.activeTasks.first { task in
                 extractBaseId(from: task.value.id) == baseSearchId
             }
             model = task

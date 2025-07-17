@@ -118,8 +118,11 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
-    // MARK: - Helpers
+    func setUpTotalTime(task: TaskModel) {
+        totalTime = returnTotalTime(task: task)
+    }
     
+    // MARK: - Helpers
     private func configureAudioSession() throws {
         try audioSession.setCategory(
             .playAndRecord,

@@ -40,18 +40,8 @@ final class TaskManager: TaskManagerProtocol {
     
     var tasks = [MainModel]()
     
-    var completedTasks: [MainModel] {
-        tasks
-            .filter {
-                $0.value.done.contains { $0.completedFor == selectedDate } == true
-            }
-    }
-    
-    var activeTasks: [MainModel] {
-        tasks.filter {
-            $0.value.done.contains { $0.completedFor == selectedDate } != true
-        }
-    }
+    var completedTasks = [MainModel]()
+    var activeTasks = [MainModel]()
     
     init() {
         NotificationCenter.default.addObserver(self, selector: #selector(updateTasks), name: Notification.Name("updateTasks"), object: nil)
@@ -66,16 +56,20 @@ final class TaskManager: TaskManagerProtocol {
         }
         
         tasks = sortedTasks(tasks: tasksFromCAS)
+        
+        activeTasks = tasks.filter {
+            $0.value.done.contains { $0.completedFor == selectedDate } != true
+        }
+        
+        completedTasks = tasks.filter {
+            $0.value.done.contains { $0.completedFor == selectedDate } == true
+        }
     }
     
     func thisWeekTasks(date: Double) async -> [MainModel] {
-        guard let start = firstWeekDate, let end = lastWeekDate else { return [] }
-        
         return casManager.activeTasks
             .filter { task in
-                let taskValue = task.value
-                return isTaskInWeeksRange(taskValue, startDate: start, endDate: end) &&
-                taskValue.deleted.contains { $0.deletedFor == date } != true
+                return task.value.deleted.contains { $0.deletedFor == date } != true
             }
     }
     

@@ -107,13 +107,10 @@ public final class MainVM {
     
     public init() {
         createCustomProfileModel()
-        Task {
-            checkNotificationPermission()
-            await updateNotifications()
-        }
     }
     
     public func updateNotifications() async {
+        checkNotificationPermission()
         await notificationManager.createNotification()
     }
     

@@ -46,8 +46,14 @@ final class StorageManager: StorageManagerProtocol {
         let soundsDirectory = createSoundsDirectory()
         let newFileURL = soundsDirectory.appendingPathComponent("\(hash).wav")
         
+        guard FileManager.default.fileExists(atPath: newFileURL.path) else {
+            
+            print("doesent have a file")
+            return }
+        
         do {
             try FileManager.default.removeItem(at: newFileURL)
+            print("deleted")
         } catch {
             print("Error while deleting file: \(error)")
         }

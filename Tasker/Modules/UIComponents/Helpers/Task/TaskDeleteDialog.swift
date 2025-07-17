@@ -33,7 +33,7 @@ public struct TaskDeleteDialog: ViewModifier {
                 if isSingleTask {
                     Button(role: .destructive) {
                         Task {
-                          await deleteTask()
+                            await deleteTask()
                         }
                     } label: {
                         Text("Delete this task")
@@ -64,7 +64,7 @@ public struct TaskDeleteDialog: ViewModifier {
     
     private func deleteTask() async {
         dismissAction?()
-        storageManager.deleteAudiFromDirectory(hash: task.value.audio ?? "")
+        storageManager.deleteAudiFromDirectory(hash: task.value.audio)
         try? await Task.sleep(nanoseconds: 50_000_000)
         await onDelete(task, true)
     }

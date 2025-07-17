@@ -11,8 +11,6 @@ import Managers
 
 @main
 struct Tasker: App {
-    @Environment(\.scenePhase) var schenePhase
-    
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
     @State private var mainVM = MainVM()
@@ -28,15 +26,6 @@ struct Tasker: App {
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .openTaskFromNotification)) { notification in
                     mainVM.selectedTask(by: notification)
-                }
-                .onChange(of: schenePhase) { newValue, oldValue in
-                    switch newValue {
-                    case .background, .inactive:
-                        Task {
-                            await mainVM.updateNotifications()
-                        }
-                    default: break
-                    }
                 }
         }
     }

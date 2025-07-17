@@ -21,7 +21,7 @@ final class StorageManager: StorageManagerProtocol {
         let soundsDirectory = createSoundsDirectory()
         
         let pathToAudio = casManager.pathToAudio(hash)
-
+        
         let tempUrl = soundsDirectory.appendingPathComponent(hash + ".wav")
         
         do {
@@ -42,7 +42,11 @@ final class StorageManager: StorageManagerProtocol {
         }
     }
     
-    func deleteAudiFromDirectory(hash: String) {
+    func deleteAudiFromDirectory(hash: String? = nil) {
+        guard let hash = hash else {
+            return
+        }
+        
         let soundsDirectory = createSoundsDirectory()
         let newFileURL = soundsDirectory.appendingPathComponent("\(hash).wav")
         

@@ -113,6 +113,7 @@ final class TaskVM {
         preSetTask(mainModel)
         setUpTime()
         setUpColor()
+        playerManager.totalTime = playerManager.returnTotalTime(task: task)
     }
     
     private func preSetTask(_ mainModel: MainModel) {

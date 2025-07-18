@@ -1,10 +1,12 @@
 import AVFoundation
 import Foundation
 import Speech
+import NaturalLanguage
 
 @Observable
 final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
     
+    private var titleExtractor = TitleExtractor()
     private var avAudioRecorder: AVAudioRecorder?
     
     var timer: Timer?
@@ -17,7 +19,9 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
     private var previousDecibelLevel: Float = 0.0
     
     // MARK: - Speech Recognition Properties
-    var recognizedText: String = ""
+    var recognizedText = ""
+    var dateTimeFromtext: Date?
+    
     private var audioEngine: AVAudioEngine?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -58,6 +62,7 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
             
             await MainActor.run {
                 recognizedText = ""
+                dateTimeFromtext = nil
             }
             
             startSpeechRecognition()
@@ -139,6 +144,9 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         audioEngine = nil
         recognitionRequest = nil
         recognitionTask = nil
+        
+        dateTimeFromtext = titleExtractor.extractDateTime(from: recognizedText)?.date
+        recognizedText = titleExtractor.extractTaskTitleWithNames(from: recognizedText)
     }
     
     private func prepareEngineForSpeechRecognition() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {

@@ -123,7 +123,11 @@ final class TaskVM {
     
     private func setUpTime() {
         let time = originalNotificationTimeComponents
-        notificationDate = combineDateAndTime(timeComponents: time)
+        if let date = recorderManager.dateTimeFromtext {
+            notificationDate = date
+        } else {
+            notificationDate = combineDateAndTime(timeComponents: time)
+        }
         
         sourseDateOfNotification = mainModel.value.notificationDate
         dateHasBeenChanged = false

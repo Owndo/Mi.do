@@ -224,8 +224,8 @@ public final class MainVM {
         
         model = MainModel.initial(TaskModel(
             id: UUID().uuidString,
-            title: "",
-            info: recordManager.recognizedText,
+            title: recordManager.recognizedText,
+            info: "",
             audio: audioHash,
             notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
             voiceMode: audioHash != nil ? true : false,

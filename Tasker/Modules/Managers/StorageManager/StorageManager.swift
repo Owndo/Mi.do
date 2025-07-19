@@ -51,13 +51,11 @@ final class StorageManager: StorageManagerProtocol {
         let newFileURL = soundsDirectory.appendingPathComponent("\(hash).wav")
         
         guard FileManager.default.fileExists(atPath: newFileURL.path) else {
-            
-            print("doesent have a file")
-            return }
+            return
+        }
         
         do {
             try FileManager.default.removeItem(at: newFileURL)
-            print("deleted")
         } catch {
             print("Error while deleting file: \(error)")
         }

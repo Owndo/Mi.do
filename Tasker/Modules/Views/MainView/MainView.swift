@@ -74,14 +74,10 @@ public struct MainView: View {
                     }
                 }
             }
-            .onChange(of: vm.currentlyTime) { newValue, oldValue in
-                Task {
-                    await vm.stopAfterCheck(newValue)
-                }
-            }
             .navigationBarTitleDisplayMode(.inline)
             .animation(.default, value: vm.isRecording)
             .sensoryFeedback(.selection, trigger: vm.profileViewIsOpen)
+            .sensoryFeedback(.impact(weight: .light), trigger: trigger)
         }
     }
     
@@ -117,6 +113,9 @@ public struct MainView: View {
         }
         .sheet(item: $vm.model) { model in
             TaskView(mainModel: model)
+                .onDisappear {
+                    vm.disappear()
+                }
         }
         .alert(item: $vm.alert) { alert in
             alert.alert
@@ -142,14 +141,15 @@ public struct MainView: View {
                         await vm.handleButtonTap()
                     }
                 }
-                .simultaneousGesture(
-                    LongPressGesture().onEnded({ _ in
-                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                        Task {
-                            try await vm.startAfterChek()
-                        }
-                    })
-                )
+                .onLongPressGesture(minimumDuration: 0.5, perform: {
+                    Task {
+                        try await vm.startAfterChek()
+                    }
+                }, onPressingChanged: { _ in
+                    Task {
+                        await vm.createTaskButtonHolding()
+                    }
+                })
                 .onChange(of: vm.currentlyTime) { newValue, _ in
                     if newValue > 15.0 && vm.recordingState == .recording {
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()

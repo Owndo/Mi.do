@@ -21,4 +21,5 @@ public protocol RecorderManagerProtocol {
     func startRecording() async
     func stopRecording() -> URL?
     func clearFileFromDirectory()
+    func resetDataFromText()
 }

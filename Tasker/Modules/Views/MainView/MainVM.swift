@@ -112,9 +112,21 @@ public final class MainVM {
         }
     }
     
+    func disappear() {
+        recordManager.resetDataFromText()
+    }
+    
     public func updateNotifications() async {
         checkNotificationPermission()
         await notificationManager.createNotification()
+    }
+    
+    func createTaskButtonHolding() async {
+        guard isRecording else {
+            return
+        }
+        
+        await stopRecord(isAutoStop: true)
     }
     
     func startAfterChek() async throws {
@@ -221,7 +233,6 @@ public final class MainVM {
     }
     
     func createTask(with audioHash: String? = nil) {
-        
         model = MainModel.initial(TaskModel(
             id: UUID().uuidString,
             title: recordManager.recognizedText,

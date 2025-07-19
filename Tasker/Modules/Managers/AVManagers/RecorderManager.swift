@@ -6,7 +6,7 @@ import NaturalLanguage
 @Observable
 final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
     
-    private var titleExtractor = TitleExtractor()
+    private var titleExtractor = MagicManager()
     private var avAudioRecorder: AVAudioRecorder?
     
     var timer: Timer?
@@ -59,11 +59,6 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
             
             try? await Task.sleep(nanoseconds: 100_000_000)
             isRecording = avAudioRecorder?.isRecording ?? false
-            
-            await MainActor.run {
-                recognizedText = ""
-                dateTimeFromtext = nil
-            }
             
             startSpeechRecognition()
             
@@ -147,6 +142,15 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         
         dateTimeFromtext = titleExtractor.extractDateTime(from: recognizedText)?.date
         recognizedText = titleExtractor.extractTaskTitleWithNames(from: recognizedText)
+        
+        if recognizedText == "New task" {
+            recognizedText = ""
+        }
+    }
+    
+    func resetDataFromText() {
+        recognizedText = ""
+        dateTimeFromtext = nil
     }
     
     private func prepareEngineForSpeechRecognition() throws -> (AVAudioEngine, SFSpeechAudioBufferRecognitionRequest) {

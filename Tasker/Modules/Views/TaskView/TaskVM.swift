@@ -35,7 +35,6 @@ final class TaskVM {
     var sliderValue = 0.0
     var isDragging = false
     var pause = false
-    var dateHasBeenChanged = false
     
     // MARK: - Confirmation dialog
     var confirmationDialogIsPresented = false
@@ -48,7 +47,6 @@ final class TaskVM {
     var notificationDate = Date() {
         didSet {
             checkTimeAfterSelected()
-            dateHasBeenChanged = true
         }
     }
     
@@ -122,16 +120,11 @@ final class TaskVM {
     }
     
     private func setUpTime() {
-        let time = originalNotificationTimeComponents
-        if let date = recorderManager.dateTimeFromtext {
-            notificationDate = date
-        } else {
-            notificationDate = combineDateAndTime(timeComponents: time)
-        }
+        notificationDate = combineDateAndTime(timeComponents: originalNotificationTimeComponents)
         
         sourseDateOfNotification = mainModel.value.notificationDate
-        dateHasBeenChanged = false
     }
+    
     
     private func setUpColor() {
         switch task.taskColor {
@@ -161,7 +154,7 @@ final class TaskVM {
     //MARK: - Save task
     func saveTask() async {
         task = preparedTask()
-        task.notificationDate = dateHasBeenChanged ? notificationDate.timeIntervalSince1970 : sourseDateOfNotification
+        task.notificationDate = notificationDate.timeIntervalSince1970
         mainModel.value = task
         
         casManager.saveModel(mainModel)
@@ -182,12 +175,13 @@ final class TaskVM {
     }
     
     private func combineDateAndTime(timeComponents: DateComponents) -> Date {
-        if setUpDefaultTime(task) {
+        guard setUpDefaultTime(task) else {
             return dateManager.combineDateAndTime(timeComponents: timeComponents)
-        } else {
-            return Date(timeIntervalSince1970: task.notificationDate)
         }
+        
+        return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: timeComponents)
     }
+    
     
     private func setUpDefaultTime(_ task: TaskModel) -> Bool {
         if taskManager.activeTasks.contains(where: { $0.value.id == task.id }) {

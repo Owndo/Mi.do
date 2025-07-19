@@ -77,7 +77,6 @@ public struct MainView: View {
             .navigationBarTitleDisplayMode(.inline)
             .animation(.default, value: vm.isRecording)
             .sensoryFeedback(.selection, trigger: vm.profileViewIsOpen)
-            .sensoryFeedback(.impact(weight: .light), trigger: trigger)
         }
     }
     

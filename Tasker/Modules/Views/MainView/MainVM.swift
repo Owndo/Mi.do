@@ -106,8 +106,8 @@ public final class MainVM {
     }
     
     public init() {
+        createCustomProfileModel()
         Task {
-            createCustomProfileModel()
             await updateNotifications()
         }
     }

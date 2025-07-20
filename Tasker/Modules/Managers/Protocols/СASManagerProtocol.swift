@@ -15,6 +15,7 @@ public protocol CASManagerProtocol {
     var completedTasks: [MainModel] { get }
     var deletedTasks: [MainModel] { get }
     var allCompletedTasks: [MainModel] { get }
+    var allCompletedTasksCount: Int { get }
     var taskUpdateTrigger: Bool { get }
     var profileUpdateTriger: Bool { get }
     

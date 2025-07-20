@@ -42,6 +42,19 @@ final class CASManager: CASManagerProtocol {
         models.filter { !$0.value.done.isEmpty }
     }
     
+    var allCompletedTasksCount: Int {
+        var count = 0
+        
+        for task in models {
+            if !task.value.done.isEmpty {
+                for _ in task.value.done {
+                    count += 1
+                }
+            }
+        }
+        return count
+    }
+    
     init() {
         let localDirectory = CASManager.createMainDirectory()!
         self.localDirectory = localDirectory

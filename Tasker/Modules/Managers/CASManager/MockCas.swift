@@ -11,6 +11,7 @@ import Models
 
 @Observable
 final class MockCas: CASManagerProtocol {
+    var allCompletedTasksCount: Int = 12
 
     var profileModel: ProfileData?
     

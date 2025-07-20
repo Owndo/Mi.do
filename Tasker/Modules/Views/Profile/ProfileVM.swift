@@ -88,27 +88,22 @@ final class ProfileVM {
         
         switch type {
         case .today:
-            tasks = casManager.activeTasks.map { $0.value }
+            tasks = taskManager.tasks.map { $0.value }
                 .filter { $0.isScheduledForDate(today.timeIntervalSince1970, calendar: calendar) }
             
             count = tasks.count
         case .week:
-            let weekday = calendar.component(.weekday, from: today)
-            let daysFromStartOfWeek = weekday - calendar.firstWeekday
-            let startOfWeek = calendar.date(byAdding: .day, value: -daysFromStartOfWeek, to: today)!
+            var daysFromStartOfWeek = dateManager.startOfWeek(for: today)
             
-            for offset in 0..<7 {
-                let date = calendar.date(byAdding: .day, value: offset, to: startOfWeek)!
-                let dayTasks = casManager.activeTasks.map { $0.value }
-                    .filter {
-                        $0.isScheduledForDate(date.timeIntervalSince1970, calendar: calendar)
-                    }
-                tasks.append(contentsOf: dayTasks)
+            (0..<7).forEach { _ in
+                tasks = casManager.activeTasks.map { $0.value }
+                    .filter { $0.isScheduledForDate(daysFromStartOfWeek.timeIntervalSince1970, calendar: calendar) }
+                
+                count += tasks.count
+                daysFromStartOfWeek = calendar.date(byAdding: .day, value: 1, to: daysFromStartOfWeek)!
             }
-            
-            count = tasks.count
         case .completed:
-            count = casManager.allCompletedTasks.map { $0.value.done.map { $0 }}.count
+            count = casManager.allCompletedTasksCount
         }
         
         if count >= 1000 {

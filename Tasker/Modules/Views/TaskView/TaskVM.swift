@@ -174,7 +174,7 @@ final class TaskVM {
         
         // telemetry
         telemetryAction(.taskAction(.repeatTaskButtonTapped(task.repeatTask)))
-        telemetryAction(.taskAction(.closeButtonTapped))
+        telemetryAction(.taskAction(.closeButtonTapped(.list)))
         
         if recorderManager.recognizedText != "" && task.title != recorderManager.recognizedText {
             telemetryAction(.taskAction(.correctionTitle))
@@ -306,10 +306,17 @@ final class TaskVM {
         telemetryAction(.taskAction(.playVoiceButtonTapped(.taskView)))
     }
     
+    struct model: Codable {
+        var name: String
+    }
+    
     func stopPlaying() {
-        playerManager.stopToPlay()
-        // telemetry
-        telemetryAction(.taskAction(.stopPlayingVoiceButtonTapped(.taskView)))
+        if playerManager.isPlaying {
+            playerManager.stopToPlay()
+            
+            // telemetry
+            telemetryAction(.taskAction(.stopPlayingVoiceButtonTapped(.taskView)))
+        }
     }
     
     func seekAudio(_ time: TimeInterval) {

@@ -51,6 +51,8 @@ final class MonthVM {
     
     func onAppear() {
         scrollID = 1
+        
+        telemetryAction(.openView(.calendar(.open)))
     }
     
     func onDissapear() {
@@ -108,7 +110,7 @@ final class MonthVM {
         mainViewIsOpen = true
         
         // telemetry
-        telemetryAction(.calendarAction(.selectedDateButtonTapped(.calendarView)))
+        telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))
     }
     
     func handleMonthAppeared(_ month: PeriodModel) {

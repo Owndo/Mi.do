@@ -10,7 +10,6 @@ import UIComponents
 
 public struct ListView: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("completedTasksHidden") var completedTasksHidden = false
     
     @State private var vm = ListVM()
     
@@ -52,8 +51,8 @@ public struct ListView: View {
         }
         .padding(.horizontal, 16)
         .customBlurForContainer(colorScheme: colorScheme)
-        .animation(.linear, value: completedTasksHidden)
-        .sensoryFeedback(.impact, trigger: completedTasksHidden)
+        .animation(.linear, value: vm.completedTasksHidden)
+        .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
     }
     
     @ViewBuilder
@@ -99,18 +98,18 @@ public struct ListView: View {
                 
                 Spacer()
                 
-                Image(systemName: completedTasksHidden ? "chevron.down" : "chevron.up")
+                Image(systemName: vm.completedTasksHidden ? "chevron.down" : "chevron.up")
                     .foregroundStyle(.labelTertiary)
                     .bold()
             }
             .onTapGesture {
-                completedTasksHidden.toggle()
+                vm.completedTaskViewChange()
             }
             .padding(.top, 18)
             .padding(.bottom, 12)
             
             
-            if !completedTasksHidden {
+            if !vm.completedTasksHidden {
                 VStack(spacing: 0) {
                     ForEach(Array(vm.completedTasks.enumerated()), id: \.element) { index, task in
                         TaskRow(task: task)

@@ -35,25 +35,28 @@ public struct ProfileModel: Codable {
     }
 }
 
-public struct SettingsModel: Codable {
+public struct SettingsModel: Codable, Equatable {
     public var firstDayOfWeek: Int
     public var colorScheme: String
     public var accentColor: String
     public var background: String
     public var minimalProgressMode: Bool
+    public var completedTasksHidden: Bool
     
     public init(
         firstDayOfWeek: Int,
         colorScheme: String,
         accentColor: String,
         background: String,
-        minimalProgressMode: Bool = true
+        minimalProgressMode: Bool = true,
+        completedTasksHidden: Bool = false
     ) {
         self.firstDayOfWeek = firstDayOfWeek
         self.colorScheme = colorScheme
         self.accentColor = accentColor
         self.background = background
         self.minimalProgressMode = minimalProgressMode
+        self.completedTasksHidden = completedTasksHidden
     }
 }
 

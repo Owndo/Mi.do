@@ -13,6 +13,8 @@ import Managers
 @Observable
 final class ListVM {
     @ObservationIgnored
+    @Injected(\.casManager) private var casManager: CASManagerProtocol
+    @ObservationIgnored
     @Injected(\.dateManager) private var dateManager: DateManagerProtocol
     @ObservationIgnored
     @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
@@ -20,10 +22,16 @@ final class ListVM {
     @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     @ObservationIgnored
     @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
+    @ObservationIgnored
+    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     
     //MARK: UI State
     var startSwipping = false
     var contentHeight: CGFloat = 0
+    
+    var completedTasksHidden: Bool {
+        casManager.profileModel?.value.settings.completedTasksHidden ?? false
+    }
     
     var tasks: [MainModel] {
         taskManager.activeTasks
@@ -100,5 +108,24 @@ final class ListVM {
         default:
             return minGestureHeight
         }
+    }
+    
+    func completedTaskViewChange() {
+        let model = casManager.profileModel ?? mockProfileData()
+        model.value.settings.completedTasksHidden.toggle()
+        
+        casManager.saveProfileData(model)
+        
+        // telemetry
+        if model.value.settings.completedTasksHidden {
+            telemetryAction(.taskAction(.showCompletedButtonTapped))
+        } else {
+            telemetryAction(.taskAction(.hideCompletedButtonTapped))
+        }
+    }
+    
+    //MARK: - Telemetry action
+    private func telemetryAction(_ action: EventType) {
+        telemetryManager.logEvent(action)
     }
 }

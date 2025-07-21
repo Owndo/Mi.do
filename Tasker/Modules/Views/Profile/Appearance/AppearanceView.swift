@@ -20,7 +20,7 @@ struct AppearanceView: View {
     
     var body: some View {
         ZStack {
-            colorScheme.backgroundColor.hexColor()
+            vm.backgroundColor()
                 .ignoresSafeArea()
             
             VStack {
@@ -94,7 +94,8 @@ struct AppearanceView: View {
                 .foregroundStyle(.labelPrimary)
             
             Button {
-                showAlert.toggle()
+                vm.changeScheme(scheme)
+                print(scheme.description)
             } label: {
                 if scheme.description == vm.profileData.value.settings.colorScheme {
                     Image(systemName: "checkmark.circle.fill")

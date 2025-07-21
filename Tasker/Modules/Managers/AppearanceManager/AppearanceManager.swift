@@ -29,7 +29,6 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     }
     
     public func changeColorSchemeMode(scheme: ColorSchemeMode) {
-        print(scheme.description)
         profileData.value.settings.colorScheme = scheme.description
         saveProfileData()
     }

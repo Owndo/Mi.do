@@ -63,7 +63,7 @@ final class TaskRowVM {
         stopToPlay()
         
         // telemetry
-        telemetryAction(.taskAction(.openTaskButtonTapped))
+        telemetryAction(.taskAction(.openTaskButtonTapped(.list)))
     }
     
     //MARK: - Check Mark Function

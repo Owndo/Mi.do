@@ -23,6 +23,7 @@ final class ProfileVM {
     @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
     @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
     @ObservationIgnored @Injected(\.permissionManager) private var permissionManager: PermissionProtocol
+    @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     
     var profileModel: ProfileData = mockProfileData()
     
@@ -68,15 +69,36 @@ final class ProfileVM {
         photoPosition = profileModel.value.photoPosition
     }
     
+    func onAppear() {
+        //telemetry
+        telemetryAction(action: .openView(.profile(.open)))
+    }
+    
+    func onDisappear() {
+        profileModelSave()
+        
+        //telemetry
+        telemetryAction(action: .openView(.profile(.close)))
+    }
+    
     //MARK: - Navigation to
     func goTo(_ destination: ProfileDestination) {
         switch destination {
         case .articles:
             path.append(destination)
+            
+            // telemtry
+            telemetryAction(action: .profileAction(.productivityArticleView(.openArticle)))
         case .history:
             path.append(destination)
+            
+            // telemtry
+            telemetryAction(action: .profileAction(.taskHistoryButtonTapped))
         case .appearance:
             path.append(destination)
+            
+            // telemtry
+            telemetryAction(action: .profileAction(.appearanceButtonTapped))
         }
     }
     
@@ -132,6 +154,9 @@ final class ProfileVM {
         }
         
         showLibrary = true
+        
+        // telemtry
+        telemetryAction(action: .profileAction(.addPhotoButtonTapped))
     }
     
     func getPhotoFromCAS() -> Data? {
@@ -154,7 +179,6 @@ final class ProfileVM {
         profileModel.value.photoPosition = photoPosition
     }
     
-    
     func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
         dateManager.calendar.firstWeekday = firstDayOfWeek
     }
@@ -169,5 +193,14 @@ final class ProfileVM {
     
     func accentColor() -> Color {
         appearanceManager.accentColor()
+    }
+    
+    func closeButtonTapped() {
+        telemetryAction(action: .profileAction(.closeButtonTapped))
+    }
+    
+    //MARK: - Telemetry action
+    private func telemetryAction(action: EventType) {
+        telemetryManager.logEvent(action)
     }
 }

@@ -47,6 +47,9 @@ public struct ProfileView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         dismissButton()
+                        
+                        // telemetry
+                        vm.closeButtonTapped()
                     } label: {
                         Text("Close")
                             .font(.system(.body, design: .rounded, weight: .medium))
@@ -56,8 +59,11 @@ public struct ProfileView: View {
                 }
             }
             .toolbarBackground(colorScheme.backgroundColor.hexColor())
+            .onAppear {
+                vm.onAppear()
+            }
             .onDisappear {
-                vm.profileModelSave()
+                vm.onDisappear()
             }
         }
     }

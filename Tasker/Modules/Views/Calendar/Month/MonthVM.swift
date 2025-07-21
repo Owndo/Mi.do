@@ -16,6 +16,8 @@ final class MonthVM {
     @Injected(\.dateManager) var dateManager
     @ObservationIgnored
     @Injected(\.appearanceManager) var appearanceManager
+    @ObservationIgnored
+    @Injected(\.telemetryManager) var telemetryManager
     
     var scrollID: Int?
     
@@ -42,10 +44,17 @@ final class MonthVM {
     func selectedDateChange(_ day: Date) {
         dateManager.selectedDateChange(day)
         dateManager.initializeWeek()
+        
+        // telemetry
+        telemetryAction(.calendarAction(.selectedDateButtonTapped(.calendarView)))
     }
     
     func onAppear() {
         scrollID = 1
+    }
+    
+    func onDissapear() {
+        telemetryAction(.openView(.calendar(.close)))
     }
     
     func calculateEmptyDay(for month: PeriodModel) -> Int {
@@ -78,6 +87,9 @@ final class MonthVM {
         dateManager.backToToday()
         scrollID = 1
         dateManager.initializeMonth()
+        
+        // telemetry
+        telemetryAction(.calendarAction(.backToTodayButtonTapped(.calendarView)))
     }
     
     func currentYear(_ month: PeriodModel) -> String? {
@@ -94,6 +106,9 @@ final class MonthVM {
     func closeScreenButtonTapped(path: inout NavigationPath, mainViewIsOpen: inout Bool) {
         path.removeLast()
         mainViewIsOpen = true
+        
+        // telemetry
+        telemetryAction(.calendarAction(.selectedDateButtonTapped(.calendarView)))
     }
     
     func handleMonthAppeared(_ month: PeriodModel) {
@@ -113,5 +128,10 @@ final class MonthVM {
     
     func accentColor() -> Color {
         appearanceManager.accentColor()
+    }
+    
+    //MARK: Telemtry action
+    private func telemetryAction(_ action: EventType) {
+        telemetryManager.logEvent(action)
     }
 }

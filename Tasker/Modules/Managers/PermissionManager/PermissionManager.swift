@@ -38,7 +38,7 @@ final class PermissionManager: PermissionProtocol {
             requestRecordPermission()
             throw MicrophonePermission.silentError
         case .denied:
-            telemetryManager.trackMainScreenAction(.recordTaskButtonTapped(.error(.microphoneIsNotAvailable)))
+            telemetryManager.logEvent(.mainViewAction(.recordTaskButtonTapped(.error(.microphoneIsNotAvailable))))
             throw MicrophonePermission.microphoneIsNotAvailable
         case .granted:
             do {
@@ -91,7 +91,7 @@ final class PermissionManager: PermissionProtocol {
         default:
             if recognizePermission <= 2 {
                 allowedSpeechRecognition = false
-                telemetryManager.trackMainScreenAction(.recordTaskButtonTapped(.error(.speechRecognitionIsNotAvailable)))
+                telemetryManager.logEvent(.mainViewAction(.recordTaskButtonTapped(.error(.speechRecognitionIsNotAvailable))))
                 recognizePermission += 1
                 throw MicrophonePermission.speechRecognitionIsNotAvailable
             }

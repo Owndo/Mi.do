@@ -13,6 +13,8 @@ import Models
 final class WeekVM {
     @ObservationIgnored
     @Injected(\.dateManager) var dateManager: DateManagerProtocol
+    @ObservationIgnored
+    @Injected(\.telemetryManager) var telemetryManager: TelemetryManagerProtocol
     
     var selectedDayOfWeek = Date()
     
@@ -39,10 +41,16 @@ final class WeekVM {
     func selectedDateButtonTapped(_ day: Date) {
         dateManager.selectedDateChange(day)
         selectedDayOfWeek = day
+        
+        // telemetry
+        telemetryAction(.calendarAction(.selectedDateButtonTapped(.mainView)))
     }
     
     func backToTodayButtonTapped() {
         dateManager.backToToday()
+        
+        // telemetry
+        telemetryAction(.calendarAction(.backToTodayButtonTapped(.mainView)))
     }
     
     func isToday(_ date: Date) -> Bool {
@@ -72,5 +80,10 @@ final class WeekVM {
     
     func dateToString() -> String {
         dateManager.dateToString(for: selectedDate, format: nil, useForWeekView: true)
+    }
+    
+    //MARK: Telemtry action
+    private func telemetryAction(_ action: EventType) {
+        telemetryManager.logEvent(action)
     }
 }

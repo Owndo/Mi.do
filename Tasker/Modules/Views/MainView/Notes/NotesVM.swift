@@ -30,10 +30,10 @@ final class NotesVM {
     
     func saveNotes() {
         casManager.saveProfileData(profileModel)
-        telemetryAction(.addNotesButtonTapped)
+        telemetryAction(.mainViewAction(.addNotesButtonTapped))
     }
     
-    private func telemetryAction(_ action: MainScreenAction) {
-        telemetryManager.trackMainScreenAction(action)
+    private func telemetryAction(_ event: EventType) {
+        telemetryManager.logEvent(event)
     }
 }

@@ -9,6 +9,8 @@ final class TaskManager: TaskManagerProtocol {
     @Injected(\.dateManager) private var dateManager
     @ObservationIgnored
     @Injected(\.notificationManager) var notificationManager
+    @ObservationIgnored
+    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     
     private var weekTasksCache: [Double: [MainModel]] = [:] // key: startOfWeek timestamp
     
@@ -143,10 +145,15 @@ final class TaskManager: TaskManagerProtocol {
         if let existingIndex = task.done.firstIndex(where: { $0.completedFor == selectedDate }) {
             var updatedRecords = task.done
             updatedRecords.remove(at: existingIndex)
+            // telemetry
+            telemetryAction(.taskAction(.uncompleteButtonTapped))
             return updatedRecords
         } else {
             var updatedRecords = task.done
             updatedRecords.append(createNewTaskCompletion(task: task))
+            
+            // telemetry
+            telemetryAction(.taskAction(.completeButtonTapped))
             return updatedRecords
         }
     }
@@ -188,5 +195,10 @@ final class TaskManager: TaskManagerProtocol {
     private func isAfter9PM(_ date: Date) -> Bool {
         let hour = calendar.component(.hour, from: date)
         return hour >= 21
+    }
+    
+    //MARK: Telemetry action
+    private func telemetryAction(_ action: EventType) {
+        telemetryManager.logEvent(action)
     }
 }

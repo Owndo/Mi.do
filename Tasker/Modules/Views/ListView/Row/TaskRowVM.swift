@@ -22,6 +22,8 @@ final class TaskRowVM {
     @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     @ObservationIgnored
     @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
+    @ObservationIgnored
+    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     
     //MARK: - Properties
     var playingTask: TaskModel?
@@ -45,7 +47,6 @@ final class TaskRowVM {
     }
     
     //MARK: Private Properties
-    
     private var currentTime: Date {
         dateManager.currentTime
     }
@@ -60,6 +61,9 @@ final class TaskRowVM {
     func selectedTaskButtonTapped(_ task: MainModel) {
         selectedTask = task
         stopToPlay()
+        
+        // telemetry
+        telemetryAction(.taskAction(.openTaskButtonTapped))
     }
     
     //MARK: - Check Mark Function
@@ -106,6 +110,18 @@ final class TaskRowVM {
             
             await notificationManager.createNotification()
         }
+        
+        if task.value.repeatTask == .never {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))
+        }
+        
+        if task.value.repeatTask != .never && deleteCompletely == true {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskListView))))
+        }
+        
+        if task.value.repeatTask != .never && deleteCompletely == false {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskListView))))
+        }
     }
     
     //MARK: Change date for overdue task
@@ -122,10 +138,21 @@ final class TaskRowVM {
         } else {
             stopToPlay()
         }
+        
+        // telemetry
+        telemetryAction(.taskAction(.playVoiceButtonTapped(.taskListView)))
     }
     
     private func stopToPlay() {
         playerManager.stopToPlay()
         playingTask = nil
+        
+        // telemetry
+        telemetryAction(.taskAction(.stopPlayingVoiceButtonTapped(.taskListView)))
+    }
+    
+    //MARK: - Telemetry manager
+    private func telemetryAction(_ action: EventType) {
+        telemetryManager.logEvent(action)
     }
 }

@@ -141,14 +141,14 @@ public enum RepeatTask: CaseIterable, Codable, Identifiable {
     
     public var id: Self { self }
     
-    public var description: Text {
+    public var description: String {
         switch self {
-        case .never: return Text("Never")
-        case .daily: return Text("Every day")
-        case .weekly: return Text("Every week")
-        case .monthly: return Text("Every month")
-        case .yearly: return Text("Every year")
-        case .dayOfWeek: return Text("Day of week")
+        case .never: return "Never"
+        case .daily: return "Every day"
+        case .weekly: return "Every week"
+        case .monthly: return "Every month"
+        case .yearly: return "Every year"
+        case .dayOfWeek: return "Day of week"
         }
     }
 }

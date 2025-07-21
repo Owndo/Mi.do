@@ -15,6 +15,8 @@ final class DateManager: DateManagerProtocol {
     ///for the set up first day of week
     @ObservationIgnored
     @AppStorage("calendar", store: .standard) var firstDay = 1
+    @ObservationIgnored
+    @Injected(\.telemetryManager) var telemetryManager: TelemetryManagerProtocol
     
     var calendar = Calendar.current
     
@@ -40,6 +42,14 @@ final class DateManager: DateManagerProtocol {
                 selectedDateChange(sameWeekDay)
             } else {
                 selectedDateChange(allWeeks[1].date.first!)
+            }
+        }
+        willSet {
+            // telemetry
+            if newValue > indexForWeek {
+                telemetryManager.logEvent(.calendarAction(.changeWeekScrolled(.forward)))
+            } else {
+                telemetryManager.logEvent(.calendarAction(.changeWeekScrolled(.backward)))
             }
         }
     }

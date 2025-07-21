@@ -21,6 +21,7 @@ final class TaskVM {
     @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
     @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
+    @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     
     // MARK: - Model
     var mainModel: MainModel = mockModel()
@@ -137,14 +138,23 @@ final class TaskVM {
     // MARK: - Actions
     func selectDateButtonTapped() {
         showDatePicker.toggle()
+        
+        // telemetry
+        telemetryAction(.taskAction(.selectDateButtonTapped))
     }
     
     func selectTimeButtonTapped() {
         showTimePicker.toggle()
+        
+        // telemetry
+        telemetryAction(.taskAction(.selectTimeButtonTapped))
     }
     
     func selectedColorButtonTapped(_ taskColor: TaskColor) {
         task.taskColor = taskColor
+        
+        // telemetry
+        telemetryAction(.taskAction(.changeColorButtonTapped(taskColor)))
     }
     
     func shareViewButtonTapped() {
@@ -161,6 +171,18 @@ final class TaskVM {
         createTempAudioFile(audioHash: task.audio ?? "")
         
         await notificationManager.createNotification()
+        
+        // telemetry
+        telemetryAction(.taskAction(.repeatTaskButtonTapped(task.repeatTask)))
+        telemetryAction(.taskAction(.closeButtonTapped))
+        
+        if recorderManager.recognizedText != "" && task.title != recorderManager.recognizedText {
+            telemetryAction(.taskAction(.correctionTitle))
+        }
+        
+        if recorderManager.dateTimeFromtext != nil && notificationDate != recorderManager.dateTimeFromtext {
+            telemetryAction(.taskAction(.correctionDate))
+        }
     }
     
     
@@ -224,9 +246,14 @@ final class TaskVM {
         task = taskManager.checkMarkTapped(task: task)
         taskDoneTrigger.toggle()
         await saveTask()
+        await notificationManager.createNotification()
+        
+        // telemetry
+        telemetryAction(.taskAction(.checkMarkButtonTapped(.taskView)))
     }
     
     
+    //MARK: - Delete
     func deleteTaskButtonTapped() {
         if task.repeatTask == .never {
             messageForDelete = "Delete this task?"
@@ -239,8 +266,26 @@ final class TaskVM {
     }
     
     func deleteButtonTapped(model: MainModel, deleteCompletely: Bool = false) async {
-        task = taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely).value
-        await saveTask()
+        Task {
+            task = taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely).value
+            await saveTask()
+            await notificationManager.createNotification()
+        }
+        
+        // telemetry
+        if model.value.repeatTask == .never {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskView))))
+        }
+        
+        // telemetry
+        if model.value.repeatTask != .never && deleteCompletely == true {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskView))))
+        }
+        
+        // telemetry
+        if model.value.repeatTask != .never && deleteCompletely == false {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskView))))
+        }
     }
     
     // MARK: - Playback
@@ -257,14 +302,21 @@ final class TaskVM {
         await loadTotalTimeIfNeeded()
         await playerManager.playAudioFromData(task: task)
         
+        // telemetry
+        telemetryAction(.taskAction(.playVoiceButtonTapped(.taskView)))
     }
     
     func stopPlaying() {
         playerManager.stopToPlay()
+        // telemetry
+        telemetryAction(.taskAction(.stopPlayingVoiceButtonTapped(.taskView)))
     }
     
     func seekAudio(_ time: TimeInterval) {
         playerManager.seekAudio(time)
+        
+        // telemetry
+        telemetryAction(.taskAction(.seekToTime))
     }
     
     func currentTimeString() -> String {
@@ -304,6 +356,9 @@ final class TaskVM {
         } else {
             await startRecord()
         }
+        
+        // telemetry
+        telemetryAction(.taskAction(.addVoiceButtonTapped))
     }
     
     @MainActor
@@ -344,5 +399,10 @@ final class TaskVM {
     
     func accentColor() -> Color {
         appearanceManager.accentColor()
+    }
+    
+    //MARK: - Telemetry action
+    private func telemetryAction(_ action: EventType) {
+        telemetryManager.logEvent(action)
     }
 }

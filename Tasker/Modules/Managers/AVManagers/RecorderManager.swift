@@ -5,6 +5,8 @@ import NaturalLanguage
 
 @Observable
 final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
+    @ObservationIgnored
+    @Injected(\.telemetryManager) private var telemetryManager
     
     private var titleExtractor = MagicManager()
     private var avAudioRecorder: AVAudioRecorder?
@@ -151,6 +153,14 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         
         if recognizedText == "New task" {
             recognizedText = ""
+        }
+        
+        if !recognizedText.isEmpty {
+            telemetryManager.logEvent(.taskAction(.filledTitle))
+        }
+        
+        if dateTimeFromtext != nil {
+            telemetryManager.logEvent(.taskAction(.filledDate))
         }
     }
     

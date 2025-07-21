@@ -61,7 +61,7 @@ public final class MainVM {
             
             if presentationPosition == .fraction(0.20) {
                 // telemetry
-                telemetryAction(.showNotesButtonTapped)
+                telemetryAction(.mainViewAction(.showNotesButtonTapped))
             }
         }
     }
@@ -129,12 +129,12 @@ public final class MainVM {
     }
     
     public func mainScreenOpened() {
-        telemetryManager.trackOpenScreen(.screenOpen(.home))
+        telemetryManager.logEvent(.openView(.home(.open)))
     }
     
     // MARK: - Telemetry action
-    func telemetryAction(_ action: MainScreenAction) {
-        telemetryManager.trackMainScreenAction(action)
+    func telemetryAction(_ event: EventType) {
+        telemetryManager.logEvent(event)
     }
     
     //MARK: - Profile actions
@@ -155,7 +155,7 @@ public final class MainVM {
     
     func profileViewButtonTapped() {
         profileViewIsOpen = true
-        telemetryAction(.profileButtonTapped)
+        telemetryAction(.mainViewAction(.profileButtonTapped))
     }
     
     //MARK: - Appearance
@@ -195,7 +195,7 @@ public final class MainVM {
         playerManager.stopToPlay()
         
         // telemetry
-        telemetryAction(.recordTaskButtonTapped(.tryRecording))
+        telemetryAction(.mainViewAction(.recordTaskButtonTapped(.tryRecording)))
         
         do {
             changeDisabledButton()
@@ -228,14 +228,14 @@ public final class MainVM {
         guard let value = newValue, value >= 15.0 else { return }
         await stopRecord()
         // telemetry
-        telemetryAction(.recordTaskButtonTapped(.stopRecordingAfterTimeout))
+        telemetryAction(.mainViewAction(.recordTaskButtonTapped(.stopRecordingAfterTimeout)))
     }
     
     func startRecord() async {
         isRecording = true
         await recordManager.startRecording()
         // telemetry
-        telemetryAction(.recordTaskButtonTapped(.startRecording))
+        telemetryAction(.mainViewAction(.recordTaskButtonTapped(.startRecording)))
     }
     
     func stopRecord(isAutoStop: Bool = false) async {
@@ -256,7 +256,7 @@ public final class MainVM {
         recordManager.clearFileFromDirectory()
         
         // telemetry
-        telemetryAction(.recordTaskButtonTapped(.stopRecording))
+        telemetryAction(.mainViewAction(.recordTaskButtonTapped(.stopRecording)))
         
         try? await Task.sleep(nanoseconds: 100_000_000)
         recordingState = .idle
@@ -282,7 +282,7 @@ public final class MainVM {
         } else {
             createTask()
             // telemetry
-            telemetryAction(.createTaskButtonTapped)
+            telemetryAction(.mainViewAction(.addTaskButtonTapped))
         }
     }
     
@@ -291,7 +291,7 @@ public final class MainVM {
         path.append(Destination.calendar)
         mainViewIsOpen = false
         // telemetry
-        telemetryAction(.calendarButtonTapped)
+        telemetryAction(.mainViewAction(.calendarButtonTapped))
     }
     
     private func extractBaseId(from fullId: String) -> String {

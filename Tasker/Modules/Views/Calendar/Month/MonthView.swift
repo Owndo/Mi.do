@@ -56,6 +56,7 @@ public struct MonthView: View {
             }
             .onDisappear {
                 mainViewIsOpen = true
+                vm.onDissapear()
             }
         }
     }

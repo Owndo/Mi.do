@@ -23,6 +23,7 @@ struct Tasker: App {
                         mainVM.selectedTask(taskId: pendingId)
                         UserDefaults.standard.removeObject(forKey: "pendingTaskID")
                     }
+                    mainVM.mainScreenOpened()
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .openTaskFromNotification)) { notification in
                     mainVM.selectedTask(by: notification)

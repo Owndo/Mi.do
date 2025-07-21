@@ -203,7 +203,7 @@ final class TaskVM {
         let oldComponents = calendar.dateComponents([.day, .month, .year], from: lastNotificationDate)
         let newComponents = calendar.dateComponents([.day, .month, .year], from: notificationDate)
         
-        let timeInterval: TimeInterval = (oldComponents != newComponents) ? 0.1 : 0.8
+        let timeInterval: TimeInterval = (oldComponents != newComponents) ? 0.1 : 1.0
         lastNotificationDate = notificationDate
         
         debounceTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false) { [weak self] _ in

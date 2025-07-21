@@ -13,7 +13,16 @@ public enum MicrophonePermission: Error {
     case microphoneIsNotAvailable
     case speechRecognitionIsNotAvailable
     
-    
+    var description: String {
+        switch self {
+        case .silentError:
+            return "silent error"
+        case .microphoneIsNotAvailable:
+            return "Microphone is not avaliable"
+        case .speechRecognitionIsNotAvailable:
+            return "Speech recognition is not available"
+        }
+    }
     public func showingAlert(action: @escaping () -> Void) -> Alert {
         switch self {
         case .microphoneIsNotAvailable:
@@ -25,7 +34,7 @@ public enum MicrophonePermission: Error {
             )
         case .speechRecognitionIsNotAvailable:
                  return Alert(
-                     title: Text("Speech Recognition Unavailable 🎤❌"),
+                     title: Text("Speech Recognition Unavailable ❌"),
                      message: Text("I can't hear your voice magic... Speech recognition is turned off. Want to enable it in Settings?"),
                      primaryButton: .default(Text("Not now")),
                      secondaryButton: .default(Text("Go to Settings"), action: openSettings)

@@ -30,6 +30,8 @@ public final class MainVM {
     @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
     @ObservationIgnored
     @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
+    @ObservationIgnored
+    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     
     //MARK: - Model
     var model: MainModel?
@@ -55,6 +57,11 @@ public final class MainVM {
                 if path.count > 0 {
                     path.removeLast()
                 }
+            }
+            
+            if presentationPosition == .fraction(0.20) {
+                // telemetry
+                telemetryAction(.showNotesButtonTapped)
             }
         }
     }
@@ -121,45 +128,16 @@ public final class MainVM {
         await notificationManager.createNotification()
     }
     
-    func createTaskButtonHolding() async {
-        guard isRecording else {
-            return
-        }
-        
-        await stopRecord(isAutoStop: true)
+    public func mainScreenOpened() {
+        telemetryManager.trackOpenScreen(.screenOpen(.home))
     }
     
-    func startAfterChek() async throws {
-        
-        recordingState = .recording
-        
-        playerManager.stopToPlay()
-        
-        do {
-            changeDisabledButton()
-            try recordPermission.peremissionSessionForRecording()
-            try await recordPermission.permissionForSpeechRecognition()
-            await startRecord()
-            changeDisabledButton()
-        } catch let error as MicrophonePermission {
-            switch error {
-            case .silentError: return
-            case .microphoneIsNotAvailable:
-                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
-            case .speechRecognitionIsNotAvailable:
-                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
-            }
-        } catch let error as ErrorRecorder {
-            switch error {
-            case .cannotInterruptOthers, .cannotStartRecording, .insufficientPriority, .isBusy, .siriIsRecordign, .timeIsLimited:
-                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
-            case .none:
-                return
-            }
-        }
+    // MARK: - Telemetry action
+    func telemetryAction(_ action: MainScreenAction) {
+        telemetryManager.trackMainScreenAction(action)
     }
     
-    //MARK: - Profile model save
+    //MARK: - Profile actions
     func profileModelSave() {
         casManager.saveProfileData(profileModel)
     }
@@ -177,6 +155,7 @@ public final class MainVM {
     
     func profileViewButtonTapped() {
         profileViewIsOpen = true
+        telemetryAction(.profileButtonTapped)
     }
     
     //MARK: - Appearance
@@ -200,15 +179,63 @@ public final class MainVM {
         appearanceManager.accentColor()
     }
     
+    
+    //MARK: - Recording
+    
+    func createTaskButtonHolding() async {
+        guard isRecording else {
+            return
+        }
+        
+        await stopRecord(isAutoStop: true)
+    }
+    
+    func startAfterChek() async throws {
+        recordingState = .recording
+        playerManager.stopToPlay()
+        
+        // telemetry
+        telemetryAction(.recordTaskButtonTapped(.tryRecording))
+        
+        do {
+            changeDisabledButton()
+            try recordPermission.peremissionSessionForRecording()
+            try await recordPermission.permissionForSpeechRecognition()
+            
+            await startRecord()
+            
+            changeDisabledButton()
+        } catch let error as MicrophonePermission {
+            switch error {
+            case .silentError: return
+            case .microphoneIsNotAvailable:
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
+            case .speechRecognitionIsNotAvailable:
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
+            }
+        } catch let error as ErrorRecorder {
+            switch error {
+            case .cannotInterruptOthers, .cannotStartRecording, .insufficientPriority, .isBusy, .siriIsRecordign, .timeIsLimited:
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
+            case .none:
+                return
+            }
+        }
+    }
+    
     @MainActor
     func stopAfterCheck(_ newValue: Double?) async {
         guard let value = newValue, value >= 15.0 else { return }
         await stopRecord()
+        // telemetry
+        telemetryAction(.recordTaskButtonTapped(.stopRecordingAfterTimeout))
     }
     
     func startRecord() async {
         isRecording = true
         await recordManager.startRecording()
+        // telemetry
+        telemetryAction(.recordTaskButtonTapped(.startRecording))
     }
     
     func stopRecord(isAutoStop: Bool = false) async {
@@ -227,6 +254,9 @@ public final class MainVM {
         
         createTask(with: hashOfAudio)
         recordManager.clearFileFromDirectory()
+        
+        // telemetry
+        telemetryAction(.recordTaskButtonTapped(.stopRecording))
         
         try? await Task.sleep(nanoseconds: 100_000_000)
         recordingState = .idle
@@ -251,6 +281,8 @@ public final class MainVM {
             await stopRecord()
         } else {
             createTask()
+            // telemetry
+            telemetryAction(.createTaskButtonTapped)
         }
     }
     
@@ -258,6 +290,8 @@ public final class MainVM {
     func calendarButtonTapped() {
         path.append(Destination.calendar)
         mainViewIsOpen = false
+        // telemetry
+        telemetryAction(.calendarButtonTapped)
     }
     
     private func extractBaseId(from fullId: String) -> String {

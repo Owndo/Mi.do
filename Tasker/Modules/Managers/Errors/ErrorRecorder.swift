@@ -17,6 +17,25 @@ public enum ErrorRecorder: Error {
     case insufficientPriority
     case none
     
+    var description: String {
+        switch self {
+        case .timeIsLimited:
+            return "Recording has finished"
+        case .isBusy:
+            return "The microphone is currently busy, please stop use it and try again."
+        case .cannotInterruptOthers:
+            return "This operation cannot interrupt other processes. Please try again later."
+        case .siriIsRecordign:
+            return "Siri is Recording"
+        case .cannotStartRecording:
+            return "Cannot Start Recording"
+        case .insufficientPriority:
+            return "Insufficient Priority"
+        case .none:
+            return "No Error"
+        }
+    }
+    
     public func showingAlert(action: @escaping () -> Void) -> Alert {
         switch self {
         case .timeIsLimited:

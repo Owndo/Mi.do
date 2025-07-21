@@ -12,5 +12,6 @@ import PackageDescription
 let package = Package(
     name: "Tasker-tuist",
     dependencies: [
+        .package(url: "https://github.com/PostHog/posthog-ios", .upToNextMajor(from: "3.29.0")),
     ]
 )

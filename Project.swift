@@ -30,7 +30,8 @@ let project = Project(
             )],
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
             dependencies: [
-                .target(name: "MainView")
+                .target(name: "MainView"),
+                .external(name: "PostHog")
             ],
             settings: .settings(
                 base: .init().merging(
@@ -45,7 +46,7 @@ let project = Project(
         .module(name: "BlockSet", dependencies: []),
         .module(name: "Models", dependencies: [.target(name: "BlockSet")]),
         .module(name: "UIComponents", dependencies: [.target(name: "Models"), .target(name: "Managers")]),
-        .module(name: "Managers", dependencies: [.target(name: "Models")]),
+        .module(name: "Managers", dependencies: [.target(name: "Models"), .external(name: "PostHog")]),
         .target(
             name: "ManagersTests",
             destinations: App.destinations,
@@ -54,7 +55,6 @@ let project = Project(
             deploymentTargets: App.deploymentTargets,
             infoPlist: .default,
             sources: ["Tasker/Tests/ManagersTests/**"],
-            //            resources: [],
             dependencies: [
                 .target(name: "Managers"),
                 .target(name: "Models")

@@ -113,6 +113,12 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
     // MARK: - Speech Recognition Methods
     
     private func startSpeechRecognition() {
+        let status = SFSpeechRecognizer.authorizationStatus()
+        
+        guard status == .authorized else {
+            return
+        }
+        
         guard let speechRecognizer = speechRecognizer,
               speechRecognizer.isAvailable else {
             return

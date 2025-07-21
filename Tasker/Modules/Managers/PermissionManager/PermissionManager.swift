@@ -15,6 +15,12 @@ import Speech
 
 @Observable
 final class PermissionManager: PermissionProtocol {
+    @ObservationIgnored
+    @AppStorage("recognizePermission") var recognizePermission = 0
+    
+    @ObservationIgnored
+    @Injected(\.telemetryManager) var telemetryManager
+    
     var allowedMicro = false
     var allowedNotification = false
     var allowedSpeechRecognition = false
@@ -32,6 +38,7 @@ final class PermissionManager: PermissionProtocol {
             requestRecordPermission()
             throw MicrophonePermission.silentError
         case .denied:
+            telemetryManager.trackMainScreenAction(.recordTaskButtonTapped(.error(.microphoneIsNotAvailable)))
             throw MicrophonePermission.microphoneIsNotAvailable
         case .granted:
             do {
@@ -77,17 +84,20 @@ final class PermissionManager: PermissionProtocol {
         
         switch status {
         case .notDetermined:
-            let newStatus = await SFSpeechRecognizer.requestAuthorizationAsync()
-            let isAuthorized = newStatus == .authorized
-            allowedSpeechRecognition = isAuthorized
+            let _ = await SFSpeechRecognizer.requestAuthorizationAsync()
+            throw MicrophonePermission.silentError
         case .authorized:
             allowedSpeechRecognition = true
         default:
-            allowedSpeechRecognition = false
-            throw MicrophonePermission.speechRecognitionIsNotAvailable
+            if recognizePermission <= 2 {
+                allowedSpeechRecognition = false
+                telemetryManager.trackMainScreenAction(.recordTaskButtonTapped(.error(.speechRecognitionIsNotAvailable)))
+                recognizePermission += 1
+                throw MicrophonePermission.speechRecognitionIsNotAvailable
+            }
         }
     }
-
+    
     
     func permissionForGallery() async -> Bool {
         let readWriteStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)

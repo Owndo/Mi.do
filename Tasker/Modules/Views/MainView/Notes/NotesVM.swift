@@ -15,6 +15,8 @@ final class NotesVM {
     @Injected(\.casManager) var casManager
     @ObservationIgnored
     @Injected(\.appearanceManager) var appearanceManager
+    @ObservationIgnored
+    @Injected(\.telemetryManager) var telemetryManager
     
     var profileModel: ProfileData = mockProfileData()
     
@@ -26,8 +28,12 @@ final class NotesVM {
         profileModel = casManager.profileModel ?? mockProfileData()
     }
     
-    
     func saveNotes() {
         casManager.saveProfileData(profileModel)
+        telemetryAction(.addNotesButtonTapped)
+    }
+    
+    private func telemetryAction(_ action: MainScreenAction) {
+        telemetryManager.trackMainScreenAction(action)
     }
 }

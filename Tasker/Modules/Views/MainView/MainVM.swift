@@ -281,6 +281,7 @@ public final class MainVM {
             await stopRecord()
         } else {
             createTask()
+            
             // telemetry
             telemetryAction(.mainViewAction(.addTaskButtonTapped))
         }

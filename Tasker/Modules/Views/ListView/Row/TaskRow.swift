@@ -120,6 +120,12 @@ struct TaskRow: View {
                 Image(systemName: vm.playing ? "pause.fill" : "play.fill")
                     .foregroundStyle(.white)
                     .animation(.default, value: vm.playing)
+                    .onTapGesture {
+                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                        Task {
+                            await vm.playButtonTapped(task: task)
+                        }
+                    }
             } else {
                 Image(systemName: "plus").bold()
                     .foregroundStyle(.white)
@@ -127,12 +133,6 @@ struct TaskRow: View {
             }
         }
         .frame(width: 28, height: 28)
-        .onTapGesture {
-            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-            Task {
-                await vm.playButtonTapped(task: task)
-            }
-        }
     }
 }
 

@@ -144,11 +144,13 @@ final class TaskRowVM {
     }
     
     private func stopToPlay() {
-        playerManager.stopToPlay()
-        playingTask = nil
-        
-        // telemetry
-        telemetryAction(.taskAction(.stopPlayingVoiceButtonTapped(.taskListView)))
+        if playerManager.isPlaying {
+            playerManager.stopToPlay()
+            playingTask = nil
+            
+            // telemetry
+            telemetryAction(.taskAction(.stopPlayingVoiceButtonTapped(.taskListView)))
+        }
     }
     
     //MARK: - Telemetry manager

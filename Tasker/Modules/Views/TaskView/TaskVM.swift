@@ -185,8 +185,6 @@ final class TaskVM {
         }
     }
     
-    
-    
     private func preparedTask() -> TaskModel {
         taskManager.preparedTask(task: task, date: notificationDate)
     }
@@ -198,7 +196,7 @@ final class TaskVM {
     
     private func combineDateAndTime(timeComponents: DateComponents) -> Date {
         guard setUpDefaultTime(task) else {
-            return dateManager.combineDateAndTime(timeComponents: timeComponents)
+            return dateManager.createdtaskDate(task: task)
         }
         
         return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: timeComponents)

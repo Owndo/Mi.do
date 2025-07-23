@@ -258,6 +258,16 @@ final class DateManager: DateManagerProtocol {
         return calendar.date(from: dateComponents)!
     }
     
+    func createdtaskDate(task: TaskModel) -> Date {
+        var dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+        let componentsFromTask = calendar.dateComponents([.hour, .minute], from: Date(timeIntervalSince1970: task.notificationDate))
+        
+        dateComponents.hour = componentsFromTask.hour
+        dateComponents.minute = componentsFromTask.minute
+        
+        return calendar.date(from: dateComponents)!
+    }
+    
     
     func getDefaultNotificationTime() -> Date {
         func dateAt(_ date: Date, hour: Int, minute: Int = 0, second: Int = 0) -> Date {

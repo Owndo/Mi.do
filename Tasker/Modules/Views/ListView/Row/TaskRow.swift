@@ -85,15 +85,14 @@ struct TaskRow: View {
             }
             .listRowSeparator(.hidden)
             .listRowInsets(EdgeInsets())
-//            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-//                Button {
-//                    vm.deleteTaskButtonSwiped(task: task)
-//                } label: {
-//                    Image(systemName: "trash")
-//                        .foregroundStyle(.labelSecondary)
-//                        .tint(.accentRed)
-//                }
-//            }
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                Button {
+                    vm.deleteTaskButtonSwiped(task: task)
+                } label: {
+                    Image(systemName: "trash")
+                        .tint(.red)
+                }
+            }
             .swipeActions(edge: .leading, allowsFullSwipe: false) {
                 Button {
                     vm.updateNotificationTimeForDueDateSwipped(task: task)

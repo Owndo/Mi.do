@@ -120,16 +120,8 @@ final class MonthVM {
     }
     
     //MARK: Appearance
-    func colorScheme() -> String {
-        appearanceManager.colorScheme()
-    }
-    
-    func backgroundColor() -> Color {
-        appearanceManager.backgroundColor()
-    }
-    
-    func accentColor() -> Color {
-        appearanceManager.accentColor()
+    func colorScheme() -> ColorScheme {
+        appearanceManager.currentColorScheme()
     }
     
     //MARK: Telemtry action

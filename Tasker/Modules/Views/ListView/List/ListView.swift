@@ -61,7 +61,7 @@ public struct ListView: View {
             HStack {
                 Text("Tasks")
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelTertiary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
                 
                 Spacer()
             }
@@ -76,7 +76,7 @@ public struct ListView: View {
                     if index != vm.tasks.count - 1 {
                         RoundedRectangle(cornerRadius: 0.5)
                             .fill(
-                                Color.separatorSecondary.opacity(0.14)
+                                Color(UIComponentsColors.Separator.separatorSecondary)
                             )
                             .frame(height: 0.5)
                     }
@@ -94,12 +94,12 @@ public struct ListView: View {
             HStack {
                 Text("Completed task")
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelTertiary)
+                    .foregroundStyle(Color(.labelTertiary))
                 
                 Spacer()
                 
                 Image(systemName: vm.completedTasksHidden ? "chevron.down" : "chevron.up")
-                    .foregroundStyle(.labelTertiary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
                     .bold()
             }
             .onTapGesture {
@@ -113,12 +113,12 @@ public struct ListView: View {
                 VStack(spacing: 0) {
                     ForEach(Array(vm.completedTasks.enumerated()), id: \.element) { index, task in
                         TaskRow(task: task)
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
                         
                         if index != vm.completedTasks.count - 1 {
                             RoundedRectangle(cornerRadius: 0.5)
                                 .fill(
-                                    Color.separatorSecondary.opacity(0.14)
+                                    Color(UIComponentsColors.Separator.separatorSecondary)
                                 )
                                 .frame(height: 0.5)
                         }

@@ -8,6 +8,7 @@
 import Foundation
 import Managers
 import Models
+import SwiftUI
 
 @Observable
 final class NotesVM {
@@ -20,8 +21,8 @@ final class NotesVM {
     
     var profileModel: ProfileData = mockProfileData()
     
-    func colorScheme() -> String {
-        appearanceManager.colorScheme()
+    func colorScheme() -> ColorScheme {
+        appearanceManager.currentColorScheme()
     }
     
     init() {

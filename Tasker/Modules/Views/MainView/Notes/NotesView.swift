@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIComponents
 
 struct NotesView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -20,7 +21,7 @@ struct NotesView: View {
         ZStack {
             TextEditor(text: $vm.profileModel.value.notes)
                 .font(.system(.callout, design: .rounded, weight: .semibold))
-                .foregroundStyle(.labelPrimary)
+                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
                 .focused($notesFocusState)
                 .scrollDismissesKeyboard(.immediately)
                 .textEditorStyle(.plain)
@@ -47,13 +48,13 @@ struct NotesView: View {
         if vm.profileModel.value.notes.isEmpty && notesFocusState == false {
             VStack {
                 Image(systemName: "note.text.badge.plus")
-                    .foregroundStyle(.labelQuintuple)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelQuintuple))
                     .scaleEffect(1.5)
                 
                 Text("Tap and add your notes here...")
                     .font(.system(.callout, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.leading)
-                    .foregroundStyle(.labelQuaternary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelQuaternary))
                     .padding(.top, 3)
             }
         }
@@ -71,13 +72,13 @@ struct NotesView: View {
                     vm.saveNotes()
                 } label: {
                     Text("Done")
-                        .foregroundStyle(colorScheme.elementColor.hexColor())
+                        .foregroundStyle(colorScheme.accentColor())
                         .padding(.vertical, 9)
                 }
             }
             .padding(.horizontal, 16)
             .background(
-                colorScheme.backgroundColor.hexColor()
+                colorScheme.backgroundColor()
             )
         }
     }

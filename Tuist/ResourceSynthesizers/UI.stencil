@@ -212,122 +212,52 @@
 }
 #endif
 
-{% endif %}
-{% if catalogs.first.assets %}
-{% macro colorShortcuts assets %}
-{% for asset in assets %}
-{% if asset.type == "color" %}
-@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
-{{accessModifier}} extension {{colorType}}.Color {
-    static var {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}}: {{colorType}}.Color {
-        let bundle = Bundle.module
-        #if os(iOS) || os(tvOS) || os(visionOS)
-        return {{colorType}}.Color(named: "{{asset.value}}", in: bundle, compatibleWith: nil)!
-        #elseif os(macOS)
-        return {{colorType}}.Color(named: NSColor.Name("{{asset.value}}"), bundle: bundle)!
-        #elseif os(watchOS)
-        return {{colorType}}.Color(named: "{{asset.value}}")!
-        #endif
-    }
+// MARK: Nested Accessors for Color Groups
+
+extension {{colorType}} {
+  {% macro nestedColorAccessors assets %}
+    {% for asset in assets %}
+      {% if asset.type == "color" %}
+        public static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}} = {{colorType}}(name: "{{asset.value}}")
+      {% elif asset.items %}
+        {% if asset.isNamespaced == "true" or forceNamespaces == "true" %}
+          public struct {{asset.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
+            {% filter indent:2 %}
+            {% call nestedColorAccessors asset.items %}
+            {% endfilter %}
+          }
+        {% else %}
+          {% call nestedColorAccessors asset.items %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endmacro %}
+
+  {% call nestedColorAccessors catalogs.first.assets %}
 }
 
-#if canImport(SwiftUI)
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
-{{accessModifier}} extension SwiftUI.Color {
-    static var {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}}: SwiftUI.Color {
-        let bundle = Bundle.module
-        return SwiftUI.Color("{{asset.value}}", bundle: bundle)
-    }
+extension {{imageType}} {
+  {% macro nestedImageAccessors assets %}
+    {% for asset in assets %}
+      {% if asset.type == "image" or asset.type == "symbol" %}
+        public static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}} = {{imageType}}(name: "{{asset.value}}")
+      {% elif asset.items %}
+        {% if asset.isNamespaced == "true" or forceNamespaces == "true" %}
+          public struct {{asset.name|swiftIdentifier:"pretty"|escapeReservedKeywords}} {
+            {% filter indent:2 %}
+              {% call nestedImageAccessors asset.items %}
+            {% endfilter %}
+          }
+        {% else %}
+          {% call nestedImageAccessors asset.items %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endmacro %}
+
+  {% call nestedImageAccessors catalogs.first.assets %}
 }
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
-{{accessModifier}} extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
-    static var {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}}: SwiftUI.Color {
-        let bundle = Bundle.module
-        return SwiftUI.Color("{{asset.value}}", bundle: bundle)
-    }
-}
-#endif
-{% elif asset.items %}
-{% call colorShortcuts asset.items %}
-{% endif %}
-{% endfor %}
-{% endmacro %}
-
-{% macro imageShortcuts assets %}
-{% for asset in assets %}
-{% if asset.type == "image" or asset.type == "symbol" %}
-{{accessModifier}} extension {{imageType}}.Image {
-    static var {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}}: {{imageType}}.Image {
-        let bundle = Bundle.module
-        #if os(iOS) || os(tvOS) || os(visionOS)
-        return {{imageType}}.Image(named: "{{asset.value}}", in: bundle, compatibleWith: nil)!
-        #elseif os(macOS)
-        return bundle.image(forResource: NSImage.Name("{{asset.value}}"))!
-        #elseif os(watchOS)
-        return {{imageType}}.Image(named: "{{asset.value}}")!
-        #endif
-    }
-}
-
-#if canImport(SwiftUI)
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
-{{accessModifier}} extension SwiftUI.Image {
-    static var {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}}: SwiftUI.Image {
-        let bundle = Bundle.module
-        return SwiftUI.Image("{{asset.value}}", bundle: bundle)
-    }
-}
-#endif
-{% elif asset.items %}
-{% call imageShortcuts asset.items %}
-{% endif %}
-{% endfor %}
-{% endmacro %}
-
-{% if resourceCount.color > 0 %}
-// MARK: - Colors
-{% call colorShortcuts catalogs.first.assets %}
-{% endif %}
-
-{% if resourceCount.image > 0 or resourceCount.symbol > 0 %}
-// MARK: - Images
-{% call imageShortcuts catalogs.first.assets %}
-{% endif %}
-
-{% if resourceCount.data > 0 %}
-{% macro dataAccessors assets %}
-{% for asset in assets %}
-{% if asset.type == "data" %}
-extension {{dataType}} {
-    {{accessModifier}} static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}} = {{dataType}}(name: "{{asset.value}}")
-}
-{% elif asset.items %}
-{% call dataAccessors asset.items %}
-{% endif %}
-{% endfor %}
-{% endmacro %}
-
-// MARK: - Data Assets
-{% call dataAccessors catalogs.first.assets %}
-{% endif %}
-
-{% if resourceCount.arresourcegroup > 0 %}
-{% macro arResourceAccessors assets %}
-{% for asset in assets %}
-{% if asset.type == "arresourcegroup" %}
-extension {{arResourceGroupType}} {
-    {{accessModifier}} static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord}} = {{arResourceGroupType}}(name: "{{asset.value}}")
-}
-{% elif asset.items %}
-{% call arResourceAccessors asset.items %}
-{% endif %}
-{% endfor %}
-{% endmacro %}
-
-// MARK: - AR Resource Groups
-{% call arResourceAccessors catalogs.first.assets %}
-{% endif %}
 {% endif %}
 {% else %}
 // No assets found

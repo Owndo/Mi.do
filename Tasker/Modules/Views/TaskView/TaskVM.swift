@@ -396,16 +396,8 @@ final class TaskVM {
     }
     
     //MARK: Appearance
-    func colorScheme() -> String {
-        appearanceManager.colorScheme()
-    }
-    
-    func backgroundColor() -> Color {
-        appearanceManager.backgroundColor()
-    }
-    
-    func accentColor() -> Color {
-        appearanceManager.accentColor()
+    func colorScheme() -> ColorScheme {
+        appearanceManager.currentColorScheme()
     }
     
     //MARK: - Telemetry action

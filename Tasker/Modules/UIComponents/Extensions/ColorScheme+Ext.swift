@@ -7,13 +7,26 @@
 
 import Foundation
 import SwiftUICore
+import Managers
 
 public extension ColorScheme {
-    var elementColor: String {
-        self == .dark ? "#18C585" : "#0EBC7C"
+    func accentColor() -> Color {
+        @Injected(\.appearanceManager) var appearanceManager
+        
+        if self == .dark {
+            return appearanceManager.profileData.value.settings.accentColor.dark.hexColor()
+        } else {
+            return appearanceManager.profileData.value.settings.accentColor.light.hexColor()
+        }
     }
     
-    var backgroundColor: String {
-        self == .dark ? "#202020" : "#F2F5EE"
+    func backgroundColor() -> Color {
+        @Injected(\.appearanceManager) var appearanceManager
+        
+        if self == .dark {
+            return appearanceManager.profileData.value.settings.background.dark.hexColor()
+        } else {
+            return appearanceManager.profileData.value.settings.background.light.hexColor()
+        }
     }
 }

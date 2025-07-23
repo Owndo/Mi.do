@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Managers
+import Models
 import UIComponents
 
 struct AppearanceView: View {
@@ -16,11 +17,11 @@ struct AppearanceView: View {
     
     @State private var vm = AppearanceVM()
     
-    @State private var showAlert = false
+    @State private var animateSymbol = false
     
     var body: some View {
         ZStack {
-            vm.backgroundColor()
+            colorScheme.backgroundColor()
                 .ignoresSafeArea()
             
             VStack {
@@ -35,17 +36,14 @@ struct AppearanceView: View {
                     .padding(.bottom, 28)
                     
                     ProgressMode()
+                        .padding(.bottom, 28)
+                    
+                    AccentColorSelector()
+                        .padding(.bottom, 28)
+                    
+                    BackgroundColorSelector()
                 }
                 .scrollIndicators(.hidden)
-            }
-            .alert("Easy there", isPresented: $showAlert) {
-                Button {
-                    
-                } label: {
-                    Text("Piss me off 🤬")
-                }
-            } message: {
-                Text("Comming soon...")
             }
             .padding(.horizontal, 16)
             .toolbar {
@@ -60,56 +58,57 @@ struct AppearanceView: View {
                             Text("Profile")
                                 .font(.system(.body, design: .rounded, weight: .medium))
                         }
-                        .tint(colorScheme.elementColor.hexColor())
+                        .tint(colorScheme.accentColor())
                     }
                 }
             }
             .navigationBarBackButtonHidden()
             .navigationTitle("Appearance")
             .navigationBarTitleDisplayMode(.inline)
+            .background(colorScheme.backgroundColor())
         }
     }
     
     //MARK: - Scheme selector
     @ViewBuilder
     private func SchemeSelector(_ scheme: ColorSchemeMode) -> some View {
-        VStack(spacing: 12) {
-            switch scheme {
-            case .light:
-                Image(uiImage: .light)
-                    .resizable()
-                    .scaledToFit()
-            case .dark:
-                Image(uiImage: .dark)
-                    .resizable()
-                    .scaledToFit()
-            case .system:
-                Image(uiImage: .system)
-                    .resizable()
-                    .scaledToFit()
-            }
-            
-            Text(scheme.description)
-                .font(.system(.headline, design: .rounded, weight: .bold))
-                .foregroundStyle(.labelPrimary)
-            
-            Button {
-                vm.changeScheme(scheme)
-                print(scheme.description)
-            } label: {
-                if scheme.description == vm.profileData.value.settings.colorScheme {
+        Button {
+            vm.changeScheme(scheme)
+        } label: {
+            VStack(spacing: 12) {
+                switch scheme {
+                case .light:
+                    Image(UIComponentsImages.Appearance.light)
+                        .resizable()
+                        .scaledToFit()
+                case .dark:
+                    Image(UIComponentsImages.Appearance.dark)
+                        .resizable()
+                        .scaledToFit()
+                case .system:
+                    Image(UIComponentsImages.Appearance.system)
+                        .resizable()
+                        .scaledToFit()
+                }
+                
+                Text(scheme.description)
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                
+                
+                if scheme == vm.profileData.value.settings.colorScheme {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelPrimary)
+                        .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
                 } else {
                     Image(systemName: "circle")
                         .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelQuaternary)
+                        .foregroundStyle(Color(UIComponentsColors.Labels.labelQuaternary))
                 }
             }
         }
-        .animation(.default, value: vm.profileData)
-        .sensoryFeedback(.selection, trigger: vm.profileData)
+        .animation(.default, value: vm.appearanceManager.selectedColorScheme)
+        .sensoryFeedback(.selection, trigger: vm.appearanceManager.selectedColorScheme)
     }
     
     //MARK: - Progress mode
@@ -119,48 +118,162 @@ struct AppearanceView: View {
             
             Text("Progress task design")
                 .font(.system(.headline, design: .rounded, weight: .semibold))
-                .foregroundStyle(.labelPrimary)
+                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
             
             HStack(spacing: 16) {
-                ProgressRowButton(colorScheme == .dark ? .minimalDark : .minimal, text: "Minimal", value: true) {
+                ProgressRowButton(colorScheme == .dark ? Image(UIComponentsImages.Appearance.minimalDark) : Image(UIComponentsImages.Appearance.minimal), text: "Minimal", value: true) {
                     vm.changeProgressMode(true)
                 }
                 
-                ProgressRowButton(colorScheme == .dark ? .colorfulDark : .colorful, text: "Colorful", value: false) {
+                ProgressRowButton(colorScheme == .dark ? Image(UIComponentsImages.Appearance.colorfulDark) : Image(UIComponentsImages.Appearance.colorful), text: "Colorful", value: false) {
                     vm.changeProgressMode(false)
                 }
             }
         }
-        .sensoryFeedback(.selection, trigger: vm.progressModeTrigger)
+        .sensoryFeedback(.selection, trigger: vm.changeStateTrigger)
+        .animation(.default, value: vm.changeStateTrigger)
     }
     
     //MARK: - Progress row Button
     @ViewBuilder
-    private func ProgressRowButton(_ image: UIImage, text: String, value: Bool, action: @escaping () -> Void) -> some View {
+    private func ProgressRowButton(_ image: Image, text: String, value: Bool, action: @escaping () -> Void) -> some View {
         Button {
             action()
         } label: {
             VStack {
-                Image(uiImage: image)
+                image
                     .resizable()
                     .scaledToFit()
                     .padding(.bottom, 4)
                 
                 Text(text)
                     .font(.system(.headline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(.labelPrimary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
                     .padding(.bottom, 4)
                 
                 if value == vm.profileData.value.settings.minimalProgressMode {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelPrimary)
+                        .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
                 } else {
                     Image(systemName: "circle")
                         .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelQuaternary)
+                        .foregroundStyle(Color(UIComponentsColors.Labels.labelQuaternary))
                 }
             }
+        }
+    }
+    
+    //MARK: - Accent color selector
+    @ViewBuilder
+    private func AccentColorSelector() -> some View {
+        VStack(alignment: .leading) {
+            Text("Accent color")
+                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+            
+            LazyVGrid(columns: [
+                GridItem(.flexible(minimum: 42), spacing: 27),
+                GridItem(.flexible(minimum: 42), spacing: 27),
+                GridItem(.flexible(minimum: 42), spacing: 27),
+                GridItem(.flexible(minimum: 42), spacing: 27),
+                GridItem(.flexible(minimum: 42), spacing: 27)], spacing: 27) {
+                    ForEach(AccentColorEnum.allCases) { color in
+                        Button {
+                            vm.changeAccentColor(color)
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .fill(color.showColor(colorScheme))
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color(UIComponentsColors.Separator.separatorPrimary), lineWidth: 1)
+                                    )
+                                
+                                Image(systemName: "checkmark")
+                                    .font(.system(.body, design: .rounded, weight: .semibold))
+                                    .foregroundStyle(vm.checkAccentColor(color) ? Color(UIComponentsColors.Labels.labelPrimaryInverted) : .clear)
+                                    .symbolEffect(.bounce, value: vm.accentSymbolAnimate)
+                            }
+                        }
+                    }
+                    ZStack {
+                        ColorPicker(selection: $vm.customAccentColor) {}
+                            .fixedSize()
+                        
+                        Image(UIComponentsImages.Appearance.colorPicker)
+                            .allowsHitTesting(false)
+                        
+                        if vm.checkCustomAccent() {
+                            Image(systemName: "checkmark")
+                                .font(.system(.body, design: .rounded, weight: .semibold))
+                                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimaryInverted))
+                                .symbolEffect(.bounce, value: vm.accentSymbolAnimate)
+                        }
+                    }
+                }
+                .padding(20)
+                .background(
+                    RoundedRectangle(cornerRadius: 20)
+                        .fill(
+                            Color(UIComponentsColors.Background.backgroundTertiary)
+                        )
+                )
+        }
+    }
+    
+    //MARK: Background color selector
+    @ViewBuilder
+    private func BackgroundColorSelector() -> some View {
+        VStack(alignment: .leading) {
+            
+            Text("Background color")
+                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+            
+            HStack(spacing: 27) {
+                ForEach(BackgroundColorEnum.allCases, id: \.self) { color in
+                    Button {
+                        vm.changeBackgroundColor(color)
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(color.showColors(colorScheme))
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color(UIComponentsColors.Separator.separatorPrimary), lineWidth: 1)
+                                )
+                            
+                            Image(systemName: "checkmark")
+                                .font(.system(.body, design: .rounded, weight: .semibold))
+                                .foregroundStyle(vm.checkCurrentBackgroundColor(color) ? Color(UIComponentsColors.Labels.labelPrimary) : .clear)
+                                .symbolEffect(.bounce, value: vm.backgroundSymbolAnimate)
+                        }
+                    }
+                }
+                
+                ZStack {
+                    ColorPicker(selection: $vm.customBackgroundColor) {}
+                        .fixedSize()
+                    
+                    Image(UIComponentsImages.Appearance.colorPicker)
+                        .allowsHitTesting(false)
+                    
+                    if vm.checkCustomBackground() {
+                        Image(systemName: "checkmark")
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                            .symbolEffect(.bounce, value: vm.backgroundSymbolAnimate)
+                    }
+                }
+            }
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(
+                        Color(UIComponentsColors.Background.backgroundTertiary)
+                    )
+            )
         }
     }
 }

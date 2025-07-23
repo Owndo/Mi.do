@@ -16,9 +16,12 @@ struct Tasker: App {
     
     @State private var mainVM = MainVM()
     
+    @Injected(\.appearanceManager) var appearanceManager
+    
     var body: some Scene {
         WindowGroup {
             MainView(vm: mainVM)
+                .preferredColorScheme(appearanceManager.selectedColorScheme)
                 .onAppear {
                     if let pendingId = UserDefaults.standard.string(forKey: "pendingTaskID") {
                         mainVM.selectedTask(taskId: pendingId)
@@ -39,6 +42,7 @@ struct Tasker: App {
                         break
                     }
                 }
+                .animation(.default, value: appearanceManager.selectedColorScheme)
         }
     }
 }

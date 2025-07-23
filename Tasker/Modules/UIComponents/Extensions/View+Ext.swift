@@ -14,7 +14,7 @@ public extension View {
         self
             .overlay(alignment: .top) {
                 LinearGradient(
-                    colors: [colorScheme.backgroundColor.hexColor(), .clear],
+                    colors: [colorScheme.backgroundColor(), .clear],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -23,7 +23,7 @@ public extension View {
             }
             .overlay(alignment: .bottom) {
                 LinearGradient(
-                    colors: [.clear, colorScheme.backgroundColor.hexColor()],
+                    colors: [.clear, colorScheme.backgroundColor()],
                     startPoint: .top,
                     endPoint: .bottom
                 )

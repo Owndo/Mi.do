@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIComponents
 
 public struct WeekView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -29,7 +30,7 @@ public struct WeekView: View {
                     ForEach(0..<7) { index in
                         if vm.isSelectedDayOfWeek(index) {
                             shape
-                                .fill(Color.backgroundTertiary)
+                                .fill(Color(UIComponentsColors.Background.backgroundTertiary))
                                 .frame(maxWidth: .infinity)
                         } else {
                             Color.clear.frame(maxWidth: .infinity)
@@ -43,7 +44,7 @@ public struct WeekView: View {
                             Text(symbol)
                                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                                 .fontDesign(.default)
-                                .foregroundStyle(Color.labelSecondary)
+                                .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
                                 .frame(maxWidth: .infinity)
                         }
                     }
@@ -80,7 +81,7 @@ public struct WeekView: View {
                                 
                                 Text("\(day, format: .dateTime.day())")
                                     .font(.system(size: 17, weight: vm.calendar.isDateInToday(day) ? .semibold : .regular, design: .default))
-                                    .foregroundStyle(!vm.calendar.isDateInToday(day) ? Color.labelQuaternary : .labelPrimary)
+                                    .foregroundStyle(!vm.calendar.isDateInToday(day) ? Color(UIComponentsColors.Labels.labelQuaternary) : Color(UIComponentsColors.Labels.labelSecondary))
                                     .frame(maxWidth: .infinity)
                             }
                         }
@@ -101,19 +102,19 @@ public struct WeekView: View {
             HStack {
                 if vm.selectedDayIsToday() {
                     Image(systemName: "arrow.uturn.backward")
-                        .foregroundStyle(Color.labelSecondary)
+                        .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
                 }
                 
                 Text(vm.dateToString())
                     .font(.system(.subheadline, design: .rounded, weight: .medium))
-                    .foregroundStyle(Color.labelSecondary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
             }
             .padding(.vertical, 7)
             .padding(.horizontal, 14)
             .background(
                 RoundedRectangle(cornerRadius: 14)
                     .fill(
-                        Color.backgroundTertiary
+                        Color(UIComponentsColors.Background.backgroundTertiary)
                     )
             )
         }

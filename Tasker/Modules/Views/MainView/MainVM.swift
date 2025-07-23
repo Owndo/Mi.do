@@ -38,10 +38,6 @@ public final class MainVM {
     
     var profileModel: ProfileData = mockProfileData()
     
-    public var colorSchemeFromSettings: String?  {
-        casManager.profileModel?.value.settings.colorScheme
-    }
-    
     //MARK: - UI States
     var mainViewIsOpen = true
     var profileViewIsOpen = false
@@ -157,28 +153,6 @@ public final class MainVM {
         profileViewIsOpen = true
         telemetryAction(.mainViewAction(.profileButtonTapped))
     }
-    
-    //MARK: - Appearance
-    public func changeColorScheme() -> ColorScheme {
-        if profileModel.value.settings.colorScheme == "Light" {
-            return .light
-        } else {
-            return .dark
-        }
-    }
-    
-    func colorScheme() -> String {
-        appearanceManager.colorScheme()
-    }
-    
-    func backgroundColor() -> Color {
-        appearanceManager.backgroundColor()
-    }
-    
-    func accentColor() -> Color {
-        appearanceManager.accentColor()
-    }
-    
     
     //MARK: - Recording
     

@@ -54,18 +54,18 @@ public struct RecordButton: View {
             VStack {
                 Text("Just say our task")
                     .font(.system(size: 17, weight: .bold, design: .rounded))
-                    .foregroundStyle(.labelPrimary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
                 
                 Text("Tap or hold the plus button\nto get started")
                     .font(.system(size: 15, weight: .medium, design: .rounded))
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(.labelTertiary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
             }
             .padding(12)
             .padding(.bottom, 10)
             .background(
                 PopoverBubbleShape()
-                    .fill(.tipsBackground)
+                    .fill(Color(UIComponentsColors.Background.tipsBackground))
                     .shadow(color: .black.opacity(0.22), radius: 30, y: 10)
             )
         }
@@ -78,14 +78,14 @@ public struct RecordButton: View {
         VStack {
             Image(systemName: "plus")
                 .font(.system(size: 42))
-                .foregroundStyle(colorScheme.elementColor.hexColor())
+                .foregroundStyle(colorScheme.accentColor())
                 .frame(width: 64, height: 64)
                 .padding(13)
                 .background(
                     Circle()
                         .fill(.white)
                         .shadow(
-                            color: colorScheme.elementColor.hexColor(),
+                            color: colorScheme.accentColor(),
                             radius: shadowRadius,
                             x: shadowXOffset,
                             y: shadowYOffset
@@ -111,16 +111,16 @@ public struct RecordButton: View {
     private func StopRecording() -> some View {
         Image(systemName: "pause.fill")
             .font(.system(size: 42))
-            .foregroundStyle(colorScheme.elementColor.hexColor())
+            .foregroundStyle(colorScheme.accentColor())
             .frame(width: 64, height: 64)
             .padding(13)
             .background(
                 ZStack {
                     Circle()
-                        .stroke(.backgroundTertiary, style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
+                        .stroke(Color(UIComponentsColors.Background.backgroundTertiary), style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
                     Circle()
                         .trim(from: 0, to: CGFloat(progress))
-                        .stroke(colorScheme.elementColor.hexColor(), style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
+                        .stroke(colorScheme.accentColor(), style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
                         .rotationEffect(Angle(degrees: 270))
                         .animation(.easeInOut(duration: 0.1), value: progress)
                         .overlay {
@@ -138,22 +138,22 @@ public struct RecordButton: View {
     private func AnimationView() -> some View {
         ZStack {
             Circle()
-                .stroke(colorScheme.elementColor.hexColor().opacity(0.4), lineWidth: 0.7)
+                .stroke(colorScheme.accentColor().opacity(0.4), lineWidth: 0.7)
                 .scaleEffect(CGFloat(animationAmount) + 0.8)
                 .animation(.easeOut(duration: 0.3), value: animationAmount)
-                .shadow(color: colorScheme.elementColor.hexColor(), radius: 3)
+                .shadow(color: colorScheme.accentColor(), radius: 3)
             
             Circle()
-                .stroke(colorScheme.elementColor.hexColor().opacity(0.6), lineWidth: 1.0)
+                .stroke(colorScheme.accentColor().opacity(0.6), lineWidth: 1.0)
                 .scaleEffect(CGFloat(animationAmount) + 0.55)
                 .animation(.easeOut(duration: 0.3).delay(0.05), value: animationAmount)
-                .shadow(color: colorScheme.elementColor.hexColor(), radius: 2)
+                .shadow(color: colorScheme.accentColor(), radius: 2)
             
             Circle()
-                .stroke(colorScheme.elementColor.hexColor().opacity(0.8), lineWidth: 1.5)
+                .stroke(colorScheme.accentColor().opacity(0.8), lineWidth: 1.5)
                 .scaleEffect(CGFloat(animationAmount) + 0.3)
                 .animation(.easeOut(duration: 0.3).delay(0.1), value: animationAmount)
-                .shadow(color: colorScheme.elementColor.hexColor(), radius: 1)
+                .shadow(color: colorScheme.accentColor(), radius: 1)
         }
     }
 }

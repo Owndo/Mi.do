@@ -67,42 +67,5 @@ public extension SwiftUI.Color {
 }
 #endif
 
-
-
-// MARK: - Colors
-@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
-public extension TaskerColors.Color {
-    static var accentColor: TaskerColors.Color {
-        let bundle = Bundle.module
-        #if os(iOS) || os(tvOS) || os(visionOS)
-        return TaskerColors.Color(named: "AccentColor", in: bundle, compatibleWith: nil)!
-        #elseif os(macOS)
-        return TaskerColors.Color(named: NSColor.Name("AccentColor"), bundle: bundle)!
-        #elseif os(watchOS)
-        return TaskerColors.Color(named: "AccentColor")!
-        #endif
-    }
-}
-
-#if canImport(SwiftUI)
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
-public extension SwiftUI.Color {
-    static var accentColor: SwiftUI.Color {
-        let bundle = Bundle.module
-        return SwiftUI.Color("AccentColor", bundle: bundle)
-    }
-}
-
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
-public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
-    static var accentColor: SwiftUI.Color {
-        let bundle = Bundle.module
-        return SwiftUI.Color("AccentColor", bundle: bundle)
-    }
-}
-#endif
-
-
-
 // swiftlint:enable all
 // swiftformat:enable all

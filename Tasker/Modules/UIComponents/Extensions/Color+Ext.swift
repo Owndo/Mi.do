@@ -77,49 +77,49 @@ public extension Color {
     
     func invertedPrimaryLabel(_ colorScheme: ColorScheme) -> Color {
         if colorScheme == .dark {
-            return .labelPrimary
+            return Color(UIComponentsColors.Labels.labelPrimary)
         } else {
-            return shouldInvertForReadability() ? Color(.labelPrimaryInverted) : Color(.labelPrimary)
+            return shouldInvertForReadability() ? Color(UIComponentsColors.Labels.labelPrimaryInverted) : Color(UIComponentsColors.Labels.labelPrimary)
         }
     }
     
     func invertedSecondaryLabel(_ colorScheme: ColorScheme) -> Color {
         if colorScheme == .dark {
-            return .labelPrimary
+            return Color(UIComponentsColors.Labels.labelPrimary)
         } else {
-            return shouldInvertForReadability() ? Color(.labelSecondaryInverted) : Color(.labelSecondary)
+            return shouldInvertForReadability() ? Color(UIComponentsColors.Labels.labelSecondaryInverted) : Color(UIComponentsColors.Labels.labelSecondary)
         }
     }
     
     func invertedTertiaryLabel(_ colorScheme: ColorScheme) -> Color {
         if colorScheme == .dark {
-         return .labelTertiary
+            return Color(UIComponentsColors.Labels.labelTertiary)
         } else {
-            return shouldInvertForReadability() ? Color(.labelTertiaryInverted) : Color(.labelTertiary)
+            return shouldInvertForReadability() ? Color(UIComponentsColors.Labels.labelTertiaryInverted) : Color(UIComponentsColors.Labels.labelTertiary)
         }
     }
     
     func invertedBackgroundTertiary(_ colorScheme: ColorScheme) -> Color {
         if colorScheme == .dark {
-            return .backgroundTertiary
+            return Color(UIComponentsColors.Background.backgroundTertiary)
         } else {
-            return shouldInvertForReadability() ? Color(.backgroundTertiaryInverted) : Color(.backgroundTertiary)
+            return shouldInvertForReadability() ? Color(UIComponentsColors.Background.backgroundTertiaryInverted) : Color(UIComponentsColors.Background.backgroundTertiary)
         }
     }
     
     func invertedSeparartorPrimary(_ colorScheme: ColorScheme) -> Color {
         if colorScheme == .dark {
-            return .separatorPrimary
+            return Color(UIComponentsColors.Separator.separatorPrimary)
         } else {
-            return shouldInvertForReadability() ? Color(.separatorPrimaryInverted) : Color(.separatorPrimary)
+            return shouldInvertForReadability() ? Color(UIComponentsColors.Separator.separatorPrimaryInverted) : Color(UIComponentsColors.Separator.separatorPrimary)
         }
     }
     
     func invertedSeparartorSecondary(_ colorScheme: ColorScheme) -> Color {
         if colorScheme == .dark {
-            return .separatorSecondary
+            return Color(UIComponentsColors.Separator.separatorSecondary)
         } else {
-            return shouldInvertForReadability() ? Color(.separatorSecondaryInverted) : Color(.separatorSecondary)
+            return shouldInvertForReadability() ? Color(UIComponentsColors.Separator.separatorSecondaryInverted) : Color(UIComponentsColors.Separator.separatorSecondary)
         }
     }
 }

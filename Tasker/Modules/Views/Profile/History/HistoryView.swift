@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIComponents
 
 struct HistoryView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -14,13 +15,13 @@ struct HistoryView: View {
     
     var body: some View {
         ZStack {
-            colorScheme.backgroundColor.hexColor()
+            colorScheme.backgroundColor()
                 .ignoresSafeArea()
             VStack {
                 Text("Coming soon...")
                     .font(.system(.title2, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.leading)
-                    .foregroundStyle(.labelQuaternary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelQuaternary))
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -34,7 +35,7 @@ struct HistoryView: View {
                             Text("Profile")
                                 .font(.system(.body, design: .rounded, weight: .medium))
                         }
-                        .tint(colorScheme.elementColor.hexColor())
+                        .tint(colorScheme.accentColor())
                     }
                 }
             }

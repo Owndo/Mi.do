@@ -183,18 +183,6 @@ final class ProfileVM {
         dateManager.calendar.firstWeekday = firstDayOfWeek
     }
     
-    func colorScheme() -> String {
-        appearanceManager.colorScheme()
-    }
-    
-    func backgroundColor() -> Color {
-        appearanceManager.backgroundColor()
-    }
-    
-    func accentColor() -> Color {
-        appearanceManager.accentColor()
-    }
-    
     func closeButtonTapped() {
         telemetryAction(action: .profileAction(.closeButtonTapped))
     }

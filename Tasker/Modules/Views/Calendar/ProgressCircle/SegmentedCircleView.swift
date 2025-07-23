@@ -72,7 +72,7 @@ struct SegmentedCircleView: View {
                     .opacity(baseOpacity)
             } else {
                 let baseColor = completed
-                ? colorScheme.elementColor.hexColor().opacity(0.42)
+                ? colorScheme.accentColor().opacity(0.42)
                 : .clear
                 Circle()
                     .fill(baseColor)
@@ -92,7 +92,7 @@ struct SegmentedCircleView: View {
         
         let segmentColor = vm.useTaskColors
         ? task.value.taskColor.color(for: colorScheme)
-        : isCompleted ? colorScheme.elementColor.hexColor() : .separatorSecondary
+        : isCompleted ? colorScheme.accentColor() : Color(UIComponentsColors.Separator.separatorSecondary)
         
         let appear = min(segmentProgress * 2, 1.0)
         let scale = 0.8 + 0.2 * appear

@@ -7,13 +7,15 @@
 
 import Foundation
 import SwiftUI
+import Models
 
 public protocol AppearanceManagerProtocol {
-    func backgroundColor() -> Color
-    func accentColor() -> Color
-    func colorScheme() -> String
+    var profileData: ProfileData { get }
+    var selectedColorScheme: ColorScheme? { get }
     
-    func changeColorSchemeMode(scheme: ColorSchemeMode)
+    func currentColorScheme() -> ColorScheme
+    
+    func setColorScheme(_ mode: ColorSchemeMode) 
     func changeAccentColor(_ color: AccentColorEnum)
     func changeBackgroundColor(_ color: BackgroundColorEnum)
     func changeProgressMode(_ value: Bool)

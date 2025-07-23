@@ -20,7 +20,7 @@ public struct ProfileView: View {
     public var body: some View {
         NavigationStack(path: $vm.path) {
             ZStack {
-                colorScheme.backgroundColor.hexColor()
+                colorScheme.backgroundColor()
                     .ignoresSafeArea()
                 
                 ScrollViewContent()
@@ -53,12 +53,12 @@ public struct ProfileView: View {
                     } label: {
                         Text("Close")
                             .font(.system(.body, design: .rounded, weight: .medium))
-                            .foregroundStyle(colorScheme.elementColor.hexColor())
+                            .foregroundStyle(colorScheme.accentColor())
                             .fixedSize()
                     }
                 }
             }
-            .toolbarBackground(colorScheme.backgroundColor.hexColor())
+            .toolbarBackground(colorScheme.backgroundColor())
             .onAppear {
                 vm.onAppear()
             }
@@ -79,9 +79,9 @@ public struct ProfileView: View {
                 
                 TextField("Enter your name here", text: $vm.profileModel.value.name)
                     .font(.system(.title2, design: .rounded, weight: .semibold))
-                    .foregroundStyle(.labelPrimary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
                     .multilineTextAlignment(.center)
-                    .tint(colorScheme.elementColor.hexColor())
+                    .tint(colorScheme.accentColor())
                     .onSubmit {
                         vm.profileModelSave()
                     }
@@ -95,7 +95,7 @@ public struct ProfileView: View {
                 
                 Text("App Version \(ConfigurationFile().appVersion)")
                     .font(.system(.subheadline, design: .default, weight: .regular))
-                    .foregroundStyle(.labelTertiary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
                     .padding(.bottom, 37)
                 
             }
@@ -130,19 +130,19 @@ public struct ProfileView: View {
                 } else {
                     Image(systemName: "person.crop.circle.badge.plus")
                         .font(.system(size: 28))
-                        .foregroundStyle(.labelQuaternary)
+                        .foregroundStyle(Color(UIComponentsColors.Labels.labelQuaternary))
                         .padding(50)
                         .background(
                             RoundedRectangle(cornerRadius: 1)
-                                .fill(.backgroundTertiary)
+                                .fill(Color(UIComponentsColors.Background.backgroundTertiary))
                         )
                 }
             }
             .clipShape(Circle())
             .overlay(
                 Circle()
-                    .stroke(colorScheme.backgroundColor.hexColor(), lineWidth: 1)
-                    .shadow(color: colorScheme.elementColor.hexColor().opacity(0.8), radius: 5, x: 0, y: 3)
+                    .stroke(colorScheme.backgroundColor(), lineWidth: 1)
+                    .shadow(color: colorScheme.accentColor().opacity(0.8), radius: 5, x: 0, y: 3)
             )
             .frame(width: 128, height: 128)
             
@@ -200,13 +200,13 @@ public struct ProfileView: View {
             }
         } label: {
             Image(systemName: "ellipsis.circle.fill")
-                .foregroundStyle(colorScheme.elementColor.hexColor())
+                .foregroundStyle(colorScheme.accentColor())
                 .font(.system(size: 28))
         }
         .padding(3)
         .background(
             Circle()
-                .fill(colorScheme.backgroundColor.hexColor())
+                .fill(colorScheme.backgroundColor())
         )
     }
     
@@ -244,7 +244,7 @@ public struct ProfileView: View {
         .padding(.vertical, 18)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(.backgroundTertiary)
+                .fill(Color(UIComponentsColors.Background.backgroundTertiary))
         )
     }
     
@@ -254,11 +254,11 @@ public struct ProfileView: View {
         VStack {
             Text(count)
                 .font(.system(.title, design: .rounded, weight: .regular))
-                .foregroundStyle(.labelPrimary)
+                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
             
             Text(text)
                 .font(.system(.caption2, design: .rounded, weight: .regular))
-                .foregroundStyle(.labelSecondary)
+                .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
         }
     }
     
@@ -319,12 +319,12 @@ public struct ProfileView: View {
         } label: {
             HStack {
                 Image(systemName: icon)
-                    .foregroundStyle(colorScheme.elementColor.hexColor())
+                    .foregroundStyle(colorScheme.accentColor())
                     .frame(width: 32, height: 32)
                 
                 Text(title)
                     .font(.system(.callout, design: .rounded, weight: .regular))
-                    .foregroundStyle(.labelPrimary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
                 
                 Spacer()
                 
@@ -350,11 +350,11 @@ public struct ProfileView: View {
                                 .padding(.vertical, 12)
                         }
                     }
-                    .tint(.labelQuaternary)
+                    .tint(Color(UIComponentsColors.Labels.labelQuaternary))
                 } else {
                     Image(systemName: actionIcon)
                         .padding(.vertical, 12)
-                        .tint(.labelQuaternary)
+                        .tint(Color(UIComponentsColors.Labels.labelQuaternary))
                 }
             }
         }
@@ -364,7 +364,7 @@ public struct ProfileView: View {
     @ViewBuilder
     private func CustomDivider() -> some View {
         RoundedRectangle(cornerRadius: 1)
-            .fill(.separatorSecondary)
+            .fill(Color(UIComponentsColors.Separator.separatorSecondary))
     }
 }
 

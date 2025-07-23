@@ -26,15 +26,18 @@ public struct MainView: View {
     public var body: some View {
         NavigationStack(path: $vm.path) {
             ZStack {
-                Color(colorScheme.backgroundColor.hexColor())
+                colorScheme.backgroundColor()
                     .ignoresSafeArea()
                 
                 NotesView(mainViewIsOpen: $vm.mainViewIsOpen)
             }
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
+                    .preferredColorScheme(colorScheme)
+                
                     .sheet(isPresented: $vm.profileViewIsOpen) {
                         ProfileView()
+                            .preferredColorScheme(colorScheme)
                     }
             }
             .navigationDestination(for: MainVM.Destination.self) { destination in
@@ -51,7 +54,7 @@ public struct MainView: View {
                         vm.calendarButtonTapped()
                     } label: {
                         Image(systemName: "calendar")
-                            .foregroundStyle(colorScheme.elementColor.hexColor())
+                            .foregroundStyle(colorScheme.accentColor())
                     }
                 }
                 
@@ -70,7 +73,7 @@ public struct MainView: View {
                         vm.profileViewButtonTapped()
                     } label: {
                         Image(systemName: "person.circle")
-                            .foregroundStyle(colorScheme.elementColor.hexColor())
+                            .foregroundStyle(colorScheme.accentColor())
                     }
                 }
             }
@@ -84,7 +87,7 @@ public struct MainView: View {
     @ViewBuilder
     private func MainViewBase() -> some View {
         ZStack {
-            Color(colorScheme.backgroundColor.hexColor())
+            colorScheme.backgroundColor()
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {

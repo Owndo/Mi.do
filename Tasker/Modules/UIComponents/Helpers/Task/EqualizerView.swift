@@ -26,7 +26,7 @@ public struct EqualizerView: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
-                            colors: [colorScheme.elementColor.hexColor()],
+                            colors: [colorScheme.accentColor()],
                             startPoint: .bottom,
                             endPoint: .top
                         )

@@ -1,16 +1,19 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Accent color" : {
+
+    },
     "App Version %@" : {
+
+    },
+    "Background color" : {
 
     },
     "Close" : {
 
     },
     "Coming soon..." : {
-
-    },
-    "Comming soon..." : {
 
     },
     "Delete profile" : {
@@ -23,9 +26,6 @@
 
     },
     "Monday" : {
-
-    },
-    "Piss me off 🤬" : {
 
     },
     "Profile" : {

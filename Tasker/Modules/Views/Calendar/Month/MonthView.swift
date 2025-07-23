@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Models
+import UIComponents
 
 public struct MonthView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -24,7 +25,7 @@ public struct MonthView: View {
     
     public var body: some View {
         ZStack {
-            Color(colorScheme.backgroundColor.hexColor())
+            colorScheme.backgroundColor()
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
@@ -75,7 +76,7 @@ public struct MonthView: View {
                     Text("\(vm.selectedDate, format: .dateTime.month().day().year())")
                 }
                 .padding(.vertical, 7)
-                .tint(colorScheme.elementColor.hexColor())
+                .tint(colorScheme.accentColor())
                 
                 Spacer()
                 
@@ -88,13 +89,13 @@ public struct MonthView: View {
                             
                             Text("Today")
                         }
-                        .tint(.labelSecondary)
+                        .tint(Color(UIComponentsColors.Labels.labelSecondary))
                         .padding(.vertical, 7)
                         .padding(.horizontal, 14)
                         .background(
                             Capsule()
                                 .fill(
-                                    .backgroundTertiary
+                                    Color(UIComponentsColors.Background.backgroundTertiary)
                                 )
                         )
                     }
@@ -112,11 +113,11 @@ public struct MonthView: View {
             HStack {
                 Text(month.name ?? "")
                     .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelSecondary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
                 
                 Text(vm.currentYear(month) ?? "")
                     .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelSecondary)
+                    .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
                 
                 Spacer()
             }
@@ -126,7 +127,7 @@ public struct MonthView: View {
                 ForEach(Array(vm.shiftedWeekdaySymbols().enumerated()), id: \.offset) { index, symbol in
                     Text(symbol)
                         .font(.system(.body, design: .rounded, weight: .medium))
-                        .foregroundStyle(.labelTertiary)
+                        .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -163,7 +164,7 @@ public struct MonthView: View {
                     ZStack {
                         if vm.isSelectedDay(day) {
                             Circle()
-                                .fill(.backgroundTertiary)
+                                .fill(Color(UIComponentsColors.Background.backgroundTertiary))
                         }
                         
                         SegmentedCircleView(date: day)
@@ -171,7 +172,7 @@ public struct MonthView: View {
                         
                         Text("\(day, format: .dateTime.day())")
                             .font(.system(.body, design: .rounded, weight: .medium))
-                            .foregroundStyle(vm.isSameDay(day) ? .labelPrimary : .labelQuaternary)
+                            .foregroundStyle(vm.isSameDay(day) ? Color(UIComponentsColors.Labels.labelPrimary) : Color(UIComponentsColors.Labels.labelQuaternary))
                             .frame(maxWidth: .infinity)
                             .multilineTextAlignment(.center)
                     }

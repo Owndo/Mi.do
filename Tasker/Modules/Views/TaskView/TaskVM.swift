@@ -395,11 +395,6 @@ final class TaskVM {
         _ = storageManager.createFileInSoundsDirectory(hash: audioHash)
     }
     
-    //MARK: Appearance
-    func colorScheme() -> ColorScheme {
-        appearanceManager.currentColorScheme()
-    }
-    
     //MARK: - Telemetry action
     private func telemetryAction(_ action: EventType) {
         telemetryManager.logEvent(action)

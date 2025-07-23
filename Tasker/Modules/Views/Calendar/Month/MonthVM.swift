@@ -119,11 +119,6 @@ final class MonthVM {
         }
     }
     
-    //MARK: Appearance
-    func colorScheme() -> ColorScheme {
-        appearanceManager.currentColorScheme()
-    }
-    
     //MARK: Telemtry action
     private func telemetryAction(_ action: EventType) {
         telemetryManager.logEvent(action)

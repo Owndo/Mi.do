@@ -21,10 +21,6 @@ final class NotesVM {
     
     var profileModel: ProfileData = mockProfileData()
     
-    func colorScheme() -> ColorScheme {
-        appearanceManager.currentColorScheme()
-    }
-    
     init() {
         profileModel = casManager.profileModel ?? mockProfileData()
     }

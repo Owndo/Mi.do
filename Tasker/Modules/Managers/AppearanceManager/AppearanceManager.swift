@@ -27,18 +27,14 @@ final public class AppearanceManager: AppearanceManagerProtocol {
         profileData.value.settings.backgroundColor().hexColor()
     }
     
-    public func currentColorScheme() -> ColorScheme {
+    public func currentColorScheme() -> ColorScheme? {
         switch profileData.value.settings.colorScheme {
         case .dark:
             return .dark
         case .light:
             return .light
         default:
-            if ColorSchemeHelper.isSystemLight() {
-                return .light
-            } else {
-                return .dark
-            }
+            return ColorScheme(.unspecified)
         }
     }
     

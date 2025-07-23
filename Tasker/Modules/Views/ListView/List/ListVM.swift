@@ -66,11 +66,6 @@ final class ListVM {
         dateManager.subtractOneDay()
     }
     
-    //MARK: Appearance
-    func colorScheme() -> ColorScheme {
-        appearanceManager.currentColorScheme()
-    }
-    
     //MARK: - Calculate size for gestureView
     func calculateGestureViewHeight(screenHeight: CGFloat, contentHeight: CGFloat, safeAreaTop: CGFloat, safeAreaBottom: CGFloat) -> CGFloat {
         let availableScreenHeight = screenHeight - safeAreaTop - safeAreaBottom

@@ -13,7 +13,7 @@ public protocol AppearanceManagerProtocol {
     var profileData: ProfileData { get }
     var selectedColorScheme: ColorScheme? { get }
     
-    func currentColorScheme() -> ColorScheme
+    func currentColorScheme() -> ColorScheme?
     
     func setColorScheme(_ mode: ColorSchemeMode) 
     func changeAccentColor(_ color: AccentColorEnum)

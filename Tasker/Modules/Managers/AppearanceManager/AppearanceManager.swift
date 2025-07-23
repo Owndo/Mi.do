@@ -214,7 +214,7 @@ public enum BackgroundColorEnum: Codable, CaseIterable, Equatable, Hashable {
     public func setUpColor() -> AccentBackgroundColor {
         switch self {
         case .first:
-            return AccentBackgroundColor(light: "#F2F5EE", dark: "#323232")
+            return AccentBackgroundColor(light: "#F2F5EE", dark: "#202020")
         case .second:
             return AccentBackgroundColor(light: "#FFFFFF", dark: "#000000")
         case .third:

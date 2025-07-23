@@ -61,7 +61,7 @@ public struct ListView: View {
             HStack {
                 Text("Tasks")
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
+                    .foregroundStyle(.labelTertiary)
                 
                 Spacer()
             }
@@ -76,7 +76,7 @@ public struct ListView: View {
                     if index != vm.tasks.count - 1 {
                         RoundedRectangle(cornerRadius: 0.5)
                             .fill(
-                                Color(UIComponentsColors.Separator.separatorSecondary)
+                                .separatorSecondary
                             )
                             .frame(height: 0.5)
                     }
@@ -99,7 +99,7 @@ public struct ListView: View {
                 Spacer()
                 
                 Image(systemName: vm.completedTasksHidden ? "chevron.down" : "chevron.up")
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
+                    .foregroundStyle(.labelTertiary)
                     .bold()
             }
             .onTapGesture {
@@ -113,12 +113,12 @@ public struct ListView: View {
                 VStack(spacing: 0) {
                     ForEach(Array(vm.completedTasks.enumerated()), id: \.element) { index, task in
                         TaskRow(task: task)
-                            .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                            .foregroundStyle(.labelPrimary)
                         
                         if index != vm.completedTasks.count - 1 {
                             RoundedRectangle(cornerRadius: 0.5)
                                 .fill(
-                                    Color(UIComponentsColors.Separator.separatorSecondary)
+                                    .separatorSecondary
                                 )
                                 .frame(height: 0.5)
                         }

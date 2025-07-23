@@ -54,18 +54,18 @@ public struct RecordButton: View {
             VStack {
                 Text("Just say our task")
                     .font(.system(size: 17, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                    .foregroundStyle(.labelPrimary)
                 
                 Text("Tap or hold the plus button\nto get started")
                     .font(.system(size: 15, weight: .medium, design: .rounded))
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
+                    .foregroundStyle(.labelTertiary)
             }
             .padding(12)
             .padding(.bottom, 10)
             .background(
                 PopoverBubbleShape()
-                    .fill(Color(UIComponentsColors.Background.tipsBackground))
+                    .fill(Color(.tipsBackground))
                     .shadow(color: .black.opacity(0.22), radius: 30, y: 10)
             )
         }
@@ -117,7 +117,7 @@ public struct RecordButton: View {
             .background(
                 ZStack {
                     Circle()
-                        .stroke(Color(UIComponentsColors.Background.backgroundTertiary), style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
+                        .stroke(.backgroundTertiary, style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
                     Circle()
                         .trim(from: 0, to: CGFloat(progress))
                         .stroke(colorScheme.accentColor(), style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))

@@ -92,7 +92,7 @@ struct SegmentedCircleView: View {
         
         let segmentColor = vm.useTaskColors
         ? task.value.taskColor.color(for: colorScheme)
-        : isCompleted ? colorScheme.accentColor() : Color(UIComponentsColors.Separator.separatorSecondary)
+        : isCompleted ? colorScheme.accentColor() : .separatorSecondary
         
         let appear = min(segmentProgress * 2, 1.0)
         let scale = 0.8 + 0.2 * appear

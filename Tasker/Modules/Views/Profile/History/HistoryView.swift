@@ -21,7 +21,7 @@ struct HistoryView: View {
                 Text("Coming soon...")
                     .font(.system(.title2, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.leading)
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelQuaternary))
+                    .foregroundStyle(.labelQuaternary)
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

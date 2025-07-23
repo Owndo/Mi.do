@@ -123,7 +123,7 @@ public struct TaskView: View {
             } label: {
                 Text("Delete")
                     .font(.system(.body, design: .rounded, weight: .regular))
-                    .foregroundStyle(Color(UIComponentsColors.accentRed))
+                    .foregroundStyle(.accentRed)
             }
             
             Spacer()
@@ -175,7 +175,7 @@ public struct TaskView: View {
             
             Text(vm.currentTimeString())
                 .font(.system(.callout, design: .rounded, weight: .regular))
-                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                .foregroundStyle(.labelPrimary)
                 .monospacedDigit()
                 .contentTransition(.numericText())
         }
@@ -184,7 +184,7 @@ public struct TaskView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(
-                    Color(UIComponentsColors.Background.backgroundTertiary)
+                    .backgroundTertiary
                 )
         )
         .animation(.default, value: vm.currentProgressTime)
@@ -200,7 +200,7 @@ public struct TaskView: View {
             Toggle(isOn: $vm.task.voiceMode) {
                 Text("Play your voice in notification")
                     .font(.system(.body, design: .rounded, weight: .regular))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                    .foregroundStyle(.labelPrimary)
             }
         }
         .padding(.vertical, 11)
@@ -208,7 +208,7 @@ public struct TaskView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(
-                    Color(UIComponentsColors.Background.backgroundTertiary)
+                    .backgroundTertiary
                 )
         )
     }
@@ -222,7 +222,7 @@ public struct TaskView: View {
             } else {
                 Text("Add voice recording")
                     .font(.system(.body, design: .rounded, weight: .regular))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                    .foregroundStyle(.labelPrimary)
             }
             
             Spacer()
@@ -249,7 +249,7 @@ public struct TaskView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(
-                    Color(UIComponentsColors.Background.backgroundTertiary)
+                    .backgroundTertiary
                 )
         )
     }
@@ -262,13 +262,13 @@ public struct TaskView: View {
             TextField("New task", text: $vm.task.title, axis: .vertical)
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
                 .focused($sectionInFocuse, equals: .title)
             
             RoundedRectangle(cornerRadius: 1)
-                .fill(Color(UIComponentsColors.Separator.separatorPrimary))
+                .fill(.separatorPrimary)
                 .frame(height: 1)
                 .padding(.leading, 16)
             
@@ -276,7 +276,7 @@ public struct TaskView: View {
                 TextField("Add more information", text: $vm.task.info, axis: .vertical)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                    .foregroundStyle(.labelPrimary)
                     .padding(.vertical, 13)
                     .padding(.horizontal, 16)
                     .focused($sectionInFocuse, equals: .description)
@@ -288,7 +288,7 @@ public struct TaskView: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(
-                    Color(UIComponentsColors.Background.backgroundTertiary)
+                    .backgroundTertiary
                 )
         )
     }
@@ -471,7 +471,7 @@ public struct TaskView: View {
                                 .overlay(
                                     ZStack {
                                         Circle()
-                                            .stroke(Color(UIComponentsColors.Separator.separatorPrimary), lineWidth: vm.task.taskColor.id == color.id ? 1.5 : 0.3)
+                                            .stroke(.separatorPrimary, lineWidth: vm.task.taskColor.id == color.id ? 1.5 : 0.3)
                                             .shadow(radius: 8, y: 4)
                                         
                                         if vm.task.taskColor.id == color.id {

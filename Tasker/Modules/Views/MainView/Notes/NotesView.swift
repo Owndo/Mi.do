@@ -21,7 +21,7 @@ struct NotesView: View {
         ZStack {
             TextEditor(text: $vm.profileModel.value.notes)
                 .font(.system(.callout, design: .rounded, weight: .semibold))
-                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                .foregroundStyle(.labelPrimary)
                 .focused($notesFocusState)
                 .scrollDismissesKeyboard(.immediately)
                 .textEditorStyle(.plain)
@@ -48,13 +48,13 @@ struct NotesView: View {
         if vm.profileModel.value.notes.isEmpty && notesFocusState == false {
             VStack {
                 Image(systemName: "note.text.badge.plus")
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelQuintuple))
+                    .foregroundStyle(.labelQuintuple)
                     .scaleEffect(1.5)
                 
                 Text("Tap and add your notes here...")
                     .font(.system(.callout, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.leading)
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelQuaternary))
+                    .foregroundStyle(.labelQuaternary)
                     .padding(.top, 3)
             }
         }

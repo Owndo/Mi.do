@@ -198,7 +198,6 @@ enum TrackingType {
     case event
 }
 
-
 //MARK: - Protocol
 protocol AnalyticsTrackable {
     var eventName: String { get }

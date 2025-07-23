@@ -79,7 +79,7 @@ public struct ProfileView: View {
                 
                 TextField("Enter your name here", text: $vm.profileModel.value.name)
                     .font(.system(.title2, design: .rounded, weight: .semibold))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                    .foregroundStyle(.labelPrimary)
                     .multilineTextAlignment(.center)
                     .tint(colorScheme.accentColor())
                     .onSubmit {
@@ -95,7 +95,7 @@ public struct ProfileView: View {
                 
                 Text("App Version \(ConfigurationFile().appVersion)")
                     .font(.system(.subheadline, design: .default, weight: .regular))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
+                    .foregroundStyle(.labelTertiary)
                     .padding(.bottom, 37)
                 
             }
@@ -130,11 +130,11 @@ public struct ProfileView: View {
                 } else {
                     Image(systemName: "person.crop.circle.badge.plus")
                         .font(.system(size: 28))
-                        .foregroundStyle(Color(UIComponentsColors.Labels.labelQuaternary))
+                        .foregroundStyle(.labelQuaternary)
                         .padding(50)
                         .background(
                             RoundedRectangle(cornerRadius: 1)
-                                .fill(Color(UIComponentsColors.Background.backgroundTertiary))
+                                .fill(.backgroundTertiary)
                         )
                 }
             }
@@ -244,7 +244,7 @@ public struct ProfileView: View {
         .padding(.vertical, 18)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(UIComponentsColors.Background.backgroundTertiary))
+                .fill(.backgroundTertiary)
         )
     }
     
@@ -254,11 +254,11 @@ public struct ProfileView: View {
         VStack {
             Text(count)
                 .font(.system(.title, design: .rounded, weight: .regular))
-                .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                .foregroundStyle(.labelPrimary)
             
             Text(text)
                 .font(.system(.caption2, design: .rounded, weight: .regular))
-                .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
+                .foregroundStyle(.labelSecondary)
         }
     }
     
@@ -324,7 +324,7 @@ public struct ProfileView: View {
                 
                 Text(title)
                     .font(.system(.callout, design: .rounded, weight: .regular))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelPrimary))
+                    .foregroundStyle(.labelPrimary)
                 
                 Spacer()
                 
@@ -350,11 +350,11 @@ public struct ProfileView: View {
                                 .padding(.vertical, 12)
                         }
                     }
-                    .tint(Color(UIComponentsColors.Labels.labelQuaternary))
+                    .tint(.labelQuaternary)
                 } else {
                     Image(systemName: actionIcon)
                         .padding(.vertical, 12)
-                        .tint(Color(UIComponentsColors.Labels.labelQuaternary))
+                        .tint(.labelQuaternary)
                 }
             }
         }
@@ -364,7 +364,7 @@ public struct ProfileView: View {
     @ViewBuilder
     private func CustomDivider() -> some View {
         RoundedRectangle(cornerRadius: 1)
-            .fill(Color(UIComponentsColors.Separator.separatorSecondary))
+            .fill(.separatorSecondary)
     }
 }
 

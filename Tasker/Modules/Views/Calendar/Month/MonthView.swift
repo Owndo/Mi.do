@@ -89,13 +89,13 @@ public struct MonthView: View {
                             
                             Text("Today")
                         }
-                        .tint(Color(UIComponentsColors.Labels.labelSecondary))
+                        .tint(.labelSecondary)
                         .padding(.vertical, 7)
                         .padding(.horizontal, 14)
                         .background(
                             Capsule()
                                 .fill(
-                                    Color(UIComponentsColors.Background.backgroundTertiary)
+                                    .backgroundTertiary
                                 )
                         )
                     }
@@ -113,11 +113,11 @@ public struct MonthView: View {
             HStack {
                 Text(month.name ?? "")
                     .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
+                    .foregroundStyle(.labelSecondary)
                 
                 Text(vm.currentYear(month) ?? "")
                     .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(Color(UIComponentsColors.Labels.labelSecondary))
+                    .foregroundStyle(.labelSecondary)
                 
                 Spacer()
             }
@@ -127,7 +127,7 @@ public struct MonthView: View {
                 ForEach(Array(vm.shiftedWeekdaySymbols().enumerated()), id: \.offset) { index, symbol in
                     Text(symbol)
                         .font(.system(.body, design: .rounded, weight: .medium))
-                        .foregroundStyle(Color(UIComponentsColors.Labels.labelTertiary))
+                        .foregroundStyle(.labelTertiary)
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -164,7 +164,7 @@ public struct MonthView: View {
                     ZStack {
                         if vm.isSelectedDay(day) {
                             Circle()
-                                .fill(Color(UIComponentsColors.Background.backgroundTertiary))
+                                .fill(.backgroundTertiary)
                         }
                         
                         SegmentedCircleView(date: day)
@@ -172,7 +172,7 @@ public struct MonthView: View {
                         
                         Text("\(day, format: .dateTime.day())")
                             .font(.system(.body, design: .rounded, weight: .medium))
-                            .foregroundStyle(vm.isSameDay(day) ? Color(UIComponentsColors.Labels.labelPrimary) : Color(UIComponentsColors.Labels.labelQuaternary))
+                            .foregroundStyle(vm.isSameDay(day) ? .labelPrimary : .labelQuaternary)
                             .frame(maxWidth: .infinity)
                             .multilineTextAlignment(.center)
                     }

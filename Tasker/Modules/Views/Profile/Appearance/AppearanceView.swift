@@ -202,6 +202,8 @@ struct AppearanceView: View {
                             .fixedSize()
                         
                         Image(uiImage: .colorPicker)
+                            .resizable()
+                            .scaledToFit()
                             .allowsHitTesting(false)
                         
                         if vm.checkCustomAccent() {
@@ -257,6 +259,8 @@ struct AppearanceView: View {
                         .fixedSize()
                     
                     Image(uiImage: .colorPicker)
+                        .resizable()
+                        .scaledToFit()
                         .allowsHitTesting(false)
                     
                     if vm.checkCustomBackground() {

@@ -462,6 +462,9 @@ public struct TaskView: View {
             ScrollView(.horizontal) {
                 HStack {
                     ForEach(TaskColor.allCases, id: \.id) { color in
+                        
+                        Spacer()
+                        
                         Button {
                             vm.selectedColorButtonTapped(color)
                         } label: {
@@ -474,31 +477,37 @@ public struct TaskView: View {
                                             .stroke(.separatorPrimary, lineWidth: vm.task.taskColor.id == color.id ? 1.5 : 0.3)
                                             .shadow(radius: 8, y: 4)
                                         
-                                        if vm.task.taskColor.id == color.id {
-                                            Image(systemName: "checkmark")
-                                                .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
-                                        }
+                                        Image(systemName: "checkmark")
+                                            .symbolEffect(.bounce, value: vm.selectedColorTapped)
+                                            .foregroundStyle(vm.task.taskColor.id == color.id ? vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme) : .clear)
                                     }
                                 )
                         }
+                        
+                        Spacer()
                     }
                     
                     ZStack {
                         ColorPicker("", selection: $vm.color)
-                            .padding(.leading, -10)
+                            .scaleEffect(0.5)
+                            .fixedSize()
+                            .tint(.clear)
+                        
+                        Image(uiImage: .colorPicker)
+                            .resizable()
+                            .frame(width: 28, height: 28)
+                            .allowsHitTesting(false)
                         
                         if vm.task.taskColor == .custom(vm.color.toHex()) {
                             Image(systemName: "checkmark")
                                 .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
-                                .scaleEffect(0.8)
-                                .offset(x: -2)
                         }
                     }
                 }
-                .padding(.horizontal, 17)
+                .padding(.horizontal, 5)
                 .padding(.vertical, 1)
             }
-            .sensoryFeedback(.selection, trigger: vm.task.taskColor)
+            .sensoryFeedback(.selection, trigger: vm.selectedColorTapped)
         }
         .padding(.vertical, 13)
     }

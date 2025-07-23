@@ -36,6 +36,7 @@ final class TaskVM {
     var sliderValue = 0.0
     var isDragging = false
     var pause = false
+    var selectedColorTapped = false
     
     // MARK: - Confirmation dialog
     var confirmationDialogIsPresented = false
@@ -152,6 +153,7 @@ final class TaskVM {
     
     func selectedColorButtonTapped(_ taskColor: TaskColor) {
         task.taskColor = taskColor
+        selectedColorTapped.toggle()
         
         // telemetry
         telemetryAction(.taskAction(.changeColorButtonTapped(taskColor)))

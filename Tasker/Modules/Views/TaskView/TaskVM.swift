@@ -37,6 +37,7 @@ final class TaskVM {
     var isDragging = false
     var pause = false
     var selectedColorTapped = false
+    var dateHasBeenChanged = false
     
     // MARK: - Confirmation dialog
     var confirmationDialogIsPresented = false
@@ -49,11 +50,12 @@ final class TaskVM {
     var notificationDate = Date() {
         didSet {
             checkTimeAfterSelected()
+            dateHasBeenChanged = true
         }
     }
     
     /// First notification Date for task with repeat
-    var sourseDateOfNotification = Double()
+    var sourseDateOfNotification = Date()
     
     var dateForAppearence: String {
         dateToString()
@@ -124,7 +126,8 @@ final class TaskVM {
     private func setUpTime() {
         notificationDate = combineDateAndTime(timeComponents: originalNotificationTimeComponents)
         
-        sourseDateOfNotification = mainModel.value.notificationDate
+        sourseDateOfNotification = Date(timeIntervalSince1970: mainModel.value.notificationDate)
+        dateHasBeenChanged = false
     }
     
     
@@ -166,7 +169,7 @@ final class TaskVM {
     //MARK: - Save task
     func saveTask() async {
         task = preparedTask()
-        task.notificationDate = notificationDate.timeIntervalSince1970
+        task.notificationDate = changeNotificationTime()
         mainModel.value = task
         
         casManager.saveModel(mainModel)
@@ -184,6 +187,22 @@ final class TaskVM {
         
         if recorderManager.dateTimeFromtext != nil && notificationDate != recorderManager.dateTimeFromtext {
             telemetryAction(.taskAction(.correctionDate))
+        }
+    }
+    
+    
+    private func changeNotificationTime() -> Double {
+        var sourceDate = calendar.dateComponents([.year, .month, .day], from: sourseDateOfNotification)
+        
+        if dateHasBeenChanged && !calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) {
+            return notificationDate.timeIntervalSince1970
+        } else if dateHasBeenChanged {
+            sourceDate.hour = calendar.component(.hour, from: notificationDate)
+            sourceDate.minute = calendar.component(.minute, from: notificationDate)
+            
+            return calendar.date(from: sourceDate)!.timeIntervalSince1970
+        } else {
+            return sourseDateOfNotification.timeIntervalSince1970
         }
     }
     

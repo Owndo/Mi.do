@@ -11,10 +11,12 @@ import StoreKit
 public protocol SubscriptionManagerProtocol {
     var products: [Product] { get set }
     var showPaywall: Bool { get set }
+    var pending: Bool { get set }
     
     func hasSubscription() -> Bool
     func makePurchase(_ product: Product) async throws
-    func restorePurchases() async
+    func updatePurchase() async
+    func restorePurchases() async -> Bool
     func loadProducts() async
     func closePaywall()
 }

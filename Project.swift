@@ -31,7 +31,6 @@ let project = Project(
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
             dependencies: [
                 .target(name: "MainView"),
-                .external(name: "PostHog")
             ],
             settings: .settings(
                 base: .init().merging(
@@ -134,6 +133,7 @@ let project = Project(
                     .runAction(
                         configuration: .debug,
                         attachDebugger: false,
+                        options: .options(storeKitConfigurationPath: "Tasker/Modules/Managers/SubscriptionManager/Mi.storekit") ,
                         expandVariableFromTarget: .target("Tasker"),
                         launchStyle: .automatically
                     ),

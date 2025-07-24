@@ -24,31 +24,52 @@ public struct PaywallView: View {
                     vm.closePaywallButtonTapped()
                 }
             
-            VStack(spacing: 0) {
-                
-                Benefits()
-                
-                Subscription()
-                
-                ContinueButton()
-                
+            MainView()
+                .fixedSize(horizontal: false, vertical: true)
+            
+            if vm.pending {
+                ProgressView()
+                    .controlSize(.large)
             }
-            .padding(.horizontal, 16)
-            .frame(maxHeight: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(
-                        colorScheme.backgroundColor()
-                    )
-            )
-            .padding(.horizontal, 16)
-            .padding(.vertical, 160)
         }
         .onAppear {
             Task {
                 await vm.subscriptionManager.loadProducts()
             }
         }
+        .alert("Nothing to restore 🤷‍♂️", isPresented: $vm.showingAlert) {
+            Button {
+                
+            } label: {
+                Text("No luck")
+            }
+        } message: {
+            Text("I’d love to bring something back… but there’s nothing yet.")
+        }
+        
+    }
+    
+    //MARK: - Main View
+    @ViewBuilder
+    private func MainView() -> some View {
+        VStack(spacing: 0) {
+            Benefits()
+            
+            Subscription()
+            
+            ContinueButton()
+            
+            LegalNote()
+        }
+        .padding(.horizontal, 16)
+        .frame(maxHeight: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 24)
+                .fill(
+                    colorScheme.backgroundColor()
+                )
+        )
+        .padding(.horizontal, 16)
     }
     
     //MARK: - Info
@@ -166,7 +187,45 @@ public struct PaywallView: View {
                             colorScheme.accentColor()
                         )
                 )
+                .padding(.bottom, 20)
         }
+    }
+    
+    //MARK: - Legal note
+    @ViewBuilder
+    private func LegalNote() -> some View {
+        HStack {
+            Button {
+                
+            } label: {
+                Text("Privacy Policy")
+                    .font(.system(.caption2, design: .rounded, weight: .regular))
+                    .foregroundStyle(.labelQuaternary)
+            }
+            
+            Spacer()
+            
+            Button {
+                Task {
+                    await vm.restoreButtonTapped()
+                }
+            } label: {
+                Text("Restore")
+                    .font(.system(.caption, design: .rounded, weight: .regular))
+                    .foregroundStyle(.labelTertiary)
+            }
+            
+            Spacer()
+            
+            Button {
+                
+            } label: {
+                Text("Terms of use")
+                    .font(.system(.caption2, design: .rounded, weight: .regular))
+                    .foregroundStyle(.labelQuaternary)
+            }
+        }
+        .padding(.bottom, 20)
     }
 }
 

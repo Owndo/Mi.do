@@ -47,6 +47,9 @@ struct Tasker: App {
                         break
                     }
                 }
+                .task {
+                    await subscriptionManager.updatePurchase()
+                }
                 .sensoryFeedback(.error, trigger: subscriptionManager.showPaywall)
                 .animation(.default, value: appearanceManager.selectedColorScheme)
                 .animation(.bouncy, value: subscriptionManager.showPaywall)

@@ -17,10 +17,15 @@ final class PaywallVM {
     //MARK: - UI States
     var textForPaywall = "Plan with ease\nLive with joy\nLess tasks, more life!"
     var benefits = ["Voice tasks & voice notifications", "Create group, customize space", "History, sync, and stay on top"]
+    var showingAlert = false
     
     //MARK: StoreKit
     var products: [Product] = []
     var selecetedProduct: Product?
+    
+    var pending: Bool {
+        subscriptionManager.pending
+    }
     
     init() {
         products = subscriptionManager.products
@@ -38,6 +43,10 @@ final class PaywallVM {
         } catch {
             print("error")
         }
+    }
+    
+    func restoreButtonTapped() async {
+        showingAlert = await !subscriptionManager.restorePurchases()
     }
     
     func closePaywallButtonTapped() {

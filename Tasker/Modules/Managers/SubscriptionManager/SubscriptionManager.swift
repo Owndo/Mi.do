@@ -10,15 +10,17 @@ import StoreKit
 
 @Observable
 public final class SubscriptionManager: SubscriptionManagerProtocol {
-    let productIDs = ["yearly_base", "monthly_base"]
-    
+    //MARK: States for UI
     public var showPaywall = false
     public var pending = false
     
-    public var products: [Product] = []
-    private(set) var purchaseProductId = Set<String>()
-    private var updatePurchase: Task<Void, Never>? = nil
+    let productIDs = ["yearly_base", "monthly_base"]
     
+    public var products: [Product] = []
+    
+    private(set) var purchaseProductId = Set<String>()
+    
+    private var updatePurchase: Task<Void, Never>? = nil
     
     public init() {
         Task {
@@ -53,7 +55,10 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
         }
     }
     
+    //MARK: - Make a purchase
     public func makePurchase(_ product: Product) async throws {
+        pending = true
+        
         let result = try await product.purchase()
         
         switch result {
@@ -61,47 +66,56 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
             await transaction.finish()
             await updatePurchase()
             showPaywall = false
-            print("Already has purchase")
-            print(hasSubscription)
+            pending = false
         case let .success(.unverified(_, error)):
             print("Valid purchase, but couldn't verified receipt \(error.localizedDescription)")
+            await updatePurchase()
             showPaywall = false
+            pending = false
             break
         case .userCancelled:
-            print("canceled")
+            pending = false
             break
         case .pending:
             print("pending")
         default:
-            print("error")
+            pending = false
         }
+        
+        pending = false
     }
     
-    func updatePurchase() async {
+    //MARK: - Update a purchase
+    public func updatePurchase() async {
+        var activeProducts = Set<String>()
+        
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result else {
                 continue
             }
             
-            if transaction.revocationDate == nil {
-                purchaseProductId.insert(transaction.productID)
-            } else {
-                purchaseProductId.remove(transaction.productID)
+            if transaction.revocationDate == nil,
+               transaction.expirationDate == nil || transaction.expirationDate! > Date() {
+                activeProducts.insert(transaction.productID)
             }
         }
         
+        purchaseProductId = activeProducts
     }
     
-    public func restorePurchases() async {
+    //MARK: - Restore
+    public func restorePurchases() async -> Bool {
         pending = true
+        
         do {
             try await AppStore.sync()
             pending = false
-            print("Restored")
         } catch {
-            
-            print("Nothing to restore")
+            pending = false
+            return false
         }
+        
+        return true
     }
     
     private func backgroundTransactionUpdate() -> Task<Void, Never> {
@@ -113,6 +127,7 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
     }
 }
 
+//MARK: - Extension
 public extension Product {
     var dividedByWeek: String {
         guard let unit = subscription?.subscriptionPeriod.unit else { return "" }

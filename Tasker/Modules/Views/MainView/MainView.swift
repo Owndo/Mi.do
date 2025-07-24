@@ -14,7 +14,6 @@ import Profile
 import Paywall
 
 public struct MainView: View {
-    @AppStorage("showPaywall") var showPaywall = false
     @Environment(\.colorScheme) var colorScheme
     
     @Bindable var vm: MainVM
@@ -32,13 +31,15 @@ public struct MainView: View {
                     .ignoresSafeArea()
                 
                 NotesView(mainViewIsOpen: $vm.mainViewIsOpen)
+                    .disabled(vm.showPaywall)
+                
+                if vm.showPaywall {
+                    Color.backgroundDimDark.ignoresSafeArea()
+                }
             }
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
                     .preferredColorScheme(colorScheme)
-                    .onTapGesture {
-                        showPaywall = true
-                    }
                     .sheet(isPresented: $vm.profileViewIsOpen) {
                         ProfileView()
                             .preferredColorScheme(colorScheme)
@@ -60,6 +61,7 @@ public struct MainView: View {
                         Image(systemName: "calendar")
                             .foregroundStyle(colorScheme.accentColor())
                     }
+                    .disabled(vm.showPaywall)
                 }
                 
                 ToolbarItem(placement: .principal) {
@@ -70,15 +72,16 @@ public struct MainView: View {
                         .onSubmit {
                             vm.profileModelSave()
                         }
+                        .disabled(vm.showPaywall)
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         vm.profileViewButtonTapped()
                     } label: {
-                        Image(systemName: "person.circle")
-                            .foregroundStyle(colorScheme.accentColor())
+                        ProfilePhoto()
                     }
+                    .disabled(vm.showPaywall)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -117,7 +120,7 @@ public struct MainView: View {
             }
             .ignoresSafeArea(.keyboard)
             
-            if showPaywall {
+            if vm.showPaywall {
                 PaywallView()
             }
         }
@@ -173,6 +176,20 @@ public struct MainView: View {
         .frame(maxWidth: .infinity)
         .blendMode(colorScheme == .dark ? .normal : .darken)
         .ignoresSafeArea(.keyboard)
+    }
+    
+    //MARK: - Profile photo
+    @ViewBuilder
+    private func ProfilePhoto() -> some View {
+        //        if let image = vm.uiImage {
+        //            Image(uiImage: image)
+        //                .resizable()
+        //                .frame(width: 42, height: 42)
+        //                .clipShape(Circle())
+        //        } else {
+        Image(systemName: "person.circle")
+            .foregroundStyle(colorScheme.accentColor())
+        //        }
     }
 }
 

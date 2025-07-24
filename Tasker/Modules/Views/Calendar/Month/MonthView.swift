@@ -8,6 +8,7 @@
 import SwiftUI
 import Models
 import UIComponents
+import Paywall
 
 public struct MonthView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -51,15 +52,26 @@ public struct MonthView: View {
                 .scrollIndicators(.hidden)
                 .navigationBarBackButtonHidden()
                 .scrollPosition(id: $vm.scrollID, anchor: .top)
+                .scrollDisabled(vm.showPaywall)
+            }
+            .onChange(of: vm.showPaywall) { oldValue, _ in
+                vm.automaticlyClossScreen(path: &path, mainViewIsOpen: &mainViewIsOpen)
             }
             .onAppear {
-                vm.onAppear()
+                Task {
+                    await vm.onAppear()
+                }
             }
             .onDisappear {
                 mainViewIsOpen = true
                 vm.onDissapear()
             }
+            
+            if vm.showPaywall {
+                PaywallView()
+            }
         }
+        .animation(.bouncy, value: vm.showPaywall)
     }
     
     //MARK: - ToolBar
@@ -101,6 +113,7 @@ public struct MonthView: View {
                     }
                 }
             }
+            .disabled(vm.showPaywall)
         }
         .padding(.leading, 8)
         .padding(.trailing, 16)

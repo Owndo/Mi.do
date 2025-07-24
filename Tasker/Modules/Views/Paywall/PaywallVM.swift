@@ -15,7 +15,7 @@ final class PaywallVM {
     @Injected(\.subscriptionManager) var subscriptionManager
     
     //MARK: - UI States
-    var textForPaywall = "Achieve your goals many\ntimes faster!"
+    var textForPaywall = "Plan with ease\nLive with joy\nLess tasks, more life!"
     var benefits = ["Voice tasks & voice notifications", "Create group, customize space", "History, sync, and stay on top"]
     
     //MARK: StoreKit
@@ -27,13 +27,9 @@ final class PaywallVM {
         selecetedProduct = products.last
     }
     
-    func hasSubscription() -> Bool {
-        subscriptionManager.hasSubscription()
-    }
-    
     func makePurchase() async {
+        
         guard let selecetedProduct else {
-            
             return
         }
         
@@ -42,5 +38,9 @@ final class PaywallVM {
         } catch {
             print("error")
         }
+    }
+    
+    func closePaywallButtonTapped() {
+        subscriptionManager.closePaywall()
     }
 }

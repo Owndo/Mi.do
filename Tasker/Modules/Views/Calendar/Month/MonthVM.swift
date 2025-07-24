@@ -18,6 +18,12 @@ final class MonthVM {
     @Injected(\.appearanceManager) var appearanceManager
     @ObservationIgnored
     @Injected(\.telemetryManager) var telemetryManager
+    @ObservationIgnored
+    @Injected(\.subscriptionManager) var subscriptionManager
+    
+    var showPaywall: Bool {
+        subscriptionManager.showPaywall
+    }
     
     var scrollID: Int?
     
@@ -49,10 +55,20 @@ final class MonthVM {
         telemetryAction(.calendarAction(.selectedDateButtonTapped(.calendarView)))
     }
     
-    func onAppear() {
+    func onAppear() async {
         scrollID = 1
         
         telemetryAction(.openView(.calendar(.open)))
+        
+        try? await Task.sleep(for: .seconds(0.5))
+        
+        guard checkSubscription() else {
+            return
+        }
+    }
+    
+    func checkSubscription() -> Bool {
+        subscriptionManager.hasSubscription()
     }
     
     func onDissapear() {
@@ -111,6 +127,18 @@ final class MonthVM {
         
         // telemetry
         telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))
+    }
+    
+    func automaticlyClossScreen(path: inout NavigationPath, mainViewIsOpen: inout Bool) {
+        if showPaywall == false && !checkSubscription() {
+            subscriptionManager.closePaywall()
+            
+            path.removeLast()
+            mainViewIsOpen = true
+            
+            // telemetry
+            telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))
+        }
     }
     
     func handleMonthAppeared(_ month: PeriodModel) {

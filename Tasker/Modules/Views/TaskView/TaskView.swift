@@ -8,6 +8,7 @@
 import SwiftUI
 import Models
 import UIComponents
+import Paywall
 
 public struct TaskView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -40,16 +41,7 @@ public struct TaskView: View {
                 ScrollView {
                     VStack(spacing: 28) {
                         
-                        VStack(spacing: 28) {
-                            if vm.task.audio != nil {
-                                VoicePlaying()
-                                
-                                VoiceModeToogle()
-                            } else {
-                                AddVoice()
-                            }
-                        }
-                        .padding(.top, 12)
+                        AudioSection()
                         
                         MainSection()
                         
@@ -111,7 +103,12 @@ public struct TaskView: View {
                     .presentationDetents([.medium])
             }
             .padding(.horizontal, 16)
+            
+            if vm.showPaywall {
+                PaywallView()
+            }
         }
+        .animation(.bouncy, value: vm.showPaywall)
     }
     
     //MARK: TabBar
@@ -138,6 +135,21 @@ public struct TaskView: View {
         .tint(colorScheme.accentColor())
         .padding(.top, 14)
         .padding(.bottom, 3)
+    }
+    
+    //MARK: - Audio Section
+    @ViewBuilder
+    private func AudioSection() -> some View {
+        VStack(spacing: 28) {
+            if vm.task.audio != nil {
+                VoicePlaying()
+                
+                VoiceModeToogle()
+            } else {
+                AddVoice()
+            }
+        }
+        .padding(.top, 12)
     }
     
     //MARK: Voice Playing

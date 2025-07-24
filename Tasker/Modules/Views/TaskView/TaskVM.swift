@@ -22,6 +22,7 @@ final class TaskVM {
     @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
     @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
     @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+    @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
     // MARK: - Model
     var mainModel: MainModel = mockModel()
@@ -38,6 +39,10 @@ final class TaskVM {
     var pause = false
     var selectedColorTapped = false
     var dateHasBeenChanged = false
+    
+    var showPaywall: Bool {
+        subscriptionManager.showPaywall
+    }
     
     // MARK: - Confirmation dialog
     var confirmationDialogIsPresented = false
@@ -196,11 +201,13 @@ final class TaskVM {
         
         if dateHasBeenChanged && !calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) {
             return notificationDate.timeIntervalSince1970
-        } else if dateHasBeenChanged {
+        } else if dateHasBeenChanged && !setUpDefaultTime(task) {
             sourceDate.hour = calendar.component(.hour, from: notificationDate)
             sourceDate.minute = calendar.component(.minute, from: notificationDate)
             
             return calendar.date(from: sourceDate)!.timeIntervalSince1970
+        } else if calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) {
+            return notificationDate.timeIntervalSince1970
         } else {
             return sourseDateOfNotification.timeIntervalSince1970
         }
@@ -377,6 +384,10 @@ final class TaskVM {
     
     // MARK: - Recording
     func recordButtonTapped() async {
+        guard subscriptionManager.hasSubscription() else {
+            return
+        }
+        
         if isRecording {
             stopRecord()
         } else {

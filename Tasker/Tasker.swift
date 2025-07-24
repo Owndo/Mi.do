@@ -47,7 +47,9 @@ struct Tasker: App {
                         break
                     }
                 }
+                .sensoryFeedback(.error, trigger: subscriptionManager.showPaywall)
                 .animation(.default, value: appearanceManager.selectedColorScheme)
+                .animation(.bouncy, value: subscriptionManager.showPaywall)
         }
     }
 }

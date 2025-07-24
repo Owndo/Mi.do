@@ -32,6 +32,8 @@ public final class MainVM {
     @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
     @ObservationIgnored
     @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+    @ObservationIgnored
+    @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
     //MARK: - Model
     var model: MainModel?
@@ -46,6 +48,9 @@ public final class MainVM {
     var alert: AlertModel?
     var disabledButton = false
     
+    var showPaywall: Bool {
+        subscriptionManager.showPaywall
+    }
     
     var presentationPosition: PresentationDetent = PresentationMode.base.detent {
         didSet {
@@ -56,6 +61,8 @@ public final class MainVM {
             }
             
             if presentationPosition == .fraction(0.20) {
+                subscriptionManager.closePaywall()
+                
                 // telemetry
                 telemetryAction(.mainViewAction(.showNotesButtonTapped))
             }
@@ -165,6 +172,10 @@ public final class MainVM {
     }
     
     func startAfterChek() async throws {
+        guard subscriptionManager.hasSubscription() else {
+            return
+        }
+        
         recordingState = .recording
         playerManager.stopToPlay()
         
@@ -197,6 +208,7 @@ public final class MainVM {
         }
     }
     
+    //MARK: - Stop after check
     @MainActor
     func stopAfterCheck(_ newValue: Double?) async {
         guard let value = newValue, value >= 15.0 else { return }
@@ -313,4 +325,21 @@ enum PresentationMode: CGFloat, CaseIterable {
     }
     
     static let detents = Set(PresentationMode.allCases.map { $0.detent })
+}
+
+extension Data {
+    func thumbnailImageData(maxPixelSize: Int = 64) -> Data? {
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
+        ]
+        
+        guard let imageSource = CGImageSourceCreateWithData(self as CFData, nil),
+              let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
+            return nil
+        }
+        
+        return UIImage(cgImage: cgImage).jpegData(compressionQuality: 0.8)
+    }
 }

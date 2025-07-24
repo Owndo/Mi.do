@@ -12,7 +12,6 @@ import StoreKit
 
 public struct PaywallView: View {
     @Environment(\.colorScheme) var colorScheme
-    @AppStorage("showPaywall") var showPaywall = false
     
     @State private var vm = PaywallVM()
     
@@ -22,7 +21,7 @@ public struct PaywallView: View {
         ZStack {
             Color.backgroundDimDark.ignoresSafeArea()
                 .onTapGesture {
-                    showPaywall = false
+                    vm.closePaywallButtonTapped()
                 }
             
             VStack(spacing: 0) {
@@ -111,6 +110,10 @@ public struct PaywallView: View {
                 Text(product.displayPrice)
                     .font(.system(.title2, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelPrimary)
+                
+                Text(product.subscription?.subscriptionPeriod.unit == .month ? product.dividedByWeek : product.dividedByMonth)
+                    .font(.system(.caption2, design: .rounded, weight: .medium))
+                    .foregroundStyle(.labelTertiary)
             }
             .padding(.vertical, 16)
             .frame(maxWidth: .infinity)

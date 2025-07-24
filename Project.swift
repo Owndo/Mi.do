@@ -73,7 +73,8 @@ let project = Project(
             dependencies: [
                 .target(name: "Models"),
                 .target(name: "Managers"),
-                .target(name: "UIComponents")
+                .target(name: "UIComponents"),
+                .target(name: "Paywall")
             ]
         ),
         .moduleView(
@@ -81,7 +82,8 @@ let project = Project(
             dependencies: [
                 .target(name: "Models"),
                 .target(name: "Managers"),
-                .target(name: "UIComponents")
+                .target(name: "UIComponents"),
+                .target(name: "Paywall")
             ]
         ),
         .moduleView(
@@ -89,7 +91,8 @@ let project = Project(
             dependencies: [
                 .target(name: "Models"),
                 .target(name: "Managers"),
-                .target(name: "UIComponents")
+                .target(name: "UIComponents"),
+                .target(name: "Paywall")
             ]
         ),
         .moduleView(

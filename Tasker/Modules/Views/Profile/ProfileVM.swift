@@ -111,7 +111,7 @@ final class ProfileVM {
         switch type {
         case .today:
             tasks = taskManager.tasks.map { $0.value }
-                .filter { $0.isScheduledForDate(today.timeIntervalSince1970, calendar: calendar) }
+                .filter { $0.isScheduledForDate(today.timeIntervalSince1970, calendar: calendar)}
             
             count = tasks.count
         case .week:

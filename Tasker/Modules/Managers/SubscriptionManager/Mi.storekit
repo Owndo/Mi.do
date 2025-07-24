@@ -9,7 +9,7 @@
       }
     ]
   },
-  "identifier" : "D4360C00",
+  "identifier" : "67CB4604",
   "nonRenewingSubscriptions" : [
 
   ],
@@ -17,10 +17,12 @@
 
   ],
   "settings" : {
-    "_applicationInternalID" : "6746461042",
-    "_developerTeamID" : "JMB8Y7C47R",
+    "_applicationInternalID" : "6749021753",
+    "_developerTeamID" : "5M63H38ZMF",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 774989689.80178201,
+    "_lastSynchronizedDate" : 775003342.23073399,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
     "_storeKitErrors" : [
       {
         "current" : null,
@@ -70,7 +72,99 @@
     ]
   },
   "subscriptionGroups" : [
+    {
+      "id" : "21739390",
+      "localizations" : [
 
+      ],
+      "name" : "Base subscriptions",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "3.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "6749025836",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "One month to boost your flow",
+              "displayName" : "Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "monthly_base",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly",
+          "subscriptionGroupID" : "21739390",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "1.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "6749025522",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Stay sharp this week",
+              "displayName" : "Weekly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "weekly_base",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Weekly",
+          "subscriptionGroupID" : "21739390",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6749025703",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Plan your year with style",
+              "displayName" : "Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "yearly_base",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Yearly",
+          "subscriptionGroupID" : "21739390",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
   ],
   "version" : {
     "major" : 4,

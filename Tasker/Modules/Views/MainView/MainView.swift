@@ -11,8 +11,10 @@ import Calendar
 import ListView
 import TaskView
 import Profile
+import Paywall
 
 public struct MainView: View {
+    @AppStorage("showPaywall") var showPaywall = false
     @Environment(\.colorScheme) var colorScheme
     
     @Bindable var vm: MainVM
@@ -34,7 +36,9 @@ public struct MainView: View {
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
                     .preferredColorScheme(colorScheme)
-                
+                    .onTapGesture {
+                        showPaywall = true
+                    }
                     .sheet(isPresented: $vm.profileViewIsOpen) {
                         ProfileView()
                             .preferredColorScheme(colorScheme)
@@ -112,6 +116,10 @@ public struct MainView: View {
                 }
             }
             .ignoresSafeArea(.keyboard)
+            
+            if showPaywall {
+                PaywallView()
+            }
         }
         .sheet(item: $vm.model) { model in
             TaskView(mainModel: model)

@@ -8,6 +8,7 @@
 import SwiftUI
 import MainView
 import Managers
+import Paywall
 
 @main
 struct Tasker: App {
@@ -17,6 +18,7 @@ struct Tasker: App {
     @State private var mainVM = MainVM()
     
     @Injected(\.appearanceManager) var appearanceManager
+    @Injected(\.subscriptionManager) var subscriptionManager
     
     var body: some Scene {
         WindowGroup {
@@ -28,6 +30,9 @@ struct Tasker: App {
                         UserDefaults.standard.removeObject(forKey: "pendingTaskID")
                     }
                     mainVM.mainScreenOpened()
+                    Task {
+                        await subscriptionManager.loadProducts()
+                    }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .openTaskFromNotification)) { notification in
                     mainVM.selectedTask(by: notification)

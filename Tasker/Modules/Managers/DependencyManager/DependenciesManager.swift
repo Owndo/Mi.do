@@ -25,6 +25,7 @@ final class DependenciesManager: DependenciesManagerProtocol {
     lazy var taskManager: TaskManagerProtocol = TaskManager()
     lazy var appearanceManager: AppearanceManagerProtocol = AppearanceManager()
     lazy var telemetryManager: TelemetryManagerProtocol = TelemetryManager()
+    lazy var subscriptionManager: SubscriptionManagerProtocol = SubscriptionManager()
 }
 
 public protocol DependenciesManagerProtocol {
@@ -38,6 +39,7 @@ public protocol DependenciesManagerProtocol {
     var taskManager: TaskManagerProtocol { get }
     var appearanceManager: AppearanceManagerProtocol { get }
     var telemetryManager: TelemetryManagerProtocol { get }
+    var subscriptionManager: SubscriptionManagerProtocol { get }
 }
 
 public protocol DependencyRegister {

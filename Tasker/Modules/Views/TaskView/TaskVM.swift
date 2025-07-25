@@ -16,6 +16,7 @@ final class TaskVM {
     @ObservationIgnored @Injected(\.casManager) var casManager: CASManagerProtocol
     @ObservationIgnored @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
     @ObservationIgnored @Injected(\.recorderManager) private var recorderManager: RecorderManagerProtocol
+    @ObservationIgnored @Injected(\.permissionManager) private var recordPermission: PermissionProtocol
     @ObservationIgnored @Injected(\.dateManager) private var dateManager: DateManagerProtocol
     @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
     @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
@@ -39,6 +40,8 @@ final class TaskVM {
     var pause = false
     var selectedColorTapped = false
     var dateHasBeenChanged = false
+    var alert: AlertModel?
+    var disabledButton = false
     
     var showPaywall: Bool {
         subscriptionManager.showPaywall
@@ -391,7 +394,7 @@ final class TaskVM {
         if isRecording {
             stopRecord()
         } else {
-            await startRecord()
+            try? await startRecord()
         }
         
         // telemetry
@@ -404,17 +407,43 @@ final class TaskVM {
         stopRecord()
     }
     
-    private func startRecord() async {
-        await recorderManager.startRecording()
+    private func startRecord() async throws {
+        do {
+            try recordPermission.peremissionSessionForRecording()
+            try await recordPermission.permissionForSpeechRecognition()
+            await recorderManager.startRecording()
+        } catch let error as MicrophonePermission {
+            switch error {
+            case .silentError: return
+            case .microphoneIsNotAvailable:
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
+            case .speechRecognitionIsNotAvailable:
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
+            }
+        } catch let error as ErrorRecorder {
+            switch error {
+            case .cannotInterruptOthers, .cannotStartRecording, .insufficientPriority, .isBusy, .siriIsRecordign, .timeIsLimited:
+                alert = AlertModel(alert: error.showingAlert(action: changeDisabledButton))
+            case .none:
+                return
+            }
+        }
     }
     
     private func stopRecord() {
         var hashOfAudio: String?
+        
         if let audioURLString = recorderManager.stopRecording() {
             hashOfAudio = casManager.saveAudio(url: audioURLString)
         }
         task.audio = hashOfAudio
         task.voiceMode = true
+        
+        if task.title.isEmpty || task.title == "New task" {
+            if !recorderManager.recognizedText.isEmpty {
+                task.title = recorderManager.recognizedText
+            }
+        }
         
         Task { [weak self] in
             await self?.loadTotalTimeIfNeeded()
@@ -423,6 +452,10 @@ final class TaskVM {
     
     private func createTempAudioFile(audioHash: String) {
         _ = storageManager.createFileInSoundsDirectory(hash: audioHash)
+    }
+    
+    private func changeDisabledButton() {
+        disabledButton.toggle()
     }
     
     //MARK: - Telemetry action

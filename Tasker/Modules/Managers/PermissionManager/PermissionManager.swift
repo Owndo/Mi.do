@@ -89,7 +89,7 @@ final class PermissionManager: PermissionProtocol {
         case .authorized:
             allowedSpeechRecognition = true
         default:
-            if recognizePermission <= 2 {
+            if recognizePermission < 2 {
                 allowedSpeechRecognition = false
                 telemetryManager.logEvent(.mainViewAction(.recordTaskButtonTapped(.error(.speechRecognitionIsNotAvailable))))
                 recognizePermission += 1

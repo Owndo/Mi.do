@@ -93,6 +93,9 @@ public struct TaskView: View {
                 onDelete: vm.deleteButtonTapped,
                 dismissButton: dismissButton
             )
+            .alert(item: $vm.alert) { alert in
+                alert.alert
+            }
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.selection, trigger: vm.notificationDate)
             .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)

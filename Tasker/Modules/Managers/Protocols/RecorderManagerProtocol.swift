@@ -15,6 +15,7 @@ public protocol RecorderManagerProtocol {
     var decibelLevel: Float { get }
     var fileName: URL? { get }
     var recognizedText: String { get set }
+    var wholeDescription: String? { get }
     var dateTimeFromtext: Date? { get }
     var isRecording: Bool { get set }
     

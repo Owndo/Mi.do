@@ -23,6 +23,7 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
     // MARK: - Speech Recognition Properties
     var recognizedText = ""
     var dateTimeFromtext: Date?
+    var wholeDescription: String?
     
     private var audioEngine: AVAudioEngine?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -147,6 +148,8 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         audioEngine = nil
         recognitionRequest = nil
         recognitionTask = nil
+        
+        wholeDescription = recognizedText
         
         dateTimeFromtext = titleExtractor.extractDateTime(from: recognizedText)?.date
         recognizedText = titleExtractor.extractTaskTitleWithNames(from: recognizedText)

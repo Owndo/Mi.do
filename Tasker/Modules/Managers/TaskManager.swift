@@ -113,6 +113,8 @@ final class TaskManager: TaskManagerProtocol {
         )
         
         filledTask.notificationDate = date.timeIntervalSince1970
+        filledTask.endDate = task.endDate
+        filledTask.speechDescription = task.speechDescription
         filledTask.done = task.done
         filledTask.taskColor = task.taskColor
         filledTask.repeatTask = task.repeatTask

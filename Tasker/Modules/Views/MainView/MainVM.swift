@@ -253,6 +253,7 @@ public final class MainVM {
             id: UUID().uuidString,
             title: recordManager.recognizedText,
             info: "",
+            speechDescription: recordManager.wholeDescription,
             audio: audioHash,
             notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
             voiceMode: audioHash != nil ? true : false,

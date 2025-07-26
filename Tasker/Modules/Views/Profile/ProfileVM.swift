@@ -60,6 +60,10 @@ final class ProfileVM {
         dateManager.currentTime
     }
     
+    var todayForFilter: Double {
+        calendar.startOfDay(for: Date(timeIntervalSince1970: dateManager.currentTime.timeIntervalSince1970)).timeIntervalSince1970
+    }
+    
     var firstWeekday: String {
         calendar.firstWeekday == 1 ? "Sunday" : "Monday"
     }
@@ -110,8 +114,11 @@ final class ProfileVM {
         
         switch type {
         case .today:
-            tasks = taskManager.tasks.map { $0.value }
-                .filter { $0.isScheduledForDate(today.timeIntervalSince1970, calendar: calendar)}
+            tasks = casManager.activeTasks.map { $0.value }
+                .filter {
+                    $0.deleted.contains { $0.deletedFor == todayForFilter } != true &&
+                    $0.isScheduledForDate(todayForFilter, calendar: calendar)
+                }
             
             count = tasks.count
         case .week:

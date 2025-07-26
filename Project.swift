@@ -166,7 +166,7 @@ extension Target {
     static func module(name: String, dependencies: [TargetDependency]) -> ProjectDescription.Target {
         var resources: [ResourceFileElement] = []
         
-        if name != "BlockSet" || name != "Models" {
+        if name != "BlockSet" {
             resources.append("Tasker/Modules/\(name)/Resources/**")
         }
         

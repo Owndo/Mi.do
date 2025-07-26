@@ -12,6 +12,8 @@ import SwiftUI
 
 @Observable
 final class NotificationManager: NotificationManagerProtocol {
+    @ObservationIgnored
+    @Injected(\.subscriptionManager) var subscriptionManager: SubscriptionManagerProtocol
     
     @ObservationIgnored
     @AppStorage("countOfNotificationDeinid") var countOfNotificationDeinid = 0
@@ -127,8 +129,12 @@ final class NotificationManager: NotificationManagerProtocol {
             notificationContent.sound = .default
         } else {
             if let audio = task.audio {
-                _ = storageManager.createFileInSoundsDirectory(hash: audio)
-                notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                if hasSubscription() {
+                    _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                    notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                } else {
+                    notificationContent.sound = .default
+                }
             }
         }
         
@@ -180,8 +186,12 @@ final class NotificationManager: NotificationManagerProtocol {
                 notificationContent.sound = .default
             } else {
                 if let audio = task.audio {
-                    _ = storageManager.createFileInSoundsDirectory(hash: audio)
-                    notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                    if hasSubscription() {
+                        _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                        notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                    } else {
+                        notificationContent.sound = .default
+                    }
                 }
             }
             
@@ -221,8 +231,12 @@ final class NotificationManager: NotificationManagerProtocol {
                 notificationContent.sound = .default
             } else {
                 if let audio = task.audio {
-                    _ = storageManager.createFileInSoundsDirectory(hash: audio)
-                    notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                    if hasSubscription() {
+                        _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                        notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                    } else {
+                        notificationContent.sound = .default
+                    }
                 }
             }
             
@@ -256,8 +270,12 @@ final class NotificationManager: NotificationManagerProtocol {
             notificationContent.sound = .default
         } else {
             if let audio = task.audio {
-                _ = storageManager.createFileInSoundsDirectory(hash: audio)
-                notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                if hasSubscription() {
+                    _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                    notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                } else {
+                    notificationContent.sound = .default
+                }
             }
         }
         
@@ -308,7 +326,7 @@ final class NotificationManager: NotificationManagerProtocol {
         case .authorized:
             countOfNotificationDeinid = 0
         case .denied:
-            guard countOfNotificationDeinid < 3 else { return }
+            guard countOfNotificationDeinid <= 1 else { return }
             
             if let notificationAlert = NotificationsAlert.deinit.showingAlert(action: timesOfAskingPermission) {
                 alert = AlertModel(id: UUID(), alert: notificationAlert)
@@ -323,10 +341,6 @@ final class NotificationManager: NotificationManagerProtocol {
             break
         }
     }
-    
-    
-    
-    //MARK: - Logic for actual notifications
     
     //MARK: Check count of notifications
     /// work if count of notification less than 63
@@ -501,6 +515,10 @@ final class NotificationManager: NotificationManagerProtocol {
             default: return 1
             }
         }
+    }
+    
+    private func hasSubscription() -> Bool {
+        subscriptionManager.hasSubscription()
     }
 }
 

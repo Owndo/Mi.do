@@ -42,6 +42,14 @@ public struct ListView: View {
                             safeAreaTop: screenGeometry.safeAreaInsets.top,
                             safeAreaBottom: screenGeometry.safeAreaInsets.bottom
                         ))
+                        .popover(
+                            isPresented: $vm.onboardingManager.createButtonTip,
+                            attachmentAnchor: .point(.center),
+                            arrowEdge: .bottom
+                        ) {
+                            OnboardingView(type: .createButtonTip)
+                                .presentationCompactAdaptation(.popover)
+                        }
                 }
             }
             .scrollIndicators(.hidden)
@@ -154,6 +162,14 @@ public struct ListView: View {
             )
             .onTapGesture(count: 2) {
                 vm.backToTodayButtonTapped()
+            }
+            .popover(
+                isPresented: $vm.onboardingManager.listSwipeTip,
+                attachmentAnchor: .point(.center),
+                arrowEdge: .top
+            ) {
+                OnboardingView(type: .listSwipeTip)
+                    .presentationCompactAdaptation(.popover)
             }
     }
 }

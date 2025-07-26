@@ -34,6 +34,8 @@ public final class MainVM {
     @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     @ObservationIgnored
     @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
+    @ObservationIgnored
+    @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
     //MARK: - Model
     var model: MainModel?
@@ -47,6 +49,10 @@ public final class MainVM {
     var showDetailsScreen = false
     var alert: AlertModel?
     var disabledButton = false
+    
+    var onboardingComplete: Bool {
+        onboardingManager.onboardingComplete
+    }
     
     var showPaywall: Bool {
         subscriptionManager.showPaywall
@@ -117,7 +123,9 @@ public final class MainVM {
     
     public init() {
         createCustomProfileModel()
+        
         Task {
+            await onboardingStart()
             await updateNotifications()
         }
     }
@@ -127,6 +135,10 @@ public final class MainVM {
     }
     
     public func updateNotifications() async {
+        while showPaywall == true {
+            try? await Task.sleep(for: .seconds(0.1))
+        }
+        
         checkNotificationPermission()
         await notificationManager.createNotification()
     }
@@ -278,6 +290,7 @@ public final class MainVM {
     func calendarButtonTapped() {
         path.append(Destination.calendar)
         mainViewIsOpen = false
+        
         // telemetry
         telemetryAction(.mainViewAction(.calendarButtonTapped))
     }
@@ -314,6 +327,19 @@ public final class MainVM {
             await notificationManager.checkPermission()
             alert = notificationManager.alert
         }
+    }
+    
+    private func onboardingStart() async {
+        disabledButton = true
+        
+        await onboardingManager.onboardingStart()
+        
+        guard subscriptionManager.hasSubscription() else {
+            disabledButton = false
+            return
+        }
+        
+        disabledButton = false
     }
 }
 

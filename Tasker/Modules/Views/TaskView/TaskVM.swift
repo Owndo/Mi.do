@@ -28,6 +28,7 @@ final class TaskVM {
     // MARK: - Model
     var mainModel: MainModel = mockModel()
     var task: TaskModel = mockModel().value
+    var profileModel: ProfileData = mockProfileData()
     
     // MARK: - UI States
     var showDatePicker = false
@@ -42,6 +43,7 @@ final class TaskVM {
     var dateHasBeenChanged = false
     var alert: AlertModel?
     var disabledButton = false
+    var checkMarkTip = false
     
     var showPaywall: Bool {
         subscriptionManager.showPaywall
@@ -127,8 +129,13 @@ final class TaskVM {
     }
     
     private func preSetTask(_ mainModel: MainModel) {
+        profileModel = casManager.profileModel ?? mockProfileData()
         self.mainModel = mainModel
         task = mainModel.value
+        
+        Task {
+            await onboarding()
+        }
     }
     
     private func setUpTime() {
@@ -461,5 +468,22 @@ final class TaskVM {
     //MARK: - Telemetry action
     private func telemetryAction(_ action: EventType) {
         telemetryManager.logEvent(action)
+    }
+    
+    //MARK: - Onboarding
+    func onboarding() async {
+        guard profileModel.value.onboarding.checkMarkTip == false else {
+            return
+        }
+        
+        checkMarkTip = true
+        
+        while checkMarkTip {
+            try? await Task.sleep(for: .seconds(0.3))
+        }
+        
+        profileModel.value.onboarding.checkMarkTip = true
+        
+        casManager.saveProfileData(profileModel)
     }
 }

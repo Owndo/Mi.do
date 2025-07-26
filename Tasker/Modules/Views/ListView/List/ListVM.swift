@@ -24,6 +24,8 @@ final class ListVM {
     @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
     @ObservationIgnored
     @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+    @ObservationIgnored
+    @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
     //MARK: UI State
     var startSwipping = false
@@ -31,6 +33,10 @@ final class ListVM {
     
     var completedTasksHidden: Bool {
         casManager.profileModel?.value.settings.completedTasksHidden ?? false
+    }
+    
+    var deleteTip: Bool {
+        casManager.profileModel?.value.onboarding.deleteTip ?? false
     }
     
     var tasks: [MainModel] {

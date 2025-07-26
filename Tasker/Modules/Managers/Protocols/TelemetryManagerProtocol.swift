@@ -9,4 +9,5 @@ import Foundation
 
 public protocol TelemetryManagerProtocol {
     func logEvent(_ event: EventType)
+    func pageView()
 }

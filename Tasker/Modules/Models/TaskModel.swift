@@ -75,33 +75,33 @@ public struct TaskModel: Identifiable, Codable {
         self.deleted = deleted
         self.taskColor = taskColor
     }
-        
-//    public init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//        
-//        id = try container.decode(String.self, forKey: .id)
-//        title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
-//        info = try container.decodeIfPresent(String.self, forKey: .info) ?? ""
-//        speechDescription = try container.decodeIfPresent(String.self, forKey: .speechDescription) ?? nil
-//        audio = try container.decodeIfPresent(String.self, forKey: .audio)
-//        repeatModel = try container.decodeIfPresent(Bool.self, forKey: .repeatModel) ?? false
-//        
-//        createDate = try container.decodeIfPresent(Double.self, forKey: .createDate) ?? Date.now.timeIntervalSince1970
-//        endDate = try container.decodeIfPresent(Double.self, forKey: .endDate)
-//        notificationDate = try container.decode(Double.self, forKey: .notificationDate)
-//        secondNotificationDate = try container.decodeIfPresent(Double.self, forKey: .secondNotificationDate)
-//        voiceMode = try container.decodeIfPresent(Bool.self, forKey: .voiceMode) ?? true
-//        
-//        markAsDeleted = try container.decodeIfPresent(Bool.self, forKey: .markAsDeleted) ?? false
-//        
-//        repeatTask = try container.decodeIfPresent(RepeatTask.self, forKey: .repeatTask) ?? .never
-//        dayOfWeek = try container.decode([DayOfWeek].self, forKey: .dayOfWeek)
-//        
-//        done = try container.decodeIfPresent([CompleteRecord].self, forKey: .done) ?? []
-//        deleted = try container.decodeIfPresent([DeleteRecord].self, forKey: .deleted) ?? []
-//        
-//        taskColor = try container.decodeIfPresent(TaskColor.self, forKey: .taskColor) ?? .yellow
-//    }
+    
+    //    public init(from decoder: Decoder) throws {
+    //        let container = try decoder.container(keyedBy: CodingKeys.self)
+    //        
+    //        id = try container.decode(String.self, forKey: .id)
+    //        title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
+    //        info = try container.decodeIfPresent(String.self, forKey: .info) ?? ""
+    //        speechDescription = try container.decodeIfPresent(String.self, forKey: .speechDescription) ?? nil
+    //        audio = try container.decodeIfPresent(String.self, forKey: .audio)
+    //        repeatModel = try container.decodeIfPresent(Bool.self, forKey: .repeatModel) ?? false
+    //        
+    //        createDate = try container.decodeIfPresent(Double.self, forKey: .createDate) ?? Date.now.timeIntervalSince1970
+    //        endDate = try container.decodeIfPresent(Double.self, forKey: .endDate)
+    //        notificationDate = try container.decode(Double.self, forKey: .notificationDate)
+    //        secondNotificationDate = try container.decodeIfPresent(Double.self, forKey: .secondNotificationDate)
+    //        voiceMode = try container.decodeIfPresent(Bool.self, forKey: .voiceMode) ?? true
+    //        
+    //        markAsDeleted = try container.decodeIfPresent(Bool.self, forKey: .markAsDeleted) ?? false
+    //        
+    //        repeatTask = try container.decodeIfPresent(RepeatTask.self, forKey: .repeatTask) ?? .never
+    //        dayOfWeek = try container.decode([DayOfWeek].self, forKey: .dayOfWeek)
+    //        
+    //        done = try container.decodeIfPresent([CompleteRecord].self, forKey: .done) ?? []
+    //        deleted = try container.decodeIfPresent([DeleteRecord].self, forKey: .deleted) ?? []
+    //        
+    //        taskColor = try container.decodeIfPresent(TaskColor.self, forKey: .taskColor) ?? .yellow
+    //    }
 }
 
 public func mockModel() -> MainModel {

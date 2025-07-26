@@ -19,6 +19,7 @@ struct Tasker: App {
     
     @Injected(\.appearanceManager) var appearanceManager
     @Injected(\.subscriptionManager) var subscriptionManager
+    @Injected(\.telemetryManager) var telemetryManager
     
     var body: some Scene {
         WindowGroup {
@@ -32,15 +33,17 @@ struct Tasker: App {
                     mainVM.mainScreenOpened()
                     Task {
                         await subscriptionManager.loadProducts()
+                        telemetryManager.pageView()
                     }
                 }
                 .onReceive(NotificationCenter.default.publisher(for: .openTaskFromNotification)) { notification in
                     mainVM.selectedTask(by: notification)
                 }
-                .onChange(of: scenePhase) { newValue, _ in
+                .onChange(of: scenePhase) { oldValue, newValue in
                     switch newValue {
                     case .background, .inactive:
                         Task {
+                            print("here")
                             await mainVM.updateNotifications()
                         }
                     default:

@@ -544,6 +544,14 @@ public struct TaskView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
             )
+            .popover(
+                isPresented: $vm.checkMarkTip,
+                attachmentAnchor: .point(.center),
+                arrowEdge: .bottom
+            ) {
+                OnboardingView(type: .checkMarkTip)
+                    .presentationCompactAdaptation(.popover)
+            }
             
             Button {
                 Task {

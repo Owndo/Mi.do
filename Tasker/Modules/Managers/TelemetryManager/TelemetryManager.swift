@@ -15,8 +15,10 @@ public final class TelemetryManager: TelemetryManagerProtocol {
     
     public init() {
         let config = PostHogConfig(apiKey: POSTHOG_API_KEY, host: POSTHOG_HOST)
+        config.personProfiles = .identifiedOnly
         
         PostHogSDK.shared.setup(config)
+        
     }
     
     //MARK: - Open screen actions
@@ -81,6 +83,10 @@ public final class TelemetryManager: TelemetryManagerProtocol {
     //MARK: - Profile View
     private func trackProfileViewAction(_ action: ProfileViewAction) {
         PostHogSDK.shared.capture(action.eventName, properties: action.properties)
+    }
+    
+    public func pageView() {
+        PostHogSDK.shared.capture("$pageView")
     }
 }
 

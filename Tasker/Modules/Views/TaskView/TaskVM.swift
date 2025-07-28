@@ -30,6 +30,8 @@ final class TaskVM {
     var task: TaskModel = mockModel().value
     var profileModel: ProfileData = mockProfileData()
     
+    var dayOfWeek = [DayOfWeek]()
+    
     // MARK: - UI States
     var showDatePicker = false
     var showTimePicker = false
@@ -129,9 +131,10 @@ final class TaskVM {
     }
     
     private func preSetTask(_ mainModel: MainModel) {
-        profileModel = casManager.profileModel ?? mockProfileData()
+        profileModel = casManager.profileModel
         self.mainModel = mainModel
         task = mainModel.value
+        dayOfWeek = task.dayOfWeek.actualyDayOFWeek(calendar)
         
         Task {
             await onboarding()
@@ -183,6 +186,7 @@ final class TaskVM {
     
     //MARK: - Save task
     func saveTask() async {
+        task.dayOfWeek = dayOfWeek
         task = preparedTask()
         task.notificationDate = changeNotificationTime()
         mainModel.value = task

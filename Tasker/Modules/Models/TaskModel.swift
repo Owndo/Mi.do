@@ -169,6 +169,22 @@ public struct DayOfWeek: Codable, Hashable, Identifiable {
     }
 }
 
+public extension [DayOfWeek] {
+    mutating func actualyDayOFWeek(_ calendar: Calendar) -> [DayOfWeek]{
+        if calendar.firstWeekday == 2 {
+            guard self.first!.name != "Mon" else {
+                return self
+            }
+            
+            self.reverse()
+            self[0..<6].reverse()
+            return self
+        } else {
+            return self
+        }
+    }
+}
+
 
 public enum DayOfWeekEnum: CaseIterable, Codable {
     case monday

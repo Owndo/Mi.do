@@ -434,7 +434,7 @@ public struct TaskView: View {
             CustomDivider()
             
             HStack {
-                ForEach($vm.task.dayOfWeek) { $day in
+                ForEach($vm.dayOfWeek) { $day in
                     Button {
                         day.value.toggle()
                     } label: {

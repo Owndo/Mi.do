@@ -159,7 +159,10 @@ final class NotificationManager: NotificationManagerProtocol {
         if task.repeatTask == .dayOfWeek {
             let selectedDayWeekday = calendar.dateComponents([.weekday], from: selectedDay).weekday!
             
-            guard let matchingDay = task.dayOfWeek.first(where: { day in
+            var orderedDayOfWeek = task.dayOfWeek
+            let actualDays = orderedDayOfWeek.actualyDayOFWeek(calendar)
+            
+            guard let matchingDay = actualDays.first(where: { day in
                 let dayWeekdayValue = getWeekdayValue(for: day.name)
                 return dayWeekdayValue == selectedDayWeekday && day.value == true
             }) else {
@@ -198,7 +201,6 @@ final class NotificationManager: NotificationManagerProtocol {
             let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             
-            print(request)
             notificationCenter.add(request)
         } else {
             guard !uniqueID.contains(uniqueNotificationID) else { return }
@@ -493,28 +495,15 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     private func getWeekdayValue(for dayName: String) -> Int {
-        if calendar.firstWeekday == 1 {
-            switch dayName {
-            case "Sun": return 1
-            case "Mon": return 2
-            case "Tue": return 3
-            case "Wed": return 4
-            case "Thu": return 5
-            case "Fri": return 6
-            case "Sat": return 7
-            default: return 1
-            }
-        } else {
-            switch dayName {
-            case "Mon": return 1
-            case "Tue": return 2
-            case "Wed": return 3
-            case "Thu": return 4
-            case "Fri": return 5
-            case "Sat": return 6
-            case "Sun": return 7
-            default: return 1
-            }
+        switch dayName {
+        case "Sun": return 1
+        case "Mon": return 2
+        case "Tue": return 3
+        case "Wed": return 4
+        case "Thu": return 5
+        case "Fri": return 6
+        case "Sat": return 7
+        default: return 1
         }
     }
     

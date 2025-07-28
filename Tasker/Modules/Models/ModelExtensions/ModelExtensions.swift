@@ -55,13 +55,18 @@ public extension TaskModel {
             
         case .dayOfWeek:
             let selectedWeekday = calendar.component(.weekday, from: dateAsDate)
-            let dayIndex = selectedWeekday - 1
             
-            guard dayIndex >= 0 && dayIndex < self.dayOfWeek.count else {
+            var orderedDayOfWeek = self.dayOfWeek
+            let actualDays = orderedDayOfWeek.actualyDayOFWeek(calendar)
+            
+            let dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+            let selectedDayName = dayNames[selectedWeekday - 1]
+            
+            guard let dayOfWeek = actualDays.first(where: { $0.name == selectedDayName }) else {
                 return false
             }
             
-            return self.dayOfWeek[dayIndex].value
+            return dayOfWeek.value
         }
     }
     

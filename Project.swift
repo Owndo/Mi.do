@@ -18,7 +18,20 @@ let project = Project(
                     "NSUserNotificationsUsageDescription": "Notifications may include alerts, sounds, or badges. Can be adjusted anytime in Settings.",
                     "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",
                     "NSSpeechRecognitionUsageDescription": "Speech recognize access is needed to fill your tasks.",
-                    "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery."
+                    "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery.",
+                    "CFBundleLocalizations": [
+                      "en",
+                      "ru",
+                      "fr",
+                      "fr-CA",
+                      "es",
+                      "es-MX",
+                      "es-419",
+                      "it",
+                      "de",
+                      "pt",
+                      "pt-PT"
+                    ]
                 ]
             ),
             sources: [.glob(

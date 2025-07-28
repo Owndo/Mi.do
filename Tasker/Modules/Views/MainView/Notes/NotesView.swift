@@ -51,7 +51,7 @@ struct NotesView: View {
                     .foregroundStyle(.labelQuintuple)
                     .scaleEffect(1.5)
                 
-                Text("Tap and add your notes here...")
+                Text("Tap and add your notes here...", bundle: .module)
                     .font(.system(.callout, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.labelQuaternary)
@@ -71,7 +71,7 @@ struct NotesView: View {
                     notesFocusState = false
                     vm.saveNotes()
                 } label: {
-                    Text("Done")
+                    Text("Done", bundle: .module)
                         .foregroundStyle(colorScheme.accentColor())
                         .padding(.vertical, 9)
                 }

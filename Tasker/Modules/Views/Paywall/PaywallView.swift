@@ -61,6 +61,7 @@ public struct PaywallView: View {
             
             LegalNote()
         }
+        .padding(.top)
         .padding(.horizontal, 16)
         .frame(maxHeight: .infinity)
         .background(
@@ -176,7 +177,7 @@ public struct PaywallView: View {
             }
         } label: {
             Text("Continue")
-                .font(.system(.body, design: .rounded, weight: .regular))
+                .font(.system(.body, design: .rounded, weight: .medium))
                 .font(.system(size: 17))
                 .foregroundStyle(.labelPrimaryInverted)
                 .padding(.vertical, 15)
@@ -225,6 +226,7 @@ public struct PaywallView: View {
                     .foregroundStyle(.labelQuaternary)
             }
         }
+        .padding(.horizontal, 5)
         .padding(.bottom, 20)
     }
 }

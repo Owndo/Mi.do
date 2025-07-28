@@ -18,7 +18,7 @@ final class SegmentedCircleVM {
     @Injected(\.casManager) var casManager
     
     var useTaskColors: Bool {
-        let minimal = casManager.profileModel?.value.settings.minimalProgressMode ?? true
+        let minimal = casManager.profileModel.value.settings.minimalProgressMode
         return !minimal
     }
     

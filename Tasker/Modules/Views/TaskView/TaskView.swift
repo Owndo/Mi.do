@@ -121,7 +121,7 @@ public struct TaskView: View {
             Button {
                 vm.deleteTaskButtonTapped()
             } label: {
-                Text("Delete")
+                Text("Delete", bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(.accentRed)
             }
@@ -235,7 +235,7 @@ public struct TaskView: View {
             if vm.isRecording {
                 EqualizerView(decibelLevel: vm.decibelLVL)
             } else {
-                Text("Add voice recording")
+                Text("Add voice recording", bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelPrimary)
             }
@@ -321,14 +321,14 @@ public struct TaskView: View {
                     Image(systemName: "calendar")
                         .foregroundStyle(colorScheme.accentColor())
                     
-                    Text("Date")
+                    Text("Date", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
                         .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                         .padding(.vertical, 13)
                     
                     Spacer()
                     
-                    Text(vm.dateForAppearence)
+                    Text(vm.dateForAppearence, bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
                         .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
                 }
@@ -362,7 +362,7 @@ public struct TaskView: View {
                     Image(systemName: "clock")
                         .foregroundStyle(colorScheme.accentColor())
                     
-                    Text("Time")
+                    Text("Time", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
                         .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                         .padding(.vertical, 13)
@@ -370,7 +370,7 @@ public struct TaskView: View {
                     
                     Spacer()
                     
-                    Text("\(vm.notificationDate, format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))")
+                    Text(vm.notificationDate, format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                         .font(.system(.body, design: .rounded, weight: .regular))
                         .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
                 }
@@ -397,7 +397,7 @@ public struct TaskView: View {
                 Image(systemName: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
                     .foregroundStyle(colorScheme.accentColor())
                 
-                Text("Repeat")
+                Text("Repeat", bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                     .padding(.vertical, 13)
@@ -406,12 +406,12 @@ public struct TaskView: View {
                 
                 Picker(selection: $vm.task.repeatTask, content: {
                     ForEach(RepeatTask.allCases, id: \.self) { type in
-                        Text("\(type.description)")
+                        Text(type.description, bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
                     }
                 }, label: {
                     HStack {
-                        Text("\(vm.task.repeatTask.description)")
+                        Text(vm.task.repeatTask.description)
                             .font(.system(.body, design: .rounded, weight: .regular))
                     }
                 })
@@ -452,7 +452,7 @@ public struct TaskView: View {
                 Image(systemName: "info.circle")
                     .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                 
-                Text("Pick the days of the week to repeat")
+                Text("Pick the days of the week to repeat", bundle: .module)
                     .font(.system(.footnote, design: .rounded, weight: .regular))
                     .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
             }
@@ -466,7 +466,7 @@ public struct TaskView: View {
     private func CustomColorPicker() -> some View {
         VStack {
             HStack {
-                Text("Color task")
+                Text("Color task", bundle: .module)
                     .font(.system(.callout, design: .rounded, weight: .regular))
                     .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
                 
@@ -561,7 +561,7 @@ public struct TaskView: View {
                     await vm.saveTask()
                 }
             } label: {
-                Text("Close")
+                Text("Close", bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(.white)
                     .padding(.vertical, 15)
@@ -586,7 +586,7 @@ public struct TaskView: View {
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
             
-            Text("Created:")
+            Text("Created:", bundle: .module)
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
             

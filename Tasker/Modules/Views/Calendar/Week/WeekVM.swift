@@ -71,14 +71,12 @@ final class WeekVM {
     }
     
     func orderedWeekdaySymbols() -> [String] {
-        if calendar.firstWeekday == 2 {
-            return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        } else {
-            return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        }
+        let symbols = calendar.veryShortWeekdaySymbols
+        let weekdayIndex = calendar.firstWeekday - 1
+        return Array(symbols[weekdayIndex...] + symbols[..<weekdayIndex])
     }
     
-    func dateToString() -> String {
+    func dateToString() -> LocalizedStringKey {
         dateManager.dateToString(for: selectedDate, format: nil, useForWeekView: true)
     }
     

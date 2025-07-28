@@ -43,7 +43,6 @@ struct Tasker: App {
                     switch newValue {
                     case .background, .inactive:
                         Task {
-                            print("here")
                             await mainVM.updateNotifications()
                         }
                     default:

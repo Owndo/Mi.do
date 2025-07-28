@@ -19,6 +19,8 @@ public final class TelemetryManager: TelemetryManagerProtocol {
         
         PostHogSDK.shared.setup(config)
         
+        let id = PostHogSDK.shared.getAnonymousId()
+        PostHogSDK.shared.identify(id)
     }
     
     //MARK: - Open screen actions

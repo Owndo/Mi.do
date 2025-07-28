@@ -114,14 +114,14 @@ public enum ColorSchemeMode: CaseIterable, Codable, Sendable {
     case dark
     case system
     
-    public var description: String {
+    public var description: LocalizedStringKey {
         switch self {
         case .light:
-            return "light"
+            return "Light"
         case .dark:
-            return "dark"
+            return "Dark"
         case .system:
-            return "system"
+            return "System"
         }
     }
     
@@ -138,6 +138,7 @@ public enum ColorSchemeMode: CaseIterable, Codable, Sendable {
 }
 
 public struct OnboardingModel: Codable {
+    public var firstTimeOpen: Bool = true
     public var dayTip: Bool = false
     public var calendarTip: Bool = false
     public var profileTip: Bool = false

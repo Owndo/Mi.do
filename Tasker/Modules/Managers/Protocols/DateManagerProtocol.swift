@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import Models
+import SwiftUICore
 
 public protocol DateManagerProtocol {
     var calendar: Calendar { get set }
@@ -26,7 +27,7 @@ public protocol DateManagerProtocol {
     func appendMonthsForward()
     func appendMonthsBackward()
     /// Converte date to string
-    func dateToString(for date: Date, format: String?, useForWeekView: Bool) -> String
+    func dateToString(for date: Date, format: String?, useForWeekView: Bool) -> LocalizedStringKey
     func createdtaskDate(task: TaskModel) -> Date
     /// Combine date from selected date and notification date
     func combineDateAndTime(timeComponents: DateComponents) -> Date

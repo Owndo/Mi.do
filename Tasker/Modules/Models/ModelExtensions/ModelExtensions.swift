@@ -10,7 +10,7 @@ import SwiftUI
 
 //MARK: - Check for visible
 public extension TaskModel {
-   ///Function for check schedule task
+    ///Function for check schedule task
     func isScheduledForDate(_ date: Double, calendar: Calendar = Calendar.current) -> Bool {
         let taskNotificationDate = self.notificationDate
         
@@ -86,7 +86,7 @@ public extension TaskModel {
 
 //MARK: Only for mock in TaskModel init
 extension Array where Element == DayOfWeek {
-   public static let `default` = [
+    public static let `default` = [
         DayOfWeek(name: "Sun", value: false),
         DayOfWeek(name: "Mon", value: false),
         DayOfWeek(name: "Tue", value: false),

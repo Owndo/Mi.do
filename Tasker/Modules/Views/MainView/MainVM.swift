@@ -158,14 +158,9 @@ public final class MainVM {
     }
     
     public func createCustomProfileModel() {
-        if let model = casManager.profileModel {
-            profileModel = model
-        } else {
-            let model = mockProfileData()
-            
-            profileModel = model
-            profileModelSave()
-        }
+        profileModel = casManager.profileModel
+        
+        profileModelSave()
     }
     
     func profileViewButtonTapped() {
@@ -333,6 +328,8 @@ public final class MainVM {
         disabledButton = true
         
         await onboardingManager.onboardingStart()
+        
+        try? await Task.sleep(for: .seconds(0.8))
         
         guard subscriptionManager.hasSubscription() else {
             disabledButton = false

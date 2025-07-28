@@ -11,9 +11,6 @@ import Models
 
 @Observable
 final class CASManager: CASManagerProtocol {
-    
-    var firstTimeOpened = UserDefaults.standard.bool(forKey: "firstTimeOpened")
-    
     let cas: MultiCas
     let remoteDirectory = "iCloud.com.KodiMaberek.Tasker"
     
@@ -28,7 +25,7 @@ final class CASManager: CASManagerProtocol {
     var profileUpdateTriger = false
     
     var models: [MainModel] = []
-    var profileModel: ProfileData?
+    var profileModel: ProfileData = mockProfileData()
     
     var activeTasks = [MainModel]()
     
@@ -64,10 +61,10 @@ final class CASManager: CASManagerProtocol {
         
         cas = MultiCas(local: localCas, remote: iCas)
         
-        firstTimeOpen()
-        
         models = fetchModels()
         profileModel = fetchProfileData()
+        
+        firstTimeOpen()
         
         updateTask()
     }
@@ -149,7 +146,7 @@ final class CASManager: CASManagerProtocol {
     }
     
     //MARK: - Profile data
-    func fetchProfileData() -> ProfileData? {
+    func fetchProfileData() -> ProfileData {
         let list = try! cas.listMutable()
         
         return list.compactMap { mutable in
@@ -158,7 +155,7 @@ final class CASManager: CASManagerProtocol {
             } catch {
                 return nil
             }
-        }.first
+        }.first ?? mockProfileData()
     }
     
     func pathToAudio(_ hash: String) -> URL {
@@ -203,7 +200,7 @@ final class CASManager: CASManagerProtocol {
     }
     
     private func firstTimeOpen() {
-        guard !firstTimeOpened else {
+        guard profileModel.value.onboarding.firstTimeOpen else {
             return
         }
         
@@ -217,6 +214,7 @@ final class CASManager: CASManagerProtocol {
         saveModel(factory.create(.readSomething))
         saveModel(factory.create(.withoutPhone))
         
-        UserDefaults.standard.set(true, forKey: "firstTimeOpened")
+        profileModel.value.onboarding.firstTimeOpen = false
+        saveProfileData(profileModel)
     }
 }

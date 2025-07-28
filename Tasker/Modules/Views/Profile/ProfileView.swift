@@ -51,7 +51,7 @@ public struct ProfileView: View {
                         // telemetry
                         vm.closeButtonTapped()
                     } label: {
-                        Text("Close")
+                        Text("Close", bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .medium))
                             .foregroundStyle(colorScheme.accentColor())
                             .fixedSize()
@@ -93,7 +93,7 @@ public struct ProfileView: View {
                 ButtonsList()
                     .padding(.bottom, 28)
                 
-                Text("App Version \(ConfigurationFile().appVersion)")
+                Text("App Version \(ConfigurationFile().appVersion)", bundle: .module)
                     .font(.system(.subheadline, design: .default, weight: .regular))
                     .foregroundStyle(.labelTertiary)
                     .padding(.bottom, 37)
@@ -173,19 +173,9 @@ public struct ProfileView: View {
                 }
             } label: {
                 HStack {
-                    Text("Edit avatar")
+                    Text("Edit avatar", bundle: .module)
                     
                     Image(systemName: "photo.on.rectangle")
-                }
-            }
-            
-            Button {
-                
-            } label: {
-                HStack {
-                    Text("Log out")
-                    
-                    Image(systemName: "rectangle.portrait.and.arrow.forward")
                 }
             }
             
@@ -193,7 +183,7 @@ public struct ProfileView: View {
                 
             } label: {
                 HStack {
-                    Text("Delete profile")
+                    Text("Delete photo", bundle: .module)
                     
                     Image(systemName: "trash")
                 }
@@ -218,6 +208,7 @@ public struct ProfileView: View {
             Spacer()
             
             StaticRow(count: vm.tasksState(of: .today), text: "Today's tasks")
+                .frame(maxWidth: .infinity)
             
             Spacer()
             
@@ -228,6 +219,7 @@ public struct ProfileView: View {
             Spacer()
             
             StaticRow(count: vm.tasksState(of: .week), text: "Tasks this week")
+                .frame(maxWidth: .infinity)
             
             Spacer()
             
@@ -237,7 +229,8 @@ public struct ProfileView: View {
             
             Spacer()
             
-            StaticRow(count: vm.tasksState(of: .completed), text: "Completed tasks")
+            StaticRow(count: vm.tasksState(of: .completed), text: "Completed")
+                .frame(maxWidth: .infinity)
             
             Spacer()
         }
@@ -250,13 +243,13 @@ public struct ProfileView: View {
     
     //MARK: Static row
     @ViewBuilder
-    private func StaticRow(count: String, text: String) -> some View {
+    private func StaticRow(count: String, text: LocalizedStringKey) -> some View {
         VStack {
             Text(count)
                 .font(.system(.title, design: .rounded, weight: .regular))
                 .foregroundStyle(.labelPrimary)
             
-            Text(text)
+            Text(text, bundle: .module)
                 .font(.system(.caption2, design: .rounded, weight: .regular))
                 .foregroundStyle(.labelSecondary)
         }
@@ -266,7 +259,7 @@ public struct ProfileView: View {
     @ViewBuilder
     private func ButtonsList() -> some View {
         VStack {
-            ButtonRow(icon: "text.rectangle.page", title: "Productivity articles") {
+            ButtonRow(icon: "text.rectangle.page", title: "Articles") {
                 vm.goTo(.articles)
             }
             
@@ -290,7 +283,8 @@ public struct ProfileView: View {
                 .frame(height: 1)
                 .padding(.leading, 38)
             
-            ButtonRow(icon: "calendar.badge.checkmark", title: "The day the week started", actionIcon: "chevron.up.chevron.down") {
+            ButtonRow(icon: "calendar.badge.checkmark", title: "Week start day", actionIcon: "chevron.up.chevron.down") {
+                
             }
             
             CustomDivider()
@@ -309,11 +303,12 @@ public struct ProfileView: View {
                 
             }
         }
+        .sensoryFeedback(.levelChange, trigger: vm.path)
     }
     
     //MARK: - Button Row
     @ViewBuilder
-    private func ButtonRow(icon: String, title: String, actionIcon: String = "chevron.right", action: @escaping () -> Void) -> some View {
+    private func ButtonRow(icon: String, title: LocalizedStringKey, actionIcon: String = "chevron.right", action: @escaping () -> Void) -> some View {
         Button {
             action()
         } label: {
@@ -322,7 +317,7 @@ public struct ProfileView: View {
                     .foregroundStyle(colorScheme.accentColor())
                     .frame(width: 32, height: 32)
                 
-                Text(title)
+                Text(title, bundle: .module)
                     .font(.system(.callout, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelPrimary)
                 
@@ -333,17 +328,17 @@ public struct ProfileView: View {
                         Button {
                             vm.changeFirstDayOfWeek(1)
                         } label: {
-                            Text("Sunday")
+                            Text("Sunday", bundle: .module)
                         }
                         
                         Button {
                             vm.changeFirstDayOfWeek(2)
                         } label: {
-                            Text("Monday")
+                            Text("Monday", bundle: .module)
                         }
                     } label: {
                         HStack {
-                            Text(vm.firstWeekday)
+                            Text(vm.firstWeekday, bundle: .module)
                                 .font(.system(.callout, design: .rounded, weight: .regular))
                             
                             Image(systemName: actionIcon)

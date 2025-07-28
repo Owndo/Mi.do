@@ -67,7 +67,7 @@ public struct ListView: View {
     private func TasksList() -> some View {
         if !vm.tasks.isEmpty {
             HStack {
-                Text("Tasks")
+                Text("Tasks", bundle: .module)
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelTertiary)
                 
@@ -100,7 +100,7 @@ public struct ListView: View {
     private func CompletedTasksList() -> some View {
         if !vm.completedTasks.isEmpty {
             HStack {
-                Text("Completed task")
+                Text("Completed task", bundle: .module)
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundStyle(Color(.labelTertiary))
                 
@@ -162,14 +162,6 @@ public struct ListView: View {
             )
             .onTapGesture(count: 2) {
                 vm.backToTodayButtonTapped()
-            }
-            .popover(
-                isPresented: $vm.onboardingManager.listSwipeTip,
-                attachmentAnchor: .point(.center),
-                arrowEdge: .top
-            ) {
-                OnboardingView(type: .listSwipeTip)
-                    .presentationCompactAdaptation(.popover)
             }
     }
 }

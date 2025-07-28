@@ -14,11 +14,15 @@ import Models
 final class DateManager: DateManagerProtocol {
     ///for the set up first day of week
     @ObservationIgnored
-    @AppStorage("calendar", store: .standard) var firstDay = 1
+    @Injected(\.casManager) var casManager: CASManagerProtocol
     @ObservationIgnored
     @Injected(\.telemetryManager) var telemetryManager: TelemetryManagerProtocol
     
-    var calendar = Calendar.current
+    var calendar = Calendar.current {
+        didSet {
+            initializeWeek()
+        }
+    }
     
     var selectedDate = Date()
     
@@ -56,6 +60,8 @@ final class DateManager: DateManagerProtocol {
     
     //MARK: - Init
     init() {
+        calendar.firstWeekday = casManager.profileModel.value.settings.firstDayOfWeek
+        
         initializeWeek()
         initializeMonth()
     }
@@ -209,7 +215,7 @@ final class DateManager: DateManagerProtocol {
         }
     }
     
-    func dateToString(for date: Date, format: String?, useForWeekView: Bool = false) -> String {
+    func dateToString(for date: Date, format: String?, useForWeekView: Bool = false) -> LocalizedStringKey {
         if useForWeekView {
             return formatterDate(date: date, format: format)
         } else {
@@ -225,18 +231,18 @@ final class DateManager: DateManagerProtocol {
         }
     }
     
-    private func formatterDate(date: Date, format: String?) -> String {
+    private func formatterDate(date: Date, format: String?) -> LocalizedStringKey {
         if let format = format {
             let formatter = DateFormatter()
             formatter.dateFormat = format
             formatter.locale = Locale.current
-            return formatter.string(from: date)
+            return LocalizedStringKey(formatter.string(from: date))
         }
         
         let weekday = selectedDate.formatted(.dateTime.weekday(.wide).locale(Locale.current))
         let dateString = selectedDate.formatted(.dateTime.day().month(.wide).year().locale(Locale.current))
         
-        return "\(weekday) - \(dateString)"
+        return LocalizedStringKey("\(weekday.capitalized) - \(dateString)")
     }
     
     func combineDateAndTime(timeComponents: DateComponents) -> Date {

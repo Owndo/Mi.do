@@ -12,8 +12,8 @@ import Models
 @Observable
 final class MockCas: CASManagerProtocol {
     var allCompletedTasksCount: Int = 12
-
-    var profileModel: ProfileData?
+    
+    var profileModel: ProfileData = mockProfileData()
     
     let cas: MultiCas
     let remoteDirectory = "iCloud.com.KodiMaberek.Tasker"
@@ -118,7 +118,7 @@ final class MockCas: CASManagerProtocol {
     
     
     
-    func fetchProfileData() -> ProfileData? {
+    func fetchProfileData() -> ProfileData {
         let list = try! cas.listMutable()
         
         return list.compactMap { mutable in
@@ -128,7 +128,7 @@ final class MockCas: CASManagerProtocol {
                 
                 return nil
             }
-        }.first
+        }.first ?? mockProfileData()
     }
     
     //MARK: Delete model

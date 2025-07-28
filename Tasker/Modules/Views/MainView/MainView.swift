@@ -159,6 +159,23 @@ public struct MainView: View {
                         OnboardingView(type: .deleteTip)
                             .presentationCompactAdaptation(.popover)
                     }
+                    .popover(
+                        isPresented: $vm.onboardingManager.listSwipeTip,
+                        attachmentAnchor: .rect(
+                            .rect(
+                                CGRect(
+                                    x: UIScreen.main.bounds.width / 2,
+                                    y: UIScreen.main.bounds.height / 2,
+                                    width: 15,
+                                    height: 15
+                                )
+                            )
+                        ),
+                        arrowEdge: .trailing
+                    ) {
+                        OnboardingView(type: .listSwipeTip)
+                            .presentationCompactAdaptation(.popover)
+                    }
                 
                 Spacer()
             }

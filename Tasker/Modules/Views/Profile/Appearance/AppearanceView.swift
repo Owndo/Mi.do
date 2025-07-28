@@ -55,7 +55,7 @@ struct AppearanceView: View {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 17))
                             
-                            Text("Profile")
+                            Text("Profile", bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .medium))
                         }
                         .tint(colorScheme.accentColor())
@@ -63,7 +63,7 @@ struct AppearanceView: View {
                 }
             }
             .navigationBarBackButtonHidden()
-            .navigationTitle("Appearance")
+            .navigationTitle(Text("Appearance", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
             .background(colorScheme.backgroundColor())
         }
@@ -91,7 +91,7 @@ struct AppearanceView: View {
                         .scaledToFit()
                 }
                 
-                Text(scheme.description)
+                Text(scheme.description, bundle: .module)
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelPrimary)
                 
@@ -116,7 +116,7 @@ struct AppearanceView: View {
     private func ProgressMode() -> some View {
         VStack(alignment: .leading) {
             
-            Text("Progress task design")
+            Text("Progress task design", bundle: .module)
                 .font(.system(.headline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.labelPrimary)
             
@@ -136,7 +136,7 @@ struct AppearanceView: View {
     
     //MARK: - Progress row Button
     @ViewBuilder
-    private func ProgressRowButton(_ image: Image, text: String, value: Bool, action: @escaping () -> Void) -> some View {
+    private func ProgressRowButton(_ image: Image, text: LocalizedStringKey, value: Bool, action: @escaping () -> Void) -> some View {
         Button {
             action()
         } label: {
@@ -146,7 +146,7 @@ struct AppearanceView: View {
                     .scaledToFit()
                     .padding(.bottom, 4)
                 
-                Text(text)
+                Text(text, bundle: .module)
                     .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(.labelPrimary)
                     .padding(.bottom, 4)
@@ -168,7 +168,7 @@ struct AppearanceView: View {
     @ViewBuilder
     private func AccentColorSelector() -> some View {
         VStack(alignment: .leading) {
-            Text("Accent color")
+            Text("Interface color", bundle: .module)
                 .font(.system(.headline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.labelPrimary)
             
@@ -229,7 +229,7 @@ struct AppearanceView: View {
     private func BackgroundColorSelector() -> some View {
         VStack(alignment: .leading) {
             
-            Text("Background color")
+            Text("Background color", bundle: .module)
                 .font(.system(.headline, design: .rounded, weight: .semibold))
                 .foregroundStyle(.labelPrimary)
             

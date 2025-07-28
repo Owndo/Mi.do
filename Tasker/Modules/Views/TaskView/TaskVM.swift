@@ -67,7 +67,7 @@ final class TaskVM {
     /// First notification Date for task with repeat
     var sourseDateOfNotification = Date()
     
-    var dateForAppearence: String {
+    var dateForAppearence: LocalizedStringKey {
         dateToString()
     }
     
@@ -228,7 +228,7 @@ final class TaskVM {
     }
     
     //MARK: - Date and time
-    private func dateToString() -> String {
+    private func dateToString() -> LocalizedStringKey {
         dateManager.dateToString(for: notificationDate, format: "MMMM d", useForWeekView: false)
     }
     

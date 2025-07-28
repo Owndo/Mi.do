@@ -64,7 +64,7 @@ final class ProfileVM {
         calendar.startOfDay(for: Date(timeIntervalSince1970: dateManager.currentTime.timeIntervalSince1970)).timeIntervalSince1970
     }
     
-    var firstWeekday: String {
+    var firstWeekday: LocalizedStringKey {
         calendar.firstWeekday == 1 ? "Sunday" : "Monday"
     }
     
@@ -188,6 +188,8 @@ final class ProfileVM {
     
     func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
         dateManager.calendar.firstWeekday = firstDayOfWeek
+        profileModel.value.settings.firstDayOfWeek = firstDayOfWeek
+        profileModelSave()
     }
     
     func closeButtonTapped() {

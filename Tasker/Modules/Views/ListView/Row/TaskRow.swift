@@ -62,7 +62,7 @@ struct TaskRow: View {
                     }
                     
                     HStack(spacing: 12) {
-                        Text("\(Date(timeIntervalSince1970: task.value.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))")
+                        Text(Date(timeIntervalSince1970: task.value.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                             .font(.system(.subheadline, design: .rounded, weight: .regular))
                             .foregroundStyle(task.value.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
                             .padding(.leading, 6)

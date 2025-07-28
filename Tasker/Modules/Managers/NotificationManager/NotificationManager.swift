@@ -198,6 +198,7 @@ final class NotificationManager: NotificationManagerProtocol {
             let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             
+            print(request)
             notificationCenter.add(request)
         } else {
             guard !uniqueID.contains(uniqueNotificationID) else { return }

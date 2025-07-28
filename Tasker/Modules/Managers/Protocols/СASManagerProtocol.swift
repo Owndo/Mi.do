@@ -10,7 +10,7 @@ import Models
 
 public protocol CASManagerProtocol {
     var models: [MainModel] { get }
-    var profileModel: ProfileData? { get }
+    var profileModel: ProfileData { get }
     var activeTasks: [MainModel] { get }
     var completedTasks: [MainModel] { get }
     var deletedTasks: [MainModel] { get }
@@ -25,7 +25,7 @@ public protocol CASManagerProtocol {
     func saveImage(_ photo: Data) -> String?
     func pathToAudio(_ hash: String) -> URL
     func fetchModels() -> [MainModel]
-    func fetchProfileData() -> ProfileData?
+    func fetchProfileData() -> ProfileData
     func getData(_ hash: String) -> Data?
     func deleteModel(_ model: MainModel)
 }

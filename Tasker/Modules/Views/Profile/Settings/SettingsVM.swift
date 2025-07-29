@@ -1,0 +1,93 @@
+//
+//  SettingsVM.swift
+//  BlockSet
+//
+//  Created by Rodion Akhmedov on 7/28/25.
+//
+
+import Foundation
+import Managers
+import Models
+import SwiftUI
+
+@Observable
+final class SettingsVM {
+    @ObservationIgnored
+    @Injected(\.casManager) var casManager: CASManagerProtocol
+    @ObservationIgnored
+    @Injected(\.dateManager) var dateManager: DateManagerProtocol
+    @ObservationIgnored
+    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+    @ObservationIgnored
+    @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
+    
+    var showPaywall: Bool {
+        subscriptionManager.showPaywall
+    }
+    
+    var syncWithIcloud = false
+    
+    var calendar: Calendar {
+        dateManager.calendar
+    }
+    
+    var profileModel: ProfileData = mockProfileData()
+    
+    var createdDate = Date()
+    
+    var firstWeekday: LocalizedStringKey {
+        profileModel.value.settings.firstDayOfWeek == 1 ? "Sunday" : "Monday"
+    }
+    
+    init() {
+        profileModel = casManager.profileModel
+        createdDate = Date(timeIntervalSince1970: profileModel.value.createdProfile)
+        syncWithIcloud = profileModel.value.settings.iCloudSyncEnabled
+    }
+    
+    func goTo(path: inout NavigationPath, destination: ProfileDestination) {
+        path.append(destination)
+    }
+    
+    func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
+        dateManager.calendar.firstWeekday = firstDayOfWeek
+        profileModel.value.settings.firstDayOfWeek = firstDayOfWeek
+        profileModelSave()
+    }
+    
+    func turnOnSync() async {
+        guard subscriptionManager.hasSubscription() else {
+            
+            while showPaywall {
+                try? await Task.sleep(for: .seconds(0.2))
+            }
+            
+            if subscriptionManager.hasSubscription() {
+                profileModel.value.settings.iCloudSyncEnabled = syncWithIcloud
+                profileModelSave()
+            }
+            
+            syncWithIcloud = subscriptionManager.hasSubscription()
+            
+            return
+        }
+        
+        profileModel.value.settings.iCloudSyncEnabled = syncWithIcloud
+        profileModelSave()
+        casManager.syncCases()
+    }
+    
+    /// Save profile to cas
+    private func profileModelSave() {
+        casManager.saveProfileData(profileModel)
+    }
+    
+    func closeButtonTapped() {
+        telemetryAction(action: .profileAction(.closeButtonTapped))
+    }
+    
+    //MARK: - Telemetry action
+    private func telemetryAction(action: EventType) {
+        telemetryManager.logEvent(action)
+    }
+}

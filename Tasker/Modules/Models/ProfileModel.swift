@@ -13,11 +13,13 @@ import UIKit
 public typealias ProfileData = Model<ProfileModel>
 
 public struct ProfileModel: Codable {
+    public var id: String = UUID().uuidString
     public var customTitle: String
     public var notes: String
     public var name: String
     public var photo: String
     public var photoPosition: CGSize
+    public var createdProfile: Double = Date.now.timeIntervalSince1970
     public var settings: SettingsModel
     public var onboarding: OnboardingModel
     
@@ -45,23 +47,20 @@ public struct SettingsModel: Codable, Equatable {
     public var colorScheme: ColorSchemeMode
     public var accentColor: AccentBackgroundColor
     public var background: AccentBackgroundColor
-    public var minimalProgressMode: Bool
-    public var completedTasksHidden: Bool
+    public var minimalProgressMode = true
+    public var completedTasksHidden = false
+    public var iCloudSyncEnabled = false
     
     public init(
         firstDayOfWeek: Int,
         colorScheme: ColorSchemeMode,
         accentColor: AccentBackgroundColor = AccentBackgroundColor(light: "#0EBC7C", dark: "#18C585"),
         background: AccentBackgroundColor = AccentBackgroundColor(light: "#F2F5EE", dark: "#202020"),
-        minimalProgressMode: Bool = true,
-        completedTasksHidden: Bool = false
     ) {
         self.firstDayOfWeek = firstDayOfWeek
         self.colorScheme = colorScheme
         self.accentColor = accentColor
         self.background = background
-        self.minimalProgressMode = minimalProgressMode
-        self.completedTasksHidden = completedTasksHidden
     }
     
     private func currentSystemColorSchemeIsDark() -> Bool {

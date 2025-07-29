@@ -274,13 +274,16 @@ public struct TaskView: View {
     @ViewBuilder
     private func MainSection() -> some View {
         VStack(spacing: 0) {
-            TextField("New task", text: $vm.task.title, axis: .vertical)
+            TextField(text: $vm.task.title, prompt: Text("New task", bundle: .module)) {}
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
                 .focused($sectionInFocuse, equals: .title)
+                .onSubmit {
+                    sectionInFocuse = nil
+                }
             
             RoundedRectangle(cornerRadius: 1)
                 .fill(.separatorPrimary)
@@ -288,7 +291,7 @@ public struct TaskView: View {
                 .padding(.leading, 16)
             
             VStack {
-                TextField("Add more information", text: $vm.task.info, axis: .vertical)
+                TextField(text: $vm.task.info, prompt: Text("Add more information", bundle: .module), axis: .vertical) {}
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)
                     .foregroundStyle(.labelPrimary)

@@ -71,7 +71,7 @@ final class WeekVM {
     }
     
     func orderedWeekdaySymbols() -> [String] {
-        let symbols = calendar.veryShortWeekdaySymbols
+        let symbols = calendar.shortWeekdaySymbols
         let weekdayIndex = calendar.firstWeekday - 1
         return Array(symbols[weekdayIndex...] + symbols[..<weekdayIndex])
     }

@@ -28,4 +28,5 @@ public protocol CASManagerProtocol {
     func fetchProfileData() -> ProfileData
     func getData(_ hash: String) -> Data?
     func deleteModel(_ model: MainModel)
+    func syncCases()
 }

@@ -19,6 +19,7 @@ let project = Project(
                     "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",
                     "NSSpeechRecognitionUsageDescription": "Speech recognize access is needed to fill your tasks.",
                     "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery.",
+                    "NSUbiquitousKeyValueStoreUsageDescription": "iCloud is used to sync your data across devices.",
                     "CFBundleLocalizations": [
                       "en",
                       "ru",

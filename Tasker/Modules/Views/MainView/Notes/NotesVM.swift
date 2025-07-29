@@ -22,7 +22,7 @@ final class NotesVM {
     var profileModel: ProfileData = mockProfileData()
     
     init() {
-        profileModel = casManager.profileModel ?? mockProfileData()
+        profileModel = casManager.profileModel
     }
     
     func saveNotes() {

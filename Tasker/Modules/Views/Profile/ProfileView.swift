@@ -9,7 +9,9 @@ import SwiftUI
 import Models
 import UIComponents
 
+//TODO: - Keyboard ignore safe area
 public struct ProfileView: View {
+    
     @State private var vm = ProfileVM()
     
     @Environment(\.colorScheme) var colorScheme
@@ -30,12 +32,14 @@ public struct ProfileView: View {
                         matching: .images
                     )
             }
-            .navigationDestination(for: ProfileVM.ProfileDestination.self) { desctination in
+            .navigationDestination(for: ProfileDestination.self) { desctination in
                 switch desctination {
                 case .articles:
                     ArticlesView(path: $vm.path)
                 case .history:
                     HistoryView(path: $vm.path)
+                case .settings:
+                    SettingsView(path: $vm.path)
                 case .appearance:
                     AppearanceView(path: $vm.path)
                 }
@@ -66,44 +70,63 @@ public struct ProfileView: View {
                 vm.onDisappear()
             }
         }
+        .sensoryFeedback(.levelChange, trigger: vm.navigationTriger)
     }
     
     //MARK: - Scroll View
     @ViewBuilder
     private func ScrollViewContent() -> some View {
-        ScrollView {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
+            ZStack {
+                SettingsButton()
                 
                 ProfilePhoto()
                     .padding(.bottom, 14)
-                
-                TextField("Enter your name here", text: $vm.profileModel.value.name)
-                    .font(.system(.title2, design: .rounded, weight: .semibold))
-                    .foregroundStyle(.labelPrimary)
-                    .multilineTextAlignment(.center)
-                    .tint(colorScheme.accentColor())
-                    .onSubmit {
-                        vm.profileModelSave()
-                    }
-                
-                TaskStatic()
-                    .padding(.top, 20)
-                    .padding(.bottom, 28)
-                
-                ButtonsList()
-                    .padding(.bottom, 28)
-                
-                Text("App Version \(ConfigurationFile().appVersion)", bundle: .module)
-                    .font(.system(.subheadline, design: .default, weight: .regular))
-                    .foregroundStyle(.labelTertiary)
-                    .padding(.bottom, 37)
-                
             }
             .padding(.top, 25)
-            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            
+            TextField(text: $vm.profileModel.value.name, prompt: Text("Enter your name here", bundle: .module)) {}
+                .font(.system(.title2, design: .rounded, weight: .semibold))
+                .foregroundStyle(.labelPrimary)
+                .multilineTextAlignment(.center)
+                .tint(colorScheme.accentColor())
+                .onSubmit {
+                    vm.profileModelSave()
+                }
+            
+            TaskStatic()
+                .padding(.top, 20)
+                .padding(.bottom, 28)
+                .ignoresSafeArea(.keyboard)
+            
+            ButtonsList()
+                .padding(.bottom, 28)
+                .ignoresSafeArea(.keyboard)
+            
+            Spacer()
         }
-        .scrollDismissesKeyboard(.immediately)
-        .scrollIndicators(.hidden)
+        .padding(.horizontal, 16)
+        .ignoresSafeArea(.keyboard)
+    }
+    
+    //MARK: - Settings Button
+    @ViewBuilder
+    private func SettingsButton() -> some View {
+        Button {
+            vm.goTo(.settings)
+        } label: {
+            Image(systemName: "gearshape")
+                .foregroundStyle(colorScheme.accentColor())
+                .font(.system(size: 25))
+                .padding(4)
+                .shadow(color: colorScheme.accentColor(), radius: 16, y: 4)
+                .background(
+                    Circle()
+                        .fill(.backgroundTertiary)
+                )
+        }
+        .offset(vm.buttonOffset)
     }
     
     //MARK: - Photo
@@ -139,12 +162,9 @@ public struct ProfileView: View {
                 }
             }
             .clipShape(Circle())
-            .overlay(
-                Circle()
-                    .stroke(colorScheme.backgroundColor(), lineWidth: 1)
-                    .shadow(color: colorScheme.accentColor().opacity(0.8), radius: 5, x: 0, y: 3)
-            )
-            .frame(width: 128, height: 128)
+            .overlay(Circle().stroke(colorScheme.backgroundColor(), lineWidth: 1))
+            .shadow(color: colorScheme.accentColor(), radius: 14, x: 0, y: 4)
+            .frame(width: 148, height: 148)
             
             VStack(spacing: 0) {
                 
@@ -158,7 +178,7 @@ public struct ProfileView: View {
                 }
             }
         }
-        .frame(width: 128, height: 128)
+        .frame(width: 148, height: 148)
         .sensoryFeedback(.selection, trigger: vm.showLibrary)
     }
     
@@ -180,7 +200,7 @@ public struct ProfileView: View {
             }
             
             Button(role: .destructive) {
-                
+                vm.deletePhotoFromProfile()
             } label: {
                 HStack {
                     Text("Delete photo", bundle: .module)
@@ -235,6 +255,7 @@ public struct ProfileView: View {
             Spacer()
         }
         .padding(.vertical, 18)
+        .frame(maxHeight: 96)
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(.backgroundTertiary)
@@ -271,88 +292,11 @@ public struct ProfileView: View {
                 vm.goTo(.history)
             }
             
-            CustomDivider()
-                .frame(height: 1)
-                .padding(.leading, 38)
+            Spacer()
             
-            ButtonRow(icon: "swirl.circle.righthalf.filled", title: "Appearance") {
-                vm.goTo(.appearance)
-            }
-            
-            CustomDivider()
-                .frame(height: 1)
-                .padding(.leading, 38)
-            
-            ButtonRow(icon: "calendar.badge.checkmark", title: "Week start day", actionIcon: "chevron.up.chevron.down") {
-                
-            }
-            
-            CustomDivider()
-                .frame(height: 1)
-                .padding(.leading, 38)
-            
-            ButtonRow(icon: "lock.shield", title: "Privacy Policy") {
-                
-            }
-            
-            CustomDivider()
-                .frame(height: 1)
-                .padding(.leading, 38)
-            
-            ButtonRow(icon: "doc", title: "Terms of Use") {
-                
-            }
+            CreatedDate()
         }
         .sensoryFeedback(.levelChange, trigger: vm.path)
-    }
-    
-    //MARK: - Button Row
-    @ViewBuilder
-    private func ButtonRow(icon: String, title: LocalizedStringKey, actionIcon: String = "chevron.right", action: @escaping () -> Void) -> some View {
-        Button {
-            action()
-        } label: {
-            HStack {
-                Image(systemName: icon)
-                    .foregroundStyle(colorScheme.accentColor())
-                    .frame(width: 32, height: 32)
-                
-                Text(title, bundle: .module)
-                    .font(.system(.callout, design: .rounded, weight: .regular))
-                    .foregroundStyle(.labelPrimary)
-                
-                Spacer()
-                
-                if actionIcon != "chevron.right" {
-                    Menu {
-                        Button {
-                            vm.changeFirstDayOfWeek(1)
-                        } label: {
-                            Text("Sunday", bundle: .module)
-                        }
-                        
-                        Button {
-                            vm.changeFirstDayOfWeek(2)
-                        } label: {
-                            Text("Monday", bundle: .module)
-                        }
-                    } label: {
-                        HStack {
-                            Text(vm.firstWeekday, bundle: .module)
-                                .font(.system(.callout, design: .rounded, weight: .regular))
-                            
-                            Image(systemName: actionIcon)
-                                .padding(.vertical, 12)
-                        }
-                    }
-                    .tint(.labelQuaternary)
-                } else {
-                    Image(systemName: actionIcon)
-                        .padding(.vertical, 12)
-                        .tint(.labelQuaternary)
-                }
-            }
-        }
     }
     
     //MARK: - Custom divider
@@ -360,6 +304,25 @@ public struct ProfileView: View {
     private func CustomDivider() -> some View {
         RoundedRectangle(cornerRadius: 1)
             .fill(.separatorSecondary)
+    }
+    
+    //MARK: - Created Date
+    @ViewBuilder
+    private func CreatedDate() -> some View {
+        HStack(alignment: .center, spacing: 4) {
+            Image(systemName: "calendar")
+                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                .foregroundStyle(.labelTertiary)
+            
+            Text("Created:", bundle: .module)
+                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                .foregroundStyle(.labelTertiary)
+            
+            Text(vm.createdDate.formatted(.dateTime.month().day().hour().minute().year()))
+                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                .foregroundStyle(.labelSecondary)
+        }
+        .ignoresSafeArea(.keyboard)
     }
 }
 

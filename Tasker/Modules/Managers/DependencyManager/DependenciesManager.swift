@@ -8,13 +8,7 @@
 import Foundation
 
 final class DependenciesManager: DependenciesManagerProtocol {
-    lazy var casManager: CASManagerProtocol = {
-#if targetEnvironment(simulator)
-        return MockCas()
-#else
-        return CASManager()
-#endif
-    }()
+    var casManager: CASManagerProtocol
     
     lazy var playerManager: PlayerManagerProtocol = PlayerManager()
     lazy var recorderManager: RecorderManagerProtocol = RecorderManager()
@@ -27,6 +21,14 @@ final class DependenciesManager: DependenciesManagerProtocol {
     lazy var telemetryManager: TelemetryManagerProtocol = TelemetryManager()
     lazy var subscriptionManager: SubscriptionManagerProtocol = SubscriptionManager()
     lazy var onboardingManager: OnboardingManagerProtocol = OnboardingManager()
+    
+    init() {
+#if targetEnvironment(simulator)
+        casManager = MockCas()
+#else
+        casManager = CASManager()
+#endif
+    }
 }
 
 public protocol DependenciesManagerProtocol {

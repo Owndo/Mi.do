@@ -27,8 +27,28 @@ final class ProfileVM {
     
     var profileModel: ProfileData = mockProfileData()
     
+    //MARK: UI state
     var showLibrary = false
     var alert: AlertModel?
+    var navigationTriger = false
+    
+    var settingsScreenIsPresented = false {
+        didSet {
+            if settingsScreenIsPresented == true {
+                endAnimationButton()
+            } else {
+                startAnimation()
+            }
+        }
+    }
+    
+    // Animation
+    var buttonOffset: CGSize = CGSize(width: 120, height: 0)
+    var rotationAngle: Double = 0
+    private var orbitRadius: CGFloat = 25
+    var orbitRadiusY: CGFloat = 20
+    var orbitRadiusX: CGFloat = 35
+    var animationTimer: Timer?
     
     var photoPosition = CGSize.zero
     
@@ -38,7 +58,6 @@ final class ProfileVM {
             Task {
                 if let imageData = try await pickerSelection?.loadTransferable(type: Data.self) {
                     addPhotoToProfile(image: imageData)
-                    photoPosition = .zero
                 }
             }
         }
@@ -46,11 +65,7 @@ final class ProfileVM {
     
     var path = NavigationPath()
     
-    enum ProfileDestination: Hashable {
-        case articles
-        case history
-        case appearance
-    }
+    var createdDate = Date()
     
     var calendar: Calendar {
         dateManager.calendar
@@ -64,21 +79,21 @@ final class ProfileVM {
         calendar.startOfDay(for: Date(timeIntervalSince1970: dateManager.currentTime.timeIntervalSince1970)).timeIntervalSince1970
     }
     
-    var firstWeekday: LocalizedStringKey {
-        calendar.firstWeekday == 1 ? "Sunday" : "Monday"
-    }
-    
     init() {
-        profileModel = casManager.profileModel ?? mockProfileData()
+        profileModel = casManager.profileModel
         photoPosition = profileModel.value.photoPosition
+        createdDate = Date(timeIntervalSince1970: profileModel.value.createdProfile)
     }
     
     func onAppear() {
+        startAnimation()
+        
         //telemetry
         telemetryAction(action: .openView(.profile(.open)))
     }
     
     func onDisappear() {
+        endAnimationButton()
         profileModelSave()
         
         //telemetry
@@ -95,15 +110,19 @@ final class ProfileVM {
             telemetryAction(action: .profileAction(.productivityArticleView(.openArticle)))
         case .history:
             path.append(destination)
-            
             // telemtry
             telemetryAction(action: .profileAction(.taskHistoryButtonTapped))
+            
+        case .settings:
+            settingsScreenIsPresented = true
+            path.append(destination)
         case .appearance:
             path.append(destination)
-            
-            // telemtry
-            telemetryAction(action: .profileAction(.appearanceButtonTapped))
         }
+    }
+    
+    func settingsButtonTapped() {
+        settingsScreenIsPresented = true
     }
     
     //MARK: Task's statistics
@@ -174,6 +193,15 @@ final class ProfileVM {
     
     private func addPhotoToProfile(image: Data) {
         profileModel.value.photo = casManager.saveImage(image) ?? ""
+        photoPosition = .zero
+        profileModel.value.photoPosition = photoPosition
+        casManager.saveProfileData(profileModel)
+    }
+    
+    func deletePhotoFromProfile() {
+        profileModel.value.photo = ""
+        photoPosition = .zero
+        profileModel.value.photoPosition = photoPosition
         casManager.saveProfileData(profileModel)
     }
     
@@ -186,12 +214,6 @@ final class ProfileVM {
         profileModel.value.photoPosition = photoPosition
     }
     
-    func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
-        dateManager.calendar.firstWeekday = firstDayOfWeek
-        profileModel.value.settings.firstDayOfWeek = firstDayOfWeek
-        profileModelSave()
-    }
-    
     func closeButtonTapped() {
         telemetryAction(action: .profileAction(.closeButtonTapped))
     }
@@ -200,4 +222,35 @@ final class ProfileVM {
     private func telemetryAction(action: EventType) {
         telemetryManager.logEvent(action)
     }
+    
+    //MARK: - Animation
+    private func startAnimation() {
+        animationTimer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: true) { _ in
+            withAnimation(.linear(duration: 3.5)) {
+                self.buttonOffset = CGSize(
+                    width: CGFloat.random(in: 100...150),
+                    height: CGFloat.random(in: -50...50)
+                )
+            }
+        }
+    }
+    
+    private func endAnimationButton() {
+        animationTimer?.invalidate()
+        animationTimer = nil
+        
+    }
+}
+
+enum ProfileDestination: Hashable {
+    case articles
+    case history
+    case settings
+    case appearance
+}
+
+
+enum SettingsDestination: Hashable {
+    case settings
+    case appearance
 }

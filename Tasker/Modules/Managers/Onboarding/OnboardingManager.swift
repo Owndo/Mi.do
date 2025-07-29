@@ -26,7 +26,7 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     public var createButtonTip = false
     
     init() {
-        profileModel = casManager.profileModel ?? mockProfileData()
+        profileModel = casManager.profileModel
     }
     
     //MARK: - Onboarding flow

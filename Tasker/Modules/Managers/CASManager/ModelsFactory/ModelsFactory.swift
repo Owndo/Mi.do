@@ -9,14 +9,11 @@ import Foundation
 import Models
 
 final class ModelsFactory {
-    @Injected(\.dateManager) var dateManager
-    
-    var calendar: Calendar { dateManager.calendar }
-    
-    var now: Date { dateManager.currentTime }
+    var calendar = Calendar.current
+    var now = Date.now
     
     private var selectedDate: Double {
-        calendar.startOfDay(for: Date(timeIntervalSince1970: dateManager.selectedDate.timeIntervalSince1970)).timeIntervalSince1970
+        calendar.startOfDay(for: now).timeIntervalSince1970
     }
     
     func create(_ model: Models) -> MainModel {
@@ -24,7 +21,6 @@ final class ModelsFactory {
         case .drinkWater:
             MainModel.initial(
                 TaskModel(
-                    id: UUID().uuidString,
                     title: "💧 Drink Water",
                     info: "You’re not a cactus. Hydrate or evaporate.",
                     createDate: Date.now.timeIntervalSince1970,
@@ -40,7 +36,6 @@ final class ModelsFactory {
         case .clearMind:
             MainModel.initial(
                 TaskModel(
-                    id: UUID().uuidString,
                     title: "🧹 Clear Your Mind",
                     info: "Close your mental tabs. Breathe. Meditate or journal, or just stare into the void.",
                     createDate: Date.now.timeIntervalSince1970,
@@ -56,7 +51,6 @@ final class ModelsFactory {
         case .bestApp:
             MainModel.initial(
                 TaskModel(
-                    id: UUID().uuidString,
                     title: "📱 Install the Best App",
                     info: "Mega task. Install the one app to rule them all. So... you did it",
                     createDate: Date.now.timeIntervalSince1970,
@@ -71,7 +65,6 @@ final class ModelsFactory {
         case .planForTommorow:
             MainModel.initial(
                 TaskModel(
-                    id: UUID().uuidString,
                     title: "🗓️ Plan Tomorrow",
                     info: "Maybe you'll save the world tomorrow. Might wanna write that down.",
                     createDate: Date.now.timeIntervalSince1970,
@@ -87,7 +80,6 @@ final class ModelsFactory {
         case .withoutPhone:
             MainModel.initial(
                 TaskModel(
-                    id: UUID().uuidString,
                     title: "📵 10 Minutes Without Phone",
                     info: "Put the glowing rectangle down. The world can wait. Breathe...",
                     createDate: Date.now.timeIntervalSince1970,
@@ -104,7 +96,6 @@ final class ModelsFactory {
         case .randomHours:
             MainModel.initial(
                 TaskModel(
-                    id: UUID().uuidString,
                     title: "💡 Random Hour",
                     info: "Google something you don’t understand. Quantum foam? Why cats scream at 3 AM? Choose your adventure.",
                     createDate: Date.now.timeIntervalSince1970,
@@ -120,7 +111,6 @@ final class ModelsFactory {
         case .readSomething:
             MainModel.initial(
                 TaskModel(
-                    id: UUID().uuidString,
                     title: "📚 Read Something That’s Not a Screen",
                     info: "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge.",
                     createDate: Date.now.timeIntervalSince1970,

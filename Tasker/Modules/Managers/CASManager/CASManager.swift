@@ -11,8 +11,9 @@ import Models
 
 @Observable
 final class CASManager: CASManagerProtocol {
+    
     let cas: MultiCas
-    let remoteDirectory = "iCloud.com.KodiMaberek.Tasker"
+    let remoteDirectory = "iCloud.mido.robocode"
     
     var localDirectory: URL
     
@@ -61,23 +62,26 @@ final class CASManager: CASManagerProtocol {
         
         cas = MultiCas(local: localCas, remote: iCas)
         
+        syncCases()
+        
         models = fetchModels()
         profileModel = fetchProfileData()
         
         firstTimeOpen()
         
         updateTask()
+        
     }
     
     func updateTask() {
         activeTasks = models.filter { $0.value.markAsDeleted == false }
         completedTasks = models.filter { $0.value.markAsDeleted == false && !$0.value.done.isEmpty }
+        
         NotificationCenter.default.post(name: NSNotification.Name("updateTasks"), object: nil)
     }
     
     //MARK: Actions for work with CAS
     func saveModel(_ task: MainModel) {
-        
         do {
             try cas.saveJsonModel(task)
             indexForDelete(task)
@@ -174,6 +178,17 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
+    //MARK: - Sync with iCloud
+    //TODO: Doesent work
+    func syncCases() {
+//        do {
+//            try cas.syncRemote()
+//            print("sync cas")
+//        } catch {
+//            print("Sync error: \(error.localizedDescription)")
+//        }
+    }
+    
     //MARK: Create directory for CAS
     private static func createMainDirectory() -> URL? {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask).first else {
@@ -199,6 +214,7 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
+    //MARK: - Onboarding
     private func firstTimeOpen() {
         guard profileModel.value.onboarding.firstTimeOpen else {
             return

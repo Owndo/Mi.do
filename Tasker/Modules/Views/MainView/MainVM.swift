@@ -257,7 +257,6 @@ public final class MainVM {
     
     func createTask(with audioHash: String? = nil) {
         model = MainModel.initial(TaskModel(
-            id: UUID().uuidString,
             title: recordManager.recognizedText,
             info: "",
             speechDescription: recordManager.wholeDescription,

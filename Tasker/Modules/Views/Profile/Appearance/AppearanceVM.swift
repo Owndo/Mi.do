@@ -41,14 +41,14 @@ final class AppearanceVM {
     }
     
     init() {
-        profileData = casManager.profileModel ?? mockProfileData()
+        profileData = casManager.profileModel
     }
     
     // MARK: - Change progress Mode
     func changeProgressMode(_ progressMode: Bool) {
         changeStateTrigger.toggle()
         appearanceManager.changeProgressMode(progressMode)
-        profileData = casManager.profileModel ?? mockProfileData()
+        profileData = casManager.profileModel
     }
     
     func changeAccentColor(_ accentColor: AccentColorEnum) {

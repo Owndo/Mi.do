@@ -55,7 +55,7 @@ struct AppearanceView: View {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 17))
                             
-                            Text("Profile", bundle: .module)
+                            Text("Settings", bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .medium))
                         }
                         .tint(colorScheme.accentColor())

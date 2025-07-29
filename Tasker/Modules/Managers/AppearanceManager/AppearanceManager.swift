@@ -19,7 +19,7 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     public var selectedColorScheme: ColorScheme?
     
     init() {
-        profileData = casManager.profileModel ?? mockProfileData()
+        profileData = casManager.profileModel
         selectedColorScheme = currentColorScheme()
     }
     

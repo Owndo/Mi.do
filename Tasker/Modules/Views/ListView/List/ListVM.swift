@@ -32,11 +32,11 @@ final class ListVM {
     var contentHeight: CGFloat = 0
     
     var completedTasksHidden: Bool {
-        casManager.profileModel?.value.settings.completedTasksHidden ?? false
+        casManager.profileModel.value.settings.completedTasksHidden
     }
     
     var deleteTip: Bool {
-        casManager.profileModel?.value.onboarding.deleteTip ?? false
+        casManager.profileModel.value.onboarding.deleteTip
     }
     
     var tasks: [MainModel] {
@@ -104,7 +104,7 @@ final class ListVM {
     }
     
     func completedTaskViewChange() {
-        let model = casManager.profileModel ?? mockProfileData()
+        let model = casManager.profileModel
         model.value.settings.completedTasksHidden.toggle()
         
         casManager.saveProfileData(model)

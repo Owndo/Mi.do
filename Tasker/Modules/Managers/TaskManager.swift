@@ -103,7 +103,6 @@ final class TaskManager: TaskManagerProtocol {
     
     func preparedTask(task: TaskModel, date: Date) -> TaskModel {
         var filledTask = TaskModel(
-            id: task.id,
             title: task.title.isEmpty ? "New Task" : task.title,
             info: task.info,
             createDate: task.createDate,

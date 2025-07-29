@@ -40,8 +40,8 @@ public struct WeekView: View {
                 
                 VStack {
                     HStack {
-                        ForEach(vm.orderedWeekdaySymbols(), id: \.self) { symbol in
-                            Text(symbol)
+                        ForEach(0..<vm.orderedWeekdaySymbols().count, id: \.self) { symbol in
+                            Text(vm.orderedWeekdaySymbols()[symbol])
                                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                                 .fontDesign(.default)
                                 .foregroundStyle(.labelSecondary)

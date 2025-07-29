@@ -14,7 +14,7 @@ public typealias MainModel = Model<TaskModel>
 
 ///Model for CAS
 public struct TaskModel: Identifiable, Codable {
-    public var id: String
+    public var id: String = UUID().uuidString
     
     public var title = ""
     public var info = ""
@@ -23,8 +23,9 @@ public struct TaskModel: Identifiable, Codable {
     public var repeatModel: Bool? = false
     
     public var createDate = Date.now.timeIntervalSince1970
-    public var endDate: Double?
     public var notificationDate: Double
+    public var duration: Double?
+    public var endDate: Double?
     public var secondNotificationDate: Double?
     public var voiceMode = false
     
@@ -39,15 +40,15 @@ public struct TaskModel: Identifiable, Codable {
     public var taskColor = TaskColor.yellow
     
     public init(
-        id: String,
         title: String = "",
         info: String = "",
         speechDescription: String? = nil,
         audio: String? = nil,
         repeatModel: Bool? = nil,
         createDate: Foundation.TimeInterval = Date.now.timeIntervalSince1970,
-        endDate: Double? = nil,
         notificationDate: Double = 00,
+        endDate: Double? = nil,
+        duration: Double? = nil,
         secondNotificationDate: Double? = nil,
         voiceMode: Bool = true,
         markAsDeleted: Bool = false,
@@ -57,15 +58,15 @@ public struct TaskModel: Identifiable, Codable {
         deleted: [DeleteRecord],
         taskColor: TaskColor = .yellow
     ) {
-        self.id = id
         self.title = title
         self.speechDescription = speechDescription
         self.info = info
         self.audio = audio
         self.repeatModel = repeatModel
         self.createDate = createDate
-        self.endDate = endDate
         self.notificationDate = notificationDate
+        self.duration = duration
+        self.endDate = endDate
         self.secondNotificationDate = secondNotificationDate
         self.voiceMode = voiceMode
         self.markAsDeleted = markAsDeleted
@@ -106,9 +107,9 @@ public struct TaskModel: Identifiable, Codable {
 
 public func mockModel() -> MainModel {
 #if targetEnvironment(simulator)
-    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
+    MainModel.initial(TaskModel(title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
 #else
-    MainModel.initial(TaskModel(id: UUID().uuidString, title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
+    MainModel.initial(TaskModel(title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
 #endif
 }
 
@@ -157,13 +158,12 @@ public enum RepeatTask: CaseIterable, Codable, Identifiable {
 }
 
 public struct DayOfWeek: Codable, Hashable, Identifiable {
-    public var id = UUID()
+    public var id: String = UUID().uuidString
     
     public var name: String
     public var value: Bool
     
-    public init(id: UUID = UUID(), name: String, value: Bool) {
-        self.id = id
+    public init(name: String, value: Bool) {
         self.name = name
         self.value = value
     }

@@ -69,6 +69,11 @@ final class MockCas: CASManagerProtocol {
         
     }
     
+    //MARK: - Sync
+    func syncCases() {
+        
+    }
+    
     func saveAudio(url: URL) -> String? {
         
         do {

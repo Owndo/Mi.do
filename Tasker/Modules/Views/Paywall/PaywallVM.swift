@@ -8,6 +8,7 @@
 import Foundation
 import Managers
 import StoreKit
+import SwiftUICore
 
 @Observable
 final class PaywallVM {
@@ -15,7 +16,7 @@ final class PaywallVM {
     @Injected(\.subscriptionManager) var subscriptionManager
     
     //MARK: - UI States
-    var textForPaywall = "Plan with ease\nLive with joy\nLess tasks, more life!"
+    var textForPaywall: LocalizedStringKey = "Plan with ease\nLive with joy\nLess tasks, more life!"
     var benefits = ["Voice tasks & voice notifications", "Create group, customize space", "History, sync, and stay on top"]
     var showingAlert = false
     

@@ -1,7 +1,31 @@
 {
   "images" : [
     {
-      "filename" : "Midō Logo with Checkmark Symbol.jpg",
+      "filename" : "appiconLight.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "appiconDark.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "tinted"
+        }
+      ],
+      "filename" : "appiconTinted.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

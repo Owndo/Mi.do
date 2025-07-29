@@ -7,6 +7,7 @@
 
 import Foundation
 import StoreKit
+import SwiftUICore
 
 @Observable
 public final class SubscriptionManager: SubscriptionManagerProtocol {
@@ -143,7 +144,7 @@ public extension Product {
         formatter.maximumFractionDigits = 2
         
         guard let formattedPrice = formatter.string(from: weeklyPrice as NSDecimalNumber) else { return "" }
-        return "\(formattedPrice) / week"
+        return "\(formattedPrice)"
     }
     
     var dividedByMonth: String {
@@ -157,6 +158,38 @@ public extension Product {
         formatter.maximumFractionDigits = 2
         
         guard let formattedPrice = formatter.string(from: monthlyPrice as NSDecimalNumber) else { return "" }
-        return "\(formattedPrice) / month"
+        return "\(formattedPrice)"
+    }
+}
+
+public extension Product.SubscriptionPeriod.Unit {
+    var periodDescription: LocalizedStringKey {
+        switch self {
+        case .day:
+            return "/ day"
+        case .week:
+            return "/ week"
+        case .month:
+            return "/ month"
+        case .year:
+            return "/ year"
+         default:
+            return ""
+        }
+    }
+    
+    var devidedPeriodByWeek: LocalizedStringKey {
+        switch self {
+        case .day:
+            return " / week"
+        case .week:
+            return " / week"
+        case .month:
+            return " / week"
+        case .year:
+            return " / week"
+         default:
+            return ""
+        }
     }
 }

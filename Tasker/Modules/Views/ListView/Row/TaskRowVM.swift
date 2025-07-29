@@ -8,6 +8,7 @@
 import Foundation
 import Managers
 import Models
+import SwiftUICore
 
 @Observable
 final class TaskRowVM {
@@ -38,7 +39,7 @@ final class TaskRowVM {
     
     //MARK: Confirmation dialog
     var confirmationDialogIsPresented = false
-    var messageForDelete = ""
+    var messageForDelete: LocalizedStringKey = ""
     var singleTask = true
     
     //MARK: Computed Properties
@@ -96,7 +97,7 @@ final class TaskRowVM {
             return
         }
         
-        messageForDelete = "Delete this task?"
+        messageForDelete = "Delete task?"
         singleTask = true
         confirmationDialogIsPresented.toggle()
     }

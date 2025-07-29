@@ -22,7 +22,7 @@ public struct TaskDeleteDialog: ViewModifier {
     @Binding var isPresented: Bool
     
     let task: MainModel
-    let message: String
+    let message: LocalizedStringKey
     let isSingleTask: Bool
     let onDelete: (MainModel, Bool) async -> Void
     let dismissAction: DismissAction?
@@ -36,7 +36,7 @@ public struct TaskDeleteDialog: ViewModifier {
                             await deleteTask()
                         }
                     } label: {
-                        Text("Delete this task")
+                        Text("Delete", bundle: .module)
                     }
                 } else {
                     Button(role: .destructive) {
@@ -46,7 +46,7 @@ public struct TaskDeleteDialog: ViewModifier {
                             await onDelete(task, false)
                         }
                     } label: {
-                        Text("Delete only this task")
+                        Text("Delete only this task", bundle: .module)
                     }
                     
                     Button(role: .destructive) {
@@ -58,7 +58,7 @@ public struct TaskDeleteDialog: ViewModifier {
                     }
                 }
             } message: {
-                Text(message)
+                Text(message, bundle: .module)
             }
     }
     
@@ -72,7 +72,7 @@ public struct TaskDeleteDialog: ViewModifier {
 
 public extension View {
     /// Confirmation dialog
-    func taskDeleteDialog(isPresented: Binding<Bool>, task: MainModel, message: String, isSingleTask: Bool, onDelete: @escaping (MainModel, Bool) async -> Void, dismissButton: DismissAction? = nil) -> some View {
+    func taskDeleteDialog(isPresented: Binding<Bool>, task: MainModel, message: LocalizedStringKey, isSingleTask: Bool, onDelete: @escaping (MainModel, Bool) async -> Void, dismissButton: DismissAction? = nil) -> some View {
         modifier(
             TaskDeleteDialog(
                 isPresented: isPresented,

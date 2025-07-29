@@ -215,9 +215,9 @@ final class DateManager: DateManagerProtocol {
         }
     }
     
-    func dateToString(for date: Date, format: String?, useForWeekView: Bool = false) -> LocalizedStringKey {
+    func dateToString(for date: Date, useForWeekView: Bool) -> LocalizedStringKey {
         if useForWeekView {
-            return formatterDate(date: date, format: format)
+            return formatterDate(date: date, useForWeek: useForWeekView)
         } else {
             if calendar.isDateInToday(date) {
                 return "Today"
@@ -226,23 +226,30 @@ final class DateManager: DateManagerProtocol {
             } else if calendar.isDateInYesterday(date) {
                 return "Yesterday"
             } else {
-                return formatterDate(date: date, format: format)
+                return formatterDate(date: date, useForWeek: false)
             }
         }
     }
     
-    private func formatterDate(date: Date, format: String?) -> LocalizedStringKey {
-        if let format = format {
+    
+    private func formatterDate(date: Date, useForWeek: Bool) -> LocalizedStringKey {
+        guard !useForWeek else {
             let formatter = DateFormatter()
-            formatter.dateFormat = format
             formatter.locale = Locale.current
-            return LocalizedStringKey(formatter.string(from: date))
+            
+            var dateString = ""
+            
+            if calendar.dateComponents([.year], from: date).year == calendar.dateComponents([.year], from: Date()).year {
+                dateString = date.formatted(.dateTime.weekday(.wide).day().month(.wide).locale(formatter.locale))
+            } else {
+                dateString = date.formatted(.dateTime.weekday(.wide).day().month(.wide).year().locale(formatter.locale))
+            }
+            
+            return LocalizedStringKey("\(dateString.capitalized)")
         }
         
-        let weekday = selectedDate.formatted(.dateTime.weekday(.wide).locale(Locale.current))
-        let dateString = selectedDate.formatted(.dateTime.day().month(.wide).year().locale(Locale.current))
-        
-        return LocalizedStringKey("\(weekday.capitalized) - \(dateString)")
+        let dateString = date.formatted(.dateTime.weekday().day().month(.wide).locale(Locale.current))
+        return LocalizedStringKey("\(dateString.capitalized)")
     }
     
     func combineDateAndTime(timeComponents: DateComponents) -> Date {

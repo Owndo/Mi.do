@@ -52,11 +52,11 @@ public struct RecordButton: View {
     private func CustomPopOver() -> some View {
         if showTips && isRecording == false {
             VStack {
-                Text("Just say our task")
+                Text("Just say our task", bundle: .module)
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundStyle(.labelPrimary)
                 
-                Text("Tap or hold the plus button\nto get started")
+                Text("Tap or hold the plus button\nto get started", bundle: .module)
                     .font(.system(size: 15, weight: .medium, design: .rounded))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.labelTertiary)

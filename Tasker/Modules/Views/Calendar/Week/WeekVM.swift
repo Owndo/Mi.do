@@ -77,7 +77,7 @@ final class WeekVM {
     }
     
     func dateToString() -> LocalizedStringKey {
-        dateManager.dateToString(for: selectedDate, format: nil, useForWeekView: true)
+        dateManager.dateToString(for: selectedDate, useForWeekView: true)
     }
     
     //MARK: Telemtry action

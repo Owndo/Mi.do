@@ -881,6 +881,28 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 
 // MARK: - Images
 public extension UIComponentsImages.Image {
+    static var appIcon: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "AppIcons/appIcon", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("AppIcons/appIcon"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "AppIcons/appIcon")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var appIcon: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("AppIcons/appIcon", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
     static var colorPicker: UIComponentsImages.Image {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
@@ -1053,6 +1075,28 @@ public extension SwiftUI.Image {
     static var system: SwiftUI.Image {
         let bundle = Bundle.module
         return SwiftUI.Image("Appearance/system", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
+    static var onboardingLight: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Onboarding/onboardingLight", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Onboarding/onboardingLight"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Onboarding/onboardingLight")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var onboardingLight: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Onboarding/onboardingLight", bundle: bundle)
     }
 }
 #endif

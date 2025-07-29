@@ -66,7 +66,7 @@ public struct MainView: View {
                 }
                 
                 ToolbarItem(placement: .principal) {
-                    TextField("Write your title here 🎯", text: $vm.profileModel.value.customTitle)
+                    TextField(text: $vm.profileModel.value.customTitle, prompt: Text("Write title 🎯", bundle: .module)) {}
                         .font(.system(.headline, design: .default, weight: .semibold))
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.center)

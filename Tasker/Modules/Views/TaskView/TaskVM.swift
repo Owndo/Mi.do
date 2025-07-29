@@ -53,7 +53,7 @@ final class TaskVM {
     
     // MARK: - Confirmation dialog
     var confirmationDialogIsPresented = false
-    var messageForDelete = ""
+    var messageForDelete: LocalizedStringKey = ""
     var singleTask = true
     
     // MARK: - Computed properties
@@ -220,8 +220,15 @@ final class TaskVM {
             sourceDate.minute = calendar.component(.minute, from: notificationDate)
             
             return calendar.date(from: sourceDate)!.timeIntervalSince1970
-        } else if calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) {
-            return notificationDate.timeIntervalSince1970
+        } else if dateHasBeenChanged && calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) {
+            var dateComponents = DateComponents()
+            dateComponents.year = calendar.component(.year, from: sourseDateOfNotification)
+            dateComponents.month = calendar.component(.month, from: sourseDateOfNotification)
+            dateComponents.day = calendar.component(.day, from: sourseDateOfNotification)
+            dateComponents.hour = calendar.component(.hour, from: notificationDate)
+            dateComponents.minute = calendar.component(.minute, from: notificationDate)
+            
+            return calendar.date(from: dateComponents)!.timeIntervalSince1970
         } else {
             return sourseDateOfNotification.timeIntervalSince1970
         }
@@ -233,12 +240,12 @@ final class TaskVM {
     
     //MARK: - Date and time
     private func dateToString() -> LocalizedStringKey {
-        dateManager.dateToString(for: notificationDate, format: "MMMM d", useForWeekView: false)
+        dateManager.dateToString(for: notificationDate, useForWeekView: false)
     }
     
     private func combineDateAndTime(timeComponents: DateComponents) -> Date {
         guard setUpDefaultTime(task) else {
-            return dateManager.createdtaskDate(task: task)
+            return dateManager.combineDateAndTime(timeComponents: timeComponents)
         }
         
         return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: timeComponents)
@@ -296,7 +303,7 @@ final class TaskVM {
     //MARK: - Delete
     func deleteTaskButtonTapped() {
         if task.repeatTask == .never {
-            messageForDelete = "Delete this task?"
+            messageForDelete = "Delete task?"
             singleTask = true
         } else {
             messageForDelete = "This's a recurring task."

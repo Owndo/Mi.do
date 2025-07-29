@@ -27,7 +27,7 @@ public protocol DateManagerProtocol {
     func appendMonthsForward()
     func appendMonthsBackward()
     /// Converte date to string
-    func dateToString(for date: Date, format: String?, useForWeekView: Bool) -> LocalizedStringKey
+    func dateToString(for date: Date, useForWeekView: Bool) -> LocalizedStringKey
     func createdtaskDate(task: TaskModel) -> Date
     /// Combine date from selected date and notification date
     func combineDateAndTime(timeComponents: DateComponents) -> Date

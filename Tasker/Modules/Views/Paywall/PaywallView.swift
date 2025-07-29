@@ -53,6 +53,19 @@ public struct PaywallView: View {
     @ViewBuilder
     private func MainView() -> some View {
         VStack(spacing: 0) {
+            Image(uiImage: .appIcon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 98)
+                .clipShape(
+                    RoundedRectangle(cornerRadius: 12)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(.separatorPrimary, lineWidth: 1)
+                )
+                .padding(.bottom, 12)
+            
             Benefits()
             
             Subscription()
@@ -61,7 +74,7 @@ public struct PaywallView: View {
             
             LegalNote()
         }
-        .padding(.top)
+        .padding(.top, 24)
         .padding(.horizontal, 16)
         .frame(maxHeight: .infinity)
         .background(
@@ -77,10 +90,11 @@ public struct PaywallView: View {
     @ViewBuilder
     private func Benefits() -> some View {
         VStack(spacing: 12) {
-            Text(vm.textForPaywall)
+            Text(vm.textForPaywall, bundle: .module)
                 .font(.system(.title2, design: .rounded, weight: .bold))
                 .foregroundStyle(.labelPrimary)
                 .multilineTextAlignment(.center)
+                .padding(.bottom, 6)
             
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(vm.benefits, id: \.self) { benefit in
@@ -89,7 +103,7 @@ public struct PaywallView: View {
                         Image(systemName: "checkmark")
                             .foregroundStyle(colorScheme.accentColor())
                         
-                        Text(benefit)
+                        Text(LocalizedStringKey(benefit), bundle: .module)
                             .font(.system(.subheadline, design: .rounded, weight: .medium))
                             .foregroundStyle(.labelSecondary)
                     }
@@ -125,17 +139,23 @@ public struct PaywallView: View {
             vm.selecetedProduct = product
         } label: {
             VStack {
-                Text(verbatim: product.displayName)
+                Text(LocalizedStringKey(product.displayName), bundle: .module)
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelSecondary)
                 
-                Text(product.displayPrice)
+                Text(LocalizedStringKey(product.displayPrice), bundle: .module)
                     .font(.system(.title2, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelPrimary)
                 
-                Text(product.subscription?.subscriptionPeriod.unit == .month ? product.dividedByWeek : product.dividedByMonth)
-                    .font(.system(.caption2, design: .rounded, weight: .medium))
-                    .foregroundStyle(.labelTertiary)
+                HStack(spacing: 0) {
+                    Text(product.subscription?.subscriptionPeriod.unit == .month ? product.dividedByWeek : product.dividedByMonth)
+                        .font(.system(.caption2, design: .rounded, weight: .medium))
+                        .foregroundStyle(.labelTertiary)
+                    
+                    Text(product.subscription?.subscriptionPeriod.unit.devidedPeriodByWeek ?? "", bundle: .module)
+                        .font(.system(.caption2, design: .rounded, weight: .medium))
+                        .foregroundStyle(.labelTertiary)
+                }
             }
             .padding(.vertical, 16)
             .frame(maxWidth: .infinity)
@@ -151,7 +171,24 @@ public struct PaywallView: View {
             .overlay(alignment: .top) {
                 if product == vm.products.last {
                     HStack {
-                        Text("Popular")
+                        Text("Popular", bundle: .module)
+                            .font(.system(.caption, design: .rounded, weight: .medium))
+                            .foregroundStyle(.labelPrimaryInverted)
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 22)
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(
+                                        colorScheme.accentColor()
+                                    )
+                            )
+                    }
+                }
+            }
+            .overlay(alignment: .top) {
+                if let offer = product.subscription?.introductoryOffer {
+                    HStack {
+                        Text(offer.period.unit.localizedDescription)
                             .font(.system(.caption, design: .rounded, weight: .medium))
                             .foregroundStyle(.labelPrimaryInverted)
                             .padding(.vertical, 4)
@@ -176,7 +213,7 @@ public struct PaywallView: View {
                 await vm.makePurchase()
             }
         } label: {
-            Text("Continue")
+            Text("Continue", bundle: .module)
                 .font(.system(.body, design: .rounded, weight: .medium))
                 .font(.system(size: 17))
                 .foregroundStyle(.labelPrimaryInverted)
@@ -199,10 +236,11 @@ public struct PaywallView: View {
             Button {
                 
             } label: {
-                Text("Privacy Policy")
+                Text("Privacy Policy", bundle: .module)
                     .font(.system(.caption2, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelQuaternary)
             }
+            .frame(maxWidth: .infinity)
             
             Spacer()
             
@@ -211,22 +249,23 @@ public struct PaywallView: View {
                     await vm.restoreButtonTapped()
                 }
             } label: {
-                Text("Restore")
+                Text("Restore", bundle: .module)
                     .font(.system(.caption, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelTertiary)
             }
+            .frame(maxWidth: .infinity)
             
             Spacer()
             
             Button {
                 
             } label: {
-                Text("Terms of use")
+                Text("Terms of use", bundle: .module)
                     .font(.system(.caption2, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelQuaternary)
             }
+            .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, 5)
         .padding(.bottom, 20)
     }
 }

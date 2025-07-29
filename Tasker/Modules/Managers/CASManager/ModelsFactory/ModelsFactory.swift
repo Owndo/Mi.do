@@ -7,6 +7,7 @@
 
 import Foundation
 import Models
+import SwiftUICore
 
 final class ModelsFactory {
     var calendar = Calendar.current

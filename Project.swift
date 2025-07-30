@@ -223,7 +223,7 @@ struct App {
     public static let bundleId = "mido.robocode"
     public static let teamId = "5M63H38ZMF"
     public static let deploymentTargets = DeploymentTargets.iOS("17.0")
-    public static let version = "1.0.0."
+    public static let version = "1.0.0"
 }
 
 

@@ -47,6 +47,12 @@ final class DateManager: DateManagerProtocol {
             } else {
                 selectedDateChange(allWeeks[1].date.first!)
             }
+            
+            if indexForWeek == allWeeks.last?.id {
+                appendWeeksForward()
+            } else if indexForWeek == allWeeks.first?.id {
+                prependWeeksBackward()
+            }
         }
         willSet {
             // telemetry
@@ -91,6 +97,9 @@ final class DateManager: DateManagerProtocol {
             allWeeks.append(PeriodModel(id: idNumber, date: newWeek))
             idNumber += 1
         }
+        
+        appendWeeksForward()
+        prependWeeksBackward()
     }
     
     func initializeMonth() {

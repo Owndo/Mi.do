@@ -295,8 +295,8 @@ public struct TaskView: View {
             
             VStack {
                 TextField(text: Binding(
-                    get: { NSLocalizedString(vm.task.info, bundle: .module, comment: "") },
-                    set: { vm.task.info = $0 }
+                    get: { NSLocalizedString(vm.task.description, bundle: .module, comment: "") },
+                    set: { vm.task.description = $0 }
                 ), prompt: Text("Add more information", bundle: .module), axis: .vertical) {}
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)

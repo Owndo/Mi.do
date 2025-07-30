@@ -120,7 +120,7 @@ final class NotificationManager: NotificationManagerProtocol {
     //MARK: - Single notification
     private func createSingleNotification(_ task: TaskModel) {
         notificationContent.title = task.title
-        notificationContent.body = task.info
+        notificationContent.body = task.description
         notificationContent.userInfo = ["taskID": task.id]
         
         uniqueID.append(task.id)
@@ -151,7 +151,7 @@ final class NotificationManager: NotificationManagerProtocol {
         var uniqueNotificationID = task.id
         
         notificationContent.title = task.title
-        notificationContent.body = task.info
+        notificationContent.body = task.description
         notificationContent.userInfo = ["taskID": task.id]
         
         guard !checkIsTaskActualyForThisDay(task: task) else { return }
@@ -264,7 +264,7 @@ final class NotificationManager: NotificationManagerProtocol {
         let updatedID = task.id + ".\(UUID().uuidString)"
         
         notificationContent.title = task.title
-        notificationContent.body = task.info
+        notificationContent.body = task.description
         notificationContent.userInfo = ["taskID": updatedID]
         
         uniqueID.append(updatedID)

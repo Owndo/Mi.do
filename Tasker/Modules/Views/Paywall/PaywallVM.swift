@@ -28,6 +28,10 @@ final class PaywallVM {
         subscriptionManager.pending
     }
     
+    var textForButton: LocalizedStringKey {
+        selecetedProduct?.promotionalOffer() != nil ? "Try for free" : "Continue"
+    }
+    
     init() {
         products = subscriptionManager.products
         selecetedProduct = products.last

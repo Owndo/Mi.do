@@ -15,12 +15,8 @@ public final class TelemetryManager: TelemetryManagerProtocol {
     
     public init() {
         let config = PostHogConfig(apiKey: POSTHOG_API_KEY, host: POSTHOG_HOST)
-        config.personProfiles = .identifiedOnly
         
         PostHogSDK.shared.setup(config)
-        
-        let id = PostHogSDK.shared.getAnonymousId()
-        PostHogSDK.shared.identify(id)
     }
     
     //MARK: - Open screen actions

@@ -9,9 +9,11 @@ import SwiftUI
 import Managers
 import UIComponents
 import StoreKit
+import Models
 
 public struct PaywallView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.openURL) var openUrl
     
     @State private var vm = PaywallVM()
     
@@ -175,7 +177,7 @@ public struct PaywallView: View {
                             .font(.system(.caption, design: .rounded, weight: .medium))
                             .foregroundStyle(.labelPrimaryInverted)
                             .padding(.vertical, 4)
-                            .padding(.horizontal, 22)
+                            .padding(.horizontal, 10)
                             .background(
                                 RoundedRectangle(cornerRadius: 16)
                                     .fill(
@@ -186,13 +188,13 @@ public struct PaywallView: View {
                 }
             }
             .overlay(alignment: .top) {
-                if let offer = product.subscription?.introductoryOffer {
+                if let offer = product.promotionalOffer() {
                     HStack {
-                        Text(offer.period.unit.localizedDescription)
+                        Text(offer, bundle: .module)
                             .font(.system(.caption, design: .rounded, weight: .medium))
                             .foregroundStyle(.labelPrimaryInverted)
                             .padding(.vertical, 4)
-                            .padding(.horizontal, 22)
+                            .padding(.horizontal, 10)
                             .background(
                                 RoundedRectangle(cornerRadius: 16)
                                     .fill(
@@ -213,7 +215,7 @@ public struct PaywallView: View {
                 await vm.makePurchase()
             }
         } label: {
-            Text("Continue", bundle: .module)
+            Text(vm.textForButton, bundle: .module)
                 .font(.system(.body, design: .rounded, weight: .medium))
                 .font(.system(size: 17))
                 .foregroundStyle(.labelPrimaryInverted)
@@ -234,7 +236,7 @@ public struct PaywallView: View {
     private func LegalNote() -> some View {
         HStack {
             Button {
-                
+                openUrl(ConfigurationFile().privacy)
             } label: {
                 Text("Privacy Policy", bundle: .module)
                     .font(.system(.caption2, design: .rounded, weight: .regular))
@@ -258,7 +260,7 @@ public struct PaywallView: View {
             Spacer()
             
             Button {
-                
+                openUrl(ConfigurationFile().terms)
             } label: {
                 Text("Terms of use", bundle: .module)
                     .font(.system(.caption2, design: .rounded, weight: .regular))

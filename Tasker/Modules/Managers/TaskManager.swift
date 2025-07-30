@@ -104,7 +104,7 @@ final class TaskManager: TaskManagerProtocol {
     func preparedTask(task: TaskModel, date: Date) -> TaskModel {
         var filledTask = TaskModel(
             title: task.title.isEmpty ? "New Task" : task.title,
-            info: task.info,
+            description: task.description,
             createDate: task.createDate,
             dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
             done: [],

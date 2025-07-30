@@ -93,7 +93,6 @@ final class CASManager: CASManagerProtocol {
     }
     
     func saveProfileData(_ data: ProfileData) {
-        print("save model")
         do {
             try cas.saveJsonModel(data)
             profileModel = data

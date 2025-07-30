@@ -162,6 +162,21 @@ public extension Product {
     }
 }
 
+public extension Product {
+    
+    func promotionalOffer() -> LocalizedStringKey? {
+        if let offer = self.subscription?.promotionalOffers.first {
+            switch offer.period {
+            case .weekly: 
+                return "Free week"
+            default:
+                return nil
+            }
+        }
+        return nil
+    }
+}
+
 public extension Product.SubscriptionPeriod.Unit {
     var periodDescription: LocalizedStringKey {
         switch self {

@@ -17,7 +17,7 @@ public struct TaskModel: Identifiable, Codable {
     public var id: String = UUID().uuidString
     
     public var title = ""
-    public var info = ""
+    public var description = ""
     public var speechDescription: String?
     public var audio: String? = nil
     public var repeatModel: Bool? = false
@@ -41,7 +41,7 @@ public struct TaskModel: Identifiable, Codable {
     
     public init(
         title: String = "",
-        info: String = "",
+        description: String = "",
         speechDescription: String? = nil,
         audio: String? = nil,
         repeatModel: Bool? = nil,
@@ -60,7 +60,7 @@ public struct TaskModel: Identifiable, Codable {
     ) {
         self.title = title
         self.speechDescription = speechDescription
-        self.info = info
+        self.description = description
         self.audio = audio
         self.repeatModel = repeatModel
         self.createDate = createDate
@@ -109,7 +109,7 @@ public func mockModel() -> MainModel {
 #if targetEnvironment(simulator)
     MainModel.initial(TaskModel(title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
 #else
-    MainModel.initial(TaskModel(title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
+    MainModel.initial(TaskModel(title: "New task", description: "", createDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
 #endif
 }
 

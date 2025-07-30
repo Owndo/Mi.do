@@ -263,7 +263,7 @@ public final class MainVM {
     func createTask(with audioHash: String? = nil) {
         model = MainModel.initial(TaskModel(
             title: recordManager.recognizedText,
-            info: "",
+            description: "",
             speechDescription: recordManager.wholeDescription,
             audio: audioHash,
             notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,

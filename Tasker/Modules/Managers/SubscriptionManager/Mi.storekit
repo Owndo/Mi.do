@@ -20,12 +20,15 @@
     "_applicationInternalID" : "6749021753",
     "_developerTeamID" : "5M63H38ZMF",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 775003342.23073399,
+    "_lastSynchronizedDate" : 775602029.40249801,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
       {
-        "current" : null,
+        "current" : {
+          "index" : 2,
+          "type" : "generic"
+        },
         "enabled" : false,
         "name" : "Load Products"
       },
@@ -81,7 +84,14 @@
       "subscriptions" : [
         {
           "adHocOffers" : [
-
+            {
+              "internalID" : "CF48599E",
+              "numberOfPeriods" : 1,
+              "offerID" : "7_days_free",
+              "paymentMode" : "free",
+              "referenceName" : "7 days free trial",
+              "subscriptionPeriod" : "P1W"
+            }
           ],
           "codeOffers" : [
 

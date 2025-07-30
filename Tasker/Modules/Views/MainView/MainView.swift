@@ -44,6 +44,11 @@ public struct MainView: View {
                         ProfileView()
                             .preferredColorScheme(colorScheme)
                     }
+                    .sheet(isPresented: $vm.onboardingManager.sayHello) {
+                        SayHelloView()
+                            .preferredColorScheme(colorScheme)
+                            .presentationDragIndicator(.visible)
+                    }
             }
             .navigationDestination(for: MainVM.Destination.self) { destination in
                 switch destination {
@@ -171,7 +176,7 @@ public struct MainView: View {
                                 )
                             )
                         ),
-                        arrowEdge: .trailing
+                        arrowEdge: .bottom
                     ) {
                         OnboardingView(type: .listSwipeTip)
                             .presentationCompactAdaptation(.popover)

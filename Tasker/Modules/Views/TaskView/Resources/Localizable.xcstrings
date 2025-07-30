@@ -386,7 +386,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "🗓️ Спланировать завтра"
+            "value" : "🗓️ План на завтра"
           }
         }
       }
@@ -452,6 +452,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "🧹 Очистить разум"
+          }
+        }
+      }
+    },
+    "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Buch, eine Zeitung, eine Cornflakes-Packung. Fühl das Papier. Sauge Wissen auf."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un libro, un periódico, una caja de cereales. Toca el papel. Absorbe conocimiento."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un libro, un periódico, una caja de cereales. Toca el papel. Absorbe conocimiento."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un libro, un periódico, una caja de cereales. Toca el papel. Absorbe conocimiento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un livre, un journal, une boîte de céréales. Touche le papier. Absorbe la sagesse."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un livre, un journal, une boîte de céréales. Touche le papier. Absorbe la sagesse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un libro, un giornale, una scatola di cereali. Tocca la carta. Assorbi conoscenza."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um livro, um jornal, uma caixa de cereal. Toque o papel. Absorva conhecimento."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um livro, um jornal, uma caixa de cereal. Toque o papel. Absorva conhecimento."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Книга, газета, коробка хлопьев. Потрогай бумагу. Впитай знания."
           }
         }
       }
@@ -645,6 +710,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Закрыть"
+          }
+        }
+      }
+    },
+    "Close mental tabs. Breathe. Meditate or journal, or just stare into the void." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schließ mentale Tabs. Atme. Meditiere, schreib Tagebuch oder starr einfach ins Nichts."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cierra las pestañas mentales. Respira. Medita, escribe en tu diario o simplemente mira al vacío."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cierra las pestañas mentales. Respira. Medita, escribe en tu diario o simplemente mira al vacío."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cierra las pestañas mentales. Respira. Medita, escribe en tu diario o simplemente mira al vacío."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ferme tes onglets mentaux. Respire. Médite, écris un journal ou contemple simplement le vide."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ferme tes onglets mentaux. Respire. Médite, écris un journal ou contemple simplement le vide."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chiudi le schede mentali. Respira. Medita, scrivi un diario o fissa semplicemente il vuoto."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feche as abas mentais. Respire. Medite, escreva no diário ou apenas encare o vazio."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feche as abas mentais. Respire. Medite, escreva no diário ou apenas encare o vazio."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Закрой ментальные вкладки. Подыши. Помедитируй, запиши мысли или просто посмотри в пустоту."
           }
         }
       }
@@ -1295,6 +1425,201 @@
         }
       }
     },
+    "Google something you don’t understand. Quantum foam? Why cats scream at 3 AM? Choose your adventure." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google etwas, das du nicht verstehst. Quanten-Schaum? Warum Katzen nachts schreien? Wähl dein Abenteuer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca en Google algo que no entiendas. ¿Espuma cuántica? ¿Por qué los gatos gritan de noche? Elige tu aventura."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca en Google algo que no entiendas. ¿Espuma cuántica? ¿Por qué los gatos gritan de noche? Elige tu aventura."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Busca en Google algo que no entiendas. ¿Espuma cuántica? ¿Por qué los gatos gritan de noche? Elige tu aventura."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cherche sur Google quelque chose que tu ne comprends pas. Mousse quantique ? Pourquoi les chats crient la nuit ? Choisis ton aventure."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cherche sur Google quelque chose que tu ne comprends pas. Mousse quantique ? Pourquoi les chats crient la nuit ? Choisis ton aventure."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca su Google qualcosa che non capisci. Schiuma quantistica? Perché i gatti urlano di notte? Scegli la tua avventura."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pesquise no Google algo que você não entende. Espuma quântica? Por que os gatos gritam à noite? Escolha sua aventura."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pesquise no Google algo que você não entende. Espuma quântica? Por que os gatos gritam à noite? Escolha sua aventura."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Погугли что-то непонятное. Квантовая пена? Почему коты орут по ночам? Выбери своё приключение."
+          }
+        }
+      }
+    },
+    "Maybe you'll save the world tomorrow. Might wanna write that down." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vielleicht rettest du morgen die Welt. Schreib’s lieber auf."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quizá salves el mundo mañana. Mejor apúntalo."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quizá salves el mundo mañana. Mejor apúntalo."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quizá salves el mundo mañana. Mejor apúntalo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peut-être que tu sauveras le monde demain. Tu devrais noter ça, au cas où."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peut-être que tu sauveras le monde demain. Tu devrais noter ça, au cas où."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magari domani salverai il mondo. Forse dovresti annotarlo."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talvez você salve o mundo amanhã. Melhor anotar isso."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talvez você salve o mundo amanhã. Melhor anotar isso."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Может, завтра прийдется спасти мир. Лучше записать это."
+          }
+        }
+      }
+    },
+    "Mega task. Install the one app to rule them all. So... you did it" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mega-Aufgabe. Installiere die eine App, die alle beherrscht. Also… du hast es geschafft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mega tarea. Instala la aplicación que las domina todas. Así que... lo lograste."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mega tarea. Instala la aplicación que las domina todas. Así que... lo lograste."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mega tarea. Instala la aplicación que las domina todas. Así que... lo lograste."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Méga tâche. Installe l’app qui les domine toutes. Alors… mission accomplie."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Méga tâche. Installe l’app qui les domine toutes. Alors… mission accomplie."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mega compito. Installa l’app che domina tutte. Quindi... ce l’hai fatta"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mega tarefa. Instale o app que governa todos. Então... você conseguiu."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mega tarefa. Instale o app que governa todos. Então... você conseguiu."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мега-задача. Установить лучшее приложение. Ну... мы справились."
+          }
+        }
+      }
+    },
     "Never" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -1549,6 +1874,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Воспроизвести голос в уведомлении"
+          }
+        }
+      }
+    },
+    "Put the glowing rectangle down. The world can wait. Breathe..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leg das leuchtende Rechteck weg. Die Welt kann warten. Atme…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja el rectángulo brillante. El mundo puede esperar. Respira…"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja el rectángulo brillante. El mundo puede esperar. Respira…"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deja el rectángulo brillante. El mundo puede esperar. Respira…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose le rectangle lumineux. Le monde peut attendre. Inspire…"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose le rectangle lumineux. Le monde peut attendre. Inspire…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metti giù il rettangolo luminoso. Il mondo può aspettare. Respira…"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Largue o retângulo brilhante. O mundo pode esperar. Respire…"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Largue o retângulo brilhante. O mundo pode esperar. Respire…"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отложи светящийся прямоугольник. Мир подождёт. Вдохни…"
           }
         }
       }
@@ -1872,6 +2262,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Вчера"
+          }
+        }
+      }
+    },
+    "You’re not a cactus. Hydrate or evaporate." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist kein Kaktus. Trink was oder verdurste."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No eres un cactus. Hidrátate o te marchitarás."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No eres un cactus. Hidrátate o te marchitarás."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No eres un cactus. Hidrátate o te marchitarás."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n’es pas un cactus. Hydrate-toi ou disparais dans la poussière."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n’es pas un cactus. Hydrate-toi ou disparais dans la poussière."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non sei un cactus. Bevi o ti seccherai."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você não é um cacto. Hidrate-se ou vai secar."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você não é um cacto. Hidrate-se ou vai secar."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Только кактус может жить без воды… Люди вряд ли."
           }
         }
       }

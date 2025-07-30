@@ -16,6 +16,8 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     var profileModel = mockProfileData()
     
     //MARK: - Onboarding flow
+    public var sayHello = false
+    
     public var onboardingComplete = false
     public var dayTip = false
     public var calendarTip = false
@@ -27,6 +29,28 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     
     init() {
         profileModel = casManager.profileModel
+    }
+    
+    public func firstTimeOpen() async {
+        
+        if profileModel.value.onboarding.sayHello {
+            sayHello = true
+            
+            while sayHello {
+                try? await Task.sleep(for: .seconds(0.1))
+            }
+            
+            sayHello = false
+            profileModel.value.onboarding.sayHello = false
+        }
+        
+        profileModelSave()
+        
+        guard !profileModel.value.onboarding.onboardingCompleted else {
+            return
+        }
+        
+        await onboardingStart()
     }
     
     //MARK: - Onboarding flow
@@ -98,6 +122,8 @@ public final class OnboardingManager: OnboardingManagerProtocol {
             
             profileModel.value.onboarding.createButtonTip = true
         }
+        
+        profileModel.value.onboarding.onboardingCompleted = true
         
         profileModelSave()
     }

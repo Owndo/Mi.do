@@ -53,7 +53,7 @@ final class TaskRowVM {
     }
     
     func onAppear(task: MainModel) {
-        if task.value.title.count < 25 {
+        if task.value.title.count < 20 {
             disabledScroll = true
         }
     }

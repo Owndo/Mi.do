@@ -38,7 +38,7 @@ final class ModelsFactory {
             MainModel.initial(
                 TaskModel(
                     title: "🧹 Clear Your Mind",
-                    info: "Close your mental tabs. Breathe. Meditate or journal, or just stare into the void.",
+                    info: "Close mental tabs. Breathe. Meditate or journal, or just stare into the void.",
                     createDate: Date.now.timeIntervalSince1970,
                     notificationDate: Double(calendar.date(bySettingHour: 21, minute: 0, second: 0, of: now)!.timeIntervalSince1970),
                     voiceMode: false,

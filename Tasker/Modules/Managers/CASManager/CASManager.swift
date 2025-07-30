@@ -93,6 +93,7 @@ final class CASManager: CASManagerProtocol {
     }
     
     func saveProfileData(_ data: ProfileData) {
+        print("save model")
         do {
             try cas.saveJsonModel(data)
             profileModel = data
@@ -181,12 +182,12 @@ final class CASManager: CASManagerProtocol {
     //MARK: - Sync with iCloud
     //TODO: Doesent work
     func syncCases() {
-//        do {
-//            try cas.syncRemote()
-//            print("sync cas")
-//        } catch {
-//            print("Sync error: \(error.localizedDescription)")
-//        }
+        //        do {
+        //            try cas.syncRemote()
+        //            print("sync cas")
+        //        } catch {
+        //            print("Sync error: \(error.localizedDescription)")
+        //        }
     }
     
     //MARK: Create directory for CAS

@@ -137,7 +137,12 @@ public enum ColorSchemeMode: CaseIterable, Codable, Sendable {
 }
 
 public struct OnboardingModel: Codable {
+    /// Create models, init app
     public var firstTimeOpen: Bool = true
+    /// Greetengs for user when app will launch first time
+    public var sayHello: Bool = true
+    
+    /// States for showing onboarding
     public var dayTip: Bool = false
     public var calendarTip: Bool = false
     public var profileTip: Bool = false
@@ -148,6 +153,10 @@ public struct OnboardingModel: Codable {
     public var checkMarkTip: Bool = false
     public var listSwipeTip: Bool = false
     public var createButtonTip: Bool = false
+    
+    /// At this time onboarding has been created
+    public var onboardingCreatedDate: Double = 1753717500.0
+    public var onboardingCompleted = false
 }
 
 public enum OnboardingModelEnum {
@@ -173,11 +182,11 @@ public enum OnboardingModelEnum {
     public var typeOfTips: (LocalizedStringKey, LocalizedStringKey) {
         switch self {
         case .dayTip:
-            return ("Your task by day", "Switch between dates and\nsee the challenges")
+            return ("Your task by day", "Switch between dates and see the challenges")
         case .calendarTip:
             return ("Calendar", "Quick access to your tasks")
         case .profileTip:
-            return ("Profile", "Your data, news and app\ncustomization")
+            return ("Profile", "Your data, news and app customization")
         case .noteTip:
             return ("Add notes..", "Pull down to start")
         case .deleteTip:
@@ -185,13 +194,13 @@ public enum OnboardingModelEnum {
         case .searchTasksTip:
             return ("Find your tasks..", "Tap the search button to get started")
         case .openSubtasksTip:
-            return ("Open subtasks..", "A double tap will expand\nthe subtasks")
+            return ("Open subtasks..", "A double tap will expand the subtasks")
         case .checkMarkTip:
-            return ("Tap to complete", "When you've completed\nthis task")
+            return ("Tap to complete", "When you've completed this task")
         case .listSwipeTip:
-            return ("Controll here..", "Swipe for change date\ndouble tap to back")
+            return ("Controll here..", "Swipe for change date double tap to back")
         case .createButtonTip:
-            return ("Just say our task", "Tap or hold the plus button\nto get started")
+            return ("Just say our task", "Tap or hold the plus button to get started")
         }
     }
 }

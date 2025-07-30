@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol OnboardingManagerProtocol {
+    var sayHello: Bool { get set }
     var onboardingComplete: Bool { get set }
     var dayTip: Bool { get set }
     var calendarTip: Bool { get set }
@@ -17,5 +18,5 @@ public protocol OnboardingManagerProtocol {
     var listSwipeTip: Bool { get set }
     var createButtonTip: Bool { get set }
     
-    func onboardingStart() async
+    func firstTimeOpen() async
 }

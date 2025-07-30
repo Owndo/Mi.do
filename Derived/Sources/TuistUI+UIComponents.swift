@@ -881,14 +881,14 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 
 // MARK: - Images
 public extension UIComponentsImages.Image {
-    static var appIcon: UIComponentsImages.Image {
+    static var paywall: UIComponentsImages.Image {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
-        return UIComponentsImages.Image(named: "AppIcons/appIcon", in: bundle, compatibleWith: nil)!
+        return UIComponentsImages.Image(named: "AppIcons/paywall", in: bundle, compatibleWith: nil)!
         #elseif os(macOS)
-        return bundle.image(forResource: NSImage.Name("AppIcons/appIcon"))!
+        return bundle.image(forResource: NSImage.Name("AppIcons/paywall"))!
         #elseif os(watchOS)
-        return UIComponentsImages.Image(named: "AppIcons/appIcon")!
+        return UIComponentsImages.Image(named: "AppIcons/paywall")!
         #endif
     }
 }
@@ -896,9 +896,9 @@ public extension UIComponentsImages.Image {
 #if canImport(SwiftUI)
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
 public extension SwiftUI.Image {
-    static var appIcon: SwiftUI.Image {
+    static var paywall: SwiftUI.Image {
         let bundle = Bundle.module
-        return SwiftUI.Image("AppIcons/appIcon", bundle: bundle)
+        return SwiftUI.Image("AppIcons/paywall", bundle: bundle)
     }
 }
 #endif
@@ -1079,14 +1079,14 @@ public extension SwiftUI.Image {
 }
 #endif
 public extension UIComponentsImages.Image {
-    static var onboardingLight: UIComponentsImages.Image {
+    static var onboarding: UIComponentsImages.Image {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)
-        return UIComponentsImages.Image(named: "Onboarding/onboardingLight", in: bundle, compatibleWith: nil)!
+        return UIComponentsImages.Image(named: "Onboarding/onboarding", in: bundle, compatibleWith: nil)!
         #elseif os(macOS)
-        return bundle.image(forResource: NSImage.Name("Onboarding/onboardingLight"))!
+        return bundle.image(forResource: NSImage.Name("Onboarding/onboarding"))!
         #elseif os(watchOS)
-        return UIComponentsImages.Image(named: "Onboarding/onboardingLight")!
+        return UIComponentsImages.Image(named: "Onboarding/onboarding")!
         #endif
     }
 }
@@ -1094,9 +1094,9 @@ public extension UIComponentsImages.Image {
 #if canImport(SwiftUI)
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
 public extension SwiftUI.Image {
-    static var onboardingLight: SwiftUI.Image {
+    static var onboarding: SwiftUI.Image {
         let bundle = Bundle.module
-        return SwiftUI.Image("Onboarding/onboardingLight", bundle: bundle)
+        return SwiftUI.Image("Onboarding/onboarding", bundle: bundle)
     }
 }
 #endif

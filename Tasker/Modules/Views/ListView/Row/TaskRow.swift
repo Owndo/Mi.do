@@ -93,14 +93,15 @@ struct TaskRow: View {
                         .tint(.red)
                 }
             }
-            .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                Button {
-                    vm.updateNotificationTimeForDueDateSwipped(task: task)
-                } label: {
-                    Image(systemName: "arrow.forward.circle.fill")
-                        .tint(colorScheme.accentColor())
-                }
-            }
+            //TODO: - Next day for task
+//            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+//                Button {
+//                    vm.updateNotificationTimeForDueDateSwipped(task: task)
+//                } label: {
+//                    Image(systemName: "arrow.forward.circle.fill")
+//                        .tint(colorScheme.accentColor())
+//                }
+//            }
         }
         .listStyle(PlainListStyle())
         .listRowSeparator(.hidden)

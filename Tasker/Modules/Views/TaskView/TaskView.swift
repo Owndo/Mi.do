@@ -274,7 +274,10 @@ public struct TaskView: View {
     @ViewBuilder
     private func MainSection() -> some View {
         VStack(spacing: 0) {
-            TextField(text: $vm.task.title, prompt: Text("New task", bundle: .module)) {}
+            TextField(text: Binding(
+                get: { NSLocalizedString(vm.task.title, bundle: .module, comment: "") },
+                set: { vm.task.title = $0 }
+            ), prompt: Text("New task", bundle: .module)) {}
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundStyle(.labelPrimary)
@@ -291,7 +294,10 @@ public struct TaskView: View {
                 .padding(.leading, 16)
             
             VStack {
-                TextField(text: $vm.task.info, prompt: Text("Add more information", bundle: .module), axis: .vertical) {}
+                TextField(text: Binding(
+                    get: { NSLocalizedString(vm.task.info, bundle: .module, comment: "") },
+                    set: { vm.task.info = $0 }
+                ), prompt: Text("Add more information", bundle: .module), axis: .vertical) {}
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)
                     .foregroundStyle(.labelPrimary)

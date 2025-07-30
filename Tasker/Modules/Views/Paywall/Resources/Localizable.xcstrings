@@ -66,6 +66,9 @@
         }
       }
     },
+    "Close mental tabs. Breathe. Meditate or journal, or just stare into the void." : {
+      "extractionState" : "manual"
+    },
     "Continue" : {
       "localizations" : {
         "de" : {

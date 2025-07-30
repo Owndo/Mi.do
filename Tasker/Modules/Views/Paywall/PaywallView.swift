@@ -53,17 +53,17 @@ public struct PaywallView: View {
     @ViewBuilder
     private func MainView() -> some View {
         VStack(spacing: 0) {
-            Image(uiImage: .appIcon)
+            Image(uiImage: .paywall)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 98)
                 .clipShape(
                     RoundedRectangle(cornerRadius: 12)
                 )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(.separatorPrimary, lineWidth: 1)
-                )
+            //                .overlay(
+            //                    RoundedRectangle(cornerRadius: 12)
+            //                        .stroke(.separatorPrimary.opacity(0.5), lineWidth: 1)
+            //                )
                 .padding(.bottom, 12)
             
             Benefits()

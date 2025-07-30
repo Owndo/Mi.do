@@ -23,17 +23,20 @@ public struct OnboardingView: View {
             colorScheme.backgroundColor().ignoresSafeArea()
             
             VStack(spacing: 2) {
-                Text(type.typeOfTips.0)
+                Text(type.typeOfTips.0, bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .semibold))
                     .foregroundStyle(.labelPrimary)
+                    .padding(.top, 2)
                 
-                Text(type.typeOfTips.1)
+                Text(type.typeOfTips.1, bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.labelTertiary)
-                    
+                    .padding(.bottom, 2)
             }
+            .frame(maxWidth: 230)
             .padding(12)
+            .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

@@ -54,6 +54,9 @@ public final class MainVM {
         onboardingManager.onboardingComplete
     }
     
+    /// First time ever opened
+    var sayHello = false
+    
     var showPaywall: Bool {
         subscriptionManager.showPaywall
     }
@@ -135,6 +138,10 @@ public final class MainVM {
     }
     
     public func updateNotifications() async {
+        guard profileModel.value.onboarding.onboardingCompleted else {
+            return
+        }
+        
         while showPaywall == true {
             try? await Task.sleep(for: .seconds(0.1))
         }
@@ -159,8 +166,6 @@ public final class MainVM {
     
     public func createCustomProfileModel() {
         profileModel = casManager.profileModel
-        
-        profileModelSave()
     }
     
     func profileViewButtonTapped() {
@@ -169,7 +174,6 @@ public final class MainVM {
     }
     
     //MARK: - Recording
-    
     func createTaskButtonHolding() async {
         guard isRecording else {
             return
@@ -255,6 +259,7 @@ public final class MainVM {
         recordingState = .idle
     }
     
+    //MARK: - Create task
     func createTask(with audioHash: String? = nil) {
         model = MainModel.initial(TaskModel(
             title: recordManager.recognizedText,
@@ -331,10 +336,11 @@ public final class MainVM {
         }
     }
     
+    //MARK: - Onboarding
     private func onboardingStart() async {
         disabledButton = true
         
-        await onboardingManager.onboardingStart()
+        await onboardingManager.firstTimeOpen()
         
         try? await Task.sleep(for: .seconds(0.8))
         
@@ -347,6 +353,8 @@ public final class MainVM {
     }
 }
 
+
+//MARK: - Helpers not a VM
 enum PresentationMode: CGFloat, CaseIterable {
     case base = 0.96
     case bottom = 0.20

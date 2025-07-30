@@ -1108,61 +1108,61 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wechsel zwischen den Daten und sieh die Aufgaben"
+            "value" : "Daten wechseln und Aufgaben sehen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambia entre fechas y mira los desafíos"
+            "value" : "Cambia entre fechas y mira tus tareas."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambia entre fechas y mira los desafíos"
+            "value" : "Cambia entre fechas y mira tus tareas."
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambia entre fechas y mira los desafíos"
+            "value" : "Cambia entre fechas y mira tus tareas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Basculez entre les dates et voyez les défis"
+            "value" : "Change les dates et vois tes tâches."
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Basculez entre les dates et voyez les défis"
+            "value" : "Change les dates et vois tes tâches."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passa tra le date e vedi le sfide"
+            "value" : "Passa tra le date e guarda i tuoi compiti."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alterne entre datas e veja os desafios"
+            "value" : "Alterna entre as datas e vê as tuas tarefas."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alterne entre datas e veja os desafios"
+            "value" : "Alterna entre as datas e vê as tuas tarefas."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Переключай даты и смотри задачи"
+            "value" : "Переключай даты и смотри дела"
           }
         }
       }

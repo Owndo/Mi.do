@@ -170,7 +170,7 @@ public struct DayOfWeek: Codable, Hashable, Identifiable {
 }
 
 public extension [DayOfWeek] {
-    mutating func actualyDayOFWeek(_ calendar: Calendar) -> [DayOfWeek]{
+    mutating func actualyDayOFWeek(_ calendar: Calendar) -> [DayOfWeek] {
         if calendar.firstWeekday == 2 {
             guard self.first!.name != "Mon" else {
                 return self
@@ -180,6 +180,12 @@ public extension [DayOfWeek] {
             self[0..<6].reverse()
             return self
         } else {
+            guard self.first!.name == "Sun" else {
+                self.insert(self.last!, at: 0)
+                self.removeLast()
+                return self
+            }
+            
             return self
         }
     }

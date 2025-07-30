@@ -268,15 +268,7 @@ public final class MainVM {
             audio: audioHash,
             notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
             voiceMode: audioHash != nil ? true : false,
-            dayOfWeek: [
-                DayOfWeek(name: "Sun", value: false),
-                DayOfWeek(name: "Mon", value: false),
-                DayOfWeek(name: "Tue", value: false),
-                DayOfWeek(name: "Wed", value: false),
-                DayOfWeek(name: "Thu", value: false),
-                DayOfWeek(name: "Fri", value: false),
-                DayOfWeek(name: "Sat", value: false)
-            ],
+            dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
             done: [],
             deleted: []
         ))

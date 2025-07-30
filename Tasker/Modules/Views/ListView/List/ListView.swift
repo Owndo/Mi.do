@@ -79,7 +79,6 @@ public struct ListView: View {
             VStack(spacing: 0) {
                 ForEach(Array(vm.tasks.enumerated()), id: \.element) { index, task in
                     TaskRow(task: task)
-                        .foregroundStyle(.primary)
                     
                     if index != vm.tasks.count - 1 {
                         RoundedRectangle(cornerRadius: 0.5)

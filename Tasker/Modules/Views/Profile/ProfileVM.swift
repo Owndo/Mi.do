@@ -32,18 +32,14 @@ final class ProfileVM {
     var alert: AlertModel?
     var navigationTriger = false
     
-    var settingsScreenIsPresented = false {
-        didSet {
-            if settingsScreenIsPresented == true {
-                endAnimationButton()
-            } else {
-                startAnimation()
-            }
-        }
-    }
+    var settingsScreenIsPresented = false
     
     // Animation
-    var buttonOffset: CGSize = CGSize(width: 120, height: 0)
+    var buttonOffset: CGSize = CGSize(
+        width: CGFloat.random(in: 120...160),
+        height: CGFloat.random(in: -50...50)
+    )
+    
     var rotationAngle: Double = 0
     private var orbitRadius: CGFloat = 25
     var orbitRadiusY: CGFloat = 20
@@ -86,14 +82,14 @@ final class ProfileVM {
     }
     
     func onAppear() {
-        startAnimation()
+        //        startAnimation()
         
         //telemetry
         telemetryAction(action: .openView(.profile(.open)))
     }
     
     func onDisappear() {
-        endAnimationButton()
+        //        endAnimationButton()
         profileModelSave()
         
         //telemetry
@@ -102,6 +98,8 @@ final class ProfileVM {
     
     //MARK: - Navigation to
     func goTo(_ destination: ProfileDestination) {
+        navigationTriger.toggle()
+        
         switch destination {
         case .articles:
             path.append(destination)
@@ -114,7 +112,6 @@ final class ProfileVM {
             telemetryAction(action: .profileAction(.taskHistoryButtonTapped))
             
         case .settings:
-            settingsScreenIsPresented = true
             path.append(destination)
         case .appearance:
             path.append(destination)
@@ -224,22 +221,22 @@ final class ProfileVM {
     }
     
     //MARK: - Animation
-    private func startAnimation() {
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: true) { _ in
-            withAnimation(.linear(duration: 3.5)) {
-                self.buttonOffset = CGSize(
-                    width: CGFloat.random(in: 100...150),
-                    height: CGFloat.random(in: -50...50)
-                )
-            }
-        }
-    }
-    
-    private func endAnimationButton() {
-        animationTimer?.invalidate()
-        animationTimer = nil
-        
-    }
+    //    private func startAnimation() {
+    //        animationTimer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: true) { _ in
+    //            withAnimation(.linear(duration: 3.5)) {
+    //                self.buttonOffset = CGSize(
+    //                    width: CGFloat.random(in: 120...160),
+    //                    height: CGFloat.random(in: -50...50)
+    //                )
+    //            }
+    //        }
+    //    }
+    //    
+    //    private func endAnimationButton() {
+    //        animationTimer?.invalidate()
+    //        animationTimer = nil
+    //        
+    //    }
 }
 
 enum ProfileDestination: Hashable {

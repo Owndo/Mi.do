@@ -118,9 +118,9 @@ public struct ProfileView: View {
         } label: {
             Image(systemName: "gearshape")
                 .foregroundStyle(colorScheme.accentColor())
-                .font(.system(size: 25))
+                .font(.system(size: 30))
                 .padding(4)
-                .shadow(color: colorScheme.accentColor(), radius: 16, y: 4)
+                .shadow(color: colorScheme.accentColor().opacity(0.5), radius: 16, y: 4)
                 .background(
                     Circle()
                         .fill(.backgroundTertiary)
@@ -163,7 +163,7 @@ public struct ProfileView: View {
             }
             .clipShape(Circle())
             .overlay(Circle().stroke(colorScheme.backgroundColor(), lineWidth: 1))
-            .shadow(color: colorScheme.accentColor(), radius: 14, x: 0, y: 4)
+            .shadow(color: colorScheme.accentColor().opacity(0.7), radius: 15, x: 0, y: 4)
             .frame(width: 148, height: 148)
             
             VStack(spacing: 0) {

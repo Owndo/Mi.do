@@ -42,21 +42,22 @@ struct SettingsView: View {
                         .frame(height: 1)
                         .padding(.leading, 38)
                     
-                    Toggle(isOn: $vm.syncWithIcloud) {
-                        HStack {
-                            Image(systemName: "arrow.clockwise.icloud")
-                                .foregroundStyle(colorScheme.accentColor())
-                                .frame(width: 32, height: 32)
-                            
-                            Text("Sync with iCloud", bundle: .module)
-                                .font(.system(.callout, design: .rounded, weight: .regular))
-                                .foregroundStyle(.labelPrimary)
-                        }
-                    }
-                    
-                    CustomDivider()
-                        .frame(height: 1)
-                        .padding(.leading, 38)
+                    //TODO: - Sync iCloud
+//                    Toggle(isOn: $vm.syncWithIcloud) {
+//                        HStack {
+//                            Image(systemName: "arrow.clockwise.icloud")
+//                                .foregroundStyle(colorScheme.accentColor())
+//                                .frame(width: 32, height: 32)
+//                            
+//                            Text("Sync with iCloud", bundle: .module)
+//                                .font(.system(.callout, design: .rounded, weight: .regular))
+//                                .foregroundStyle(.labelPrimary)
+//                        }
+//                    }
+//                    
+//                    CustomDivider()
+//                        .frame(height: 1)
+//                        .padding(.leading, 38)
                     
                     ButtonRow(icon: "lock.shield", title: "Privacy Policy") {
                         

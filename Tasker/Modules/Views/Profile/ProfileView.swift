@@ -163,7 +163,7 @@ public struct ProfileView: View {
             }
             .clipShape(Circle())
             .overlay(Circle().stroke(colorScheme.backgroundColor(), lineWidth: 1))
-            .shadow(color: colorScheme.accentColor().opacity(0.7), radius: 15, x: 0, y: 4)
+            .shadow(color: colorScheme.accentColor().opacity(0.7), radius: 15, x: 0, y: 8)
             .frame(width: 148, height: 148)
             
             VStack(spacing: 0) {

@@ -447,7 +447,7 @@ public struct TaskView: View {
                     Button {
                         day.value.toggle()
                     } label: {
-                        Text(day.name)
+                        Text(LocalizedStringKey(day.name), bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
                             .foregroundStyle(day.value ? colorScheme.accentColor() : vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                             .padding(.vertical, 13)
@@ -467,7 +467,7 @@ public struct TaskView: View {
             }
             .padding(.bottom, 13)
         }
-        .sensoryFeedback(.selection, trigger: vm.task.dayOfWeek)
+        .sensoryFeedback(.selection, trigger: vm.dayOfWeek)
     }
     
     //MARK: ColorPicker

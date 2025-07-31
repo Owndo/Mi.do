@@ -36,7 +36,7 @@ final class OnboardingVM {
         guard onboardingManager.sayHello else {
             return
         }
-        print("here")
+        
         closeTriger.toggle()
         onboardingManager.sayHello = false
         profileModel.value.onboarding.sayHello = false

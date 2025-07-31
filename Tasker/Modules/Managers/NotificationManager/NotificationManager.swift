@@ -71,7 +71,6 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Main function for scheduling notification
     private func scheduleNotification(_ task: TaskModel) {
-        print("notifications")
         guard permissibleQuantity() else {
             return
         }

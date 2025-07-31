@@ -213,6 +213,10 @@ final class TaskVM {
     private func changeNotificationTime() -> Double {
         var sourceDate = calendar.dateComponents([.year, .month, .day], from: sourseDateOfNotification)
         
+        if dateHasBeenChanged && !calendar.isDate(notificationDate, inSameDayAs: sourseDateOfNotification) {
+            return notificationDate.timeIntervalSince1970
+        }
+        
         if dateHasBeenChanged && !calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) {
             return notificationDate.timeIntervalSince1970
         } else if dateHasBeenChanged && !setUpDefaultTime(task) {
@@ -229,7 +233,20 @@ final class TaskVM {
             dateComponents.minute = calendar.component(.minute, from: notificationDate)
             
             return calendar.date(from: dateComponents)!.timeIntervalSince1970
-        } else {
+        }
+        //        else if dateHasBeenChanged && !calendar.isDate(sourseDateOfNotification, inSameDayAs: dateManager.selectedDate) {
+        //            print("3")
+        //            var dateComponents = DateComponents()
+        //            dateComponents.year = calendar.component(.year, from: sourseDateOfNotification)
+        //            dateComponents.month = calendar.component(.month, from: sourseDateOfNotification)
+        //            dateComponents.day = calendar.component(.day, from: notificationDate)
+        //            dateComponents.hour = calendar.component(.hour, from: notificationDate)
+        //            dateComponents.minute = calendar.component(.minute, from: notificationDate)
+        //
+        //            return calendar.date(from: dateComponents)!.timeIntervalSince1970
+        //        }
+        else {
+            print("4")
             return sourseDateOfNotification.timeIntervalSince1970
         }
     }
@@ -240,12 +257,12 @@ final class TaskVM {
     
     //MARK: - Date and time
     private func dateToString() -> LocalizedStringKey {
-        dateManager.dateToString(for: notificationDate, useForWeekView: false)
+        dateManager.dateToString(for: dateManager.selectedDate, useForWeekView: false)
     }
     
     private func combineDateAndTime(timeComponents: DateComponents) -> Date {
         guard setUpDefaultTime(task) else {
-            return dateManager.combineDateAndTime(timeComponents: timeComponents)
+            return Date(timeIntervalSince1970: task.notificationDate)
         }
         
         return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: timeComponents)

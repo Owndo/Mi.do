@@ -74,14 +74,11 @@ struct SayHelloView: View {
                 .font(.system(size: 22))
                 .frame(width: 40, height: 40)
                 .foregroundStyle(colorScheme.accentColor())
-                .padding(.leading, 16)
             
             Text(text, bundle: .module)
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(.labelSecondary)
                 .multilineTextAlignment(.leading)
-            
-            Spacer()
         }
     }
     

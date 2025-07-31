@@ -107,7 +107,7 @@ public struct TaskModel: Identifiable, Codable {
 
 public func mockModel() -> MainModel {
 #if targetEnvironment(simulator)
-    MainModel.initial(TaskModel(title: "New task", info: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
+    MainModel.initial(TaskModel(title: "New task", description: "", createDate: Date.now.timeIntervalSince1970, notificationDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
 #else
     MainModel.initial(TaskModel(title: "New task", description: "", createDate: Date.now.timeIntervalSince1970, dayOfWeek: [], done: [], deleted: []))
 #endif

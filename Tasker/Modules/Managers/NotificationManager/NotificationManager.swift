@@ -71,6 +71,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Main function for scheduling notification
     private func scheduleNotification(_ task: TaskModel) {
+        print("notifications")
         guard permissibleQuantity() else {
             return
         }
@@ -80,6 +81,10 @@ final class NotificationManager: NotificationManagerProtocol {
         }
         
         guard task.repeatTask != .never else {
+            guard !checkIsTaskActualyForThisDay(task: task) else {
+                return
+            }
+            
             createSingleNotification(task)
             return
         }

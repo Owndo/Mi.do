@@ -57,7 +57,7 @@ public struct ListView: View {
                 vm.contentHeight = height
             }
         }
-        .padding(.horizontal, 16)
+        
         .customBlurForContainer(colorScheme: colorScheme)
         .animation(.linear, value: vm.completedTasksHidden)
         .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
@@ -65,64 +65,23 @@ public struct ListView: View {
     
     @ViewBuilder
     private func TasksList() -> some View {
-        if !vm.tasks.isEmpty {
-            HStack {
-                Text("Tasks", bundle: .module)
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelTertiary)
-                
-                Spacer()
-            }
-            .padding(.top, 18)
-            .padding(.bottom, 12)
-            
-            VStack(spacing: 0) {
-                ForEach(Array(vm.tasks.enumerated()), id: \.element) { index, task in
-                    TaskRow(task: task)
+        VStack {
+            if !vm.tasks.isEmpty {
+                HStack {
+                    Text("Tasks", bundle: .module)
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .foregroundStyle(.labelTertiary)
                     
-                    if index != vm.tasks.count - 1 {
-                        RoundedRectangle(cornerRadius: 0.5)
-                            .fill(
-                                .separatorSecondary
-                            )
-                            .frame(height: 0.5)
-                    }
+                    Spacer()
                 }
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets())
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-        }
-    }
-    
-    @ViewBuilder
-    private func CompletedTasksList() -> some View {
-        if !vm.completedTasks.isEmpty {
-            HStack {
-                Text("Completed task", bundle: .module)
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(Color(.labelTertiary))
+                .padding(.top, 18)
+                .padding(.bottom, 12)
                 
-                Spacer()
-                
-                Image(systemName: vm.completedTasksHidden ? "chevron.down" : "chevron.up")
-                    .foregroundStyle(.labelTertiary)
-                    .bold()
-            }
-            .onTapGesture {
-                vm.completedTaskViewChange()
-            }
-            .padding(.top, 18)
-            .padding(.bottom, 12)
-            
-            
-            if !vm.completedTasksHidden {
                 VStack(spacing: 0) {
-                    ForEach(Array(vm.completedTasks.enumerated()), id: \.element) { index, task in
+                    ForEach(Array(vm.tasks.enumerated()), id: \.element) { index, task in
                         TaskRow(task: task)
-                            .foregroundStyle(.labelPrimary)
                         
-                        if index != vm.completedTasks.count - 1 {
+                        if index != vm.tasks.count - 1 {
                             RoundedRectangle(cornerRadius: 0.5)
                                 .fill(
                                     .separatorSecondary
@@ -134,8 +93,57 @@ public struct ListView: View {
                     .listRowInsets(EdgeInsets())
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 16))
+                .shadow(color: .profileShadow, radius: 5)
             }
         }
+        .padding(.horizontal, 16)
+    }
+    
+    @ViewBuilder
+    private func CompletedTasksList() -> some View {
+        VStack {
+            if !vm.completedTasks.isEmpty {
+                HStack {
+                    Text("Completed task", bundle: .module)
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .foregroundStyle(Color(.labelTertiary))
+                    
+                    Spacer()
+                    
+                    Image(systemName: vm.completedTasksHidden ? "chevron.down" : "chevron.up")
+                        .foregroundStyle(.labelTertiary)
+                        .bold()
+                }
+                .onTapGesture {
+                    vm.completedTaskViewChange()
+                }
+                .padding(.top, 18)
+                .padding(.bottom, 12)
+                
+                
+                if !vm.completedTasksHidden {
+                    VStack(spacing: 0) {
+                        ForEach(Array(vm.completedTasks.enumerated()), id: \.element) { index, task in
+                            TaskRow(task: task)
+                                .foregroundStyle(.labelPrimary)
+                            
+                            if index != vm.completedTasks.count - 1 {
+                                RoundedRectangle(cornerRadius: 0.5)
+                                    .fill(
+                                        .separatorSecondary
+                                    )
+                                    .frame(height: 0.5)
+                            }
+                        }
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets())
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .shadow(color: .profileShadow, radius: 5)
+                }
+            }
+        }
+        .padding(.horizontal, 16)
     }
     
     //MARK: Gesture dectectView

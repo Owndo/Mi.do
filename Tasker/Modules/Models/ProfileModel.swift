@@ -182,25 +182,25 @@ public enum OnboardingModelEnum {
     public var typeOfTips: (LocalizedStringKey, LocalizedStringKey) {
         switch self {
         case .dayTip:
-            return ("Your task by day", "Switch between dates and see the challenges")
+            return ("Your journey, day by day", "Swipe left or right to switch weeks")
         case .calendarTip:
-            return ("Calendar", "Quick access to your tasks")
+            return ("Calendar", "Check the past or look at the future")
         case .profileTip:
-            return ("Profile", "Your data, news and app customization")
+            return ("Profile", "Your space")
         case .noteTip:
-            return ("Add notes..", "Pull down to start")
+            return ("Notes", "Pull screen down")
         case .deleteTip:
-            return ("Swipe to delete", "Swipe to the left to delete a task")
+            return ("Quick action", "Swipe left to delete with ease")
         case .searchTasksTip:
-            return ("Find your tasks..", "Tap the search button to get started")
+            return ("Find what matters...", "Tap the search icon to begin")
         case .openSubtasksTip:
-            return ("Open subtasks..", "A double tap will expand the subtasks")
+            return ("Open subtasks...", "Double-tap to see the details")
         case .checkMarkTip:
-            return ("Tap to complete", "When you've completed this task")
+            return ("Tap to complete", "Mark it done when you’re ready")
         case .listSwipeTip:
-            return ("Controll here..", "Swipe for change date double tap to back")
+            return ("Navigate your days...", "Swipe to change, double tap to return")
         case .createButtonTip:
-            return ("Just say our task", "Tap or hold the plus button to get started")
+            return ("Plus button", "Hold for record or tap to create")
         }
     }
 }

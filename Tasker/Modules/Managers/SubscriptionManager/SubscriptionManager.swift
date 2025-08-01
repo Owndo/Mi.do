@@ -160,6 +160,20 @@ public extension Product {
         guard let formattedPrice = formatter.string(from: monthlyPrice as NSDecimalNumber) else { return "" }
         return "\(formattedPrice)"
     }
+    
+    var dividedYearByWeek: String {
+        guard subscription?.subscriptionPeriod.unit == .year else { return "" }
+        
+        let monthlyPrice = price / 52
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = priceFormatStyle.currencyCode
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        
+        guard let formattedPrice = formatter.string(from: monthlyPrice as NSDecimalNumber) else { return "" }
+        return "\(formattedPrice)"
+    }
 }
 
 public extension Product {

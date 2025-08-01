@@ -15,7 +15,7 @@ public struct TaskView: View {
     
     @Environment(\.dismiss) var dismissButton
     
-    @State private var vm: TaskVM
+    @Bindable var vm: TaskVM
     
     @FocusState private var sectionInFocuse: SectionInFocuse?
     
@@ -24,8 +24,8 @@ public struct TaskView: View {
         case description
     }
     
-    public init(mainModel: MainModel) {
-        vm = TaskVM(mainModel: mainModel)
+    public init(vm: TaskVM) {
+        self.vm = vm
     }
     
     public var body: some View {
@@ -616,5 +616,5 @@ public struct TaskView: View {
 }
 
 #Preview {
-    TaskView(mainModel: mockModel())
+    TaskView(vm: TaskVM(mainModel: mockModel()))
 }

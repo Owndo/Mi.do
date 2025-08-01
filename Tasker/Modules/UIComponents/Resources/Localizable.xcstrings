@@ -1,136 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "A double tap will expand the subtasks" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppelt tippen zum Öffnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doble toque para expandir subtareas"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doble toque para expandir subtareas"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doble toque para expandir subtareas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un double tap développera les sous-tâches"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un double tap développera les sous-tâches"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Doppio tocco per espandere"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque duplo para expandir"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque duplo para expandir"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Двойной тап раскроет список"
-          }
-        }
-      }
-    },
-    "Add notes.." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notizen hinzufügen.."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir notas.."
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir notas.."
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Añadir notas.."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter des notes.."
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter des notes.."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aggiungi note.."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar notas.."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar notas.."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Добавить заметку.."
-          }
-        }
-      }
-    },
     "Calendar" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -192,6 +62,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Календарь"
+          }
+        }
+      }
+    },
+    "Check the past or look at the future" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sieh dir die Vergangenheit oder Zukunft an"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta el pasado o mira hacia el futuro"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta el pasado o mira hacia el futuro"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta el pasado o mira hacia el futuro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultez le passé ou regardez vers l’avenir"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultez le passé ou regardez vers l’avenir"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guarda al passato o dai uno sguardo al futuro"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veja o passado ou olhe para o futuro"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veja o passado ou olhe para o futuro"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Смотри в прошлое или заглядывай в будущее"
           }
         }
       }
@@ -518,196 +453,391 @@
         }
       }
     },
-    "Find your tasks.." : {
+    "Hold for record or tap to create" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Finde deine Aufgaben.."
+            "value" : "Zum Aufnehmen halten oder zum Erstellen tippen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encuentra tus tareas.."
+            "value" : "Mantén presionado para grabar o toca para crear"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encuentra tus tareas.."
+            "value" : "Mantén presionado para grabar o toca para crear"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encuentra tus tareas.."
+            "value" : "Mantén presionado para grabar o toca para crear"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez à gauche pour supprimer"
+            "value" : "Appuyez pour créer ou maintenez pour enregistrer"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez à gauche pour supprimer"
+            "value" : "Maintenez pour enregistrer ou touchez pour créer"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trova le attività.."
+            "value" : "Tieni premuto per registrare o tocca per creare"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encontre suas tarefas.."
+            "value" : "Segure para gravar ou toque para criar"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encontre suas tarefas.."
+            "value" : "Segure para gravar ou toque para criar"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Найди свои задачи.."
+            "value" : "Удерживать для записи или нажать, чтобы создать"
           }
         }
       }
     },
-    "Just say our task" : {
+    "Hold or tap the plus button\n to create" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sag einfach unsere Aufgabe"
+            "value" : "Halte oder tippe auf die Hinzufügen-Schaltfläche,\num etwas zu erstellen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo di nuestra tarea"
+            "value" : "Mantén presionado o toca el botón Agregar\npara crear"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo di nuestra tarea"
+            "value" : "Mantén presionado o toca el botón Agregar\npara crear"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solo di nuestra tarea"
+            "value" : "Mantén presionado o toca el botón Agregar\npara crear"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dis simplement notre tâche"
+            "value" : "Maintenez ou touchez le bouton Ajouter\npour créer"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dis simplement notre tâche"
+            "value" : "Maintenez ou touchez le bouton Ajouter\npour créer"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dì semplicemente il nostro compito"
+            "value" : "Tieni premuto o tocca il pulsante Aggiungi\nper creare"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Basta dizer nossa tarefa"
+            "value" : "Segure ou toque no botão Adicionar\npara criar"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Basta dizer nossa tarefa"
+            "value" : "Segure ou toque no botão Adicionar\npara criar"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Просто скажи задачу"
+            "value" : "Удерживать или нажать кнопку плюс\nчтобы начать"
           }
         }
       }
     },
-    "Open subtasks.." : {
+    "Mark it done when you’re ready" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unteraufgaben öffnen.."
+            "value" : "Markiere es als erledigt, wenn du bereit bist"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir subtareas.."
+            "value" : "Márcalo como hecho cuando estés listo"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir subtareas.."
+            "value" : "Márcalo como hecho cuando estés listo"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir subtareas.."
+            "value" : "Márcalo como hecho cuando estés listo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvrir les sous-tâches.."
+            "value" : "Marquez comme fait quand vous êtes prêt"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvrir les sous-tâches.."
+            "value" : "Marquez comme fait quand vous êtes prêt"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apri sotto-attività.."
+            "value" : "Segnalo come fatto quando sei pronto"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir subtarefas.."
+            "value" : "Marque como feito quando estiver pronto"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir subtarefas.."
+            "value" : "Marque como feito quando estiver pronto"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Открыть подзадачи.."
+            "value" : "Отметить как выполненное, когда будет готово"
+          }
+        }
+      }
+    },
+    "Navigate your days..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navigiere durch deine Tage..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navega por tus días..."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navega por tus días..."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navega por tus días..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naviguez dans vos journées..."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naviguez dans vos journées..."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naviga tra i tuoi giorni..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navegue pelos seus dias..."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navegue pelos seus dias..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Управляй своими днями..."
+          }
+        }
+      }
+    },
+    "Notes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notizen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes.."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes.."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Заметки"
+          }
+        }
+      }
+    },
+    "Plus button" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hinzufügen-Schaltfläche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botón Agregar"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botón Agregar"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botón Agregar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bouton Ajouter"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bouton Ajouter"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsante Aggiungi"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botão Adicionar"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botão Adicionar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кнопка плюс"
           }
         }
       }
@@ -777,586 +907,391 @@
         }
       }
     },
-    "Pull down to start" : {
+    "Pull screen down" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Start nach unten ziehen"
+            "value" : "Bildschirm nach unten ziehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza hacia abajo para empezar"
+            "value" : "Desliza la pantalla hacia abajo"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza hacia abajo para empezar"
+            "value" : "Desliza la pantalla hacia abajo"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza hacia abajo para empezar"
+            "value" : "Desliza la pantalla hacia abajo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tirez vers le bas pour commencer"
+            "value" : "Tirez l’écran vers le bas"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tirez vers le bas pour commencer"
+            "value" : "Tirez l’écran vers le bas"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scorri giù per iniziare"
+            "value" : "Tira giù lo schermo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puxe para começar"
+            "value" : "Puxe a tela para baixo"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puxe para começar"
+            "value" : "Puxe a tela para baixo"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Потяни вниз, чтобы начать"
+            "value" : "Потяни экран вниз"
           }
         }
       }
     },
-    "Quick access to your tasks" : {
+    "Quick action" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schnellzugriff auf Aufgaben"
+            "value" : "Schnellaktion"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acceso rápido a tus tareas"
+            "value" : "Acción rápida"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acceso rápido a tus tareas"
+            "value" : "Acción rápida"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acceso rápido a tus tareas"
+            "value" : "Acción rápida"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accès rapide à vos tâches"
+            "value" : "Action rapide"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accès rapide à vos tâches"
+            "value" : "Action rapide"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accesso rapido alle attività"
+            "value" : "Azione rapida"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acesso rápido às tarefas"
+            "value" : "Ação rápida"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acesso rápido às tarefas"
+            "value" : "Ação rápida"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Быстрый доступ к задачам"
+            "value" : "Быстрое действие"
           }
         }
       }
     },
-    "Swipe for change date double tap to back" : {
+    "Start here" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starte hier"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza aquí"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza aquí"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza aquí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencez ici"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencez ici"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia qui"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece aqui"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece aqui"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создать"
+          }
+        }
+      }
+    },
+    "Swipe left or right to switch weeks" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wischen zum Datum ändern, Doppeltippen zurück"
+            "value" : "Wische nach links oder rechts, um Wochen zu wechseln"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para cambiar fecha, doble toque para volver"
+            "value" : "Desliza a la izquierda o derecha para cambiar de semana"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para cambiar fecha, doble toque para volver"
+            "value" : "Desliza a la izquierda o derecha para cambiar de semana"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para cambiar fecha, doble toque para volver"
+            "value" : "Desliza a la izquierda o derecha para cambiar de semana"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez pour changer la date, double tap pour revenir"
+            "value" : "Balayez pour changer de semaine"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez pour changer la date, double tap pour revenir"
+            "value" : "Balayez pour changer de semaine"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scorri per cambiare data, doppio tocco indietro"
+            "value" : "Scorri a sinistra o a destra per cambiare settimana"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deslize para mudar a data, toque duplo para voltar"
+            "value" : "Deslize para a esquerda ou direita para trocar de semana"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deslize para mudar a data, toque duplo para voltar"
+            "value" : "Deslize para a esquerda ou direita para trocar de semana"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Смахни, чтобы сменить дату, двойной тап — назад"
+            "value" : "Свайпай влево или вправо, чтобы сменить неделю"
           }
         }
       }
     },
-    "Swipe to delete" : {
+    "Swipe left to delete with ease" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Löschen wischen"
+            "value" : "Wische nach links, um einfach zu löschen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para eliminar"
+            "value" : "Desliza a la izquierda para borrar fácilmente"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para eliminar"
+            "value" : "Desliza a la izquierda para borrar fácilmente"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para eliminar"
+            "value" : "Desliza a la izquierda para borrar fácilmente"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez pour supprimer"
+            "value" : "Glissez vers la gauche pour supprimer facilement"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez pour supprimer"
+            "value" : "Glissez vers la gauche pour supprimer facilement"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scorri per eliminare"
+            "value" : "Scorri a sinistra per eliminare facilmente"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deslize para excluir"
+            "value" : "Deslize para a esquerda para apagar com facilidade"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deslize para excluir"
+            "value" : "Deslize para a esquerda para apagar com facilidade"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Смахни, чтобы удалить"
+            "value" : "Свайпни влево, чтобы удалить"
           }
         }
       }
     },
-    "Swipe to the left to delete a task" : {
+    "Swipe to change, double tap to return" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach links wischen zum Löschen"
+            "value" : "Wischen zum Wechseln, Doppeltipp zurück"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza a la izquierda para eliminar"
+            "value" : "Desliza para cambiar, doble toque para volver"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza a la izquierda para eliminar"
+            "value" : "Desliza para cambiar, doble toque para volver"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza a la izquierda para eliminar"
+            "value" : "Desliza para cambiar, doble toque para volver"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez à gauche pour supprimer"
+            "value" : "Glissez pour changer, double tapez pour revenir"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez à gauche pour supprimer"
+            "value" : "Glissez pour changer, double tapez pour revenir"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scorri a sinistra per eliminare"
+            "value" : "Scorri per cambiare, doppio tocco per tornare"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deslize para a esquerda para excluir"
+            "value" : "Deslize para mudar, toque duplo para voltar"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deslize para a esquerda para excluir"
+            "value" : "Deslize para mudar, toque duplo para voltar"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Смахни влево, чтобы удалить"
-          }
-        }
-      }
-    },
-    "Switch between dates and see the challenges" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Daten wechseln und Aufgaben sehen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cambia entre fechas y mira tus tareas."
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cambia entre fechas y mira tus tareas."
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cambia entre fechas y mira tus tareas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Change les dates et vois tes tâches."
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Change les dates et vois tes tâches."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passa tra le date e guarda i tuoi compiti."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alterna entre as datas e vê as tuas tarefas."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alterna entre as datas e vê as tuas tarefas."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Переключай даты и смотри дела"
-          }
-        }
-      }
-    },
-    "Tap or hold the plus button\nto get started" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus-Taste tippen oder halten zum Start"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca o mantén presionado el botón más\npara comenzar"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca o mantén presionado el botón más\npara comenzar"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca o mantén presionado el botón más\npara comenzar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuyez ou maintenez le bouton plus\npour commencer"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuyez ou maintenez le bouton plus\npour commencer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca o tieni premuto il pulsante più\nper iniziare"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque ou segure o botão de mais\npara começar"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque ou segure o botão de mais\npara começar"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажмите или удерживайте кнопку плюс,\nчтобы начать"
-          }
-        }
-      }
-    },
-    "Tap or hold the plus button to get started" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus-Taste tippen oder halten zum Start"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca o mantén presionado el botón más para comenzar"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca o mantén presionado el botón más para comenzar"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca o mantén presionado el botón más para comenzar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuyez ou maintenez le bouton plus pour commencer"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuyez ou maintenez le bouton plus pour commencer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca o tieni premuto plus per iniziare"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque ou segure o botão mais para começar"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque ou segure o botão mais para começar"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажмите или удерживайте кнопку плюс,\nчтобы начать"
-          }
-        }
-      }
-    },
-    "Tap the search button to get started" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suchknopf tippen zum Start"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca el botón de búsqueda para empezar"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca el botón de búsqueda para empezar"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca el botón de búsqueda para empezar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuyez sur recherche pour démarrer"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuyez sur recherche pour démarrer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca cerca per iniziare"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque em buscar para começar"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque em buscar para começar"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажми поиск, чтобы начать"
+            "value" : "Свайп для смены, двойной тап - вернуться"
           }
         }
       }
@@ -1367,7 +1302,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippen zum Abschließen"
+            "value" : "Tippe zum Abschließen"
           }
         },
         "es" : {
@@ -1391,13 +1326,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez pour terminer"
+            "value" : "Appuyez pour terminer"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez pour terminer"
+            "value" : "Appuyez pour terminer"
           }
         },
         "it" : {
@@ -1491,197 +1426,132 @@
         }
       }
     },
-    "When you've completed this task" : {
+    "Your journey, day by day" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn Aufgabe abgeschlossen ist"
+            "value" : "Deine Reise, Tag für Tag"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando hayas completado la tarea"
+            "value" : "Tu camino, día a día"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando hayas completado la tarea"
+            "value" : "Tu camino, día a día"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando hayas completado la tarea"
+            "value" : "Tu camino, día a día"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand vous avez terminé cette tâche"
+            "value" : "Votre voyage, jour après jour"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand vous avez terminé cette tâche"
+            "value" : "Votre voyage, jour après jour"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando hai completato"
+            "value" : "Il tuo viaggio, giorno dopo giorno"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando a tarefa for concluída"
+            "value" : "Sua jornada, dia após dia"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando a tarefa for concluída"
+            "value" : "Sua jornada, dia após dia"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Когда задача завершена"
+            "value" : "Твой путь - день за днём"
           }
         }
       }
     },
-    "Your data, news and app customization" : {
+    "Your space" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daten, News und App-Anpassung"
+            "value" : "Dein persönlicher Bereich"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datos, noticias y personalización"
+            "value" : "Tu espacio personal"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datos, noticias y personalización"
+            "value" : "Tu espacio personal"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Datos, noticias y personalización"
+            "value" : "Tu espacio personal"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vos données et réglages"
+            "value" : "Votre espace personnel"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vos données et réglages"
+            "value" : "Votre espace personnel"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dati, notizie e personalizzazione"
+            "value" : "Il tuo spazio personale"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dados, novidades e personalização"
+            "value" : "Seu espaço pessoal"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dados, novidades e personalização"
+            "value" : "Seu espaço pessoal"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Данные, новости и настройки"
-          }
-        }
-      }
-    },
-    "Your task by day" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Aufgabe pro Tag"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu tarea por día"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu tarea por día"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu tarea por día"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Votre tâche par jour"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Votre tâche par jour"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua attività per giorno"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua tarefa por dia"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua tarefa por dia"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Задачи по дням"
+            "value" : "Твоё личное пространство"
           }
         }
       }

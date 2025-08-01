@@ -10,8 +10,20 @@ import SwiftUI
 import Managers
 import Models
 
+public protocol HashableObject: AnyObject, Hashable {}
+
+extension HashableObject {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs === rhs
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
+    }
+}
+
 @Observable
-final class TaskVM {
+public final class TaskVM: Identifiable {
     // MARK: - Managers
     @ObservationIgnored @Injected(\.casManager) var casManager: CASManagerProtocol
     @ObservationIgnored @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
@@ -25,6 +37,9 @@ final class TaskVM {
     @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
+    public var id: String {
+        mainModel.value.id
+    }
     // MARK: - Model
     var mainModel: MainModel = mockModel()
     var task: TaskModel = mockModel().value
@@ -119,7 +134,7 @@ final class TaskVM {
     private var lastNotificationDate = Date()
     
     // MARK: - Init
-    init(mainModel: MainModel) {
+    public init(mainModel: MainModel) {
         setUPViewModel(mainModel)
     }
     
@@ -246,7 +261,6 @@ final class TaskVM {
         //            return calendar.date(from: dateComponents)!.timeIntervalSince1970
         //        }
         else {
-            print("4")
             return sourseDateOfNotification.timeIntervalSince1970
         }
     }

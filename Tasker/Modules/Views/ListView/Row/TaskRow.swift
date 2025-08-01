@@ -13,27 +13,19 @@ import UIComponents
 struct TaskRow: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var vm = TaskRowVM()
-    
-    var task: MainModel
+    @Bindable var vm: TaskRowVM
     
     //MARK: - Body
     var body: some View {
         TaskRow()
-            .sheet(item: $vm.selectedTask) { task in
-                TaskView(mainModel: task)
-            }
             .taskDeleteDialog(
                 isPresented: $vm.confirmationDialogIsPresented,
-                task: task,
+                task: vm.task,
                 message: vm.messageForDelete,
                 isSingleTask: vm.singleTask,
                 onDelete: vm.deleteButtonTapped
             )
-            .onAppear {
-                vm.onAppear(task: task)
-            }
-            .sensoryFeedback(.selection, trigger: vm.selectedTask)
+        //            .sensoryFeedback(.selection, trigger: vm.selectedTask)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.decrease, trigger: vm.taskDeleteTrigger)
     }
@@ -45,15 +37,15 @@ struct TaskRow: View {
             ForEach(0..<1) { _ in
                 HStack(spacing: 0) {
                     HStack(spacing: 12) {
-                        TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task), task: task.value) {
-                            vm.checkMarkTapped(task: task)
+                        TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task.value) {
+                            vm.checkMarkTapped()
                         }
                         
                         ScrollView(.horizontal) {
-                            Text(LocalizedStringKey(task.value.title), bundle: .module)
+                            Text(LocalizedStringKey(vm.task.value.title), bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .regular))
                                 .multilineTextAlignment(.leading)
-                                .foregroundStyle(task.value.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
+                                .foregroundStyle(vm.task.value.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                                 .font(.callout)
                                 .lineLimit(1)
                         }
@@ -62,9 +54,9 @@ struct TaskRow: View {
                     }
                     
                     HStack(spacing: 12) {
-                        Text(Date(timeIntervalSince1970: task.value.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
+                        Text(Date(timeIntervalSince1970: vm.task.value.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                             .font(.system(.subheadline, design: .rounded, weight: .regular))
-                            .foregroundStyle(task.value.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
+                            .foregroundStyle(vm.task.value.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
                             .padding(.leading, 6)
                             .lineLimit(1)
                         
@@ -73,12 +65,12 @@ struct TaskRow: View {
                 }
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    vm.selectedTaskButtonTapped(task)
+                    vm.selectedTaskButtonTapped()
                 }
                 .padding(.vertical, 12)
                 .padding(.horizontal, 11)
                 .background(
-                    task.value.taskColor.color(for: colorScheme)
+                    vm.task.value.taskColor.color(for: colorScheme)
                 )
                 .frame(maxWidth: .infinity)
                 .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
@@ -87,7 +79,7 @@ struct TaskRow: View {
             .listRowInsets(EdgeInsets())
             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 Button {
-                    vm.deleteTaskButtonSwiped(task: task)
+                    vm.deleteTaskButtonSwiped()
                 } label: {
                     Image(systemName: "trash")
                         .tint(.red)
@@ -114,16 +106,16 @@ struct TaskRow: View {
     private func PlayButton() -> some View {
         ZStack {
             Circle()
-                .fill(task.value.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
+                .fill(vm.task.value.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
             
-            if task.value.audio != nil {
+            if vm.task.value.audio != nil {
                 Image(systemName: vm.playing ? "pause.fill" : "play.fill")
                     .foregroundStyle(.white)
                     .animation(.default, value: vm.playing)
                     .onTapGesture {
                         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                         Task {
-                            await vm.playButtonTapped(task: task)
+                            await vm.playButtonTapped()
                         }
                     }
             } else {
@@ -137,7 +129,7 @@ struct TaskRow: View {
 }
 
 #Preview {
-    TaskRow(task: mockModel())
+    TaskRow(vm: TaskRowVM(task: mockModel()))
 }
 
 struct ContentSizePreferenceKey: PreferenceKey {

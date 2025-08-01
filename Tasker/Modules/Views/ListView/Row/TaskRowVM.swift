@@ -9,9 +9,10 @@ import Foundation
 import Managers
 import Models
 import SwiftUICore
+import TaskView
 
 @Observable
-final class TaskRowVM {
+final class TaskRowVM: HashableObject {
     //MARK: Dependecies
     @ObservationIgnored
     @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
@@ -28,7 +29,10 @@ final class TaskRowVM {
     
     //MARK: - Properties
     var playingTask: TaskModel?
-    var selectedTask: MainModel?
+    var selectedTask: ((MainModel) -> Void)?
+    var deletedTask: ((MainModel) -> Void)?
+    
+    var task: MainModel
     
     //MARK: - UI States
     var taskDoneTrigger = false
@@ -52,6 +56,14 @@ final class TaskRowVM {
         dateManager.currentTime
     }
     
+    init(task: MainModel) {
+        self.task = task
+        
+        if task.value.title.count < 20 {
+            disabledScroll = true
+        }
+    }
+    
     func onAppear(task: MainModel) {
         if task.value.title.count < 20 {
             disabledScroll = true
@@ -59,8 +71,9 @@ final class TaskRowVM {
     }
     
     //MARK: Selected task
-    func selectedTaskButtonTapped(_ task: MainModel) {
-        selectedTask = task
+    func selectedTaskButtonTapped() {
+        selectedTask?(task)
+        
         stopToPlay()
         
         // telemetry
@@ -68,28 +81,27 @@ final class TaskRowVM {
     }
     
     //MARK: - Check Mark Function
-    func checkCompletedTaskForToday(task: MainModel) -> Bool {
+    func checkCompletedTaskForToday() -> Bool {
         taskManager.checkCompletedTaskForToday(task: task.value)
     }
     
-    func checkMarkTapped(task: MainModel) {
+    func checkMarkTapped() {
         Task {
-            let model = task
-            let task = taskManager.checkMarkTapped(task: model.value)
+            let task = taskManager.checkMarkTapped(task: task.value)
             
             taskDoneTrigger.toggle()
             stopToPlay()
             
-            model.value = task
+            self.task.value = task
             
-            casManager.saveModel(model)
+            casManager.saveModel(self.task)
             
             await notificationManager.createNotification()
         }
     }
     
     //MARK: - Delete functions
-    func deleteTaskButtonSwiped(task: MainModel) {
+    func deleteTaskButtonSwiped() {
         guard task.value.repeatTask == .never else {
             messageForDelete = "This's a recurring task."
             singleTask = false
@@ -132,7 +144,7 @@ final class TaskRowVM {
     }
     
     //MARK: Play sound function
-    func playButtonTapped(task: MainModel) async {
+    func playButtonTapped() async {
         if !playing {
             playingTask = task.value
             await playerManager.playAudioFromData(task: task.value)
@@ -157,5 +169,17 @@ final class TaskRowVM {
     //MARK: - Telemetry manager
     private func telemetryAction(_ action: EventType) {
         telemetryManager.logEvent(action)
+    }
+}
+
+public protocol HashableObject: AnyObject, Hashable {}
+
+extension HashableObject {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs === rhs
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
     }
 }

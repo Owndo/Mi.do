@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIComponents
+import TaskView
 
 public struct ListView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -52,12 +53,17 @@ public struct ListView: View {
                         }
                 }
             }
+            .onAppear {
+                vm.updateTasksList()
+            }
             .scrollIndicators(.hidden)
             .onPreferenceChange(ContentHeightPreferenceKey.self) { height in
                 vm.contentHeight = height
             }
         }
-        
+        .sheet(item: $vm.selectedTask) { vm in
+            TaskView(vm: vm)
+        }
         .customBlurForContainer(colorScheme: colorScheme)
         .animation(.linear, value: vm.completedTasksHidden)
         .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
@@ -65,7 +71,7 @@ public struct ListView: View {
     
     @ViewBuilder
     private func TasksList() -> some View {
-        VStack {
+        VStack(spacing: 1) {
             if !vm.tasks.isEmpty {
                 HStack {
                     Text("Tasks", bundle: .module)
@@ -77,31 +83,22 @@ public struct ListView: View {
                 .padding(.top, 18)
                 .padding(.bottom, 12)
                 
-                VStack(spacing: 0) {
-                    ForEach(Array(vm.tasks.enumerated()), id: \.element) { index, task in
-                        TaskRow(task: task)
-                        
-                        if index != vm.tasks.count - 1 {
-                            RoundedRectangle(cornerRadius: 0.5)
-                                .fill(
-                                    .separatorSecondary
-                                )
-                                .frame(height: 0.5)
-                        }
+                VStack(spacing: 2) {
+                    ForEach(vm.tasks, id: \.self) { vm in
+                        TaskRow(vm: vm)
                     }
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets())
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .shadow(color: .profileShadow, radius: 5)
             }
         }
+        //        .clipShape(RoundedRectangle(cornerRadius: 16))
+        //        .shadow(color: .profileShadow.opacity(0.5), radius: 5)
         .padding(.horizontal, 16)
     }
     
     @ViewBuilder
     private func CompletedTasksList() -> some View {
-        VStack {
+        VStack(spacing: 1) {
             if !vm.completedTasks.isEmpty {
                 HStack {
                     Text("Completed task", bundle: .module)
@@ -122,27 +119,18 @@ public struct ListView: View {
                 
                 
                 if !vm.completedTasksHidden {
-                    VStack(spacing: 0) {
-                        ForEach(Array(vm.completedTasks.enumerated()), id: \.element) { index, task in
-                            TaskRow(task: task)
+                    VStack(spacing: 2) {
+                        ForEach(vm.completedTasks, id: \.self) { vm in
+                            TaskRow(vm: vm)
                                 .foregroundStyle(.labelPrimary)
-                            
-                            if index != vm.completedTasks.count - 1 {
-                                RoundedRectangle(cornerRadius: 0.5)
-                                    .fill(
-                                        .separatorSecondary
-                                    )
-                                    .frame(height: 0.5)
-                            }
                         }
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets())
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: .profileShadow, radius: 5)
                 }
             }
         }
+        //        .clipShape(RoundedRectangle(cornerRadius: 16))
+        //        .shadow(color: .profileShadow.opacity(0.5), radius: 5)
         .padding(.horizontal, 16)
     }
     

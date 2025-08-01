@@ -9,9 +9,10 @@ import Foundation
 import SwiftUI
 import Models
 import Managers
+import TaskView
 
 @Observable
-final class ListVM {
+final class ListVM: HashableObject {
     @ObservationIgnored
     @Injected(\.casManager) private var casManager: CASManagerProtocol
     @ObservationIgnored
@@ -31,6 +32,8 @@ final class ListVM {
     var startSwipping = false
     var contentHeight: CGFloat = 0
     
+    var selectedTask: TaskVM?
+    
     var completedTasksHidden: Bool {
         casManager.profileModel.value.settings.completedTasksHidden
     }
@@ -39,13 +42,9 @@ final class ListVM {
         casManager.profileModel.value.onboarding.deleteTip
     }
     
-    var tasks: [MainModel] {
-        taskManager.activeTasks
-    }
+    var tasks: [TaskRowVM] = []
     
-    var completedTasks: [MainModel] {
-        taskManager.completedTasks
-    }
+    var completedTasks: [TaskRowVM] = []
     
     var countOfTodayTasks: Int {
         tasks.count + completedTasks.count
@@ -57,6 +56,39 @@ final class ListVM {
     
     private var selectedDate: Double {
         calendar.startOfDay(for: dateManager.selectedDate).timeIntervalSince1970
+    }
+    
+    init() {
+        Task {
+            try await Task.sleep(for: .seconds(0.5))
+            NotificationCenter.default.addObserver(self, selector: #selector(updateTasksList), name: Notification.Name("updateTasks"), object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(updateTasksList), name: Notification.Name("selectedDateChange"), object: nil)
+        }
+    }
+    
+    @objc func updateTasksList() {
+        tasks.removeAll()
+        completedTasks.removeAll()
+        
+        for i in taskManager.activeTasks {
+            let taskRowVM = TaskRowVM(task: i)
+            
+            taskRowVM.selectedTask = { [weak self] task in
+                self?.selectedTask = TaskVM(mainModel: task)
+            }
+            
+            tasks.append(taskRowVM)
+        }
+        
+        for i in taskManager.completedTasks {
+            let taskRowVM = TaskRowVM(task: i)
+            
+            taskRowVM.selectedTask = { [weak self] task in
+                self?.selectedTask = TaskVM(mainModel: task)
+            }
+            
+            completedTasks.append(taskRowVM)
+        }
     }
     
     //MARK: - Check for visible

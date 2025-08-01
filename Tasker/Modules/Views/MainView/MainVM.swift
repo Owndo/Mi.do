@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Managers
 import Models
+import TaskView
 
 @MainActor
 @Observable
@@ -38,7 +39,7 @@ public final class MainVM {
     @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
     //MARK: - Model
-    var model: MainModel?
+    var taskVM: TaskVM?
     
     var profileModel: ProfileData = mockProfileData()
     
@@ -261,7 +262,7 @@ public final class MainVM {
     
     //MARK: - Create task
     func createTask(with audioHash: String? = nil) {
-        model = MainModel.initial(TaskModel(
+        let model = MainModel.initial(TaskModel(
             title: recordManager.recognizedText,
             description: "",
             speechDescription: recordManager.wholeDescription,
@@ -272,6 +273,8 @@ public final class MainVM {
             done: [],
             deleted: []
         ))
+        
+        taskVM = TaskVM(mainModel: model)
     }
     
     func handleButtonTap() async {
@@ -304,7 +307,11 @@ public final class MainVM {
             let task = taskManager.activeTasks.first { task in
                 extractBaseId(from: task.value.id) == baseSearchId
             }
-            model = task
+            
+            if let task {
+                taskVM = TaskVM(mainModel: task)
+            }
+            
             return
         }
         
@@ -313,7 +320,9 @@ public final class MainVM {
             let task = taskManager.activeTasks.first { task in
                 extractBaseId(from: task.value.id) == baseSearchId
             }
-            model = task
+            if let task {
+                taskVM = TaskVM(mainModel: task)
+            }
         }
     }
     

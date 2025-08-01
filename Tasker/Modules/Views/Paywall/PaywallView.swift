@@ -150,7 +150,7 @@ public struct PaywallView: View {
                     .foregroundStyle(.labelPrimary)
                 
                 HStack(spacing: 0) {
-                    Text(product.subscription?.subscriptionPeriod.unit == .month ? product.dividedByWeek : product.dividedByMonth)
+                    Text(product.subscription?.subscriptionPeriod.unit == .month ? product.dividedByWeek : product.dividedYearByWeek)
                         .font(.system(.caption2, design: .rounded, weight: .medium))
                         .foregroundStyle(.labelTertiary)
                     

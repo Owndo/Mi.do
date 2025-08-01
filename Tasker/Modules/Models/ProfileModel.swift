@@ -43,7 +43,7 @@ public struct ProfileModel: Codable {
 }
 
 public struct SettingsModel: Codable, Equatable {
-    public var firstDayOfWeek: Int?
+    public var firstDayOfWeek: Int = Calendar.current.firstWeekday
     public var colorScheme: ColorSchemeMode
     public var accentColor: AccentBackgroundColor
     public var background: AccentBackgroundColor

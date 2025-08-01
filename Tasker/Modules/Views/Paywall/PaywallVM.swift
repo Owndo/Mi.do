@@ -29,7 +29,7 @@ final class PaywallVM {
     }
     
     var textForButton: LocalizedStringKey {
-        selecetedProduct?.promotionalOffer() != nil ? "Try for free" : "Continue"
+        selecetedProduct?.intoductoryOffer() != nil ? "Try for free" : "Continue"
     }
     
     init() {

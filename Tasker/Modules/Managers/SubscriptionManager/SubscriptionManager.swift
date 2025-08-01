@@ -177,9 +177,8 @@ public extension Product {
 }
 
 public extension Product {
-    
-    func promotionalOffer() -> LocalizedStringKey? {
-        if let offer = self.subscription?.promotionalOffers.first {
+    func intoductoryOffer() -> LocalizedStringKey? {
+        if let offer = self.subscription?.introductoryOffer {
             switch offer.period {
             case .weekly: 
                 return "Free week"

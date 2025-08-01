@@ -20,7 +20,7 @@
     "_applicationInternalID" : "6749021753",
     "_developerTeamID" : "5M63H38ZMF",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 775602029.40249801,
+    "_lastSynchronizedDate" : 775778229.25352001,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -85,7 +85,7 @@
         {
           "adHocOffers" : [
             {
-              "internalID" : "CF48599E",
+              "internalID" : "7D88413F",
               "numberOfPeriods" : 1,
               "offerID" : "7_days_free",
               "paymentMode" : "free",
@@ -100,12 +100,62 @@
           "familyShareable" : false,
           "groupNumber" : 2,
           "internalID" : "6749025836",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "internalID" : "ED828B23",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
           "localizations" : [
+            {
+              "description" : "Un mois pour booster ton élan",
+              "displayName" : "Mensuel",
+              "locale" : "fr"
+            },
+            {
+              "description" : "Un mes para impulsar tu ritmo",
+              "displayName" : "Mensual",
+              "locale" : "es_MX"
+            },
+            {
+              "description" : "Ein Monat für deinen Flow",
+              "displayName" : "Monatlich",
+              "locale" : "de"
+            },
+            {
+              "description" : "Un mes para impulsar tu ritmo",
+              "displayName" : "Mensual",
+              "locale" : "es_ES"
+            },
+            {
+              "description" : "Um mês para acelerar seu ritmo",
+              "displayName" : "Mensal",
+              "locale" : "pt_PT"
+            },
+            {
+              "description" : "Месяц продуктивности",
+              "displayName" : "Месяц",
+              "locale" : "ru"
+            },
+            {
+              "description" : "Um mês para acelerar seu ritmo",
+              "displayName" : "Mensal",
+              "locale" : "pt_BR"
+            },
+            {
+              "description" : "Un mese per darti slancio",
+              "displayName" : "Mensile",
+              "locale" : "it"
+            },
             {
               "description" : "One month to boost your flow",
               "displayName" : "Monthly",
               "locale" : "en_US"
+            },
+            {
+              "description" : "Un mois pour booster ton élan",
+              "displayName" : "Mensuel",
+              "locale" : "fr"
             }
           ],
           "productID" : "monthly_base",
@@ -159,9 +209,54 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
+              "description" : "Un año de enfoque y claridad",
+              "displayName" : "Anual",
+              "locale" : "es_ES"
+            },
+            {
+              "description" : "Um ano de foco e clareza",
+              "displayName" : "Anual",
+              "locale" : "pt_BR"
+            },
+            {
               "description" : "Plan your year with style",
               "displayName" : "Yearly",
               "locale" : "en_US"
+            },
+            {
+              "description" : "Une année de clarté et de focus",
+              "displayName" : "Annuel",
+              "locale" : "fr"
+            },
+            {
+              "description" : "Год ясности и концентрации",
+              "displayName" : "Год",
+              "locale" : "ru"
+            },
+            {
+              "description" : "Un año de enfoque y claridad",
+              "displayName" : "Anual",
+              "locale" : "es_MX"
+            },
+            {
+              "description" : "Un anno di chiarezza e concentrazione",
+              "displayName" : "Annuale",
+              "locale" : "it"
+            },
+            {
+              "description" : "Une année de clarté et de focus",
+              "displayName" : "Annuel",
+              "locale" : "fr"
+            },
+            {
+              "description" : "Um ano de foco e clareza",
+              "displayName" : "Anual",
+              "locale" : "pt_PT"
+            },
+            {
+              "description" : "Ein Jahr voller Klarheit und Fokus",
+              "displayName" : "Jährlich",
+              "locale" : "de"
             }
           ],
           "productID" : "yearly_base",

@@ -188,7 +188,7 @@ public struct PaywallView: View {
                 }
             }
             .overlay(alignment: .top) {
-                if let offer = product.promotionalOffer() {
+                if let offer = product.intoductoryOffer() {
                     HStack {
                         Text(offer, bundle: .module)
                             .font(.system(.caption, design: .rounded, weight: .medium))

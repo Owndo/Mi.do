@@ -1,987 +1,1016 @@
 {
-    "sourceLanguage": "en",
-    "version": "1.0",
-    "strings": {
-        "Can't hear you 😢": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Je ne t'entends pas 😢"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ich höre dich nicht 😢"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No te oigo 😢"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Non ti sento 😢"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não consigo te ouvir 😢"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Не слышу тебя 😢"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Je ne t'entends pas 😢"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não consigo te ouvir 😢"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não consigo te ouvir 😢"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No te oigo 😢"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No te oigo 😢"
-                    }
-                }
-            }
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Can't hear you 😢" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich höre dich nicht 😢"
+          }
         },
-        "Cannot Interrupt Others": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossible d’interrompre les autres"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Andere können nicht unterbrochen werden"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede interrumpir a otros"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossibile interrompere gli altri"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível interromper outros"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Нельзя прерывать других"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossible d’interrompre les autres"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível interromper outros"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível interromper outros"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede interrumpir a otros"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede interrumpir a otros"
-                    }
-                }
-            }
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No te oigo 😢"
+          }
         },
-        "Cannot start record": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossible de démarrer l’enregistrement"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Aufnahme kann nicht gestartet werden"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede iniciar la grabación"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossibile avviare la registrazione"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível iniciar a gravação"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Не удалось начать запись"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossible de démarrer l’enregistrement"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível iniciar a gravação"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível iniciar a gravação"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede iniciar la grabación"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede iniciar la grabación"
-                    }
-                }
-            }
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No te oigo 😢"
+          }
         },
-        "Cannot start recording": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossible de commencer l’enregistrement"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Aufnahme kann nicht gestartet werden"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede iniciar la grabación"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossibile avviare la registrazione"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível iniciar a gravação"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Не удаётся начать запись"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Impossible de commencer l’enregistrement"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível iniciar a gravação"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não é possível iniciar a gravação"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede iniciar la grabación"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No se puede iniciar la grabación"
-                    }
-                }
-            }
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No te oigo 😢"
+          }
         },
-        "Go to Settings": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Aller aux Réglages"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Zu den Einstellungen"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ir a Configuración"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Vai alle Impostazioni"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ir para Configurações"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Перейти в настройки"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Aller aux Réglages"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ir para Configurações"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ir para Configurações"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ir a Configuración"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ir a Configuración"
-                    }
-                }
-            }
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je ne t'entends pas 😢"
+          }
         },
-        "Guess we’ll just sit here... quietly.": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "On va juste rester là... tout doucement."
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Dann sitzen wir halt... ganz still."
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Supongo que nos quedamos aquí... en silencio."
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Restiamo qui... in silenzio, immagino."
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Acho que vamos ficar aqui... bem quietinhos."
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ну что ж, просто посидим тут... молча."
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "On va juste rester là... tout doucement."
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Acho que vamos ficar aqui... bem quietinhos."
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Acho que vamos ficar aqui... bem quietinhos."
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Supongo que nos quedamos aquí... en silencio."
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Supongo que nos quedamos aquí... en silencio."
-                    }
-                }
-            }
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je ne t'entends pas 😢"
+          }
         },
-        "I can't hear your voice magic... Speech recognition is turned off. Want to enable it in Settings?": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Je n'entends pas ta magie vocale... La reconnaissance vocale est désactivée. L'activer dans les Réglages ?"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ich höre deinen Sprachzauber nicht... Spracherkennung ist aus. In den Einstellungen aktivieren?"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No oigo tu magia de voz... El reconocimiento está desactivado. ¿Lo activamos en Configuración?"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Non sento la tua magia vocale... Il riconoscimento vocale è disattivato. Vuoi attivarlo nelle Impostazioni?"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não ouço sua mágica vocal... O reconhecimento está desligado. Ativar nas Configurações?"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Не слышу твоей голосовой магии... Распознавание отключено. Включим в настройках?"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Je n'entends pas ta magie vocale... La reconnaissance vocale est désactivée. L'activer dans les Réglages ?"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não ouço sua mágica vocal... O reconhecimento está desligado. Ativar nas Configurações?"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Não ouço sua mágica vocal... O reconhecimento está desligado. Ativar nas Configurações?"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No oigo tu magia de voz... El reconocimiento está desactivado. ¿Lo activamos en Configuración?"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "No oigo tu magia de voz... El reconocimiento está desactivado. ¿Lo activamos en Configuración?"
-                    }
-                }
-            }
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non ti sento 😢"
+          }
         },
-        "I'd love to hear your voice... but the microphone is off. You can fix it in Settings!": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "J’aimerais entendre ta voix... mais le micro est coupé. Tu peux régler ça dans les Réglages !"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ich würde deine Stimme gerne hören... aber das Mikro ist aus. In den Einstellungen kannst du’s ändern!"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Me encantaría oírte... pero el micrófono está apagado. ¡Ve a Configuración!"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Vorrei tanto sentire la tua voce... ma il microfono è spento. Puoi risolvere nelle Impostazioni!"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Adoraria ouvir sua voz... mas o microfone está desligado. Vai nas Configurações!"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Я бы с радостью тебя послушал... но микрофон выключен. Включи его в настройках!"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "J’aimerais entendre ta voix... mais le micro est coupé. Tu peux régler ça dans les Réglages !"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Adoraria ouvir sua voz... mas o microfone está desligado. Vai nas Configurações!"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Adoraria ouvir sua voz... mas o microfone está desligado. Vai nas Configurações!"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Me encantaría oírte... pero el micrófono está apagado. ¡Ve a Configuración!"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Me encantaría oírte... pero el micrófono está apagado. ¡Ve a Configuración!"
-                    }
-                }
-            }
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não consigo te ouvir 😢"
+          }
         },
-        "I’d love to see your masterpieces… but I can’t. Photo access is off. Flip the switch in Settings?": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "J’aimerais voir tes chefs-d'œuvre... mais je peux pas. L’accès aux photos est désactivé. Tu l’actives ?"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ich würde gern deine Meisterwerke sehen… aber ohne Fotozugriff geht das nicht. Einschalten in den Einstellungen?"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Me encantaría ver tus obras maestras… pero no puedo. El acceso a fotos está desactivado. ¿Lo activas?"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Mi piacerebbe vedere i tuoi capolavori... ma non posso. Accesso alle foto disattivato. Lo attiviamo?"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Adoraria ver suas obras... mas o acesso às fotos está bloqueado. Que tal ativar nas Configurações?"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Хочу увидеть твои шедевры... но доступ к фото закрыт. Включим в настройках?"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "J’aimerais voir tes chefs-d'œuvre... mais je peux pas. L’accès aux photos est désactivé. Tu l’actives ?"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Adoraria ver suas obras... mas o acesso às fotos está bloqueado. Que tal ativar nas Configurações?"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Adoraria ver suas obras... mas o acesso às fotos está bloqueado. Que tal ativar nas Configurações?"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Me encantaría ver tus obras maestras… pero no puedo. El acceso a fotos está desactivado. ¿Lo activas?"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Me encantaría ver tus obras maestras… pero no puedo. El acceso a fotos está desactivado. ¿Lo activas?"
-                    }
-                }
-            }
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não consigo te ouvir 😢"
+          }
         },
-        "Maybe later": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Peut-être plus tard"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Vielleicht später"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Quizás más tarde"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Forse più tardi"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Talvez depois"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Может, позже"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Peut-être plus tard"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Talvez depois"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Talvez depois"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Quizás más tarde"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Quizás más tarde"
-                    }
-                }
-            }
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não consigo te ouvir 😢"
+          }
         },
-        "No photos for you 🫣": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Pas de photos pour toi 🫣"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Keine Fotos für dich 🫣"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Nada de fotos para ti 🫣"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Niente foto per te 🫣"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Nada de fotos pra você 🫣"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Без фоточек 🫣"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Pas de photos pour toi 🫣"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Nada de fotos pra você 🫣"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Nada de fotos pra você 🫣"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Nada de fotos para ti 🫣"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Nada de fotos para ti 🫣"
-                    }
-                }
-            }
-        },
-        "Not now": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Pas maintenant"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Nicht jetzt"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ahora no"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Non ora"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Agora não"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Не сейчас"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Pas maintenant"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Agora não"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Agora não"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ahora no"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Ahora no"
-                    }
-                }
-            }
-        },
-        "Notifications are off 😶‍🌫️": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notifications désactivées 😶‍🌫️"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Benachrichtigungen sind aus 😶‍🌫️"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notificaciones desactivadas 😶‍🌫️"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notifiche disattivate 😶‍🌫️"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notificações desativadas 😶‍🌫️"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Уведомления выключены 😶‍🌫️"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notifications désactivées 😶‍🌫️"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notificações desativadas 😶‍🌫️"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notificações desativadas 😶‍🌫️"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notificaciones desactivadas 😶‍🌫️"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "Notificaciones desactivadas 😶‍🌫️"
-                    }
-                }
-            }
-        },
-        "OK": {
-            "localizations": {
-                "fr": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "de": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "es": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "it": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "pt": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "ru": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "ОК"
-                    }
-                },
-                "fr-CA": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "pt-BR": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "pt-PT": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "es-419": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                },
-                "es-US": {
-                    "stringUnit": {
-                        "state": "translated",
-                        "value": "OK"
-                    }
-                }
-            }
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не слышу тебя 😢"
+          }
         }
+      }
     },
-    "version": "1.0"
+    "Cannot Interrupt Others" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Andere können nicht unterbrochen werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede interrumpir a otros"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede interrumpir a otros"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede interrumpir a otros"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’interrompre les autres"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’interrompre les autres"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile interrompere gli altri"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível interromper outros"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível interromper outros"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível interromper outros"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нельзя прерывать других"
+          }
+        }
+      }
+    },
+    "Cannot start record" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufnahme kann nicht gestartet werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede iniciar la grabación"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede iniciar la grabación"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede iniciar la grabación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de démarrer l’enregistrement"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de démarrer l’enregistrement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile avviare la registrazione"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível iniciar a gravação"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível iniciar a gravação"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível iniciar a gravação"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удалось начать запись"
+          }
+        }
+      }
+    },
+    "Cannot start recording" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufnahme kann nicht gestartet werden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede iniciar la grabación"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede iniciar la grabación"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede iniciar la grabación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de commencer l’enregistrement"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de commencer l’enregistrement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossibile avviare la registrazione"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível iniciar a gravação"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível iniciar a gravação"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não é possível iniciar a gravação"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не удаётся начать запись"
+          }
+        }
+      }
+    },
+    "Go to Settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu den Einstellungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a Configuración"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a Configuración"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a Configuración"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aller aux Réglages"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aller aux Réglages"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vai alle Impostazioni"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir para Configurações"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir para Configurações"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir para Configurações"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Перейти в настройки"
+          }
+        }
+      }
+    },
+    "Guess we’ll just sit here... quietly." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dann sitzen wir halt... ganz still."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supongo que nos quedamos aquí... en silencio."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supongo que nos quedamos aquí... en silencio."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supongo que nos quedamos aquí... en silencio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On va juste rester là... tout doucement."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On va juste rester là... tout doucement."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restiamo qui... in silenzio, immagino."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acho que vamos ficar aqui... bem quietinhos."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acho que vamos ficar aqui... bem quietinhos."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acho que vamos ficar aqui... bem quietinhos."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ну что ж, просто посидим тут... молча."
+          }
+        }
+      }
+    },
+    "I can't hear your voice magic... Speech recognition is turned off. Want to enable it in Settings?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich höre deinen Sprachzauber nicht... Spracherkennung ist aus. In den Einstellungen aktivieren?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No oigo tu magia de voz... El reconocimiento está desactivado. ¿Lo activamos en Configuración?"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No oigo tu magia de voz... El reconocimiento está desactivado. ¿Lo activamos en Configuración?"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No oigo tu magia de voz... El reconocimiento está desactivado. ¿Lo activamos en Configuración?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je n'entends pas ta magie vocale... La reconnaissance vocale est désactivée. L'activer dans les Réglages ?"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je n'entends pas ta magie vocale... La reconnaissance vocale est désactivée. L'activer dans les Réglages ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non sento la tua magia vocale... Il riconoscimento vocale è disattivato. Vuoi attivarlo nelle Impostazioni?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não ouço sua mágica vocal... O reconhecimento está desligado. Ativar nas Configurações?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não ouço sua mágica vocal... O reconhecimento está desligado. Ativar nas Configurações?"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não ouço sua mágica vocal... O reconhecimento está desligado. Ativar nas Configurações?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не слышу твоей голосовой магии... Распознавание отключено. Включим в настройках?"
+          }
+        }
+      }
+    },
+    "I'd love to hear your voice... but the microphone is off. You can fix it in Settings!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich würde deine Stimme gerne hören... aber das Mikro ist aus. In den Einstellungen kannst du’s ändern!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me encantaría oírte... pero el micrófono está apagado. ¡Ve a Configuración!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me encantaría oírte... pero el micrófono está apagado. ¡Ve a Configuración!"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me encantaría oírte... pero el micrófono está apagado. ¡Ve a Configuración!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J’aimerais entendre ta voix... mais le micro est coupé. Tu peux régler ça dans les Réglages !"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J’aimerais entendre ta voix... mais le micro est coupé. Tu peux régler ça dans les Réglages !"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorrei tanto sentire la tua voce... ma il microfono è spento. Puoi risolvere nelle Impostazioni!"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adoraria ouvir sua voz... mas o microfone está desligado. Vai nas Configurações!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adoraria ouvir sua voz... mas o microfone está desligado. Vai nas Configurações!"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adoraria ouvir sua voz... mas o microfone está desligado. Vai nas Configurações!"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Я бы с радостью тебя послушал... но микрофон выключен. Включи его в настройках!"
+          }
+        }
+      }
+    },
+    "I’d love to see your masterpieces… but I can’t. Photo access is off. Flip the switch in Settings?" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich würde gern deine Meisterwerke sehen… aber ohne Fotozugriff geht das nicht. Einschalten in den Einstellungen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me encantaría ver tus obras maestras… pero no puedo. El acceso a fotos está desactivado. ¿Lo activas?"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me encantaría ver tus obras maestras… pero no puedo. El acceso a fotos está desactivado. ¿Lo activas?"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me encantaría ver tus obras maestras… pero no puedo. El acceso a fotos está desactivado. ¿Lo activas?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J’aimerais voir tes chefs-d'œuvre... mais je peux pas. L’accès aux photos est désactivé. Tu l’actives ?"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J’aimerais voir tes chefs-d'œuvre... mais je peux pas. L’accès aux photos est désactivé. Tu l’actives ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mi piacerebbe vedere i tuoi capolavori... ma non posso. Accesso alle foto disattivato. Lo attiviamo?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adoraria ver suas obras... mas o acesso às fotos está bloqueado. Que tal ativar nas Configurações?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adoraria ver suas obras... mas o acesso às fotos está bloqueado. Que tal ativar nas Configurações?"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adoraria ver suas obras... mas o acesso às fotos está bloqueado. Que tal ativar nas Configurações?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Хочу увидеть твои шедевры... но доступ к фото закрыт. Включим в настройках?"
+          }
+        }
+      }
+    },
+    "Maybe later" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vielleicht später"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quizás más tarde"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quizás más tarde"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quizás más tarde"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peut-être plus tard"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peut-être plus tard"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forse più tardi"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talvez depois"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talvez depois"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talvez depois"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Может, позже"
+          }
+        }
+      }
+    },
+    "No photos for you 🫣" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Fotos für dich 🫣"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada de fotos para ti 🫣"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada de fotos para ti 🫣"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada de fotos para ti 🫣"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de photos pour toi 🫣"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas de photos pour toi 🫣"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niente foto per te 🫣"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada de fotos pra você 🫣"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada de fotos pra você 🫣"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada de fotos pra você 🫣"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Без фоточек 🫣"
+          }
+        }
+      }
+    },
+    "Not now" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht jetzt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora no"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora no"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora no"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas maintenant"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas maintenant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non ora"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora não"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora não"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora não"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Не сейчас"
+          }
+        }
+      }
+    },
+    "Notifications are off 😶‍🌫️" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benachrichtigungen sind aus 😶‍🌫️"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificaciones desactivadas 😶‍🌫️"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificaciones desactivadas 😶‍🌫️"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificaciones desactivadas 😶‍🌫️"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications désactivées 😶‍🌫️"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications désactivées 😶‍🌫️"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifiche disattivate 😶‍🌫️"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificações desativadas 😶‍🌫️"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificações desativadas 😶‍🌫️"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notificações desativadas 😶‍🌫️"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Уведомления выключены 😶‍🌫️"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ОК"
+          }
+        }
+      }
+    },
+    "Please end the call to start recording." : {
+
+    },
+    "Recording has finished" : {
+
+    },
+    "Recording is unavailable" : {
+
+    },
+    "Siri is currently recording. Please wait until Siri has finished." : {
+
+    },
+    "Siri is Recording" : {
+
+    },
+    "Speech Recognition Unavailable ❌" : {
+
+    },
+    "The microphone is currently busy, please stop use it and try again." : {
+
+    },
+    "This operation cannot interrupt other processes. Please try again later." : {
+
+    },
+    "Unable to start recording. Please try again later." : {
+
+    },
+    "Unfortunately we are currently unable to record task longer then 15 seconds." : {
+
+    }
+  },
+  "version" : "1.0"
 }

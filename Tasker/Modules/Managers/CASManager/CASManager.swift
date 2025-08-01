@@ -152,6 +152,11 @@ final class CASManager: CASManagerProtocol {
     //MARK: - Profile data
     func fetchProfileData() -> ProfileData {
         let list = try! cas.listMutable()
+        let defaultProfileData = mockProfileData()
+        
+        if defaultProfileData.value.settings.firstDayOfWeek == nil {
+            defaultProfileData.value.settings.firstDayOfWeek = Calendar.current.firstWeekday
+        }
         
         return list.compactMap { mutable in
             do {
@@ -159,7 +164,7 @@ final class CASManager: CASManagerProtocol {
             } catch {
                 return nil
             }
-        }.first ?? mockProfileData()
+        }.first ?? defaultProfileData
     }
     
     func pathToAudio(_ hash: String) -> URL {

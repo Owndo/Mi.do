@@ -43,7 +43,7 @@ public struct ProfileModel: Codable {
 }
 
 public struct SettingsModel: Codable, Equatable {
-    public var firstDayOfWeek: Int
+    public var firstDayOfWeek: Int?
     public var colorScheme: ColorSchemeMode
     public var accentColor: AccentBackgroundColor
     public var background: AccentBackgroundColor
@@ -52,12 +52,10 @@ public struct SettingsModel: Codable, Equatable {
     public var iCloudSyncEnabled = false
     
     public init(
-        firstDayOfWeek: Int,
         colorScheme: ColorSchemeMode,
         accentColor: AccentBackgroundColor = AccentBackgroundColor(light: "#0EBC7C", dark: "#18C585"),
         background: AccentBackgroundColor = AccentBackgroundColor(light: "#F2F5EE", dark: "#202020"),
     ) {
-        self.firstDayOfWeek = firstDayOfWeek
         self.colorScheme = colorScheme
         self.accentColor = accentColor
         self.background = background
@@ -98,7 +96,6 @@ public func mockProfileData() -> ProfileData {
             photo: "",
             photoPosition: .zero,
             settings: SettingsModel(
-                firstDayOfWeek: 1,
                 colorScheme: .system,
                 accentColor: AccentBackgroundColor(light: "#0EBC7C", dark: "#18C585"),
                 background: AccentBackgroundColor(light: "#F2F5EE", dark: "#202020")

@@ -18,7 +18,7 @@ struct HistoryView: View {
             colorScheme.backgroundColor()
                 .ignoresSafeArea()
             VStack {
-                Text("Coming soon...")
+                Text("Coming soon...", bundle: .module)
                     .font(.system(.title2, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.labelQuaternary)

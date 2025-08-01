@@ -13,6 +13,7 @@ import Paywall
 struct SettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
+    @Environment(\.openURL) var openURL
     
     @State private var vm = SettingsVM()
     
@@ -60,7 +61,7 @@ struct SettingsView: View {
 //                        .padding(.leading, 38)
                     
                     ButtonRow(icon: "lock.shield", title: "Privacy Policy") {
-                        
+                        openURL(ConfigurationFile.privacy)
                     }
                     
                     CustomDivider()
@@ -68,7 +69,7 @@ struct SettingsView: View {
                         .padding(.leading, 38)
                     
                     ButtonRow(icon: "doc", title: "Terms of Use") {
-                        
+                        openURL(ConfigurationFile.terms)
                     }
                     
                     .padding(.bottom, 28)

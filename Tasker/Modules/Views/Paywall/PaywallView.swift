@@ -236,7 +236,7 @@ public struct PaywallView: View {
     private func LegalNote() -> some View {
         HStack {
             Button {
-                openUrl(ConfigurationFile().privacy)
+                openUrl(ConfigurationFile.privacy)
             } label: {
                 Text("Privacy Policy", bundle: .module)
                     .font(.system(.caption2, design: .rounded, weight: .regular))
@@ -260,7 +260,7 @@ public struct PaywallView: View {
             Spacer()
             
             Button {
-                openUrl(ConfigurationFile().terms)
+                openUrl(ConfigurationFile.terms)
             } label: {
                 Text("Terms of use", bundle: .module)
                     .font(.system(.caption2, design: .rounded, weight: .regular))

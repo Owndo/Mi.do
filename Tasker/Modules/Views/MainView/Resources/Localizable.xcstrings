@@ -1,585 +1,585 @@
 {
-    "sourceLanguage" : "en",
-    "strings" : {
-        "Continue" : {
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Fortsetzen"
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Continuar"
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Continuar"
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Continuar"
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Continuer"
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Continuer"
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Continua"
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Continuar"
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Continuar"
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Продолжить"
-                    }
-                }
-            }
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Continue" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortsetzen"
+          }
         },
-        "Create tasks, reminders,\nnotes or voice recordings - we’ll\nsafe them and quietly remind you\nwhen it matters." : {
-            "extractionState" : "manual",
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Erstelle Aufgaben, Erinnerungen,\nNotizen und Sprachaufnahmen – wir\nbewahren sie sicher auf und erinnern dich\ngelegentlich an etwas Wichtiges."
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Créez des tâches, rappels,\nnotes et enregistrements vocaux – nous\nles garderons précieusement et vous rappellerons\nde temps en temps quelque chose d'important."
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Créez des tâches, rappels,\nnotes et enregistrements vocaux – nous\nles garderons précieusement et vous rappellerons\nde temps en temps quelque chose d'important."
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Crea attività, promemoria,\nnote e registrazioni vocali – le\nconserveremo con cura e ti ricorderemo\nogni tanto qualcosa di importante."
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Crie tarefas, lembretes,\nnotas e gravações de voz – vamos\nguardá-las com cuidado e lembrar você\nde algo importante de vez em quando."
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Crie tarefas, lembretes,\nnotas e gravações de voz – vamos\nguardá-las com cuidado e lembrar você\nde algo importante de vez em quando."
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Создавайте задачи, напоминания,\nзаметки и голосовые записи - а мы бережно сохраним и иногда\nнапомним о чем то важном."
-                    }
-                }
-            }
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
         },
-        "Created:" : {
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Erstellt:"
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Creado:"
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Creado:"
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Creado:"
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Créé :"
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Créé :"
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Creato:"
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Criado:"
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Criado:"
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Создано:"
-                    }
-                }
-            }
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
         },
-        "Done" : {
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Fertig"
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Hecho"
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Hecho"
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Hecho"
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Terminé"
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Terminé"
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Fatto"
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Concluído"
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Concluído"
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Готово"
-                    }
-                }
-            }
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
         },
-        "Everything stays in your hands\nand never leaves your device.\nPlan your life with Mi.dō!" : {
-            "extractionState" : "manual",
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Alles bleibt in deinen Händen\nund verlässt niemals dein Gerät.\nPlane dein Leben mit Mi.dō!"
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Tout reste entre vos mains\net ne quitte jamais votre appareil.\nPlanifiez votre vie avec Mi.dō !"
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Tout reste entre vos mains\net ne quitte jamais votre appareil.\nPlanifiez votre vie avec Mi.dō !"
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Tutto rimane nelle tue mani\ne non lascia mai il tuo dispositivo.\nPianifica la tua vita con Mi.dō!"
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Tudo permanece em suas mãos\ne nunca sai do seu dispositivo.\nPlaneje sua vida com Mi.dō!"
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Tudo permanece em suas mãos\ne nunca sai do seu dispositivo.\nPlaneje sua vida com Mi.dō!"
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Все остается в ваших руках\nи не покидает устройство.\nПланируйте свою жизнь с Mi.dō!"
-                    }
-                }
-            }
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer"
+          }
         },
-        "Life isn’t a goal, it's journey.\nWe’re happy to walk it with you." : {
-            "extractionState" : "manual",
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Das Leben ist kein Ziel, sondern eine Reise.\nWir freuen uns, sie mit dir zu gehen."
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "La vida no es una meta, es un viaje.\nNos alegra recorrerlo contigo."
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "La vida no es una meta, es un viaje.\nNos alegra recorrerlo contigo."
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "La vida no es una meta, es un viaje.\nNos alegra recorrerlo contigo."
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "La vie n’est pas un but, c’est un voyage.\nNous sommes heureux de le parcourir avec vous."
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "La vie n’est pas un but, c’est un voyage.\nNous sommes heureux de le parcourir avec vous."
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "La vita non è un obiettivo, è un viaggio.\nSiamo felici di farlo con te."
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "A vida não é um objetivo, é uma jornada.\nFicamos felizes em percorrê-la com você."
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "A vida não é um objetivo, é uma jornada.\nFicamos felizes em percorrê-la com você."
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Жизнь - это не цель, а путь.\nМы рады пройти его вместе с вами."
-                    }
-                }
-            }
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer"
+          }
         },
-        "Tap and add your notes here..." : {
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Tippen und fügen Sie hier Ihre Notizen hinzu..."
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Toca y añade tus notas aquí..."
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Toca y añade tus notas aquí..."
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Toca y añade tus notas aquí..."
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Touchez et ajoutez vos notes ici..."
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Touchez et ajoutez vos notes ici..."
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Tocca e aggiungi qui le tue note..."
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Toque e adicione suas anotações aqui..."
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Toque e adicione suas anotações aqui..."
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Нажмите тут, чтобы добавить заметку…"
-                    }
-                }
-            }
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continua"
+          }
         },
-        "Welcome to Mi.dō" : {
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Willkommen bei Mi.dō"
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Bienvenido a Mi.dō"
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Bienvenido a Mi.dō"
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Bienvenido a Mi.dō"
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Bienvenue sur Mi.dō"
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Bienvenue sur Mi.dō"
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Benvenuto su Mi.dō"
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Bem-vindo ao Mi.dō"
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Bem-vindo ao Mi.dō"
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Добро пожаловать\nв Mi.dō"
-                    }
-                }
-            }
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
         },
-        "Write title 🎯" : {
-            "localizations" : {
-                "de" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Titel eingeben 🎯"
-                    }
-                },
-                "es" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Ingresa el título 🎯"
-                    }
-                },
-                "es-419" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Ingresa el título 🎯"
-                    }
-                },
-                "es-US" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Ingresa el título 🎯"
-                    }
-                },
-                "fr" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Saisir le titre 🎯"
-                    }
-                },
-                "fr-CA" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Saisir le titre 🎯"
-                    }
-                },
-                "it" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Inserisci titolo 🎯"
-                    }
-                },
-                "pt-BR" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Insira o título 🎯"
-                    }
-                },
-                "pt-PT" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Insira o título 🎯"
-                    }
-                },
-                "ru" : {
-                    "stringUnit" : {
-                        "state" : "translated",
-                        "value" : "Напишите заголовок 🎯"
-                    }
-                }
-            }
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Продолжить"
+          }
         }
+      }
     },
-    "version" : "1.0"
+    "Create tasks, reminders,\nnotes or voice recordings - we’ll\nsafe them and quietly remind you\nwhen it matters." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle Aufgaben, Erinnerungen,\nNotizen und Sprachaufnahmen – wir\nbewahren sie sicher auf und erinnern dich\ngelegentlich an etwas Wichtiges."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créez des tâches, rappels,\nnotes et enregistrements vocaux – nous\nles garderons précieusement et vous rappellerons\nde temps en temps quelque chose d'important."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créez des tâches, rappels,\nnotes et enregistrements vocaux – nous\nles garderons précieusement et vous rappellerons\nde temps en temps quelque chose d'important."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea attività, promemoria,\nnote e registrazioni vocali – le\nconserveremo con cura e ti ricorderemo\nogni tanto qualcosa di importante."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie tarefas, lembretes,\nnotas e gravações de voz – vamos\nguardá-las com cuidado e lembrar você\nde algo importante de vez em quando."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie tarefas, lembretes,\nnotas e gravações de voz – vamos\nguardá-las com cuidado e lembrar você\nde algo importante de vez em quando."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создавайте задачи, напоминания,\nзаметки и голосовые записи - а мы бережно сохраним и иногда\nнапомним о чем - то важном."
+          }
+        }
+      }
+    },
+    "Created:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstellt:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creado:"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creado:"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creado:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créé :"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créé :"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creato:"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criado:"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criado:"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Создано:"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hecho"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hecho"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hecho"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminé"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatto"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concluído"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concluído"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Готово"
+          }
+        }
+      }
+    },
+    "Everything stays in your hands\nand never leaves your device.\nPlan your life with Mi.dō!" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles bleibt in deinen Händen\nund verlässt niemals dein Gerät.\nPlane dein Leben mit Mi.dō!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout reste entre vos mains\net ne quitte jamais votre appareil.\nPlanifiez votre vie avec Mi.dō !"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout reste entre vos mains\net ne quitte jamais votre appareil.\nPlanifiez votre vie avec Mi.dō !"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutto rimane nelle tue mani\ne non lascia mai il tuo dispositivo.\nPianifica la tua vita con Mi.dō!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tudo permanece em suas mãos\ne nunca sai do seu dispositivo.\nPlaneje sua vida com Mi.dō!"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tudo permanece em suas mãos\ne nunca sai do seu dispositivo.\nPlaneje sua vida com Mi.dō!"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Все остается в ваших руках\nи не покидает устройство.\nПланируйте свою жизнь с Mi.dō!"
+          }
+        }
+      }
+    },
+    "Life isn’t a goal, it's journey.\nWe’re happy to walk it with you." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Leben ist kein Ziel, sondern eine Reise.\nWir freuen uns, sie mit dir zu gehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vida no es una meta, es un viaje.\nNos alegra recorrerlo contigo."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vida no es una meta, es un viaje.\nNos alegra recorrerlo contigo."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vida no es una meta, es un viaje.\nNos alegra recorrerlo contigo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vie n’est pas un but, c’est un voyage.\nNous sommes heureux de le parcourir avec vous."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vie n’est pas un but, c’est un voyage.\nNous sommes heureux de le parcourir avec vous."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La vita non è un obiettivo, è un viaggio.\nSiamo felici di farlo con te."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A vida não é um objetivo, é uma jornada.\nFicamos felizes em percorrê-la com você."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A vida não é um objetivo, é uma jornada.\nFicamos felizes em percorrê-la com você."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Жизнь - это не цель, а путь.\nМы рады пройти его вместе с вами."
+          }
+        }
+      }
+    },
+    "Tap and add your notes here..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tippen und fügen Sie hier Ihre Notizen hinzu..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca y añade tus notas aquí..."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca y añade tus notas aquí..."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca y añade tus notas aquí..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez et ajoutez vos notes ici..."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Touchez et ajoutez vos notes ici..."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tocca e aggiungi qui le tue note..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque e adicione suas anotações aqui..."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque e adicione suas anotações aqui..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Нажмите тут, чтобы добавить заметку…"
+          }
+        }
+      }
+    },
+    "Welcome to Mi.dō" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Willkommen bei Mi.dō"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenido a Mi.dō"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenido a Mi.dō"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenido a Mi.dō"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenue sur Mi.dō"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenue sur Mi.dō"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benvenuto su Mi.dō"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bem-vindo ao Mi.dō"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bem-vindo ao Mi.dō"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Добро пожаловать\nв Mi.dō"
+          }
+        }
+      }
+    },
+    "Write title 🎯" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Titel eingeben 🎯"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingresa el título 🎯"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingresa el título 🎯"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingresa el título 🎯"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisir le titre 🎯"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisir le titre 🎯"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inserisci titolo 🎯"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insira o título 🎯"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insira o título 🎯"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Напишите заголовок 🎯"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
 }

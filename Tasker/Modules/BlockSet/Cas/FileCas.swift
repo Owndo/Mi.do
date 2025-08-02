@@ -82,6 +82,13 @@ extension Cas {
         }
         return Model(ModelStruct(mutable: mutable, value: value))
     }
+    
+//    public func loadDeletedModel<T: Decodable>(_ mutable: Mutable) throws -> Model<T>? {
+////        guard let value: T = try loadJson(mutable) else {
+////            return nil
+////        }
+////        return Model(ModelStruct(mutable: mutable, value: value))
+//    }
     @discardableResult
     public func deleteModel<T>(_ model: Model<T>) throws -> String? {
         try delete(model.s.mutable)

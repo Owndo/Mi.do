@@ -20,7 +20,7 @@ public protocol TaskManagerProtocol {
     func preparedTask(task: TaskModel, date: Date) -> TaskModel
     
     /// Delete task
-    func deleteTask(task: MainModel, deleteCompletely: Bool) -> MainModel
+    func deleteTask(task: MainModel, deleteCompletely: Bool)
     
     /// Checks whether the task has been marked as completed for the current day.
     func checkCompletedTaskForToday(task: TaskModel) -> Bool

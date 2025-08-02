@@ -62,6 +62,7 @@ extension Cas {
     @discardableResult
     public func saveData(_ mutable: Mutable, _ data: Data?) throws -> String? {
         var blobId: String?
+        
         if let data {
             blobId = try self.add(data)
         }
@@ -86,6 +87,14 @@ extension Cas {
         return try get(blobId)
     }
     
+//    public func loadDeleteData(_ mutable: Mutable) throws -> Data? {
+//        guard let blobId = mutable.parent?.blobId else {
+//
+//        }
+//        
+//        return try get(blobId)
+//    }
+    
     @discardableResult
     public func delete(_ mutable: Mutable) throws -> String? {
         try saveData(mutable, nil)
@@ -103,6 +112,13 @@ extension Cas {
     }
     
     public func loadJson<T: Decodable>(_ mutable: Mutable) throws -> T? {
+        guard let data = try loadData(mutable) else {
+            return nil
+        }
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+    
+    public func loadDeletedJson<T: Decodable>(_ mutable: Mutable) throws -> T? {
         guard let data = try loadData(mutable) else {
             return nil
         }

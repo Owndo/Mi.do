@@ -66,7 +66,7 @@ final class DateManager: DateManagerProtocol {
     
     //MARK: - Init
     init() {
-        calendar.firstWeekday = casManager.profileModel.value.settings.firstDayOfWeek ?? calendar.firstWeekday
+        calendar.firstWeekday = casManager.profileModel.value.settings.firstDayOfWeek
         
         initializeWeek()
         initializeMonth()

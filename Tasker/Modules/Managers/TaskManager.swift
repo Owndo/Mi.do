@@ -124,6 +124,9 @@ final class TaskManager: TaskManagerProtocol {
         filledTask.endDate = task.endDate
         filledTask.secondNotificationDate = task.secondNotificationDate
         filledTask.dayOfWeek = task.dayOfWeek
+        
+        filledTask.id = task.determinateID()
+        
         return filledTask
     }
     
@@ -164,19 +167,19 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     // MARK: - Deletion
-    func deleteTask(task: MainModel, deleteCompletely: Bool = false) -> MainModel {
+    func deleteTask(task: MainModel, deleteCompletely: Bool = false) {
         guard task.value.markAsDeleted == false else {
-            return task
+            return
         }
         
         let model = task
         if deleteCompletely {
             model.value.markAsDeleted = true
+            casManager.deleteModel(task)
         } else {
             model.value.deleted = updateExistingTaskDeleted(task: model.value)
+            casManager.saveModel(model)
         }
-        
-        return model
     }
     
     func updateExistingTaskDeleted(task: TaskModel) -> [DeleteRecord] {

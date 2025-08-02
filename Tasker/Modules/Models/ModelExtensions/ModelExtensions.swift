@@ -6,10 +6,24 @@
 //
 
 import Foundation
+import BlockSet
 import SwiftUI
 
 //MARK: - Check for visible
 public extension TaskModel {
+    
+    func determinateID() -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        
+        do {
+            let data = try encoder.encode(self)
+            return data.base32()
+        } catch {
+            print("Couldn't create hash for task")
+            return UUID().uuidString
+        }
+    }
     ///Function for check schedule task
     func isScheduledForDate(_ date: Double, calendar: Calendar = Calendar.current) -> Bool {
         let taskNotificationDate = self.notificationDate

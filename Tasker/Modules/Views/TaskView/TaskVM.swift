@@ -345,7 +345,7 @@ public final class TaskVM: Identifiable {
     
     func deleteButtonTapped(model: MainModel, deleteCompletely: Bool = false) async {
         Task {
-            task = taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely).value
+            taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely)
             await saveTask()
             await notificationManager.createNotification()
         }

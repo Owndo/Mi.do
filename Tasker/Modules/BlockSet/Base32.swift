@@ -31,7 +31,7 @@ private let factory85 = SplitFactory(8, 5)
 
 private let factory58 = SplitFactory(5, 8)
 
-extension Sequence where Element == UInt8 {
+public extension Sequence where Element == UInt8 {
     func base32() -> String {
         self.bitSplit(factory85).reduce(into: "") { $0.append($1.base32()) }
     }

@@ -71,6 +71,10 @@ final class CASManager: CASManagerProtocol {
         
         updateTask()
         
+        for i in models {
+            print(i.value)
+        }
+        
     }
     
     func updateTask() {

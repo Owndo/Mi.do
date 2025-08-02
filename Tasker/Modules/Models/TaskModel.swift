@@ -14,13 +14,13 @@ public typealias MainModel = Model<TaskModel>
 
 ///Model for CAS
 public struct TaskModel: Identifiable, Codable {
+    // This UUID uses only like a mock
     public var id: String = UUID().uuidString
     
     public var title = ""
     public var description = ""
     public var speechDescription: String?
-    public var audio: String? = nil
-    public var repeatModel: Bool? = false
+    public var audio: String?
     
     public var createDate = Date.now.timeIntervalSince1970
     public var notificationDate: Double
@@ -44,7 +44,7 @@ public struct TaskModel: Identifiable, Codable {
         description: String = "",
         speechDescription: String? = nil,
         audio: String? = nil,
-        repeatModel: Bool? = nil,
+        
         createDate: Foundation.TimeInterval = Date.now.timeIntervalSince1970,
         notificationDate: Double = 00,
         endDate: Double? = nil,
@@ -62,7 +62,6 @@ public struct TaskModel: Identifiable, Codable {
         self.speechDescription = speechDescription
         self.description = description
         self.audio = audio
-        self.repeatModel = repeatModel
         self.createDate = createDate
         self.notificationDate = notificationDate
         self.duration = duration

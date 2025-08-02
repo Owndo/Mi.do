@@ -116,9 +116,8 @@ final class TaskRowVM: HashableObject {
     
     func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) {
         Task {
-            let newModel = taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+            taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
             taskDeleteTrigger.toggle()
-            casManager.saveModel(newModel)
             
             
             await notificationManager.createNotification()

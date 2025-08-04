@@ -13,7 +13,14 @@ import UIComponents
 struct TaskRow: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @Bindable var vm: TaskRowVM
+    @State private var vm: TaskRowVM
+
+    var task: MainModel
+    
+    init(task: MainModel) {
+        self._vm = State(wrappedValue: TaskRowVM(task: task))
+        self.task = task
+    }
     
     //MARK: - Body
     var body: some View {
@@ -25,7 +32,10 @@ struct TaskRow: View {
                 isSingleTask: vm.singleTask,
                 onDelete: vm.deleteButtonTapped
             )
-        //            .sensoryFeedback(.selection, trigger: vm.selectedTask)
+            .sheet(item: $vm.selectedTask) { task in
+                TaskView(model: task)
+            }
+            .sensoryFeedback(.selection, trigger: vm.selectedTask)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.decrease, trigger: vm.taskDeleteTrigger)
     }
@@ -129,7 +139,7 @@ struct TaskRow: View {
 }
 
 #Preview {
-    TaskRow(vm: TaskRowVM(task: mockModel()))
+    TaskRow(task: mockModel())
 }
 
 struct ContentSizePreferenceKey: PreferenceKey {

@@ -39,7 +39,7 @@ public final class MainVM {
     @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
     //MARK: - Model
-    var taskVM: TaskVM?
+    var mainModel: MainModel?
     
     var profileModel: ProfileData = mockProfileData()
     
@@ -274,7 +274,7 @@ public final class MainVM {
             deleted: []
         ))
         
-        taskVM = TaskVM(mainModel: model)
+        mainModel = model
     }
     
     func handleButtonTap() async {
@@ -309,7 +309,7 @@ public final class MainVM {
             }
             
             if let task {
-                taskVM = TaskVM(mainModel: task)
+                mainModel = task
             }
             
             return
@@ -321,7 +321,7 @@ public final class MainVM {
                 extractBaseId(from: task.value.id) == baseSearchId
             }
             if let task {
-                taskVM = TaskVM(mainModel: task)
+                mainModel = task
             }
         }
     }

@@ -53,16 +53,13 @@ public struct ListView: View {
                         }
                 }
             }
-            .onAppear {
-                vm.updateTasksList()
-            }
+//            .onAppear {
+//                vm.updateTasksList()
+//            }
             .scrollIndicators(.hidden)
             .onPreferenceChange(ContentHeightPreferenceKey.self) { height in
                 vm.contentHeight = height
             }
-        }
-        .sheet(item: $vm.selectedTask) { vm in
-            TaskView(vm: vm)
         }
         .customBlurForContainer(colorScheme: colorScheme)
         .animation(.linear, value: vm.completedTasksHidden)
@@ -84,8 +81,8 @@ public struct ListView: View {
                 .padding(.bottom, 12)
                 
                 VStack(spacing: 2) {
-                    ForEach(vm.tasks, id: \.self) { vm in
-                        TaskRow(vm: vm)
+                    ForEach(vm.tasks) { task in
+                        TaskRow(task: task)
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
@@ -120,8 +117,8 @@ public struct ListView: View {
                 
                 if !vm.completedTasksHidden {
                     VStack(spacing: 2) {
-                        ForEach(vm.completedTasks, id: \.self) { vm in
-                            TaskRow(vm: vm)
+                        ForEach(vm.completedTasks) { task in
+                            TaskRow(task: task)
                                 .foregroundStyle(.labelPrimary)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 16))

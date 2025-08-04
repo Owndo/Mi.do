@@ -12,7 +12,7 @@ import Managers
 import TaskView
 
 @Observable
-final class ListVM: HashableObject {
+final class ListVM {
     @ObservationIgnored
     @Injected(\.casManager) private var casManager: CASManagerProtocol
     @ObservationIgnored
@@ -32,8 +32,6 @@ final class ListVM: HashableObject {
     var startSwipping = false
     var contentHeight: CGFloat = 0
     
-    var selectedTask: TaskVM?
-    
     var completedTasksHidden: Bool {
         casManager.profileModel.value.settings.completedTasksHidden
     }
@@ -42,9 +40,9 @@ final class ListVM: HashableObject {
         casManager.profileModel.value.onboarding.deleteTip
     }
     
-    var tasks: [TaskRowVM] = []
+    var tasks: [MainModel] = []
     
-    var completedTasks: [TaskRowVM] = []
+    var completedTasks: [MainModel] = []
     
     var countOfTodayTasks: Int {
         tasks.count + completedTasks.count
@@ -58,38 +56,38 @@ final class ListVM: HashableObject {
         calendar.startOfDay(for: dateManager.selectedDate).timeIntervalSince1970
     }
     
-    init() {
-        Task {
-            try await Task.sleep(for: .seconds(0.5))
-            NotificationCenter.default.addObserver(self, selector: #selector(updateTasksList), name: Notification.Name("updateTasks"), object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(updateTasksList), name: Notification.Name("selectedDateChange"), object: nil)
-        }
-    }
+//    init() {
+//        Task {
+//            try await Task.sleep(for: .seconds(0.5))
+//            NotificationCenter.default.addObserver(self, selector: #selector(updateTasksList), name: Notification.Name("updateTasks"), object: nil)
+//            NotificationCenter.default.addObserver(self, selector: #selector(updateTasksList), name: Notification.Name("selectedDateChange"), object: nil)
+//        }
+//    }
     
-    @objc func updateTasksList() {
-        tasks.removeAll()
-        completedTasks.removeAll()
-        
-        for i in taskManager.activeTasks {
-            let taskRowVM = TaskRowVM(task: i)
-            
-            taskRowVM.selectedTask = { [weak self] task in
-                self?.selectedTask = TaskVM(mainModel: task)
-            }
-            
-            tasks.append(taskRowVM)
-        }
-        
-        for i in taskManager.completedTasks {
-            let taskRowVM = TaskRowVM(task: i)
-            
-            taskRowVM.selectedTask = { [weak self] task in
-                self?.selectedTask = TaskVM(mainModel: task)
-            }
-            
-            completedTasks.append(taskRowVM)
-        }
-    }
+//    @objc func updateTasksList() {
+//        tasks.removeAll()
+//        completedTasks.removeAll()
+//        
+//        for i in taskManager.activeTasks {
+//            let taskRowVM = TaskRowVM(task: i)
+//            
+//            taskRowVM.selectedTask = { [weak self] task in
+//                self?.selectedTask = TaskVM(mainModel: task)
+//            }
+//            
+//            tasks.append(taskRowVM)
+//        }
+//        
+//        for i in taskManager.completedTasks {
+//            let taskRowVM = TaskRowVM(task: i)
+//            
+//            taskRowVM.selectedTask = { [weak self] task in
+//                self?.selectedTask = TaskVM(mainModel: task)
+//            }
+//            
+//            completedTasks.append(taskRowVM)
+//        }
+//    }
     
     //MARK: - Check for visible
     func backToTodayButtonTapped() {

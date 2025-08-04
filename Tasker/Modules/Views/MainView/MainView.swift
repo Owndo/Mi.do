@@ -211,8 +211,8 @@ public struct MainView: View {
                 PaywallView()
             }
         }
-        .sheet(item: $vm.taskVM) { model in
-            TaskView(vm: model)
+        .sheet(item: $vm.mainModel) { model in
+            TaskView(model: model)
                 .onDisappear {
                     vm.disappear()
                 }

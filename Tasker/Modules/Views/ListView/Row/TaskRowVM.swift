@@ -29,8 +29,7 @@ final class TaskRowVM: HashableObject {
     
     //MARK: - Properties
     var playingTask: TaskModel?
-    var selectedTask: ((MainModel) -> Void)?
-    var deletedTask: ((MainModel) -> Void)?
+    var selectedTask: MainModel?
     
     var task: MainModel
     
@@ -72,8 +71,7 @@ final class TaskRowVM: HashableObject {
     
     //MARK: Selected task
     func selectedTaskButtonTapped() {
-        selectedTask?(task)
-        
+        selectedTask = task
         stopToPlay()
         
         // telemetry

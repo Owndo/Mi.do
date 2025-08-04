@@ -18,6 +18,18 @@ final class WeekVM {
     
     var selectedDayOfWeek = Date()
     
+    var scaleEffect: CGFloat = 1
+    
+    var trigger = false {
+        didSet {
+            Task {
+                scaleEffect = 1.2
+                try? await Task.sleep(for: .seconds(0.3))
+                scaleEffect = 1
+            }
+        }
+    }
+    
     var calendar: Calendar {
         dateManager.calendar
     }
@@ -47,6 +59,10 @@ final class WeekVM {
     }
     
     func backToTodayButtonTapped() {
+        if selectedDayIsToday() {
+            trigger.toggle()
+        }
+        
         dateManager.backToToday()
         
         // telemetry

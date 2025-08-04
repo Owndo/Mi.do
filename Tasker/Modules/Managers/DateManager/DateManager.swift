@@ -146,7 +146,7 @@ final class DateManager: DateManagerProtocol {
     }
     
     func selectedDayIsToday() -> Bool {
-        !calendar.isDate(selectedDate, inSameDayAs: currentTime)
+        calendar.isDate(selectedDate, inSameDayAs: currentTime)
     }
     
     private func generateWeek(for date: Date) -> [Date] {

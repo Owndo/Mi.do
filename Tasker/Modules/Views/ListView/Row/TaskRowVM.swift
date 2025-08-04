@@ -33,6 +33,8 @@ final class TaskRowVM: HashableObject {
     
     var task: MainModel
     
+    var taskTitle = ""
+    
     //MARK: - UI States
     var taskDoneTrigger = false
     var taskDeleteTrigger = false
@@ -57,6 +59,11 @@ final class TaskRowVM: HashableObject {
     
     init(task: MainModel) {
         self.task = task
+        if task.title != "" {
+            taskTitle = task.title
+        } else {
+            taskTitle = "New task"
+        }
         
         if task.title.count < 20 {
             disabledScroll = true

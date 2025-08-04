@@ -482,6 +482,7 @@ public final class TaskVM: Identifiable {
         if let hashOfAudio {
             task.audio = hashOfAudio
         }
+        
         task.voiceMode = true
         
         if task.title.isEmpty || task.title == "New task" {

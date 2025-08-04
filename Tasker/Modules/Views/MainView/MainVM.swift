@@ -119,7 +119,7 @@ public final class MainVM {
     }
     
     var showTips: Bool {
-        taskManager.activeTasks.isEmpty && taskManager.completedTasks.isEmpty
+        taskManager.tasks.isEmpty
     }
     
     public var profileUpdateTrigger: Bool {
@@ -265,7 +265,7 @@ public final class MainVM {
     //MARK: - Create task
     func createTask(with audioHash: String? = nil) {
         let model = MainModel(
-            model: .initial(
+            .initial(
                 TaskModel(
                     notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970
                 )
@@ -315,7 +315,7 @@ public final class MainVM {
         
         if let taskId = notification?.userInfo?["taskId"] as? String {
             let baseSearchId = extractBaseId(from: taskId)
-            let task = taskManager.activeTasks.first { task in
+            let task = taskManager.tasks.first { task in
                 extractBaseId(from: task.id) == baseSearchId
             }
             if let task {

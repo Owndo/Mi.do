@@ -25,33 +25,22 @@ final class MockCas: CASManagerProtocol {
     
     var profileUpdateTriger = false
     
-    var models: [MainModel] = []
-    var profileModel: ProfileData = mockProfileData()
+    var models: [String: MainModel] = [:]
+    var profileModel = mockProfileData()
     
     var activeTasks = [MainModel]()
     
-    var completedTasks = [MainModel]()
+    var completedTasks: [String: MainModel] = [:]
     
     var deletedTasks: [MainModel] {
-        models.filter { $0.markAsDeleted == true }
+        models.values.filter { $0.markAsDeleted == true }
     }
     
     var allCompletedTasks: [MainModel] {
-        models.filter { !$0.done.isEmpty }
+        models.values.filter { !$0.done.isEmpty }
     }
     
-    var allCompletedTasksCount: Int {
-        var count = 0
-        
-        for task in models {
-            if !task.done.isEmpty {
-                for _ in task.done {
-                    count += 1
-                }
-            }
-        }
-        return count
-    }
+    var allCompletedTasksCount = Int()
     
     init() {
         let localDirectory = MockCas.createMainDirectory()!
@@ -64,28 +53,20 @@ final class MockCas: CASManagerProtocol {
         
         syncCases()
         
-        models = fetchModels()
+        fetchModels()
         profileModel = fetchProfileData()
         
         firstTimeOpen()
         
         updateTask()
         
-        for i in models {
-            print("models - \(i)")
-        }
-        
-        for i in activeTasks {
-            print("Active tasks - \(i.title)")
-        }
-        
+//        for i in models {
+//            print("models - \(i.notificationDate)")
+//        }
     }
     
     func updateTask() {
-        activeTasks = models.filter { $0.markAsDeleted == false }
-        completedTasks = models.filter { $0.markAsDeleted == false && !$0.done.isEmpty }
-        
-        NotificationCenter.default.post(name: NSNotification.Name("updateTasks"), object: nil)
+//        NotificationCenter.default.post(name: NSNotification.Name("updateTasks"), object: nil)
     }
     
     //MARK: Actions for work with CAS
@@ -93,8 +74,9 @@ final class MockCas: CASManagerProtocol {
         do {
             try cas.saveJsonModel(task.model)
             indexForDelete(task)
-            models.append(task)
-            taskUpdateTrigger.toggle()
+            models[task.id] = task
+            
+            
         } catch {
             print("Couldn't save daat inside CAS")
         }
@@ -144,20 +126,19 @@ final class MockCas: CASManagerProtocol {
     }
     
     //MARK: - Task models
-    func fetchModels() -> [MainModel] {
+    func fetchModels() {
         let list = try! cas.listMutable()
         
-        return list.compactMap { mutable in
+        models = list.reduce(into: [String : MainModel]()) { result, mutable in
             do {
-                guard let taskModel: Model<TaskModel> = try cas.loadJsonModel(mutable) else {
-                    return nil
+                if let taskModel: Model<TaskModel> = try cas.loadJsonModel(mutable) {
+                    let task = UITaskModel(taskModel)
+                    result[task.id] = task
                 }
-                
-                return UITaskModel(model: taskModel)
+//                return UITaskModel(taskModel)
                 
             } catch {
                 print("Error while loading model: \(error)")
-                return nil
             }
         }
     }
@@ -172,7 +153,8 @@ final class MockCas: CASManagerProtocol {
                     return nil
                 }
                 
-                return UIProfileModel(model: profileModel)
+                return UIProfileModel(profileModel)
+                
             } catch {
                 return nil
             }
@@ -226,9 +208,21 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: Predicate
     private func indexForDelete(_ task: MainModel) {
+           models.removeValue(forKey: task.id)
+       }
+       
+    private func completedTaskCount() {
+        allCompletedTasksCount = 0
         
-        
-        
+        for task in completedTasks {
+            guard !task.value.done.isEmpty else {
+                continue
+            }
+            
+            for _ in task.value.done {
+                allCompletedTasksCount += 1
+            }
+        }
     }
     
     //MARK: - Onboarding
@@ -246,7 +240,7 @@ final class MockCas: CASManagerProtocol {
         saveModel(factory.create(.randomHours))
         saveModel(factory.create(.readSomething))
         saveModel(factory.create(.withoutPhone))
-        //        
+        
         profileModel.onboarding.firstTimeOpen = false
         saveProfileData(profileModel)
     }

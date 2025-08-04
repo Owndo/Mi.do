@@ -62,8 +62,10 @@ public struct WeekView: View {
         .padding(.bottom, 2)
         .animation(.default, value: vm.indexForWeek)
         .animation(.default, value: vm.selectedDate)
+        .animation(.default, value: vm.scaleEffect)
         .sensoryFeedback(.impact, trigger: vm.selectedDate)
         .sensoryFeedback(.levelChange, trigger: vm.indexForWeek)
+        .sensoryFeedback(.impact, trigger: vm.trigger)
     }
     
     @ViewBuilder
@@ -100,7 +102,7 @@ public struct WeekView: View {
             vm.backToTodayButtonTapped()
         } label: {
             HStack {
-                if vm.selectedDayIsToday() {
+                if !vm.selectedDayIsToday() {
                     Image(systemName: "arrow.uturn.backward")
                         .foregroundStyle(.labelSecondary)
                 }
@@ -108,6 +110,7 @@ public struct WeekView: View {
                 Text(vm.dateToString())
                     .font(.system(.subheadline, design: .rounded, weight: .medium))
                     .foregroundStyle(.labelSecondary)
+                    .scaleEffect(vm.scaleEffect)
             }
             .padding(.vertical, 7)
             .padding(.horizontal, 14)

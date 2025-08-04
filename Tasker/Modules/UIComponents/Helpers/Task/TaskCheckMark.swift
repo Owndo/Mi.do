@@ -11,6 +11,8 @@ import Models
 public struct TaskCheckMark: View {
     @Environment(\.colorScheme) var colorScheme
     
+    @State var animate = false
+    
     var complete: Bool
     var task: UITaskModel
     var action: () -> Void
@@ -19,6 +21,7 @@ public struct TaskCheckMark: View {
         self.complete = complete
         self.task = task
         self.action = action
+        animate = complete
     }
     
     public var body: some View {
@@ -30,15 +33,25 @@ public struct TaskCheckMark: View {
                     RoundedRectangle(cornerRadius: 6)
                         .stroke(task.taskColor.color(for: colorScheme).invertedSeparartorSecondary(colorScheme), lineWidth: 1)
                 )
-            if complete {
+            
+            if animate {
                 Image(systemName: "checkmark")
                     .foregroundStyle(task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
+                    .transition(.symbolEffect(.disappear))
                     .bold()
             }
         }
         .frame(width: 24, height: 24)
         .onTapGesture {
-            action()
+            animate.toggle()
+            
+            Task {
+                try await Task.sleep(for: .seconds(0.2))
+                action()
+            }
+        }
+        .onAppear {
+            animate = complete
         }
     }
 }

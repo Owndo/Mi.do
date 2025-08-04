@@ -77,7 +77,7 @@ public class TaskModelWrapper <T>: Identifiable, Equatable {
     public var id: String
     public var model: Model<T>
     
-    public init(model: Model<T>) {
+    public init(_ model: Model<T>) {
         self.model = model
         self.id = UUID().uuidString
     }
@@ -90,8 +90,8 @@ public class TaskModelWrapper <T>: Identifiable, Equatable {
 @Observable
 public class UITaskModel: TaskModelWrapper<TaskModel> {
     public var title: String {
-        get { model.value.title ?? "New Task"}
-        set { model.value.title = nilIfNeed(newValue, is: "New Task") }
+        get { model.value.title ?? ""}
+        set { model.value.title = nilIfNeed(newValue, is: "") }
     }
     
     public var description: String {
@@ -123,9 +123,9 @@ public class UITaskModel: TaskModelWrapper<TaskModel> {
         set { model.value.duration = nilIfNeed(newValue, is: 0.0)}
     }
     
-    public var endDate: Double {
-        get { model.value.endDate ?? 0.0 }
-        set { model.value.endDate = nilIfNeed(newValue, is: 0.0)}
+    public var endDate: Double? {
+        get { model.value.endDate ?? nil }
+        set { model.value.endDate = nilIfNeed(newValue, is: nil)}
     }
     
     public var secondNotificationDate: Double {
@@ -181,7 +181,7 @@ func nilIfNeed<T: Equatable>(_ value: T?, is defaultValue: T?) -> T? {
 public func mockModel() -> MainModel {
 #if targetEnvironment(simulator)
     MainModel(
-        model: .initial(
+        .initial(
             TaskModel(
                 title: "New task",
                 description: "",
@@ -195,7 +195,7 @@ public func mockModel() -> MainModel {
     )
 #else
     MainModel(
-        model: .initial(
+        .initial(
             TaskModel(
                 title: "New task",
                 description: "",

@@ -21,7 +21,7 @@ final class ModelsFactory {
         switch model {
         case .drinkWater:
             UITaskModel(
-                model: .initial(
+                .initial(
                     TaskModel(
                         title: "💧 Drink Water",
                         description: "You’re not a cactus. Hydrate or evaporate.",
@@ -38,7 +38,7 @@ final class ModelsFactory {
             )
         case .clearMind:
             UITaskModel(
-                model: .initial(
+                .initial(
                     TaskModel(
                         title: "🧹 Clear Your Mind",
                         description: "Close mental tabs. Breathe. Meditate or journal, or just stare into the void.",
@@ -55,7 +55,7 @@ final class ModelsFactory {
             )
         case .bestApp:
             UITaskModel(
-                model: .initial(
+                .initial(
                     TaskModel(
                         title: "📱 Install the Best App",
                         description: "Mega task. Install the one app to rule them all. So... you did it",
@@ -71,7 +71,7 @@ final class ModelsFactory {
             )
         case .planForTommorow:
             UITaskModel(
-                model: .initial(
+                .initial(
                     TaskModel(
                         title: "🗓️ Plan Tomorrow",
                         description: "Maybe you'll save the world tomorrow. Might wanna write that down.",
@@ -88,7 +88,7 @@ final class ModelsFactory {
             )
         case .withoutPhone:
             UITaskModel(
-                model: .initial(
+                .initial(
                     TaskModel(
                         title: "📵 10 Minutes Without Phone",
                         description: "Put the glowing rectangle down. The world can wait. Breathe...",
@@ -105,7 +105,7 @@ final class ModelsFactory {
             )
         case .randomHours:
             UITaskModel(
-                model: .initial(
+                .initial(
                     TaskModel(
                         title: "💡 Random Hour",
                         description: "Google something you don’t understand. Quantum foam? Why cats scream at 3 AM? Choose your adventure.",
@@ -122,7 +122,7 @@ final class ModelsFactory {
             )
         case .readSomething:
             UITaskModel(
-                model: .initial(
+                .initial(
                     TaskModel(
                         title: "📚 Read Something That’s Not a Screen",
                         description: "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge.",
@@ -157,7 +157,6 @@ final class ModelsFactory {
         
         return targetDate
     }
-    
     
     enum Models {
         case drinkWater

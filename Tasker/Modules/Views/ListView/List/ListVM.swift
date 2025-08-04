@@ -60,31 +60,6 @@ final class ListVM {
         completedTasksHidden = casManager.profileModel.settings.completedTasksHidden
     }
     
-    //    @objc func updateTasksList() {
-    //        tasks.removeAll()
-    //        completedTasks.removeAll()
-    //
-    //        for i in taskManager.activeTasks {
-    //            let taskRowVM = TaskRowVM(task: i)
-    //
-    //            taskRowVM.selectedTask = { [weak self] task in
-    //                self?.selectedTask = TaskVM(mainModel: task)
-    //            }
-    //
-    //            tasks.append(taskRowVM)
-    //        }
-    //
-    //        for i in taskManager.completedTasks {
-    //            let taskRowVM = TaskRowVM(task: i)
-    //
-    //            taskRowVM.selectedTask = { [weak self] task in
-    //                self?.selectedTask = TaskVM(mainModel: task)
-    //            }
-    //
-    //            completedTasks.append(taskRowVM)
-    //        }
-    //    }
-    
     //MARK: - Check for visible
     func backToTodayButtonTapped() {
         dateManager.backToToday()
@@ -131,7 +106,8 @@ final class ListVM {
     
     func completedTaskViewChange() {
         let model = casManager.profileModel
-        model.settings.completedTasksHidden.toggle()
+        completedTasksHidden.toggle()
+        model.settings.completedTasksHidden = completedTasksHidden
         
         casManager.saveProfileData(model)
         

@@ -12,21 +12,25 @@ import SwiftUI
 //MARK: - Check for visible
 public extension UITaskModel {
     
-//    func determinateID() -> String {
-//        let encoder = JSONEncoder()
-//        encoder.outputFormatting = [.sortedKeys]
-//        
-//        do {
-//            let data = try encoder.encode(self)
-//            return data.base32()
-//        } catch {
-//            print("Couldn't create hash for task")
-//            return UUID().uuidString
-//        }
-//    }
+    //    func determinateID() -> String {
+    //        let encoder = JSONEncoder()
+    //        encoder.outputFormatting = [.sortedKeys]
+    //
+    //        do {
+    //            let data = try encoder.encode(self)
+    //            return data.base32()
+    //        } catch {
+    //            print("Couldn't create hash for task")
+    //            return UUID().uuidString
+    //        }
+    //    }
     ///Function for check schedule task
     func isScheduledForDate(_ date: Double, calendar: Calendar = Calendar.current) -> Bool {
         let taskNotificationDate = self.notificationDate
+        
+        if self.repeatTask == .never {
+            return taskNotificationDate >= date && taskNotificationDate < date + 86400
+        }
         
         let dateAsDate = Date(timeIntervalSince1970: date)
         let taskNotificationDateAsDate = Date(timeIntervalSince1970: taskNotificationDate)
@@ -35,20 +39,15 @@ public extension UITaskModel {
             return false
         }
         
-            let taskEndDate = Date(timeIntervalSince1970: endDate)
-            guard dateAsDate <= taskEndDate else {
-                return false
-            }
-        
+        if let endDate = self.endDate {
+            guard date <= endDate else { return false }
+        }
         
         switch self.repeatTask {
         case .never:
-            return taskNotificationDate >= date &&
-            taskNotificationDate < date + 86400
-            
+            return true
         case .daily:
             return true
-            
         case .weekly:
             let taskWeekday = calendar.component(.weekday, from: taskNotificationDateAsDate)
             let selectedWeekday = calendar.component(.weekday, from: dateAsDate)

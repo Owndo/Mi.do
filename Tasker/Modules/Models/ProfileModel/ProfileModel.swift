@@ -27,7 +27,7 @@ public class ProfileModelWrapper<T>: Identifiable {
     public var id: String
     public var model: Model<T>
     
-    public init(model: Model<T>) {
+    public init(_ model: Model<T>) {
         self.id = UUID().uuidString
         self.model = model
     }
@@ -77,7 +77,7 @@ public final class UIProfileModel: ProfileModelWrapper<ProfileModel> {
 
 public func mockProfileData() -> ProfileData {
     ProfileData(
-        model: .initial(
+        .initial(
             ProfileModel()
         )
     )

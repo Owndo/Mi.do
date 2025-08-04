@@ -62,8 +62,10 @@ public struct ListView: View {
             }
         }
         .customBlurForContainer(colorScheme: colorScheme)
-        .animation(.linear, value: vm.completedTasksHidden)
+        .animation(.default, value: vm.completedTasksHidden)
         .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
+        .animation(.spring, value: vm.tasks)
+        .animation(.spring, value: vm.completedTasks)
     }
     
     @ViewBuilder
@@ -86,6 +88,7 @@ public struct ListView: View {
                     }
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
+                .clipped()
             }
         }
         //        .clipShape(RoundedRectangle(cornerRadius: 16))

@@ -104,6 +104,9 @@ public struct TaskView: View {
             .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)
             .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.isRecording)
             .animation(.default, value: vm.task.audio)
+            .animation(.easeInOut, value: vm.showDatePicker)
+            .animation(.easeInOut, value: vm.showTimePicker)
+            .animation(.easeInOut, value: vm.task.repeatTask)
             .sheet(isPresented: $vm.shareViewIsShowing) {
                 ShareView(activityItems: [vm.task])
                     .presentationDetents([.medium])
@@ -131,12 +134,12 @@ public struct TaskView: View {
             
             Spacer()
             
-//            Button {
-//                vm.shareViewButtonTapped()
-//            } label: {
-//                Image(systemName: "square.and.arrow.up")
-//            }
-            .padding(.vertical, 11)
+            //            Button {
+            //                vm.shareViewButtonTapped()
+            //            } label: {
+            //                Image(systemName: "square.and.arrow.up")
+            //            }
+                .padding(.vertical, )
         }
         .tint(colorScheme.accentColor())
         .padding(.top, 14)
@@ -325,9 +328,7 @@ public struct TaskView: View {
     private func DateSelection() -> some View {
         VStack(spacing: 0) {
             Button {
-                withAnimation(.easeInOut(duration: vm.showDatePicker == false ? 0 : 0.2)) {
-                    vm.selectDateButtonTapped()
-                }
+                vm.selectDateButtonTapped()
             } label: {
                 HStack(spacing: 13) {
                     Image(systemName: "calendar")
@@ -359,6 +360,7 @@ public struct TaskView: View {
             }
         }
         .sensoryFeedback(.impact, trigger: vm.showDatePicker)
+        .clipped()
     }
     
     //MARK: Time Selector
@@ -366,9 +368,7 @@ public struct TaskView: View {
     private func TimeSelection() -> some View {
         VStack(spacing: 0) {
             Button {
-                withAnimation(.easeInOut(duration: vm.showTimePicker == false ? 0 : 0.2)) {
-                    vm.selectTimeButtonTapped()
-                }
+                vm.selectTimeButtonTapped()
             } label: {
                 HStack(spacing: 13) {
                     Image(systemName: "clock")
@@ -399,6 +399,7 @@ public struct TaskView: View {
             }
         }
         .sensoryFeedback(.impact, trigger: vm.showTimePicker)
+        .clipped()
     }
     
     //MARK: Repeat Selector
@@ -470,6 +471,7 @@ public struct TaskView: View {
             }
             .padding(.bottom, 13)
         }
+        .clipped()
         .sensoryFeedback(.selection, trigger: vm.dayOfWeek)
     }
     

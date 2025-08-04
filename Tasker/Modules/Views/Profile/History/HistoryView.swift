@@ -32,7 +32,7 @@ struct HistoryView: View {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 17))
                             
-                            Text("Profile")
+                            Text("Profile", bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .medium))
                         }
                         .tint(colorScheme.accentColor())
@@ -40,7 +40,7 @@ struct HistoryView: View {
                 }
             }
             .navigationBarBackButtonHidden()
-            .navigationTitle("Task history")
+            .navigationTitle(Text("Task history", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
         }
     }

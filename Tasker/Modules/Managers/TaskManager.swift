@@ -40,42 +40,28 @@ final class TaskManager: TaskManagerProtocol {
         return allDates.max()?.timeIntervalSince1970
     }
     
-    var tasks = [MainModel]()
+    var tasks: [MainModel] {
+        let models = casManager.models.values.filter { value in
+            value.deleted.contains { $0.deletedFor == selectedDate } != true &&
+            value.isScheduledForDate(selectedDate, calendar: calendar)
+        }
+        return sortedTasks(tasks: models)
+    }
+    
+    var completedTasks: [MainModel] {
+        tasks.filter {
+            $0.done.contains { $0.completedFor == selectedDate }
+        }
+    }
     
     var activeTasks: [MainModel] {
-        casManager.activeTasks.filter {
+        tasks.filter {
             $0.done.contains { $0.completedFor == selectedDate } != true
         }
     }
     
-    var completedTasks: [MainModel] {
-        casManager.completedTasks.filter {
-            $0.done.contains { $0.completedFor == selectedDate } == true
-        }
-    }
-    
-  
-    
-    init() {
-   
-        updateTasks()
-        
-        for i in activeTasks {
-            print("Hello - \(i.title)")
-        }
-    }
-    
-    @objc private func updateTasks() {
-        let tasksFromCAS = casManager.activeTasks.filter {
-            $0.deleted.contains { $0.deletedFor == selectedDate } != true &&
-            $0.isScheduledForDate(selectedDate, calendar: calendar)
-        }
-        
-        tasks = sortedTasks(tasks: tasksFromCAS)
-    }
-    
     func thisWeekTasks(date: Double) async -> [MainModel] {
-        return casManager.activeTasks
+        return casManager.models.values
             .filter { task in
                 return task.deleted.contains { $0.deletedFor == date } != true
             }

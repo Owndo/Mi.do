@@ -52,7 +52,7 @@ struct TaskRow: View {
                         }
                         
                         ScrollView(.horizontal) {
-                            Text(LocalizedStringKey(vm.task.title), bundle: .module)
+                            Text(LocalizedStringKey(vm.taskTitle), bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .regular))
                                 .multilineTextAlignment(.leading)
                                 .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))

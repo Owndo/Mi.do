@@ -61,6 +61,7 @@ public final class TaskVM: Identifiable {
     var alert: AlertModel?
     var disabledButton = false
     var checkMarkTip = false
+    var defaultTimeHasBeenSet = false
     
     var showPaywall: Bool {
         subscriptionManager.showPaywall
@@ -157,12 +158,27 @@ public final class TaskVM: Identifiable {
     }
     
     private func setUpTime() {
-        notificationDate = combineDateAndTime(timeComponents: originalNotificationTimeComponents)
+        sourseDateOfNotification = Date(timeIntervalSince1970: task.notificationDate)
         
-        sourseDateOfNotification = Date(timeIntervalSince1970: mainModel.value.notificationDate)
+        guard let data = firstTimeCreateTask(task) else {
+            notificationDate = createNotificationDateFromExistTask()
+            dateHasBeenChanged = false
+            return
+        }
+        
+        notificationDate = data
         dateHasBeenChanged = false
     }
     
+    func createNotificationDateFromExistTask() -> Date {
+        var dateComponent = DateComponents()
+        dateComponent.year = calendar.dateComponents([.year], from: dateManager.selectedDate).year
+        dateComponent.month = calendar.dateComponents([.month], from: dateManager.selectedDate).month
+        dateComponent.day = calendar.dateComponents([.day], from: dateManager.selectedDate).day
+        dateComponent.hour = originalNotificationTimeComponents.hour
+        dateComponent.minute = originalNotificationTimeComponents.minute
+        return calendar.date(from: dateComponent)!
+    }
     
     private func setUpColor() {
         switch task.taskColor {
@@ -226,43 +242,27 @@ public final class TaskVM: Identifiable {
     
     
     private func changeNotificationTime() -> Double {
-        var sourceDate = calendar.dateComponents([.year, .month, .day], from: sourseDateOfNotification)
+        guard dateHasBeenChanged else {
+            return sourseDateOfNotification.timeIntervalSince1970
+        }
         
-        if dateHasBeenChanged && !calendar.isDate(notificationDate, inSameDayAs: sourseDateOfNotification) {
+        guard !defaultTimeHasBeenSet else {
             return notificationDate.timeIntervalSince1970
         }
         
-        if dateHasBeenChanged && !calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) {
+        guard calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) else {
             return notificationDate.timeIntervalSince1970
-        } else if dateHasBeenChanged && !setUpDefaultTime(task) {
+        }
+        
+        guard !calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) else {
+            var sourceDate = calendar.dateComponents([.year, .month, .day], from: sourseDateOfNotification)
             sourceDate.hour = calendar.component(.hour, from: notificationDate)
             sourceDate.minute = calendar.component(.minute, from: notificationDate)
             
             return calendar.date(from: sourceDate)!.timeIntervalSince1970
-        } else if dateHasBeenChanged && calendar.isDate(notificationDate, inSameDayAs: dateManager.selectedDate) {
-            var dateComponents = DateComponents()
-            dateComponents.year = calendar.component(.year, from: sourseDateOfNotification)
-            dateComponents.month = calendar.component(.month, from: sourseDateOfNotification)
-            dateComponents.day = calendar.component(.day, from: sourseDateOfNotification)
-            dateComponents.hour = calendar.component(.hour, from: notificationDate)
-            dateComponents.minute = calendar.component(.minute, from: notificationDate)
-            
-            return calendar.date(from: dateComponents)!.timeIntervalSince1970
         }
-        //        else if dateHasBeenChanged && !calendar.isDate(sourseDateOfNotification, inSameDayAs: dateManager.selectedDate) {
-        //            print("3")
-        //            var dateComponents = DateComponents()
-        //            dateComponents.year = calendar.component(.year, from: sourseDateOfNotification)
-        //            dateComponents.month = calendar.component(.month, from: sourseDateOfNotification)
-        //            dateComponents.day = calendar.component(.day, from: notificationDate)
-        //            dateComponents.hour = calendar.component(.hour, from: notificationDate)
-        //            dateComponents.minute = calendar.component(.minute, from: notificationDate)
-        //
-        //            return calendar.date(from: dateComponents)!.timeIntervalSince1970
-        //        }
-        else {
-            return sourseDateOfNotification.timeIntervalSince1970
-        }
+        
+        return notificationDate.timeIntervalSince1970
     }
     
     private func preparedTask() -> TaskModel {
@@ -271,24 +271,17 @@ public final class TaskVM: Identifiable {
     
     //MARK: - Date and time
     private func dateToString() -> LocalizedStringKey {
-        dateManager.dateToString(for: dateManager.selectedDate, useForWeekView: false)
+        dateManager.dateToString(for: notificationDate, useForWeekView: false)
     }
     
-    private func combineDateAndTime(timeComponents: DateComponents) -> Date {
-        guard setUpDefaultTime(task) else {
-            return Date(timeIntervalSince1970: task.notificationDate)
+    //MARK: - First time check
+    private func firstTimeCreateTask(_ task: TaskModel) -> Date? {
+        guard taskManager.activeTasks.contains(where: { $0.value.id == task.id }) else {
+            defaultTimeHasBeenSet = true
+            return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: originalNotificationTimeComponents)
         }
         
-        return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: timeComponents)
-    }
-    
-    
-    private func setUpDefaultTime(_ task: TaskModel) -> Bool {
-        if taskManager.activeTasks.contains(where: { $0.value.id == task.id }) {
-            return false
-        } else {
-            return true
-        }
+        return nil
     }
     
     private func dateHasBeenSelected() {

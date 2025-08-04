@@ -23,15 +23,12 @@ public struct RecordButton: View {
     var countOfSec: Double
     var animationAmount: Float
     
-    //    var action: () -> Void
-    
-    public init(isRecording: Binding<Bool>, showTips: Bool, progress: Double, countOfSec: Double, animationAmount: Float/*, action: @escaping () -> Void*/) {
+    public init(isRecording: Binding<Bool>, showTips: Bool, progress: Double, countOfSec: Double, animationAmount: Float) {
         self._isRecording = isRecording
         self.showTips = showTips
         self.progress = progress
         self.countOfSec = countOfSec
         self.animationAmount = animationAmount
-        //        self.action = action
     }
     
     public var body: some View {

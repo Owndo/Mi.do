@@ -8,10 +8,15 @@
 import Foundation
 import StoreKit
 import SwiftUICore
+import Models
 
 @Observable
 public final class SubscriptionManager: SubscriptionManagerProtocol {
+    //    @ObservationIgnored
+    //    @Injected(\.casManager) var casManager
+    
     //MARK: States for UI
+    //    var profileModel: ProfileData?
     public var showPaywall = false
     public var pending = false
     
@@ -28,6 +33,8 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
             updatePurchase = backgroundTransactionUpdate()
             await loadProducts()
         }
+        
+        //        profileModel = casManager.profileModel
     }
     
     deinit {
@@ -39,6 +46,12 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
     }
     
     public func hasSubscription() -> Bool {
+        //       if let model = profileModel {
+        //           if model.value.createdProfile + 86400 > Date.now.timeIntervalSince1970 {
+        //               return true
+        //           }
+        //        }
+        
         guard purchaseProductId.isEmpty else {
             return true
         }
@@ -180,7 +193,7 @@ public extension Product {
     func intoductoryOffer() -> LocalizedStringKey? {
         if let offer = self.subscription?.introductoryOffer {
             switch offer.period {
-            case .weekly: 
+            case .weekly:
                 return "Free week"
             default:
                 return nil
@@ -201,7 +214,7 @@ public extension Product.SubscriptionPeriod.Unit {
             return "/ month"
         case .year:
             return "/ year"
-         default:
+        default:
             return ""
         }
     }
@@ -216,7 +229,7 @@ public extension Product.SubscriptionPeriod.Unit {
             return " / week"
         case .year:
             return " / week"
-         default:
+        default:
             return ""
         }
     }

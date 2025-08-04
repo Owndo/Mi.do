@@ -234,6 +234,8 @@ public struct MainView: View {
             Spacer()
             
             RecordButton(isRecording: $vm.isRecording, showTips: vm.showTips, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl)
+                .padding(20)
+                .contentShape(.circle)
                 .disabled(vm.disabledButton)
                 .onTapGesture {
                     Task {

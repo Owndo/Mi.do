@@ -70,7 +70,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     
     //MARK: - Main function for scheduling notification
-    private func scheduleNotification(_ task: TaskModel) {
+    private func scheduleNotification(_ task: UITaskModel) {
         guard permissibleQuantity() else {
             return
         }
@@ -122,7 +122,7 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     //MARK: - Single notification
-    private func createSingleNotification(_ task: TaskModel) {
+    private func createSingleNotification(_ task: UITaskModel) {
         notificationContent.title = task.title
         notificationContent.body = task.description
         notificationContent.userInfo = ["taskID": task.id]
@@ -151,7 +151,7 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     //MARK: - Create repeat notification
-    private func createRepeatNotification(_ task: TaskModel) {
+    private func createRepeatNotification(_ task: UITaskModel) {
         var uniqueNotificationID = task.id
         
         notificationContent.title = task.title
@@ -255,7 +255,7 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     //MARK: - Specific single notification
-    private func createSpecificSingleNotification(_ task: TaskModel, date: Date) {
+    private func createSpecificSingleNotification(_ task: UITaskModel, date: Date) {
         var dateComponents = DateComponents()
         dateComponents.year = calendar.component(.year, from: date)
         dateComponents.month = calendar.component(.month, from: date)
@@ -299,11 +299,11 @@ final class NotificationManager: NotificationManagerProtocol {
         await notificationCenter.pendingNotificationRequests().count
     }
     
-    func removeEvent(for task: TaskModel) async {
+    func removeEvent(for task: UITaskModel) async {
         await deleteNotification(for: task.id)
     }
     
-    func removeEvents(for tasks: [TaskModel]) async {
+    func removeEvents(for tasks: [UITaskModel]) async {
         for task in tasks {
             await deleteNotification(for: task.id)
         }
@@ -365,17 +365,16 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     /// Avalible tasks for day
-    private func tasksForSpecificDay(day: Date) -> [TaskModel] {
+    private func tasksForSpecificDay(day: Date) -> [UITaskModel] {
         casManager.activeTasks
             .filter {
-                $0.value
+                $0
                     .isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) &&
-                isTaskTimeAfterCurrent($0.value, for: day) }
-            .map { $0.value }
+                isTaskTimeAfterCurrent($0, for: day) }
             .sorted { sortedTasksForCurrentTime(task1: $0, task2: $1) }
     }
     
-    private func sortedTasksForCurrentTime(task1: TaskModel, task2: TaskModel) -> Bool {
+    private func sortedTasksForCurrentTime(task1: UITaskModel, task2: UITaskModel) -> Bool {
         let taskHour = calendar.component(.hour, from: Date(timeIntervalSince1970: task1.notificationDate))
         let taskMinutes = calendar.component(.minute, from: Date(timeIntervalSince1970: task1.notificationDate))
         
@@ -386,7 +385,7 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     /// Days before task completed or deleted
-    private func checkDaysBeforeSkip(_ task: TaskModel) -> Int {
+    private func checkDaysBeforeSkip(_ task: UITaskModel) -> Int {
         let datesBeforeSkip = task.done.map { Date(timeIntervalSince1970: $0.completedFor )}
             .filter { $0.timeIntervalSince1970 > now.timeIntervalSince1970 }
             .sorted()
@@ -401,7 +400,7 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     /// Check diff between day of week on current and selected week
-    private func checkDiffBetweenDayOfWeek(dateFromCurrentWeek: Date, dateFromSelectedWeek: Date, task: TaskModel) -> Bool {
+    private func checkDiffBetweenDayOfWeek(dateFromCurrentWeek: Date, dateFromSelectedWeek: Date, task: UITaskModel) -> Bool {
         var dateComponents = DateComponents()
         dateComponents.year = calendar.component(.year, from: dateFromSelectedWeek)
         dateComponents.month = calendar.component(.month, from: dateFromSelectedWeek)
@@ -419,7 +418,7 @@ final class NotificationManager: NotificationManagerProtocol {
         }
     }
     /// Check that's task's hours and minutes components more than now for today, not for future
-    private func isTaskTimeAfterCurrent(_ task: TaskModel, for day: Date) -> Bool {
+    private func isTaskTimeAfterCurrent(_ task: UITaskModel, for day: Date) -> Bool {
         
         if calendar.compare(day, to: now, toGranularity: .day) == .orderedAscending {
             return false
@@ -440,19 +439,19 @@ final class NotificationManager: NotificationManagerProtocol {
         return taskHour > currentHour || (taskHour == currentHour && taskMinutes > currentMinutes)
     }
     
-    private func checkIsTaskActualyForThisDay(task: TaskModel) -> Bool {
+    private func checkIsTaskActualyForThisDay(task: UITaskModel) -> Bool {
         task.done.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: selectedDay)}) ||
         task.deleted.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.deletedFor), inSameDayAs: selectedDay)})
     }
     
     //MARK: Check  completed or deleted record
-    private func hasTaskCompleteOrDeleteMarkersInFuture(task: TaskModel) -> Bool {
+    private func hasTaskCompleteOrDeleteMarkersInFuture(task: UITaskModel) -> Bool {
         task.done.contains { $0.completedFor > now.timeIntervalSince1970 } ||
         task.deleted.contains { $0.deletedFor > now.timeIntervalSince1970 }
     }
     
     //MARK: Task's in correct range
-    private func checkTaskInCorrectRange(task: TaskModel) -> Bool {
+    private func checkTaskInCorrectRange(task: UITaskModel) -> Bool {
         var dateComponents = DateComponents()
         dateComponents.year = calendar.component(.year, from: selectedDay)
         dateComponents.month = calendar.component(.month, from: selectedDay)

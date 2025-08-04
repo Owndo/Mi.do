@@ -33,19 +33,19 @@ final class CASManager: CASManagerProtocol {
     var completedTasks = [MainModel]()
     
     var deletedTasks: [MainModel] {
-        models.filter { $0.value.markAsDeleted == true }
+        models.filter { $0.markAsDeleted == true }
     }
     
     var allCompletedTasks: [MainModel] {
-        models.filter { !$0.value.done.isEmpty }
+        models.filter { !$0.done.isEmpty }
     }
     
     var allCompletedTasksCount: Int {
         var count = 0
         
         for task in models {
-            if !task.value.done.isEmpty {
-                for _ in task.value.done {
+            if !task.done.isEmpty {
+                for _ in task.done {
                     count += 1
                 }
             }
@@ -72,14 +72,18 @@ final class CASManager: CASManagerProtocol {
         updateTask()
         
         for i in models {
-            print(i.value)
+            print("models - \(i)")
+        }
+        
+        for i in activeTasks {
+            print("Active tasks - \(i.title)")
         }
         
     }
     
     func updateTask() {
-        activeTasks = models.filter { $0.value.markAsDeleted == false }
-        completedTasks = models.filter { $0.value.markAsDeleted == false && !$0.value.done.isEmpty }
+        activeTasks = models.filter { $0.markAsDeleted == false }
+        completedTasks = models.filter { $0.markAsDeleted == false && !$0.done.isEmpty }
         
         NotificationCenter.default.post(name: NSNotification.Name("updateTasks"), object: nil)
     }
@@ -87,7 +91,7 @@ final class CASManager: CASManagerProtocol {
     //MARK: Actions for work with CAS
     func saveModel(_ task: MainModel) {
         do {
-            try cas.saveJsonModel(task)
+            try cas.saveJsonModel(task.model)
             indexForDelete(task)
             models.append(task)
             taskUpdateTrigger.toggle()
@@ -145,7 +149,12 @@ final class CASManager: CASManagerProtocol {
         
         return list.compactMap { mutable in
             do {
-                return try cas.loadJsonModel(mutable)
+                guard let taskModel: Model<TaskModel> = try cas.loadJsonModel(mutable) else {
+                    return nil
+                }
+                
+                return UITaskModel(model: taskModel)
+                
             } catch {
                 print("Error while loading model: \(error)")
                 return nil
@@ -174,7 +183,7 @@ final class CASManager: CASManagerProtocol {
     //MARK: Delete model
     func deleteModel(_ task: MainModel) {
         do {
-            try cas.deleteModel(task)
+            try cas.deleteModel(task.model)
             indexForDelete(task)
             taskUpdateTrigger.toggle()
         } catch {
@@ -213,9 +222,9 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: Predicate
     private func indexForDelete(_ task: MainModel) {
-        if let index = models.firstIndex(where: { $0.hashValue == task.hashValue }) {
-            models.remove(at: index)
-        }
+        
+            
+        
     }
     
     //MARK: - Onboarding

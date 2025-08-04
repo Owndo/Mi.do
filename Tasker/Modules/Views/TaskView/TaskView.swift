@@ -131,12 +131,12 @@ public struct TaskView: View {
             
             Spacer()
             
-            Button {
-                vm.shareViewButtonTapped()
-            } label: {
-                Image(systemName: "square.and.arrow.up")
-            }
-            .padding(.vertical, 11)
+//            Button {
+//                vm.shareViewButtonTapped()
+//            } label: {
+//                Image(systemName: "square.and.arrow.up")
+//            }
+//            .padding(.vertical, 11)
         }
         .tint(colorScheme.accentColor())
         .padding(.top, 14)

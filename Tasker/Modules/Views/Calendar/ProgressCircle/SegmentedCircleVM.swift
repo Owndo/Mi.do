@@ -60,16 +60,16 @@ final class SegmentedCircleVM {
         let weekTasks = await taskManager.thisWeekTasks(date: currentDay.timeIntervalSince1970)
 
         let filtered = weekTasks.filter {
-            $0.value.isScheduledForDate(currentDay.timeIntervalSince1970, calendar: dateManager.calendar)
+            $0.isScheduledForDate(currentDay.timeIntervalSince1970, calendar: dateManager.calendar)
         }
 
-        let sorted = filtered.sorted { $0.value.notificationDate < $1.value.notificationDate }
+        let sorted = filtered.sorted { $0.notificationDate < $1.notificationDate }
         tasksForToday = sorted
 
         let timeKey = currentDay.timeIntervalSince1970
         
         completedFlags = sorted.map {
-            $0.value.done.contains { $0.completedFor == timeKey }
+            $0.done.contains { $0.completedFor == timeKey }
         }
 
         allCompleted = !sorted.isEmpty && completedFlags.allSatisfy { $0 }

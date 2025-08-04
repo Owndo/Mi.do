@@ -28,7 +28,7 @@ final class TaskRowVM: HashableObject {
     @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     
     //MARK: - Properties
-    var playingTask: TaskModel?
+    var playingTask: UITaskModel?
     var selectedTask: MainModel?
     
     var task: MainModel
@@ -58,13 +58,13 @@ final class TaskRowVM: HashableObject {
     init(task: MainModel) {
         self.task = task
         
-        if task.value.title.count < 20 {
+        if task.title.count < 20 {
             disabledScroll = true
         }
     }
     
     func onAppear(task: MainModel) {
-        if task.value.title.count < 20 {
+        if task.title.count < 20 {
             disabledScroll = true
         }
     }
@@ -80,17 +80,17 @@ final class TaskRowVM: HashableObject {
     
     //MARK: - Check Mark Function
     func checkCompletedTaskForToday() -> Bool {
-        taskManager.checkCompletedTaskForToday(task: task.value)
+        taskManager.checkCompletedTaskForToday(task: task)
     }
     
     func checkMarkTapped() {
         Task {
-            let task = taskManager.checkMarkTapped(task: task.value)
+            let task = taskManager.checkMarkTapped(task: task)
             
             taskDoneTrigger.toggle()
             stopToPlay()
             
-            self.task.value = task
+            self.task = task
             
             casManager.saveModel(self.task)
             
@@ -100,7 +100,7 @@ final class TaskRowVM: HashableObject {
     
     //MARK: - Delete functions
     func deleteTaskButtonSwiped() {
-        guard task.value.repeatTask == .never else {
+        guard task.repeatTask == .never else {
             messageForDelete = "This's a recurring task."
             singleTask = false
             confirmationDialogIsPresented.toggle()
@@ -121,15 +121,15 @@ final class TaskRowVM: HashableObject {
             await notificationManager.createNotification()
         }
         
-        if task.value.repeatTask == .never {
+        if task.repeatTask == .never {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))
         }
         
-        if task.value.repeatTask != .never && deleteCompletely == true {
+        if task.repeatTask != .never && deleteCompletely == true {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskListView))))
         }
         
-        if task.value.repeatTask != .never && deleteCompletely == false {
+        if task.repeatTask != .never && deleteCompletely == false {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskListView))))
         }
     }
@@ -143,8 +143,8 @@ final class TaskRowVM: HashableObject {
     //MARK: Play sound function
     func playButtonTapped() async {
         if !playing {
-            playingTask = task.value
-            await playerManager.playAudioFromData(task: task.value)
+            playingTask = task
+            await playerManager.playAudioFromData(task: task)
         } else {
             stopToPlay()
         }

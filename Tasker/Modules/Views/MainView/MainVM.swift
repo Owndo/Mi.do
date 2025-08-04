@@ -262,17 +262,11 @@ public final class MainVM {
     
     //MARK: - Create task
     func createTask(with audioHash: String? = nil) {
-        let model = MainModel.initial(TaskModel(
-            title: recordManager.recognizedText,
-            description: "",
-            speechDescription: recordManager.wholeDescription,
-            audio: audioHash,
-            notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
-            voiceMode: audioHash != nil ? true : false,
-            dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-            done: [],
-            deleted: []
-        ))
+        let model = MainModel(
+            model: .initial(
+                TaskModel()
+            )
+        )
         
         mainModel = model
     }
@@ -305,7 +299,7 @@ public final class MainVM {
         guard taskId == nil else {
             let baseSearchId = extractBaseId(from: taskId!)
             let task = taskManager.activeTasks.first { task in
-                extractBaseId(from: task.value.id) == baseSearchId
+                extractBaseId(from: task.id) == baseSearchId
             }
             
             if let task {
@@ -318,7 +312,7 @@ public final class MainVM {
         if let taskId = notification?.userInfo?["taskId"] as? String {
             let baseSearchId = extractBaseId(from: taskId)
             let task = taskManager.activeTasks.first { task in
-                extractBaseId(from: task.value.id) == baseSearchId
+                extractBaseId(from: task.id) == baseSearchId
             }
             if let task {
                 mainModel = task

@@ -280,7 +280,7 @@ final class DateManager: DateManagerProtocol {
         return calendar.date(from: dateComponents)!
     }
     
-    func createdtaskDate(task: TaskModel) -> Date {
+    func createdtaskDate(task: UITaskModel) -> Date {
         var dateComponents = calendar.dateComponents([.year, .month, .day], from: selectedDate)
         let componentsFromTask = calendar.dateComponents([.hour, .minute], from: Date(timeIntervalSince1970: task.notificationDate))
         

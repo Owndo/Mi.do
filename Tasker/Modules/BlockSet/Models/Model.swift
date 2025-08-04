@@ -15,7 +15,8 @@ struct ModelStruct<T> {
 public class Model<T>: Hashable, Identifiable {
     // internal:
     var s: ModelStruct<T>
-    init(_ s: ModelStruct<T>) {
+    
+    internal init(_ s: ModelStruct<T>) {
         self.s = s
     }
     
@@ -23,6 +24,7 @@ public class Model<T>: Hashable, Identifiable {
     public static func initial(_ value: T) -> Model {
         Model(ModelStruct(mutable: Mutable.initial(), value: value))
     }
+    
     public var value: T {
         get { s.value }
         set { s.value = newValue }

@@ -47,15 +47,15 @@ struct TaskRow: View {
             ForEach(0..<1) { _ in
                 HStack(spacing: 0) {
                     HStack(spacing: 12) {
-                        TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task.value) {
+                        TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task) {
                             vm.checkMarkTapped()
                         }
                         
                         ScrollView(.horizontal) {
-                            Text(LocalizedStringKey(vm.task.value.title), bundle: .module)
+                            Text(LocalizedStringKey(vm.task.title), bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .regular))
                                 .multilineTextAlignment(.leading)
-                                .foregroundStyle(vm.task.value.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
+                                .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
                                 .font(.callout)
                                 .lineLimit(1)
                         }
@@ -64,9 +64,9 @@ struct TaskRow: View {
                     }
                     
                     HStack(spacing: 12) {
-                        Text(Date(timeIntervalSince1970: vm.task.value.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
+                        Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                             .font(.system(.subheadline, design: .rounded, weight: .regular))
-                            .foregroundStyle(vm.task.value.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
+                            .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
                             .padding(.leading, 6)
                             .lineLimit(1)
                         
@@ -80,7 +80,7 @@ struct TaskRow: View {
                 .padding(.vertical, 12)
                 .padding(.horizontal, 11)
                 .background(
-                    vm.task.value.taskColor.color(for: colorScheme)
+                    vm.task.taskColor.color(for: colorScheme)
                 )
                 .frame(maxWidth: .infinity)
                 .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
@@ -116,9 +116,9 @@ struct TaskRow: View {
     private func PlayButton() -> some View {
         ZStack {
             Circle()
-                .fill(vm.task.value.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
+                .fill(vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
             
-            if vm.task.value.audio != nil {
+            if vm.task.audio != nil {
                 Image(systemName: vm.playing ? "pause.fill" : "play.fill")
                     .foregroundStyle(.white)
                     .animation(.default, value: vm.playing)

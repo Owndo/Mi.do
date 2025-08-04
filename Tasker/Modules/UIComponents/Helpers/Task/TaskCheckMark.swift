@@ -12,10 +12,10 @@ public struct TaskCheckMark: View {
     @Environment(\.colorScheme) var colorScheme
     
     var complete: Bool
-    var task: TaskModel
+    var task: UITaskModel
     var action: () -> Void
     
-    public init(complete: Bool, task: TaskModel, action: @escaping () -> Void) {
+    public init(complete: Bool, task: UITaskModel, action: @escaping () -> Void) {
         self.complete = complete
         self.task = task
         self.action = action
@@ -44,5 +44,5 @@ public struct TaskCheckMark: View {
 }
 
 #Preview {
-    TaskCheckMark(complete: true, task: mockModel().value, action: {})
+    TaskCheckMark(complete: true, task: mockModel(), action: {})
 }

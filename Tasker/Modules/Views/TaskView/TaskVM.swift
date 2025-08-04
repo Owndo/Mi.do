@@ -38,11 +38,11 @@ public final class TaskVM: Identifiable {
     @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
     public var id: String {
-        mainModel.value.id
+        mainModel.id
     }
     // MARK: - Model
     var mainModel: MainModel = mockModel()
-    var task: TaskModel = mockModel().value
+    var task: MainModel = mockModel()
     var profileModel: ProfileData = mockProfileData()
     
     var dayOfWeek = [DayOfWeek]()
@@ -149,7 +149,7 @@ public final class TaskVM: Identifiable {
     private func preSetTask(_ mainModel: MainModel) {
         profileModel = casManager.profileModel
         self.mainModel = mainModel
-        task = mainModel.value
+        task = mainModel
         dayOfWeek = task.dayOfWeek.actualyDayOFWeek(calendar)
         
         Task {
@@ -220,7 +220,7 @@ public final class TaskVM: Identifiable {
         task.dayOfWeek = dayOfWeek
         task = preparedTask()
         task.notificationDate = changeNotificationTime()
-        mainModel.value = task
+        mainModel = task
         
         casManager.saveModel(mainModel)
         createTempAudioFile(audioHash: task.audio ?? "")
@@ -265,7 +265,7 @@ public final class TaskVM: Identifiable {
         return notificationDate.timeIntervalSince1970
     }
     
-    private func preparedTask() -> TaskModel {
+    private func preparedTask() -> UITaskModel {
         taskManager.preparedTask(task: task, date: notificationDate)
     }
     
@@ -275,8 +275,8 @@ public final class TaskVM: Identifiable {
     }
     
     //MARK: - First time check
-    private func firstTimeCreateTask(_ task: TaskModel) -> Date? {
-        guard taskManager.activeTasks.contains(where: { $0.value.id == task.id }) else {
+    private func firstTimeCreateTask(_ task: UITaskModel) -> Date? {
+        guard taskManager.activeTasks.contains(where: { $0.id == task.id }) else {
             defaultTimeHasBeenSet = true
             return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: originalNotificationTimeComponents)
         }
@@ -344,23 +344,23 @@ public final class TaskVM: Identifiable {
         }
         
         // telemetry
-        if model.value.repeatTask == .never {
+        if model.repeatTask == .never {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskView))))
         }
         
         // telemetry
-        if model.value.repeatTask != .never && deleteCompletely == true {
+        if model.repeatTask != .never && deleteCompletely == true {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskView))))
         }
         
         // telemetry
-        if model.value.repeatTask != .never && deleteCompletely == false {
+        if model.repeatTask != .never && deleteCompletely == false {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskView))))
         }
     }
     
     // MARK: - Playback
-    func playButtonTapped(task: TaskModel) async {
+    func playButtonTapped(task: UITaskModel) async {
         playButtonTrigger.toggle()
         pause = false
         
@@ -478,7 +478,10 @@ public final class TaskVM: Identifiable {
         if let audioURLString = recorderManager.stopRecording() {
             hashOfAudio = casManager.saveAudio(url: audioURLString)
         }
-        task.audio = hashOfAudio
+        
+        if let hashOfAudio {
+            task.audio = hashOfAudio
+        }
         task.voiceMode = true
         
         if task.title.isEmpty || task.title == "New task" {

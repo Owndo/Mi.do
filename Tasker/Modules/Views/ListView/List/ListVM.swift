@@ -40,9 +40,13 @@ final class ListVM {
         casManager.profileModel.value.onboarding.deleteTip
     }
     
-    var tasks: [MainModel] = []
+    var tasks: [MainModel] {
+        taskManager.activeTasks
+    }
     
-    var completedTasks: [MainModel] = []
+    var completedTasks: [MainModel] {
+        taskManager.completedTasks
+    }
     
     var countOfTodayTasks: Int {
         tasks.count + completedTasks.count

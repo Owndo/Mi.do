@@ -39,12 +39,7 @@ public final class OnboardingManager: OnboardingManagerProtocol {
             while sayHello {
                 try? await Task.sleep(for: .seconds(0.1))
             }
-            
-            sayHello = false
-            profileModel.value.onboarding.sayHello = false
         }
-        
-        profileModelSave()
         
         guard !profileModel.value.onboarding.onboardingCompleted else {
             return
@@ -124,6 +119,8 @@ public final class OnboardingManager: OnboardingManagerProtocol {
         }
         
         profileModel.value.onboarding.onboardingCompleted = true
+        sayHello = false
+        profileModel.value.onboarding.sayHello = false
         
         profileModelSave()
     }

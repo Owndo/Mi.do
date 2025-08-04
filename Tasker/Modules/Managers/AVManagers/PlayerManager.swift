@@ -19,7 +19,7 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     var isPlaying = false
     var currentTime: TimeInterval = 0.0
     var totalTime: TimeInterval = 0.0
-    var task: TaskModel?
+    var task: UITaskModel?
     
     // MARK: - Private properties
     private let audioSession = AVAudioSession.sharedInstance()
@@ -33,7 +33,7 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     
     // MARK: - Playback
     
-    func playAudioFromData(task: TaskModel) async {
+    func playAudioFromData(task: UITaskModel) async {
         self.task = task
         
         do {
@@ -103,7 +103,7 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
-    func returnTotalTime(task: TaskModel) -> Double {
+    func returnTotalTime(task: UITaskModel) -> Double {
         
         guard let audio = task.audio else { return 0 }
         
@@ -118,7 +118,7 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
-    func setUpTotalTime(task: TaskModel) {
+    func setUpTotalTime(task: UITaskModel) {
         totalTime = returnTotalTime(task: task)
     }
     

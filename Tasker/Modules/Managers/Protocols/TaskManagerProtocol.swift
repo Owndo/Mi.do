@@ -17,19 +17,19 @@ public protocol TaskManagerProtocol {
     
     func thisWeekTasks(date: Double) async -> [MainModel]
     
-    func preparedTask(task: TaskModel, date: Date) -> TaskModel
+    func preparedTask(task: UITaskModel, date: Date) -> UITaskModel
     
     /// Delete task
     func deleteTask(task: MainModel, deleteCompletely: Bool)
     
     /// Checks whether the task has been marked as completed for the current day.
-    func checkCompletedTaskForToday(task: TaskModel) -> Bool
+    func checkCompletedTaskForToday(task: UITaskModel) -> Bool
     
     /// Toggles the task's completion state and saves the updated model.
-    func checkMarkTapped(task: TaskModel) -> TaskModel
+    func checkMarkTapped(task: UITaskModel) -> UITaskModel
     
     /// Updates the list of deletion records for the given task by appending today's deletion record.
-    func updateExistingTaskDeleted(task: TaskModel) -> [DeleteRecord]
+    func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord]
     
     func updateNotificationTimeForDueDate(task: MainModel) -> MainModel
     

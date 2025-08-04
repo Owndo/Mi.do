@@ -26,7 +26,7 @@ struct SegmentedCircleView: View {
         let completedFlags = Array(vm.completedFlagsForToday.prefix(10))
         
         ZStack {
-            CircleBackgroundFill(colors: visibleTasks.map { $0.value.taskColor.color(for: colorScheme) },
+            CircleBackgroundFill(colors: visibleTasks.map { $0.taskColor.color(for: colorScheme) },
                                  completed: completedFlags.allSatisfy { $0 })
             .frame(width: 36, height: 36)
             
@@ -91,7 +91,7 @@ struct SegmentedCircleView: View {
         let dynamicEnd = startAngle + segmentAngle * segmentProgress
         
         let segmentColor = vm.useTaskColors
-        ? task.value.taskColor.color(for: colorScheme)
+        ? task.taskColor.color(for: colorScheme)
         : isCompleted ? colorScheme.accentColor() : .separatorSecondary
         
         let appear = min(segmentProgress * 2, 1.0)

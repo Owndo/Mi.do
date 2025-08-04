@@ -20,108 +20,118 @@ final class ModelsFactory {
     func create(_ model: Models) -> MainModel {
         switch model {
         case .drinkWater:
-            MainModel.initial(
-                TaskModel(
-                    title: "💧 Drink Water",
-                    description: "You’re not a cactus. Hydrate or evaporate.",
-                    createDate: Date.now.timeIntervalSince1970,
-                    notificationDate: Double(calendar.date(bySetting: .hour, value: 9, of: now)!.timeIntervalSince1970),
-                    voiceMode: false,
-                    repeatTask: .daily,
-                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-                    done: [],
-                    deleted: [],
-                    taskColor: .blue,
+            UITaskModel(
+                model: .initial(
+                    TaskModel(
+                        title: "New task",
+                        description: "",
+                        createDate: Date.now.timeIntervalSince1970,
+                        notificationDate: Date.now.timeIntervalSince1970,
+                        dayOfWeek: [],
+                        done: [],
+                        deleted: []
+                    )
                 )
             )
         case .clearMind:
-            MainModel.initial(
-                TaskModel(
-                    title: "🧹 Clear Your Mind",
-                    description: "Close mental tabs. Breathe. Meditate or journal, or just stare into the void.",
-                    createDate: Date.now.timeIntervalSince1970,
-                    notificationDate: Double(calendar.date(bySettingHour: 21, minute: 0, second: 0, of: now)!.timeIntervalSince1970),
-                    voiceMode: false,
-                    repeatTask: .daily,
-                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-                    done: [],
-                    deleted: [],
-                    taskColor: .lime
+            UITaskModel(
+                model: .initial(
+                    TaskModel(
+                        title: "🧹 Clear Your Mind",
+                        description: "Close mental tabs. Breathe. Meditate or journal, or just stare into the void.",
+                        createDate: Date.now.timeIntervalSince1970,
+                        notificationDate: Double(calendar.date(bySettingHour: 21, minute: 0, second: 0, of: now)!.timeIntervalSince1970),
+                        voiceMode: false,
+                        repeatTask: .daily,
+                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
+                        done: [],
+                        deleted: [],
+                        taskColor: .lime
+                    )
                 )
             )
         case .bestApp:
-            MainModel.initial(
-                TaskModel(
-                    title: "📱 Install the Best App",
-                    description: "Mega task. Install the one app to rule them all. So... you did it",
-                    createDate: Date.now.timeIntervalSince1970,
-                    notificationDate: Date.now.timeIntervalSince1970,
-                    voiceMode: false,
-                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-                    done: [CompleteRecord(completedFor: selectedDate, timeMark: Date.now.timeIntervalSince1970)],
-                    deleted: [],
-                    taskColor: .purple
+            UITaskModel(
+                model: .initial(
+                    TaskModel(
+                        title: "📱 Install the Best App",
+                        description: "Mega task. Install the one app to rule them all. So... you did it",
+                        createDate: Date.now.timeIntervalSince1970,
+                        notificationDate: Date.now.timeIntervalSince1970,
+                        voiceMode: false,
+                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
+                        done: [CompleteRecord(completedFor: selectedDate, timeMark: Date.now.timeIntervalSince1970)],
+                        deleted: [],
+                        taskColor: .purple
+                    )
                 )
             )
         case .planForTommorow:
-            MainModel.initial(
-                TaskModel(
-                    title: "🗓️ Plan Tomorrow",
-                    description: "Maybe you'll save the world tomorrow. Might wanna write that down.",
-                    createDate: Date.now.timeIntervalSince1970,
-                    notificationDate: Double(calendar.date(bySettingHour: 20, minute: 30, second: 0, of: now)!.timeIntervalSince1970),
-                    voiceMode: false,
-                    repeatTask: .daily,
-                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-                    done: [],
-                    deleted: [],
-                    taskColor: .mint
+            UITaskModel(
+                model: .initial(
+                    TaskModel(
+                        title: "🗓️ Plan Tomorrow",
+                        description: "Maybe you'll save the world tomorrow. Might wanna write that down.",
+                        createDate: Date.now.timeIntervalSince1970,
+                        notificationDate: Double(calendar.date(bySettingHour: 20, minute: 30, second: 0, of: now)!.timeIntervalSince1970),
+                        voiceMode: false,
+                        repeatTask: .daily,
+                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
+                        done: [],
+                        deleted: [],
+                        taskColor: .mint
+                    )
                 )
             )
         case .withoutPhone:
-            MainModel.initial(
-                TaskModel(
-                    title: "📵 10 Minutes Without Phone",
-                    description: "Put the glowing rectangle down. The world can wait. Breathe...",
-                    createDate: Date.now.timeIntervalSince1970,
-                    notificationDate: Double(calendar.date(bySetting: .hour, value: 14, of: now)!.timeIntervalSince1970),
-                    voiceMode: false,
-                    repeatTask: .daily,
-                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-                    done: [],
-                    deleted: [],
-                    taskColor: .red
+            UITaskModel(
+                model: .initial(
+                    TaskModel(
+                        title: "📵 10 Minutes Without Phone",
+                        description: "Put the glowing rectangle down. The world can wait. Breathe...",
+                        createDate: Date.now.timeIntervalSince1970,
+                        notificationDate: Double(calendar.date(bySetting: .hour, value: 14, of: now)!.timeIntervalSince1970),
+                        voiceMode: false,
+                        repeatTask: .daily,
+                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
+                        done: [],
+                        deleted: [],
+                        taskColor: .red
+                    )
                 )
             )
-            
         case .randomHours:
-            MainModel.initial(
-                TaskModel(
-                    title: "💡 Random Hour",
-                    description: "Google something you don’t understand. Quantum foam? Why cats scream at 3 AM? Choose your adventure.",
-                    createDate: Date.now.timeIntervalSince1970,
-                    notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: wedensday())!.timeIntervalSince1970),
-                    voiceMode: false,
-                    repeatTask: .weekly,
-                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-                    done: [],
-                    deleted: [],
-                    taskColor: .steelBlue
+            UITaskModel(
+                model: .initial(
+                    TaskModel(
+                        title: "💡 Random Hour",
+                        description: "Google something you don’t understand. Quantum foam? Why cats scream at 3 AM? Choose your adventure.",
+                        createDate: Date.now.timeIntervalSince1970,
+                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: wedensday())!.timeIntervalSince1970),
+                        voiceMode: false,
+                        repeatTask: .weekly,
+                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
+                        done: [],
+                        deleted: [],
+                        taskColor: .steelBlue
+                    )
                 )
             )
         case .readSomething:
-            MainModel.initial(
-                TaskModel(
-                    title: "📚 Read Something That’s Not a Screen",
-                    description: "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge.",
-                    createDate: Date.now.timeIntervalSince1970,
-                    notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: saturday())!.timeIntervalSince1970),
-                    voiceMode: false,
-                    repeatTask: .weekly,
-                    dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-                    done: [],
-                    deleted: [],
-                    taskColor: .brown
+            UITaskModel(
+                model: .initial(
+                    TaskModel(
+                        title: "📚 Read Something That’s Not a Screen",
+                        description: "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge.",
+                        createDate: Date.now.timeIntervalSince1970,
+                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: saturday())!.timeIntervalSince1970),
+                        voiceMode: false,
+                        repeatTask: .weekly,
+                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
+                        done: [],
+                        deleted: [],
+                        taskColor: .brown
+                    )
                 )
             )
         }

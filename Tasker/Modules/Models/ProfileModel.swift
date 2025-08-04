@@ -13,7 +13,6 @@ import UIKit
 public typealias ProfileData = Model<ProfileModel>
 
 public struct ProfileModel: Codable {
-    public var id: String = UUID().uuidString
     public var customTitle: String
     public var notes: String
     public var name: String

@@ -125,12 +125,12 @@ final class ProfileVM {
     //MARK: Task's statistics
     func tasksState(of type: TypeOfTask) -> String {
         
-        var tasks = [TaskModel]()
+        var tasks = [UITaskModel]()
         var count = 0
         
         switch type {
         case .today:
-            tasks = casManager.activeTasks.map { $0.value }
+            tasks = casManager.activeTasks
                 .filter {
                     $0.deleted.contains { $0.deletedFor == todayForFilter } != true &&
                     $0.isScheduledForDate(todayForFilter, calendar: calendar)
@@ -141,7 +141,7 @@ final class ProfileVM {
             var daysFromStartOfWeek = dateManager.startOfWeek(for: today)
             
             (0..<7).forEach { _ in
-                tasks = casManager.activeTasks.map { $0.value }
+                tasks = casManager.activeTasks.map { $0 }
                     .filter { $0.isScheduledForDate(daysFromStartOfWeek.timeIntervalSince1970, calendar: calendar) }
                 
                 count += tasks.count

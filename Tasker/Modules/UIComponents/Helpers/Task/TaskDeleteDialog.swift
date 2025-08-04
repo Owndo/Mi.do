@@ -64,7 +64,7 @@ public struct TaskDeleteDialog: ViewModifier {
     
     private func deleteTask() async {
         dismissAction?()
-        storageManager.deleteAudiFromDirectory(hash: task.value.audio)
+        storageManager.deleteAudiFromDirectory(hash: task.audio)
         try? await Task.sleep(nanoseconds: 50_000_000)
         await onDelete(task, true)
     }

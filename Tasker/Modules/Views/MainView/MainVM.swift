@@ -68,6 +68,7 @@ public final class MainVM {
                 if path.count > 0 {
                     path.removeLast()
                 }
+                onboardingManager.showingNotes = nil
             }
             
             if presentationPosition == .fraction(0.20) {
@@ -127,6 +128,7 @@ public final class MainVM {
     
     public init() {
         createCustomProfileModel()
+        setupCallbacks()
         
         Task {
             await onboardingStart()
@@ -347,6 +349,27 @@ public final class MainVM {
         }
         
         disabledButton = false
+    }
+    
+    private func setupCallbacks() {
+        guard profileModel.onboarding.createButtonTip == false else {
+            return
+        }
+        onboardingManager.showingCalendar = { [weak self] _ in
+            self?.calendarButtonTapped()
+        }
+        onboardingManager.showingProfile = { [weak self] _ in
+            self?.profileViewButtonTapped()
+        }
+        onboardingManager.showingNotes = { [weak self] _ in
+            self?.presentationPosition = .fraction(0.20)
+        }
+        
+        onboardingManager.scrollWeek = { [weak self] _ in
+            withAnimation(.easeInOut(duration: 0.4)) {
+                self?.dateManager.indexForWeek += 1
+            }
+        }
     }
 }
 

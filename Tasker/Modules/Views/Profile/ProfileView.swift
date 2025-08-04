@@ -65,10 +65,10 @@ public struct ProfileView: View {
             .toolbarBackground(colorScheme.backgroundColor())
             .onAppear {
                 vm.onAppear()
-            }
-            .onDisappear {
-                vm.onDisappear()
-            }
+            }  
+        }
+        .onDisappear {
+            vm.onDisappear()
         }
         .sensoryFeedback(.levelChange, trigger: vm.navigationTriger)
     }

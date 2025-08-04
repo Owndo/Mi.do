@@ -20,6 +20,8 @@ final class MonthVM {
     @Injected(\.telemetryManager) var telemetryManager
     @ObservationIgnored
     @Injected(\.subscriptionManager) var subscriptionManager
+    @ObservationIgnored
+    @Injected(\.onboardingManager) var onboardingManager
     
     var showPaywall: Bool {
         subscriptionManager.showPaywall
@@ -68,10 +70,15 @@ final class MonthVM {
     }
     
     func checkSubscription() -> Bool {
-        subscriptionManager.hasSubscription()
+        guard onboardingManager.showingCalendar == nil else {
+            return true
+        }
+        
+        return subscriptionManager.hasSubscription()
     }
     
     func onDissapear() {
+        onboardingManager.showingCalendar = nil
         telemetryAction(.openView(.calendar(.close)))
     }
     

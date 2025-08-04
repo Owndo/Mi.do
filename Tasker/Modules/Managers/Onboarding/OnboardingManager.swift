@@ -15,6 +15,11 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     
     var profileModel = mockProfileData()
     
+    public var showingCalendar: ((Bool) -> Void)?
+    public var showingProfile: ((Bool) -> Void)?
+    public var showingNotes: ((Bool) -> Void)?
+    public var scrollWeek: ((Bool) -> Void)?
+    
     //MARK: - Onboarding flow
     public var sayHello = false
     
@@ -54,6 +59,11 @@ public final class OnboardingManager: OnboardingManagerProtocol {
             while dayTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
+            
+            scrollWeek?(true)
+            
+            try? await Task.sleep(for: .seconds(1))
+            
             profileModel.onboarding.dayTip = true
         }
         
@@ -63,6 +73,13 @@ public final class OnboardingManager: OnboardingManagerProtocol {
             while calendarTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
+            
+            showingCalendar?(true)
+            
+            while (showingCalendar != nil) {
+                try? await Task.sleep(for: .seconds(0.1))
+            }
+            
             profileModel.onboarding.calendarTip = true
         }
         
@@ -73,6 +90,12 @@ public final class OnboardingManager: OnboardingManagerProtocol {
                 try? await Task.sleep(for: .seconds(0.1))
             }
             
+            showingProfile?(true)
+            
+            while (showingProfile != nil) {
+                try? await Task.sleep(for: .seconds(0.1))
+            }
+            
             profileModel.onboarding.profileTip = true
         }
         
@@ -80,6 +103,12 @@ public final class OnboardingManager: OnboardingManagerProtocol {
             notesTip = true
             
             while notesTip {
+                try? await Task.sleep(for: .seconds(0.1))
+            }
+            
+            showingNotes?(true)
+            
+            while (showingNotes != nil) {
                 try? await Task.sleep(for: .seconds(0.1))
             }
             

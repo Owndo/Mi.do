@@ -17,6 +17,8 @@ final class DateManager: DateManagerProtocol {
     @Injected(\.casManager) var casManager: CASManagerProtocol
     @ObservationIgnored
     @Injected(\.telemetryManager) var telemetryManager: TelemetryManagerProtocol
+    @ObservationIgnored
+    @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
     var calendar = Calendar.current {
         didSet {
@@ -52,6 +54,10 @@ final class DateManager: DateManagerProtocol {
                 appendWeeksForward()
             } else if indexForWeek == allWeeks.first?.id {
                 prependWeeksBackward()
+            }
+            
+            if indexForWeek != 2 {
+                onboardingManager.scrollWeek = nil
             }
         }
         willSet {

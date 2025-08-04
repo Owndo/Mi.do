@@ -24,6 +24,7 @@ final class ProfileVM {
     @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
     @ObservationIgnored @Injected(\.permissionManager) private var permissionManager: PermissionProtocol
     @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+    @ObservationIgnored @Injected(\.onboardingManager) private var onboardingManager: OnboardingManagerProtocol
     
     var profileModel: ProfileData = mockProfileData()
     
@@ -89,6 +90,7 @@ final class ProfileVM {
     }
     
     func onDisappear() {
+        onboardingManager.showingProfile = nil
         //        endAnimationButton()
         profileModelSave()
         
@@ -212,6 +214,7 @@ final class ProfileVM {
     }
     
     func closeButtonTapped() {
+        onboardingManager.showingProfile = nil
         telemetryAction(action: .profileAction(.closeButtonTapped))
     }
     

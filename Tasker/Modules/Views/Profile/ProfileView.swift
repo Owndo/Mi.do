@@ -86,7 +86,7 @@ public struct ProfileView: View {
             .padding(.top, 25)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
-            TextField(text: $vm.profileModel.value.name, prompt: Text("Enter your name here", bundle: .module)) {}
+            TextField(text: $vm.profileModel.name, prompt: Text("Enter your name here", bundle: .module)) {}
                 .font(.system(.title2, design: .rounded, weight: .semibold))
                 .foregroundStyle(.labelPrimary)
                 .multilineTextAlignment(.center)

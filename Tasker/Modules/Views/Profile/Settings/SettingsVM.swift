@@ -36,13 +36,13 @@ final class SettingsVM {
     var createdDate = Date()
     
     var firstWeekday: LocalizedStringKey {
-        profileModel.value.settings.firstDayOfWeek == 1 ? "Sunday" : "Monday"
+        profileModel.settings.firstDayOfWeek == 1 ? "Sunday" : "Monday"
     }
     
     init() {
         profileModel = casManager.profileModel
-        createdDate = Date(timeIntervalSince1970: profileModel.value.createdProfile)
-        syncWithIcloud = profileModel.value.settings.iCloudSyncEnabled
+        createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
+        syncWithIcloud = profileModel.settings.iCloudSyncEnabled
     }
     
     func goTo(path: inout NavigationPath, destination: ProfileDestination) {
@@ -51,7 +51,7 @@ final class SettingsVM {
     
     func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
         dateManager.calendar.firstWeekday = firstDayOfWeek
-        profileModel.value.settings.firstDayOfWeek = firstDayOfWeek
+        profileModel.settings.firstDayOfWeek = firstDayOfWeek
         profileModelSave()
     }
     
@@ -63,7 +63,7 @@ final class SettingsVM {
             }
             
             if subscriptionManager.hasSubscription() {
-                profileModel.value.settings.iCloudSyncEnabled = syncWithIcloud
+                profileModel.settings.iCloudSyncEnabled = syncWithIcloud
                 profileModelSave()
             }
             
@@ -72,7 +72,7 @@ final class SettingsVM {
             return
         }
         
-        profileModel.value.settings.iCloudSyncEnabled = syncWithIcloud
+        profileModel.settings.iCloudSyncEnabled = syncWithIcloud
         profileModelSave()
         casManager.syncCases()
     }

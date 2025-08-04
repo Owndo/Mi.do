@@ -32,13 +32,8 @@ final class ListVM {
     var startSwipping = false
     var contentHeight: CGFloat = 0
     
-    var completedTasksHidden: Bool {
-        casManager.profileModel.value.settings.completedTasksHidden
-    }
-    
-    var deleteTip: Bool {
-        casManager.profileModel.value.onboarding.deleteTip
-    }
+    var completedTasksHidden = false
+    var deleteTip = false
     
     var tasks: [MainModel] {
         taskManager.activeTasks
@@ -60,38 +55,35 @@ final class ListVM {
         calendar.startOfDay(for: dateManager.selectedDate).timeIntervalSince1970
     }
     
-//    init() {
-//        Task {
-//            try await Task.sleep(for: .seconds(0.5))
-//            NotificationCenter.default.addObserver(self, selector: #selector(updateTasksList), name: Notification.Name("updateTasks"), object: nil)
-//            NotificationCenter.default.addObserver(self, selector: #selector(updateTasksList), name: Notification.Name("selectedDateChange"), object: nil)
-//        }
-//    }
+    init() {
+        deleteTip = casManager.profileModel.onboarding.deleteTip
+        completedTasksHidden = casManager.profileModel.settings.completedTasksHidden
+    }
     
-//    @objc func updateTasksList() {
-//        tasks.removeAll()
-//        completedTasks.removeAll()
-//        
-//        for i in taskManager.activeTasks {
-//            let taskRowVM = TaskRowVM(task: i)
-//            
-//            taskRowVM.selectedTask = { [weak self] task in
-//                self?.selectedTask = TaskVM(mainModel: task)
-//            }
-//            
-//            tasks.append(taskRowVM)
-//        }
-//        
-//        for i in taskManager.completedTasks {
-//            let taskRowVM = TaskRowVM(task: i)
-//            
-//            taskRowVM.selectedTask = { [weak self] task in
-//                self?.selectedTask = TaskVM(mainModel: task)
-//            }
-//            
-//            completedTasks.append(taskRowVM)
-//        }
-//    }
+    //    @objc func updateTasksList() {
+    //        tasks.removeAll()
+    //        completedTasks.removeAll()
+    //
+    //        for i in taskManager.activeTasks {
+    //            let taskRowVM = TaskRowVM(task: i)
+    //
+    //            taskRowVM.selectedTask = { [weak self] task in
+    //                self?.selectedTask = TaskVM(mainModel: task)
+    //            }
+    //
+    //            tasks.append(taskRowVM)
+    //        }
+    //
+    //        for i in taskManager.completedTasks {
+    //            let taskRowVM = TaskRowVM(task: i)
+    //
+    //            taskRowVM.selectedTask = { [weak self] task in
+    //                self?.selectedTask = TaskVM(mainModel: task)
+    //            }
+    //
+    //            completedTasks.append(taskRowVM)
+    //        }
+    //    }
     
     //MARK: - Check for visible
     func backToTodayButtonTapped() {
@@ -139,12 +131,12 @@ final class ListVM {
     
     func completedTaskViewChange() {
         let model = casManager.profileModel
-        model.value.settings.completedTasksHidden.toggle()
+        model.settings.completedTasksHidden.toggle()
         
         casManager.saveProfileData(model)
         
         // telemetry
-        if model.value.settings.completedTasksHidden {
+        if model.settings.completedTasksHidden {
             telemetryAction(.taskAction(.showCompletedButtonTapped))
         } else {
             telemetryAction(.taskAction(.hideCompletedButtonTapped))

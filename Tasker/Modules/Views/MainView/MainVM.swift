@@ -139,7 +139,7 @@ public final class MainVM {
     }
     
     public func updateNotifications() async {
-        guard profileModel.value.onboarding.onboardingCompleted else {
+        guard profileModel.onboarding.createButtonTip else {
             return
         }
         
@@ -264,7 +264,9 @@ public final class MainVM {
     func createTask(with audioHash: String? = nil) {
         let model = MainModel(
             model: .initial(
-                TaskModel()
+                TaskModel(
+                    notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970
+                )
             )
         )
         

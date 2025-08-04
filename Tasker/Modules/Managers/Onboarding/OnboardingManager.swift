@@ -33,16 +33,14 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     
     public func firstTimeOpen() async {
         
-        if profileModel.value.onboarding.sayHello {
+        if profileModel.onboarding.sayHello {
             sayHello = true
             
             while sayHello {
                 try? await Task.sleep(for: .seconds(0.1))
             }
-        }
-        
-        guard !profileModel.value.onboarding.onboardingCompleted else {
-            return
+            
+            sayHello = false
         }
         
         await onboardingStart()
@@ -50,77 +48,75 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     
     //MARK: - Onboarding flow
     public func onboardingStart() async {
-        if profileModel.value.onboarding.dayTip == false {
+        if profileModel.onboarding.dayTip == false {
             dayTip = true
             
             while dayTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
-            profileModel.value.onboarding.dayTip = true
+            profileModel.onboarding.dayTip = true
         }
         
-        if profileModel.value.onboarding.calendarTip == false {
+        if profileModel.onboarding.calendarTip == false {
             calendarTip = true
             
             while calendarTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
-            profileModel.value.onboarding.calendarTip = true
+            profileModel.onboarding.calendarTip = true
         }
         
-        if profileModel.value.onboarding.profileTip == false {
+        if profileModel.onboarding.profileTip == false {
             profileTip = true
             
             while profileTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
             
-            profileModel.value.onboarding.profileTip = true
+            profileModel.onboarding.profileTip = true
         }
         
-        if profileModel.value.onboarding.noteTip == false {
+        if profileModel.onboarding.noteTip == false {
             notesTip = true
             
             while notesTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
             
-            profileModel.value.onboarding.noteTip = true
+            profileModel.onboarding.noteTip = true
         }
         
-        if profileModel.value.onboarding.deleteTip == false {
+        if profileModel.onboarding.deleteTip == false {
             deleteTip = true
             
             while deleteTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
             
-            profileModel.value.onboarding.deleteTip = true
+            profileModel.onboarding.deleteTip = true
         }
         
-        if profileModel.value.onboarding.listSwipeTip == false {
+        if profileModel.onboarding.listSwipeTip == false {
             listSwipeTip = true
             
             while listSwipeTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
             
-            profileModel.value.onboarding.listSwipeTip = true
+            profileModel.onboarding.listSwipeTip = true
         }
         
-        if profileModel.value.onboarding.createButtonTip == false {
+        if profileModel.onboarding.createButtonTip == false {
             createButtonTip = true
             
             while createButtonTip {
                 try? await Task.sleep(for: .seconds(0.1))
             }
             
-            profileModel.value.onboarding.createButtonTip = true
+            profileModel.onboarding.createButtonTip = true
         }
         
-        profileModel.value.onboarding.onboardingCompleted = true
-        sayHello = false
-        profileModel.value.onboarding.sayHello = false
+        profileModel.onboarding.sayHello = false
         
         profileModelSave()
     }

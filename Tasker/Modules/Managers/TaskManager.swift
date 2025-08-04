@@ -108,7 +108,7 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     func preparedTask(task: UITaskModel, date: Date) -> UITaskModel {
-        var filledTask = task
+        let filledTask = task
         
         filledTask.notificationDate = date.timeIntervalSince1970
         filledTask.endDate = task.endDate
@@ -122,7 +122,6 @@ final class TaskManager: TaskManagerProtocol {
         filledTask.markAsDeleted = task.markAsDeleted
         filledTask.endDate = task.endDate
         filledTask.secondNotificationDate = task.secondNotificationDate
-//        filledTask.dayOfWeek = task.dayOfWeek
         
         return filledTask
     }

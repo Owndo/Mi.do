@@ -510,7 +510,7 @@ public final class TaskVM: Identifiable {
     
     //MARK: - Onboarding
     func onboarding() async {
-        guard profileModel.value.onboarding.checkMarkTip == false else {
+        guard profileModel.onboarding.checkMarkTip == false else {
             return
         }
         
@@ -520,7 +520,7 @@ public final class TaskVM: Identifiable {
             try? await Task.sleep(for: .seconds(0.3))
         }
         
-        profileModel.value.onboarding.checkMarkTip = true
+        profileModel.onboarding.checkMarkTip = true
         
         casManager.saveProfileData(profileModel)
     }

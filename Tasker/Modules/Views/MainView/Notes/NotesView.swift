@@ -19,7 +19,7 @@ struct NotesView: View {
     
     var body: some View {
         ZStack {
-            TextEditor(text: $vm.profileModel.value.notes)
+            TextEditor(text: $vm.profileModel.notes)
                 .font(.system(.callout, design: .rounded, weight: .semibold))
                 .foregroundStyle(.labelPrimary)
                 .focused($notesFocusState)
@@ -45,7 +45,7 @@ struct NotesView: View {
     //MARK: - Mock View
     @ViewBuilder
     private func MockView() -> some View {
-        if vm.profileModel.value.notes.isEmpty && notesFocusState == false {
+        if vm.profileModel.notes.isEmpty && notesFocusState == false {
             VStack {
                 Image(systemName: "note.text.badge.plus")
                     .foregroundStyle(.labelQuintuple)

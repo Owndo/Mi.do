@@ -26,7 +26,7 @@ final class CASManager: CASManagerProtocol {
     var profileUpdateTriger = false
     
     var models: [MainModel] = []
-    var profileModel: ProfileData = mockProfileData()
+    var profileModel = mockProfileData()
     
     var activeTasks = [MainModel]()
     
@@ -102,8 +102,8 @@ final class CASManager: CASManagerProtocol {
     
     func saveProfileData(_ data: ProfileData) {
         do {
-            try cas.saveJsonModel(data)
-            profileModel = data
+            try cas.saveJsonModel(data.model)
+            
             profileUpdateTriger.toggle()
         } catch {
             print("Couldn't save profile data inside CAS")
@@ -168,7 +168,11 @@ final class CASManager: CASManagerProtocol {
         
         return list.compactMap { mutable in
             do {
-                return try cas.loadJsonModel(mutable)
+                guard let profileModel: Model<ProfileModel> = try cas.loadJsonModel(mutable) else {
+                    return nil
+                }
+                
+                return UIProfileModel(model: profileModel)
             } catch {
                 return nil
             }
@@ -229,7 +233,7 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: - Onboarding
     private func firstTimeOpen() {
-        guard profileModel.value.onboarding.firstTimeOpen else {
+        guard profileModel.onboarding.firstTimeOpen else {
             return
         }
         
@@ -243,7 +247,7 @@ final class CASManager: CASManagerProtocol {
         saveModel(factory.create(.readSomething))
         saveModel(factory.create(.withoutPhone))
         
-        profileModel.value.onboarding.firstTimeOpen = false
+        profileModel.onboarding.firstTimeOpen = false
         saveProfileData(profileModel)
     }
 }

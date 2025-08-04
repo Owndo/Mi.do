@@ -14,9 +14,9 @@ public extension ColorScheme {
         @Injected(\.appearanceManager) var appearanceManager
         
         if self == .dark {
-            return appearanceManager.profileData.value.settings.accentColor.dark.hexColor()
+            return appearanceManager.profileData.settings.accentColor.dark.hexColor()
         } else {
-            return appearanceManager.profileData.value.settings.accentColor.light.hexColor()
+            return appearanceManager.profileData.settings.accentColor.light.hexColor()
         }
     }
     
@@ -24,9 +24,9 @@ public extension ColorScheme {
         @Injected(\.appearanceManager) var appearanceManager
         
         if self == .dark {
-            return appearanceManager.profileData.value.settings.background.dark.hexColor()
+            return appearanceManager.profileData.settings.background.dark.hexColor()
         } else {
-            return appearanceManager.profileData.value.settings.background.light.hexColor()
+            return appearanceManager.profileData.settings.background.light.hexColor()
         }
     }
 }

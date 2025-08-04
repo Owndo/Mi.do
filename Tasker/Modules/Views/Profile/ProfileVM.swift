@@ -77,8 +77,8 @@ final class ProfileVM {
     
     init() {
         profileModel = casManager.profileModel
-        photoPosition = profileModel.value.photoPosition
-        createdDate = Date(timeIntervalSince1970: profileModel.value.createdProfile)
+        photoPosition = profileModel.photoPosition
+        createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
     }
     
     func onAppear() {
@@ -183,22 +183,22 @@ final class ProfileVM {
     }
     
     func getPhotoFromCAS() -> Data? {
-        let hash = profileModel.value.photo
+        let hash = profileModel.photo
         
         return casManager.getData(hash)
     }
     
     private func addPhotoToProfile(image: Data) {
-        profileModel.value.photo = casManager.saveImage(image) ?? ""
+        profileModel.photo = casManager.saveImage(image) ?? ""
         photoPosition = .zero
-        profileModel.value.photoPosition = photoPosition
+        profileModel.photoPosition = photoPosition
         casManager.saveProfileData(profileModel)
     }
     
     func deletePhotoFromProfile() {
-        profileModel.value.photo = ""
+        profileModel.photo = ""
         photoPosition = .zero
-        profileModel.value.photoPosition = photoPosition
+        profileModel.photoPosition = photoPosition
         casManager.saveProfileData(profileModel)
     }
     
@@ -208,7 +208,7 @@ final class ProfileVM {
     }
     
     func savePhotoPosition() {
-        profileModel.value.photoPosition = photoPosition
+        profileModel.photoPosition = photoPosition
     }
     
     func closeButtonTapped() {

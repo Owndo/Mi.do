@@ -102,8 +102,8 @@ final class MockCas: CASManagerProtocol {
     
     func saveProfileData(_ data: ProfileData) {
         do {
-            try cas.saveJsonModel(data)
-            profileModel = data
+            try cas.saveJsonModel(data.model)
+            
             profileUpdateTriger.toggle()
         } catch {
             print("Couldn't save profile data inside CAS")
@@ -168,7 +168,11 @@ final class MockCas: CASManagerProtocol {
         
         return list.compactMap { mutable in
             do {
-                return try cas.loadJsonModel(mutable)
+                guard let profileModel: Model<ProfileModel> = try cas.loadJsonModel(mutable) else {
+                    return nil
+                }
+                
+                return UIProfileModel(model: profileModel)
             } catch {
                 return nil
             }
@@ -229,21 +233,21 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: - Onboarding
     private func firstTimeOpen() {
-        guard profileModel.value.onboarding.firstTimeOpen else {
+        guard profileModel.onboarding.firstTimeOpen else {
             return
         }
         
         let factory = ModelsFactory()
         
-        //        saveModel(factory.create(.bestApp))
-        //        saveModel(factory.create(.clearMind))
-        //        saveModel(factory.create(.drinkWater))
-        //        saveModel(factory.create(.planForTommorow))
-        //        saveModel(factory.create(.randomHours))
-        //        saveModel(factory.create(.readSomething))
-        //        saveModel(factory.create(.withoutPhone))
-        
-        profileModel.value.onboarding.firstTimeOpen = false
+        saveModel(factory.create(.bestApp))
+        saveModel(factory.create(.clearMind))
+        saveModel(factory.create(.drinkWater))
+        saveModel(factory.create(.planForTommorow))
+        saveModel(factory.create(.randomHours))
+        saveModel(factory.create(.readSomething))
+        saveModel(factory.create(.withoutPhone))
+        //        
+        profileModel.onboarding.firstTimeOpen = false
         saveProfileData(profileModel)
     }
 }

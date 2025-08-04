@@ -520,6 +520,9 @@
         }
       }
     },
+    "New Task" : {
+      "extractionState" : "manual"
+    },
     "Tasks" : {
       "localizations" : {
         "de" : {

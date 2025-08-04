@@ -24,11 +24,11 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     }
     
     public func backgroundColor() -> Color {
-        profileData.value.settings.backgroundColor().hexColor()
+        profileData.settings.backgroundColor().hexColor()
     }
     
     public func currentColorScheme() -> ColorScheme? {
-        switch profileData.value.settings.colorScheme {
+        switch profileData.settings.colorScheme {
         case .dark:
             return .dark
         case .light:
@@ -39,24 +39,24 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     }
     
     public func setColorScheme(_ mode: ColorSchemeMode) {
-        profileData.value.settings.colorScheme = mode
+        profileData.settings.colorScheme = mode
         selectedColorScheme = mode.colorScheme
         
         saveProfileData()
     }
     
     public func changeProgressMode(_ value: Bool) {
-        profileData.value.settings.minimalProgressMode = value
+        profileData.settings.minimalProgressMode = value
         saveProfileData()
     }
     
     public func changeAccentColor(_ color: AccentColorEnum) {
-        profileData.value.settings.accentColor = color.setUpColor()
+        profileData.settings.accentColor = color.setUpColor()
         saveProfileData()
     }
     
     public func changeBackgroundColor(_ color: BackgroundColorEnum) {
-        profileData.value.settings.background = color.setUpColor()
+        profileData.settings.background = color.setUpColor()
         saveProfileData()
     }
     

@@ -26,7 +26,7 @@ final class AppearanceVM {
     var customBackgroundColor = Color.black {
         didSet {
             changeStateTrigger.toggle()
-            profileData.value.settings.background = BackgroundColorEnum.custom(customBackgroundColor.toHex()).setUpColor()
+            profileData.settings.background = BackgroundColorEnum.custom(customBackgroundColor.toHex()).setUpColor()
             casManager.saveProfileData(profileData)
         }
     }
@@ -35,7 +35,7 @@ final class AppearanceVM {
     var customAccentColor = Color.black {
         didSet {
             changeStateTrigger.toggle()
-            profileData.value.settings.accentColor = AccentColorEnum.custom(customAccentColor.toHex()).setUpColor()
+            profileData.settings.accentColor = AccentColorEnum.custom(customAccentColor.toHex()).setUpColor()
             casManager.saveProfileData(profileData)
         }
     }
@@ -53,19 +53,19 @@ final class AppearanceVM {
     
     func changeAccentColor(_ accentColor: AccentColorEnum) {
         changeStateTrigger.toggle()
-        profileData.value.settings.accentColor = accentColor.setUpColor()
+        profileData.settings.accentColor = accentColor.setUpColor()
         appearanceManager.changeAccentColor(accentColor)
         accentSymbolAnimate.toggle()
     }
     
     func checkAccentColor(_ accentColor: AccentColorEnum) -> Bool {
-        profileData.value.settings.accentColor == accentColor.setUpColor()
+        profileData.settings.accentColor == accentColor.setUpColor()
     }
     
     func checkCustomAccent() -> Bool {
         var state = true
         for i in AccentColorEnum.allCases {
-            guard i.setUpColor() != profileData.value.settings.accentColor else {
+            guard i.setUpColor() != profileData.settings.accentColor else {
                 return false
             }
             
@@ -87,13 +87,13 @@ final class AppearanceVM {
     }
     
     func checkCurrentBackgroundColor(_ backgroundColor: BackgroundColorEnum) -> Bool {
-        profileData.value.settings.background == backgroundColor.setUpColor()
+        profileData.settings.background == backgroundColor.setUpColor()
     }
     
     func checkCustomBackground() -> Bool {
         var state = true
         for i in BackgroundColorEnum.allCases {
-            guard i.setUpColor() != profileData.value.settings.background else {
+            guard i.setUpColor() != profileData.settings.background else {
                 return false
             }
             

@@ -29,7 +29,7 @@ final class OnboardingVM {
     
     init() {
         profileModel = casManager.profileModel
-        createdDate = Date(timeIntervalSince1970: casManager.profileModel.value.onboarding.onboardingCreatedDate)
+        createdDate = Date(timeIntervalSince1970: casManager.profileModel.onboarding.onboardingCreatedDate)
     }
     
     func continueButtontapped() {
@@ -39,6 +39,5 @@ final class OnboardingVM {
         
         closeTriger.toggle()
         onboardingManager.sayHello = false
-        profileModel.value.onboarding.sayHello = false
     }
 }

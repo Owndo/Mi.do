@@ -23,13 +23,16 @@ final class ModelsFactory {
             UITaskModel(
                 model: .initial(
                     TaskModel(
-                        title: "New task",
-                        description: "",
-                        createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Date.now.timeIntervalSince1970,
-                        dayOfWeek: [],
+                        title: "💧 Drink Water",
+                        description: "You’re not a cactus. Hydrate or evaporate.",
+                        
+                        notificationDate: Double(calendar.date(bySettingHour: 9, minute: 0, second: 0, of: now)!.timeIntervalSince1970),
+                        voiceMode: false,
+                        repeatTask: .daily,
+                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
                         done: [],
-                        deleted: []
+                        deleted: [],
+                        taskColor: .blue
                     )
                 )
             )

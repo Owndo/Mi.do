@@ -55,7 +55,7 @@ struct TaskRow: View {
                             Text(LocalizedStringKey(vm.taskTitle), bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .regular))
                                 .multilineTextAlignment(.leading)
-                                .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedPrimaryLabel(colorScheme))
+                                .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedPrimaryLabel(task: vm.task, colorScheme))
                                 .font(.callout)
                                 .lineLimit(1)
                         }
@@ -66,7 +66,7 @@ struct TaskRow: View {
                     HStack(spacing: 12) {
                         Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                             .font(.system(.subheadline, design: .rounded, weight: .regular))
-                            .foregroundStyle(vm.task.taskColor.color(for: colorScheme).invertedTertiaryLabel(colorScheme))
+                            .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
                             .padding(.leading, 6)
                             .lineLimit(1)
                         
@@ -80,7 +80,7 @@ struct TaskRow: View {
                 .padding(.vertical, 12)
                 .padding(.horizontal, 11)
                 .background(
-                    vm.task.taskColor.color(for: colorScheme)
+                    vm.task.taskRowColor(colorScheme: colorScheme)
                 )
                 .frame(maxWidth: .infinity)
                 .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
@@ -116,7 +116,7 @@ struct TaskRow: View {
     private func PlayButton() -> some View {
         ZStack {
             Circle()
-                .fill(vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
+                .fill(vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(task: task, colorScheme))
             
             if vm.task.audio != nil {
                 Image(systemName: vm.playing ? "pause.fill" : "play.fill")

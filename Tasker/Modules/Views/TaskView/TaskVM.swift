@@ -10,18 +10,6 @@ import SwiftUI
 import Managers
 import Models
 
-public protocol HashableObject: AnyObject, Hashable {}
-
-extension HashableObject {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs === rhs
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(ObjectIdentifier(self))
-    }
-}
-
 @Observable
 public final class TaskVM: Identifiable {
     // MARK: - Managers
@@ -37,19 +25,18 @@ public final class TaskVM: Identifiable {
     @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
-    public var id: String {
-        mainModel.id
-    }
     // MARK: - Model
-    var mainModel: MainModel = mockModel()
+//    var mainModel: MainModel = mockModel()
     var task: MainModel = mockModel()
     var profileModel: ProfileData = mockProfileData()
+    var backgroundColor: Color = .white
     
     var dayOfWeek = [DayOfWeek]()
     
     // MARK: - UI States
     var showDatePicker = false
     var showTimePicker = false
+    var showDayOfWeekSelector = false
     var shareViewIsShowing = false
     var taskDoneTrigger = false
     var playButtonTrigger = false
@@ -148,14 +135,15 @@ public final class TaskVM: Identifiable {
     
     private func preSetTask(_ mainModel: MainModel) {
         profileModel = casManager.profileModel
-        self.mainModel = mainModel
-        task = mainModel
-        dayOfWeek = task.dayOfWeek.actualyDayOFWeek(calendar)
+        self.task = mainModel
+        setupDayOfWeek()
         
         Task {
             await onboarding()
         }
     }
+    
+    
     
     private func setUpTime() {
         sourseDateOfNotification = Date(timeIntervalSince1970: task.notificationDate)
@@ -203,12 +191,51 @@ public final class TaskVM: Identifiable {
         telemetryAction(.taskAction(.selectTimeButtonTapped))
     }
     
-    func selectedColorButtonTapped(_ taskColor: TaskColor) {
+    //MARK: - Repeat actions
+    func changeTypeOfRepeat(_ value: RepeatTask) {
+        if value == .dayOfWeek {
+            showDayOfWeekSelector = true
+        } else {
+            showDayOfWeekSelector = false
+        }
+    }
+    
+    private func setupDayOfWeek() {
+        if task.repeatTask == .dayOfWeek {
+            showDayOfWeekSelector = true
+        }
+        dayOfWeek = task.dayOfWeek.actualyDayOFWeek(calendar)
+    }
+    
+    //MARK: - Color task
+    func backgroundColorForTask(colorScheme: ColorScheme) {
+        if task.taskColor == .baseColor {
+            backgroundColor = colorScheme.backgroundColor()
+        } else {
+            backgroundColor = task.taskColor.color(for: colorScheme)
+        }
+        print(backgroundColor)
+    }
+    
+    func selectedColorButtonTapped(_ taskColor: TaskColor, colorScheme: ColorScheme) {
+        backgroundColor = taskColor.color(for: colorScheme)
         task.taskColor = taskColor
         selectedColorTapped.toggle()
         
         // telemetry
         telemetryAction(.taskAction(.changeColorButtonTapped(taskColor)))
+    }
+    
+    func checkColorForCheckMark(_ taskColor: TaskColor, for colorScheme: ColorScheme) -> Bool {
+        guard taskColor == .baseColor && backgroundColor == colorScheme.backgroundColor() else {
+            if taskColor.color(for: colorScheme) == backgroundColor {
+                return true
+            } else {
+                return false
+            }
+        }
+   
+        return true
     }
     
     func shareViewButtonTapped() {
@@ -220,9 +247,8 @@ public final class TaskVM: Identifiable {
         task.dayOfWeek = dayOfWeek
         task = preparedTask()
         task.notificationDate = changeNotificationTime()
-        mainModel = task
         
-        casManager.saveModel(mainModel)
+        casManager.saveModel(task)
         createTempAudioFile(audioHash: task.audio ?? "")
         
         await notificationManager.createNotification()
@@ -339,7 +365,6 @@ public final class TaskVM: Identifiable {
     func deleteButtonTapped(model: MainModel, deleteCompletely: Bool = false) async {
         Task {
             taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely)
-            await saveTask()
             await notificationManager.createNotification()
         }
         

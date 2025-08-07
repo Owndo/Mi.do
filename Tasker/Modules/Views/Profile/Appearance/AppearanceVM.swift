@@ -21,6 +21,7 @@ final class AppearanceVM {
     var changeStateTrigger = false
     var backgroundSymbolAnimate = false
     var accentSymbolAnimate = false
+    var defaultTaskColor: TaskColor = .baseColor
     
     @ObservationIgnored
     var customBackgroundColor = Color.black {
@@ -42,6 +43,7 @@ final class AppearanceVM {
     
     init() {
         profileData = casManager.profileModel
+        defaultTaskColor = profileData.settings.defaultTaskColor ?? .baseColor
     }
     
     // MARK: - Change progress Mode
@@ -49,12 +51,23 @@ final class AppearanceVM {
         changeStateTrigger.toggle()
         appearanceManager.changeProgressMode(progressMode)
         profileData = casManager.profileModel
+        casManager.saveProfileData(profileData)
+    }
+    
+    func selectedDefaultTaskColorButtonTapped(_ color: TaskColor) {
+        defaultTaskColor = color
+        profileData.settings.defaultTaskColor = defaultTaskColor
+        casManager.saveProfileData(profileData)
+    }
+    
+    func checkColorForCheckMark(color: TaskColor) -> Bool {
+        defaultTaskColor == color
     }
     
     func changeAccentColor(_ accentColor: AccentColorEnum) {
         changeStateTrigger.toggle()
-        profileData.settings.accentColor = accentColor.setUpColor()
         appearanceManager.changeAccentColor(accentColor)
+        casManager.saveProfileData(profileData)
         accentSymbolAnimate.toggle()
     }
     

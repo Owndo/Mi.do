@@ -11,6 +11,7 @@ import SwiftUI
 public struct SettingsModel: Codable, Equatable {
     public var firstDayOfWeek: Int = Calendar.current.firstWeekday
     public var colorScheme: ColorSchemeMode
+    public var defaultTaskColor: TaskColor?
     public var accentColor: AccentBackgroundColor
     public var background: AccentBackgroundColor
     public var minimalProgressMode = true
@@ -42,6 +43,7 @@ public struct SettingsModel: Codable, Equatable {
         }
     }
 }
+
 public func mockSettingsModel() -> SettingsModel {
     SettingsModel(
      colorScheme: .system,
@@ -49,6 +51,8 @@ public func mockSettingsModel() -> SettingsModel {
      background: AccentBackgroundColor(light: "#F2F5EE", dark: "#202020")
  )
 }
+
+
 public struct AccentBackgroundColor: Codable, Equatable {
     public var light: String
     public var dark: String
@@ -57,4 +61,9 @@ public struct AccentBackgroundColor: Codable, Equatable {
         self.light = light
         self.dark = dark
     }
+}
+
+public extension AccentBackgroundColor {
+    static let defaultAccent = AccentBackgroundColor(light: "#0EBC7C", dark: "#18C585")
+    static let defaultBackground = AccentBackgroundColor(light: "#F2F5EE", dark: "#202020")
 }

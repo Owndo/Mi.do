@@ -27,16 +27,16 @@ public struct TaskCheckMark: View {
     public var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 6)
-                .fill(task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(colorScheme))
+                .fill(task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(task: task, colorScheme))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
-                        .stroke(task.taskColor.color(for: colorScheme).invertedSeparartorSecondary(colorScheme), lineWidth: 1)
+                        .stroke(task.taskColor.color(for: colorScheme).invertedSeparartorSecondary(task: task, colorScheme), lineWidth: 1)
                 )
             
             if animate {
                 Image(systemName: "checkmark")
-                    .foregroundStyle(task.taskColor.color(for: colorScheme).invertedSecondaryLabel(colorScheme))
+                    .foregroundStyle(task.taskColor.color(for: colorScheme).invertedSecondaryLabel(task: task, colorScheme))
                     .transition(.symbolEffect(.disappear))
                     .bold()
             }

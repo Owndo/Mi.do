@@ -27,6 +27,10 @@ public class Mutable: Hashable {
     public static func initial() -> Mutable {
         Mutable(nil)
     }
+    
+    public func returnId() -> String? {
+        parent?.commitId
+    }
     // Hashable:
     public static func == (lhs: Mutable, rhs: Mutable) -> Bool {
         return lhs === rhs

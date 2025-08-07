@@ -161,6 +161,8 @@ final class CASManager: CASManagerProtocol {
             try cas.deleteModel(task.model)
             indexForDelete(task)
             taskUpdateTrigger.toggle()
+            
+            print("delete model")
         } catch {
             print("Couldn't delete data: \(error)")
         }

@@ -38,6 +38,9 @@ struct AppearanceView: View {
                     ProgressMode()
                         .padding(.bottom, 28)
                     
+                    DefaultTaskColorSelector()
+                        .padding(.bottom, 28)
+                    
                     AccentColorSelector()
                         .padding(.bottom, 28)
                     
@@ -164,6 +167,57 @@ struct AppearanceView: View {
                         .foregroundStyle(.labelQuaternary)
                 }
             }
+        }
+    }
+    
+    //MARK: - Default task Color
+    @ViewBuilder
+    private func DefaultTaskColorSelector() -> some View {
+        VStack(alignment: .leading) {
+            Text("Default task color", bundle: .module)
+                .font(.system(.headline, design: .rounded, weight: .semibold))
+                .foregroundStyle(.labelPrimary)
+            
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(TaskColor.allCases, id: \.id) { color in
+                        
+                        Spacer()
+                        
+                        Button {
+                            vm.selectedDefaultTaskColorButtonTapped(color)
+                        } label: {
+                            Circle()
+                                .fill(color.color(for: colorScheme))
+                                .frame(width: 28, height: 28)
+                                .overlay(
+                                    ZStack {
+                                        Circle()
+                                            .stroke(.separatorPrimary, lineWidth: vm.checkColorForCheckMark(color: color) ? 1.5 : 0.3)
+                                            .shadow(radius: 8, y: 4)
+                                        
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(vm.checkColorForCheckMark(color: color) ? .labelPrimaryInverted : .clear)
+                                            .symbolEffect(.bounce, value: vm.defaultTaskColor)
+                                            .foregroundStyle(.labelSecondary)
+                                    }
+                                )
+                        }
+                        
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal, 5)
+                .padding(.vertical, 1)
+            }
+            .padding(.vertical, 20)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(
+                        .backgroundTertiary
+                    )
+            )
+            .sensoryFeedback(.selection, trigger: vm.defaultTaskColor)
         }
     }
     

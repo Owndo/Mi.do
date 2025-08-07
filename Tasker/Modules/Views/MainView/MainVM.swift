@@ -267,7 +267,8 @@ public final class MainVM {
         let model = MainModel(
             .initial(
                 TaskModel(
-                    notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970
+                    notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
+                    taskColor: profileModel.settings.defaultTaskColor
                 )
             )
         )

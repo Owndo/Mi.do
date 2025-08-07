@@ -75,7 +75,11 @@ public extension Color {
         return shouldInvertForReadability() ? Color.white : Color.black
     }
     
-    func invertedPrimaryLabel(_ colorScheme: ColorScheme) -> Color {
+    func invertedPrimaryLabel(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
+        guard task.taskColor != .baseColor else {
+            return .labelPrimary
+        }
+        
         if colorScheme == .dark {
             return .labelPrimary
         } else {
@@ -83,15 +87,23 @@ public extension Color {
         }
     }
     
-    func invertedSecondaryLabel(_ colorScheme: ColorScheme) -> Color {
+    func invertedSecondaryLabel(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
+        guard task.taskColor != .baseColor else {
+            return .labelSecondary
+        }
+        
         if colorScheme == .dark {
-            return .labelPrimary
+            return .labelSecondary
         } else {
             return shouldInvertForReadability() ? .labelSecondaryInverted : .labelSecondary
         }
     }
     
-    func invertedTertiaryLabel(_ colorScheme: ColorScheme) -> Color {
+    func invertedTertiaryLabel(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
+        guard task.taskColor != .baseColor else {
+            return .labelTertiary
+        }
+        
         if colorScheme == .dark {
             return .labelTertiary
         } else {
@@ -99,7 +111,11 @@ public extension Color {
         }
     }
     
-    func invertedBackgroundTertiary(_ colorScheme: ColorScheme) -> Color {
+    func invertedBackgroundTertiary(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
+        guard task.taskColor != .baseColor else {
+            return .backgroundTertiary
+        }
+        
         if colorScheme == .dark {
             return .backgroundTertiary
         } else {
@@ -107,7 +123,11 @@ public extension Color {
         }
     }
     
-    func invertedSeparartorPrimary(_ colorScheme: ColorScheme) -> Color {
+    func invertedSeparartorPrimary(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
+        guard task.taskColor != .baseColor else {
+            return .separatorPrimary
+        }
+        
         if colorScheme == .dark {
             return .separatorPrimary
         } else {
@@ -115,7 +135,11 @@ public extension Color {
         }
     }
     
-    func invertedSeparartorSecondary(_ colorScheme: ColorScheme) -> Color {
+    func invertedSeparartorSecondary(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
+        guard task.taskColor != .baseColor else {
+            return .separatorSecondary
+        }
+        
         if colorScheme == .dark {
             return .separatorSecondary
         } else {

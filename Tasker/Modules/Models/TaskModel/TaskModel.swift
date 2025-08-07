@@ -168,8 +168,15 @@ public class UITaskModel: TaskModelWrapper<TaskModel> {
     }
     
     public var taskColor: TaskColor {
-        get { model.value.taskColor ?? .yellow }
-        set { model.value.taskColor = nilIfNeed(newValue, is: .yellow) }
+        get { model.value.taskColor ?? .baseColor }
+        set { model.value.taskColor = nilIfNeed(newValue, is: .baseColor) }
+    }
+}
+
+
+public extension UITaskModel {
+    func taskRowColor(colorScheme: ColorScheme) -> Color {
+        self.taskColor.color(for: colorScheme)
     }
 }
 

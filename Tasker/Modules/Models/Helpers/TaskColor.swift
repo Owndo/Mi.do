@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
+    case baseColor
     case yellow
     case purple
     case red
@@ -28,6 +29,7 @@ public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
     
     public var id: String {
         switch self {
+        case .baseColor: return "base color"
         case .yellow: return "yellow"
         case .purple: return "purple"
         case .red: return "red"
@@ -49,6 +51,8 @@ public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
     
     public func color(for colorScheme: ColorScheme) -> Color {
         switch self {
+        case .baseColor:
+            return colorScheme == .light ? "#2020200A".hexColor() : "#1AFFFFFF".hexColor()
         case .yellow:
             return colorScheme == .light ? "#FFF9C4".hexColor() : "#BFAF30".hexColor()
         case .purple:
@@ -85,7 +89,7 @@ public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
     }
     
     public static var allCases: [TaskColor] {
-        return [.yellow, .purple, .red, .teal, .aquamarine,.orange, .blue,
+        return [.baseColor, .yellow, .purple, .red, .teal, .aquamarine,.orange, .blue,
                 .green, .mint, .pink, .peach, .lime, .steelBlue, .brown, .sand]
     }
 }

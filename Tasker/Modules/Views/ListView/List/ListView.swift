@@ -53,9 +53,9 @@ public struct ListView: View {
                         }
                 }
             }
-//            .onAppear {
-//                vm.updateTasksList()
-//            }
+            //            .onAppear {
+            //                vm.updateTasksList()
+            //            }
             .scrollIndicators(.hidden)
             .onPreferenceChange(ContentHeightPreferenceKey.self) { height in
                 vm.contentHeight = height

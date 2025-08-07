@@ -108,6 +108,7 @@ public struct ProfileView: View {
         }
         .padding(.horizontal, 16)
         .ignoresSafeArea(.keyboard)
+        .animation(.default, value: vm.profileModel.name)
     }
     
     //MARK: - Settings Button

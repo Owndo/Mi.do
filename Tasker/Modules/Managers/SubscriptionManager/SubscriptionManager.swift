@@ -20,7 +20,7 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
     public var showPaywall = false
     public var pending = false
     
-    let productIDs = ["Yearly_base", "Monthly_base"]
+    let productIDs = ["yearly_base_group", "monthly_base_group"]
     
     public var products: [Product] = []
     

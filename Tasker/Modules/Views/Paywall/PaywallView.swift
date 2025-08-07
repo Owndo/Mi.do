@@ -48,7 +48,7 @@ public struct PaywallView: View {
         } message: {
             Text("I’d love to bring something back… but there’s nothing yet.")
         }
-        
+        .animation(.default, value: vm.textForButton)
     }
     
     //MARK: - Main View
@@ -62,10 +62,6 @@ public struct PaywallView: View {
                 .clipShape(
                     RoundedRectangle(cornerRadius: 12)
                 )
-            //                .overlay(
-            //                    RoundedRectangle(cornerRadius: 12)
-            //                        .stroke(.separatorPrimary.opacity(0.5), lineWidth: 1)
-            //                )
                 .padding(.bottom, 12)
             
             Benefits()

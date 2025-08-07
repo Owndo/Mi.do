@@ -302,7 +302,7 @@ public final class MainVM {
     public func selectedTask(by notification: Notification? = nil, taskId: String? = nil) {
         guard taskId == nil else {
             let baseSearchId = extractBaseId(from: taskId!)
-            let task = taskManager.activeTasks.first { task in
+            let task = casManager.models.values.first { task in
                 extractBaseId(from: task.id) == baseSearchId
             }
             
@@ -315,7 +315,7 @@ public final class MainVM {
         
         if let taskId = notification?.userInfo?["taskId"] as? String {
             let baseSearchId = extractBaseId(from: taskId)
-            let task = taskManager.tasks.first { task in
+            let task = casManager.models.values.first { task in
                 extractBaseId(from: task.id) == baseSearchId
             }
             if let task {

@@ -67,6 +67,9 @@ struct AppearanceView: View {
             .navigationBarTitleDisplayMode(.inline)
             .background(colorScheme.backgroundColor())
         }
+        .animation(.default, value: colorScheme)
+        .animation(.default, value: vm.profileData.settings.background)
+        .animation(.default, value: vm.profileData.settings.accentColor)
     }
     
     //MARK: - Scheme selector

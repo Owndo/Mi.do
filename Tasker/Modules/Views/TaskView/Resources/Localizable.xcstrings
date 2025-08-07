@@ -46,6 +46,12 @@
             "value" : "💡 Un’ora a caso"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💡 Uma hora aleatória"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -109,6 +115,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "💧 Bevi un po’ d’acqua"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "💧 Beba um pouco de água"
           }
         },
         "pt-BR" : {
@@ -176,6 +188,12 @@
             "value" : "📚 Leggi qualcosa che non sia uno schermo"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "📚 Leia algo que não seja uma tela"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -239,6 +257,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "📱 Installa la migliore app"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "📱 Instale o melhor app"
           }
         },
         "pt-BR" : {
@@ -306,6 +330,12 @@
             "value" : "📵 10 minuti senza telefono"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "📵 10 minutos sem telefone"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -369,6 +399,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "🗓️ Pianifica domani"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🗓️ Planeje o amanhã"
           }
         },
         "pt-BR" : {
@@ -436,6 +472,12 @@
             "value" : "🧹 Libera la mente"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "🧹 Limpe a mente"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -499,6 +541,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Un libro, un giornale, una scatola di cereali. Tocca la carta. Assorbi conoscenza."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um livro, um jornal, uma caixa de cereal. Toque o papel. Absorva conhecimento."
           }
         },
         "pt-BR" : {
@@ -566,6 +614,12 @@
             "value" : "Aggiungi altre informazioni"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar mais informações"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -630,6 +684,12 @@
             "value" : "Aggiungi registrazione vocale"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar gravação de voz"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -692,6 +752,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chiudi"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fechar"
           }
         },
         "pt-BR" : {
@@ -759,6 +825,12 @@
             "value" : "Chiudi le schede mentali. Respira. Medita, scrivi un diario o fissa semplicemente il vuoto."
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feche as abas mentais. Respire. Medite, escreva no diário ou apenas encare o vazio."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -821,6 +893,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Colore attività"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cor da tarefa"
           }
         },
         "pt-BR" : {
@@ -888,6 +966,12 @@
             "value" : "Creato"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criado"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -952,6 +1036,12 @@
             "value" : "Creato:"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criado:"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1011,6 +1101,12 @@
           }
         },
         "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Data"
@@ -1081,6 +1177,12 @@
             "value" : "Giorno della settimana"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dia da semana"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1143,6 +1245,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Elimina"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir"
           }
         },
         "pt-BR" : {
@@ -1210,6 +1318,12 @@
             "value" : "Ogni giorno"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os dias"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1273,6 +1387,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ogni mese"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os meses"
           }
         },
         "pt-BR" : {
@@ -1340,6 +1460,12 @@
             "value" : "Ogni settimana"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todas as semanas"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1403,6 +1529,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ogni anno"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os anos"
           }
         },
         "pt-BR" : {
@@ -1470,6 +1602,12 @@
             "value" : "Ven"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sex"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1533,6 +1671,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cerca su Google qualcosa che non capisci. Schiuma quantistica? Perché i gatti urlano di notte? Scegli la tua avventura."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pesquise no Google algo que você não entende. Espuma quântica? Por que os gatos gritam à noite? Escolha sua aventura."
           }
         },
         "pt-BR" : {
@@ -1600,6 +1744,12 @@
             "value" : "Magari domani salverai il mondo. Forse dovresti annotarlo."
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Talvez você salve o mundo amanhã. Melhor anotar isso."
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1663,6 +1813,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mega compito. Installa l’app che domina tutte. Quindi... ce l’hai fatta"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mega tarefa. Instale o app que governa todos. Então... você conseguiu."
           }
         },
         "pt-BR" : {
@@ -1730,6 +1886,12 @@
             "value" : "Lun"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seg"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1793,6 +1955,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mai"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nunca"
           }
         },
         "pt-BR" : {
@@ -1860,6 +2028,12 @@
             "value" : "Nuova attività"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nova tarefa"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1924,6 +2098,12 @@
             "value" : "Scegli i giorni della settimana da ripetere"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha os dias da semana para repetir"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -1986,6 +2166,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Riproduci la tua voce nella notifica"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproduzir sua voz na notificação"
           }
         },
         "pt-BR" : {
@@ -2053,6 +2239,12 @@
             "value" : "Metti giù il rettangolo luminoso. Il mondo può aspettare. Respira…"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Largue o retângulo brilhante. O mundo pode esperar. Respire…"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2115,6 +2307,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ripeti"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repetir"
           }
         },
         "pt-BR" : {
@@ -2182,6 +2380,12 @@
             "value" : "Sab"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sáb"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2242,6 +2446,12 @@
           }
         },
         "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dom"
+          }
+        },
+        "pt" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dom"
@@ -2312,6 +2522,12 @@
             "value" : "Gio"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qui"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2374,6 +2590,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ora"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hora"
           }
         },
         "pt-BR" : {
@@ -2441,6 +2663,12 @@
             "value" : "Oggi"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2504,6 +2732,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Domani"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Amanhã"
           }
         },
         "pt-BR" : {
@@ -2571,6 +2805,12 @@
             "value" : "Mar"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ter"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2634,6 +2874,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qua"
           }
         },
         "pt-BR" : {
@@ -2701,6 +2947,12 @@
             "value" : "Ieri"
           }
         },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ontem"
+          }
+        },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
@@ -2764,6 +3016,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non sei un cactus. Bevi o ti seccherai."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você não é um cacto. Hidrate-se ou vai secar."
           }
         },
         "pt-BR" : {

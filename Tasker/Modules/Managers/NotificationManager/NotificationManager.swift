@@ -123,8 +123,12 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Single notification
     private func createSingleNotification(_ task: UITaskModel) {
-        notificationContent.title = task.title
-        notificationContent.body = task.description
+        let localizedTitle = NSLocalizedString(task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
+        
+        notificationContent.title = localizedTitle
+        notificationContent.body = localizedDescription
+        
         notificationContent.userInfo = ["taskID": task.id]
         
         uniqueID.append(task.id)
@@ -152,10 +156,13 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Create repeat notification
     private func createRepeatNotification(_ task: UITaskModel) {
+        let localizedTitle = NSLocalizedString(task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
+        
         var uniqueNotificationID = task.id
         
-        notificationContent.title = task.title
-        notificationContent.body = task.description
+        notificationContent.title = localizedTitle
+        notificationContent.body = localizedDescription
         notificationContent.userInfo = ["taskID": task.id]
         
         guard !checkIsTaskActualyForThisDay(task: task) else { return }
@@ -256,6 +263,9 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Specific single notification
     private func createSpecificSingleNotification(_ task: UITaskModel, date: Date) {
+        let localizedTitle = NSLocalizedString(task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
+        
         var dateComponents = DateComponents()
         dateComponents.year = calendar.component(.year, from: date)
         dateComponents.month = calendar.component(.month, from: date)
@@ -267,8 +277,8 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let updatedID = task.id + ".\(UUID().uuidString)"
         
-        notificationContent.title = task.title
-        notificationContent.body = task.description
+        notificationContent.title = localizedTitle
+        notificationContent.body = localizedDescription
         notificationContent.userInfo = ["taskID": updatedID]
         
         uniqueID.append(updatedID)
@@ -366,7 +376,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     /// Avalible tasks for day
     private func tasksForSpecificDay(day: Date) -> [UITaskModel] {
-        casManager.activeTasks
+        casManager.models.values
             .filter {
                 $0
                     .isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) &&

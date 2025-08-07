@@ -64,6 +64,7 @@ public struct MainView: View {
                         vm.calendarButtonTapped()
                     } label: {
                         Image(systemName: "calendar")
+                            .font(.system(size: 18))
                             .foregroundStyle(colorScheme.accentColor())
                     }
                     .disabled(vm.showPaywall)
@@ -278,6 +279,7 @@ public struct MainView: View {
         //                .clipShape(Circle())
         //        } else {
         Image(systemName: "person.circle")
+            .font(.system(size: 18))
             .foregroundStyle(colorScheme.accentColor())
         //        }
     }

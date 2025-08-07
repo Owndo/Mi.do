@@ -105,7 +105,7 @@ final class MonthVM {
     }
     
     func selectedDayIsToday() -> Bool {
-        dateManager.selectedDayIsToday()
+        !dateManager.selectedDayIsToday()
     }
     
     func backToTodayButtonTapped() {

@@ -20,7 +20,7 @@
     "_applicationInternalID" : "6749021753",
     "_developerTeamID" : "5M63H38ZMF",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 776046116.89478803,
+    "_lastSynchronizedDate" : 776052349.21949601,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -76,11 +76,11 @@
   },
   "subscriptionGroups" : [
     {
-      "id" : "21747975",
+      "id" : "21748337",
       "localizations" : [
 
       ],
-      "name" : "Base subscriptions",
+      "name" : "Base group",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -92,43 +92,43 @@
           "displayPrice" : "3.99",
           "familyShareable" : false,
           "groupNumber" : 2,
-          "internalID" : "6749554879",
+          "internalID" : "6749557137",
           "introductoryOffer" : {
-            "internalID" : "A43026B9",
+            "internalID" : "9B71EE78",
             "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1W"
           },
           "localizations" : [
             {
-              "description" : "Monthly plan",
-              "displayName" : "Monthly",
-              "locale" : "en_US"
-            },
-            {
-              "description" : "Paiement chaque mois",
-              "displayName" : "Mensuel",
-              "locale" : "fr"
-            },
-            {
-              "description" : "Месячная подписка",
-              "displayName" : "Месяц",
-              "locale" : "ru"
-            },
-            {
               "description" : "Pago mensual",
               "displayName" : "Mensual",
               "locale" : "es_MX"
             },
             {
-              "description" : "Monatliche Zahlung",
-              "displayName" : "Monatlic",
-              "locale" : "de"
-            },
-            {
               "description" : "Pagamento mensal",
               "displayName" : "Mensal",
               "locale" : "pt_PT"
+            },
+            {
+              "description" : "Оплата раз в месяц",
+              "displayName" : "Месяц",
+              "locale" : "ru"
+            },
+            {
+              "description" : "Pagamento mensile",
+              "displayName" : "Mensile",
+              "locale" : "it"
+            },
+            {
+              "description" : "Pago mensual",
+              "displayName" : "Mensual",
+              "locale" : "es_ES"
+            },
+            {
+              "description" : "Paiement chaque mois",
+              "displayName" : "Mensuel",
+              "locale" : "fr"
             },
             {
               "description" : "Paiement chaque mois",
@@ -141,20 +141,20 @@
               "locale" : "pt_BR"
             },
             {
-              "description" : "Pago mensual",
-              "displayName" : "Mensual",
-              "locale" : "es_ES"
+              "description" : "Monatliche Zahlung",
+              "displayName" : "Monatlich",
+              "locale" : "de"
             },
             {
-              "description" : "Pagamento mensile",
-              "displayName" : "Mansile",
-              "locale" : "it"
+              "description" : "Pay once a month",
+              "displayName" : "Monthly",
+              "locale" : "en_US"
             }
           ],
-          "productID" : "Monthly_base",
+          "productID" : "monthly_base_group",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Monthly",
-          "subscriptionGroupID" : "21747975",
+          "subscriptionGroupID" : "21748337",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
 
@@ -170,13 +170,13 @@
           "displayPrice" : "29.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "6749554900",
+          "internalID" : "6749556891",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Pago una vez al año",
-              "displayName" : "Anual",
-              "locale" : "es_ES"
+              "description" : "Оплата раз в год",
+              "displayName" : "Год",
+              "locale" : "ru"
             },
             {
               "description" : "Pagamento annuale",
@@ -184,19 +184,24 @@
               "locale" : "it"
             },
             {
-              "description" : "Yearly plane",
+              "description" : "Paiement annuel",
+              "displayName" : "Annuel",
+              "locale" : "fr"
+            },
+            {
+              "description" : "Pago una vez al año",
+              "displayName" : "Anual",
+              "locale" : "es_MX"
+            },
+            {
+              "description" : "Pay once a year",
               "displayName" : "Yearly",
               "locale" : "en_US"
             },
             {
-              "description" : "Zahlung einmal im Jahr",
-              "displayName" : "Jährlich",
-              "locale" : "de"
-            },
-            {
-              "description" : "Pagamento anual",
+              "description" : "Pago una vez al año",
               "displayName" : "Anual",
-              "locale" : "pt_PT"
+              "locale" : "es_ES"
             },
             {
               "description" : "Pagamento anual",
@@ -204,9 +209,9 @@
               "locale" : "pt_BR"
             },
             {
-              "description" : "Pago una vez al año",
-              "displayName" : "Anual ",
-              "locale" : "es_MX"
+              "description" : "Zahlung einmal im Jahr",
+              "displayName" : "Jährlich",
+              "locale" : "de"
             },
             {
               "description" : "Paiement annuel",
@@ -214,20 +219,15 @@
               "locale" : "fr"
             },
             {
-              "description" : "Оплата раз в год",
-              "displayName" : "Год",
-              "locale" : "ru"
-            },
-            {
-              "description" : "Paiement annuel",
-              "displayName" : "Annuel",
-              "locale" : "fr"
+              "description" : "Pagamento anual",
+              "displayName" : "Anual",
+              "locale" : "pt_PT"
             }
           ],
-          "productID" : "Yearly_base",
+          "productID" : "yearly_base_group",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Yearly",
-          "subscriptionGroupID" : "21747975",
+          "subscriptionGroupID" : "21748337",
           "type" : "RecurringSubscription",
           "winbackOffers" : [
 

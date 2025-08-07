@@ -118,6 +118,8 @@ public struct TaskView: View {
             }
         }
         .animation(.bouncy, value: vm.showPaywall)
+        .animation(.default, value: colorScheme)
+        .animation(.default, value: vm.task.taskColor)
     }
     
     //MARK: TabBar

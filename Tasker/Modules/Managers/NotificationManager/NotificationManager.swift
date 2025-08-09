@@ -95,8 +95,19 @@ final class NotificationManager: NotificationManagerProtocol {
                 
             }
             
-            createRepeatNotification(task)
+            guard task.endDate != nil else {
+                createRepeatNotification(task)
+                return
+            }
+            
+            guard checkDayBeforeDeadline(task) <= 5 else {
+                createRepeatNotification(task)
+                return
+            }
+            
+            createSpecificSingleNotification(task, date: selectedDay)
             return
+            
         }
         
         guard checkDaysBeforeSkip(task) <= 5 else {
@@ -151,6 +162,7 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
+        print("single request - \(request)")
         removeDeliveredNotification()
     }
     
@@ -256,6 +268,7 @@ final class NotificationManager: NotificationManagerProtocol {
             
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             notificationCenter.add(request)
+            print("repeat notification - \(request)")
         }
         
         removeDeliveredNotification()
@@ -302,6 +315,7 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: updatedID, content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
+        print("specific notification - \(request)")
         removeDeliveredNotification()
     }
     
@@ -407,6 +421,15 @@ final class NotificationManager: NotificationManagerProtocol {
         let dayBeforeSkip = calendar.dateComponents([.day], from: now, to: datesBeforeSkip.first ?? dateBeforDelete.first!).day! + 1
         
         return dayBeforeSkip
+    }
+    
+    private func checkDayBeforeDeadline(_ task: UITaskModel) -> Int {
+        guard let endDate = task.endDate else {
+            return 0
+        }
+        
+        let dateBeforeDeadline = Date(timeIntervalSince1970: endDate)
+        return calendar.dateComponents([.day], from: now, to: dateBeforeDeadline).day!
     }
     
     /// Check diff between day of week on current and selected week

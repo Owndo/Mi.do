@@ -48,12 +48,44 @@ public struct TaskView: View {
                         
                         MainSection()
                         
-                        VStack {
+                        VStack(spacing: 0) {
                             DateSelection()
                             
                             TimeSelection()
                             
                             RepeatSelection()
+                            
+                            VStack {
+                                HStack {
+                                    Button {
+                                        vm.showDedalineButtonTapped()
+                                    } label: {
+                                        Image(systemName: "flame.fill")
+                                            .foregroundStyle(colorScheme.accentColor())
+                                        
+                                        Text("Deadline", bundle: .module)
+                                            .font(.system(.body, design: .rounded, weight: .regular))
+                                            .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                                            .padding(.vertical, 13)
+                                        
+                                     Spacer()
+                                        
+                                        Toggle(isOn: $vm.hasDeadline) {}
+                                            .tint(colorScheme.accentColor())
+                                            .padding(.trailing, 2)
+                                    }
+                                }
+                                .padding(.leading, 17)
+                                .padding(.trailing, 14)
+                                
+                                if vm.showDeadline {
+                                    DatePicker("", selection: $vm.deadLineDate, displayedComponents: .date)
+                                        .datePickerStyle(.graphical)
+                                        .id(vm.deadLineDate)
+                                        .tint(colorScheme.accentColor())
+                                }
+                            }
+                            .clipped()
                         }
                         .background(
                             RoundedRectangle(cornerRadius: 12)
@@ -104,11 +136,13 @@ public struct TaskView: View {
             }
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.selection, trigger: vm.notificationDate)
+            .sensoryFeedback(.selection, trigger: vm.showDeadline)
             .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)
             .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.isRecording)
             .animation(.default, value: vm.task.audio)
             .animation(.easeInOut, value: vm.showDatePicker)
             .animation(.easeInOut, value: vm.showTimePicker)
+            .animation(.easeInOut, value: vm.showDeadline)
             .animation(.easeInOut, value: vm.showDayOfWeekSelector)
             .sheet(isPresented: $vm.shareViewIsShowing) {
                 ShareView(activityItems: [vm.task])
@@ -354,8 +388,6 @@ public struct TaskView: View {
             .padding(.leading, 17)
             .padding(.trailing, 14)
             
-            CustomDivider()
-            
             if vm.showDatePicker {
                 DatePicker("", selection: $vm.notificationDate, displayedComponents: .date)
                     .datePickerStyle(.graphical)
@@ -363,6 +395,8 @@ public struct TaskView: View {
                     .id(vm.notificationDate)
                     .tint(colorScheme.accentColor())
             }
+            
+            CustomDivider()
         }
         .sensoryFeedback(.impact, trigger: vm.showDatePicker)
         .clipped()
@@ -395,13 +429,13 @@ public struct TaskView: View {
             .padding(.leading, 17)
             .padding(.trailing, 14)
             
-            CustomDivider()
-            
             if vm.showTimePicker {
                 DatePicker("", selection: $vm.notificationDate, displayedComponents: .hourAndMinute)
                     .datePickerStyle(.wheel)
                     .tint(colorScheme.accentColor())
             }
+            
+            CustomDivider()
         }
         .sensoryFeedback(.impact, trigger: vm.showTimePicker)
         .clipped()
@@ -422,17 +456,17 @@ public struct TaskView: View {
                 
                 Spacer()
                 
-                Picker(selection: $vm.task.repeatTask, content: {
+                Picker(selection: $vm.task.repeatTask) {
                     ForEach(RepeatTask.allCases, id: \.self) { type in
                         Text(type.description, bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
                     }
-                }, label: {
+                } label: {
                     HStack {
                         Text(vm.task.repeatTask.description)
                             .font(.system(.body, design: .rounded, weight: .regular))
                     }
-                })
+                }
                 .tint(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
                 .pickerStyle(.menu)
             }
@@ -441,6 +475,8 @@ public struct TaskView: View {
             if vm.showDayOfWeekSelector {
                 DayOfWeekSelection()
             }
+            
+            CustomDivider()
         }
         .onChange(of: vm.task.repeatTask) { oldValue, newValue in
             vm.changeTypeOfRepeat(newValue)
@@ -451,9 +487,6 @@ public struct TaskView: View {
     @ViewBuilder
     private func DayOfWeekSelection() -> some View {
         VStack(spacing: 0) {
-            
-            CustomDivider()
-            
             HStack {
                 ForEach($vm.dayOfWeek) { $day in
                     Button {
@@ -632,4 +665,20 @@ public struct TaskView: View {
 
 #Preview {
     TaskView(model: mockModel())
+}
+
+struct AnimatedPickerLabel: View {
+    let text: LocalizedStringKey
+    
+    @State private var previousText: String = ""
+    @State private var animate = false
+    
+    var body: some View {
+        Text(text)
+            .transition(.opacity.combined(with: .scale))
+            .animation(.easeInOut(duration: 0.25), value: text)
+            .onChange(of: text) { oldValue, newValue in
+                animate.toggle()
+            }
+    }
 }

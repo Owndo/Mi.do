@@ -71,7 +71,6 @@ final class CASManager: CASManagerProtocol {
     func saveProfileData(_ data: ProfileData) {
         do {
             try cas.saveJsonModel(data.model)
-            
             profileUpdateTriger.toggle()
         } catch {
             print("Couldn't save profile data inside CAS")

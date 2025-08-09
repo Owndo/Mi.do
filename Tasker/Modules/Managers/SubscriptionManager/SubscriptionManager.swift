@@ -46,11 +46,9 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
     }
     
     public func hasSubscription() -> Bool {
-        //       if let model = profileModel {
-        //           if model.value.createdProfile + 86400 > Date.now.timeIntervalSince1970 {
-        //               return true
-        //           }
-        //        }
+#if targetEnvironment(simulator)
+        return true
+#endif
         
         guard purchaseProductId.isEmpty else {
             return true

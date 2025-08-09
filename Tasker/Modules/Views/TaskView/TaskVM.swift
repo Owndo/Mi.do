@@ -26,7 +26,7 @@ public final class TaskVM: Identifiable {
     @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
     // MARK: - Model
-//    var mainModel: MainModel = mockModel()
+    //    var mainModel: MainModel = mockModel()
     var task: MainModel = mockModel()
     var profileModel: ProfileData = mockProfileData()
     var backgroundColor: Color = .white
@@ -49,6 +49,22 @@ public final class TaskVM: Identifiable {
     var disabledButton = false
     var checkMarkTip = false
     var defaultTimeHasBeenSet = false
+    var showDeadline = false
+    
+    var initing = false
+    
+    var hasDeadline = false {
+        didSet {
+            if hasDeadline == true {
+                guard !initing else {
+                    return
+                }
+                showDeadline = true
+            } else {
+                removeDeadlineFromTask()
+            }
+        }
+    }
     
     var showPaywall: Bool {
         subscriptionManager.showPaywall
@@ -66,6 +82,13 @@ public final class TaskVM: Identifiable {
         didSet {
             checkTimeAfterSelected()
             dateHasBeenChanged = true
+        }
+    }
+    
+    var deadLineDate = Date() {
+        didSet {
+            checkTimeAfterDeadlineSelected()
+            setUpDeadlineDate()
         }
     }
     
@@ -123,7 +146,9 @@ public final class TaskVM: Identifiable {
     
     // MARK: - Init
     public init(mainModel: MainModel) {
+        initing = true
         setUPViewModel(mainModel)
+        initing = false
     }
     
     private func setUPViewModel(_ mainModel: MainModel) {
@@ -137,6 +162,11 @@ public final class TaskVM: Identifiable {
         profileModel = casManager.profileModel
         self.task = mainModel
         setupDayOfWeek()
+        
+        if let endDate = task.endDate {
+            hasDeadline = true
+            deadLineDate = Date(timeIntervalSince1970: endDate)
+        }
         
         Task {
             await onboarding()
@@ -234,7 +264,7 @@ public final class TaskVM: Identifiable {
                 return false
             }
         }
-   
+        
         return true
     }
     
@@ -245,7 +275,6 @@ public final class TaskVM: Identifiable {
     //MARK: - Save task
     func saveTask() async {
         task.dayOfWeek = dayOfWeek
-        task = preparedTask()
         task.notificationDate = changeNotificationTime()
         
         casManager.saveModel(task)
@@ -291,9 +320,10 @@ public final class TaskVM: Identifiable {
         return notificationDate.timeIntervalSince1970
     }
     
-    private func preparedTask() -> UITaskModel {
-        taskManager.preparedTask(task: task, date: notificationDate)
-    }
+    //MARK: Prepeare task
+//    private func preparedTask() -> UITaskModel {
+//        taskManager.preparedTask(task: task, date: notificationDate)
+//    }
     
     //MARK: - Date and time
     private func dateToString() -> LocalizedStringKey {
@@ -313,6 +343,7 @@ public final class TaskVM: Identifiable {
     private func dateHasBeenSelected() {
         showDatePicker = false
         showTimePicker = false
+        showDeadline = false
     }
     
     private func checkTimeAfterSelected() {
@@ -324,6 +355,43 @@ public final class TaskVM: Identifiable {
         
         let timeInterval: TimeInterval = (oldComponents != newComponents) ? 0.1 : 1.0
         lastNotificationDate = notificationDate
+        
+        debounceTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false) { [weak self] _ in
+            Task { @MainActor in
+                if let self = self, Date().timeIntervalSince(self.lastChangeTime) >= timeInterval {
+                    self.dateHasBeenSelected()
+                }
+            }
+        }
+    }
+    
+    //MARK: - Deadline
+    func setUpDeadlineDate() {
+        task.endDate = deadLineDate.timeIntervalSince1970
+        if task.repeatTask == .never {
+            task.repeatTask = .daily
+        }
+        hasDeadline = true
+    }
+    
+    func showDedalineButtonTapped() {
+        showDeadline.toggle()
+    }
+    
+    func removeDeadlineFromTask() {
+        showDeadline = false
+        task.endDate = nil
+    }
+    
+    private func checkTimeAfterDeadlineSelected() {
+        debounceTimer?.invalidate()
+        lastChangeTime = Date()
+        
+        let oldComponents = calendar.dateComponents([.day, .month, .year], from: lastNotificationDate)
+        let newComponents = calendar.dateComponents([.day, .month, .year], from: deadLineDate)
+        
+        let timeInterval: TimeInterval = (oldComponents != newComponents) ? 0.1 : 1.0
+        lastNotificationDate = deadLineDate
         
         debounceTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: false) { [weak self] _ in
             Task { @MainActor in

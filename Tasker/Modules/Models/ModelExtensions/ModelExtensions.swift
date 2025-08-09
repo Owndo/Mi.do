@@ -40,7 +40,11 @@ public extension UITaskModel {
         }
         
         if let endDate = self.endDate {
-            guard date <= endDate else { return false }
+            let endDateAsDate = Date(timeIntervalSince1970: endDate)
+            let dateDay = calendar.startOfDay(for: dateAsDate)
+            let endDay = calendar.startOfDay(for: endDateAsDate)
+            
+            guard dateDay <= endDay else { return false }
         }
         
         switch self.repeatTask {

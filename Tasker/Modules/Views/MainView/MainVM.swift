@@ -267,13 +267,36 @@ public final class MainVM {
         let model = MainModel(
             .initial(
                 TaskModel(
-                    notificationDate: dateManager.getDefaultNotificationTime().timeIntervalSince1970,
+                    title: defaultTitle(),
+                    speechDescription: speechDescription(),
+                    audio: audioHash,
+                    notificationDate: defaultNotificationTime(),
                     taskColor: profileModel.settings.defaultTaskColor
                 )
             )
         )
         
         mainModel = model
+    }
+    
+    //MARK: - Recognize data
+    func defaultTitle() -> String? {
+        guard recordManager.recognizedText == "" else {
+            return recordManager.recognizedText
+        }
+        return nil
+    }
+    
+    func speechDescription() -> String? {
+        recordManager.wholeDescription
+    }
+    
+    func defaultNotificationTime() -> Double {
+        if let recognizedDate = recordManager.dateTimeFromtext {
+            return recognizedDate.timeIntervalSince1970
+        } else {
+            return dateManager.getDefaultNotificationTime().timeIntervalSince1970
+        }
     }
     
     func handleButtonTap() async {

@@ -17,7 +17,7 @@ public protocol TaskManagerProtocol {
     
     func thisWeekTasks(date: Double) async -> [MainModel]
     
-    func preparedTask(task: UITaskModel, date: Date) -> UITaskModel
+//    func preparedTask(task: UITaskModel, date: Date) -> UITaskModel
     
     /// Delete task
     func deleteTask(task: MainModel, deleteCompletely: Bool)
@@ -32,6 +32,9 @@ public protocol TaskManagerProtocol {
     func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord]
     
     func updateNotificationTimeForDueDate(task: MainModel) -> MainModel
+    
+    /// last day in deadline
+    func dayUntillDeadLine(_ task: MainModel) -> Int?
     
 //    /// Simple func for check case where task has complete or delete record
 //    func hasTaskCompleteOrDeleteMarkers(task: TaskModel) -> Bool

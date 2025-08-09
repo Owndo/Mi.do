@@ -14,7 +14,7 @@ struct TaskRow: View {
     @Environment(\.colorScheme) var colorScheme
     
     @State private var vm: TaskRowVM
-
+    
     var task: MainModel
     
     init(task: MainModel) {
@@ -38,6 +38,8 @@ struct TaskRow: View {
             .sensoryFeedback(.selection, trigger: vm.selectedTask)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.decrease, trigger: vm.taskDeleteTrigger)
+            .sensoryFeedback(.selection, trigger: vm.showDeadlinePicker)
+            .animation(.default, value: vm.showDeadlinePicker)
     }
     
     //MARK: Task row
@@ -64,11 +66,24 @@ struct TaskRow: View {
                     }
                     
                     HStack(spacing: 12) {
-                        Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
-                            .font(.system(.subheadline, design: .rounded, weight: .regular))
-                            .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                            .padding(.leading, 6)
-                            .lineLimit(1)
+                        HStack {
+                            if vm.showDeadlinePicker {
+                                Text(vm.timeRemainingString(), bundle: .module)
+                                    .font(.system(.subheadline, design: .rounded, weight: .regular))
+                                    .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                                    .underline(true, pattern: .dot, color: .gray)
+                            } else {
+                                Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
+                                    .font(.system(.subheadline, design: .rounded, weight: .regular))
+                                    .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                                    .underline(vm.isTaskHasDeadline() ? true : false, pattern: .dot, color: .gray)
+                                    .padding(.leading, 6)
+                                    .lineLimit(1)
+                            }
+                        }
+                        .onTapGesture {
+                            vm.showDedalineButtonTapped()
+                        }
                         
                         PlayButton()
                     }

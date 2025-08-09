@@ -75,8 +75,7 @@ final class MockCas: CASManagerProtocol {
             try cas.saveJsonModel(task.model)
             indexForDelete(task)
             models[task.id] = task
-            
-            
+            taskUpdateTrigger.toggle()
         } catch {
             print("Couldn't save daat inside CAS")
         }

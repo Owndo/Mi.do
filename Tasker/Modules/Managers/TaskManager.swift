@@ -30,6 +30,7 @@ final class TaskManager: TaskManagerProtocol {
     private func startOfWeek(for date: Date) -> Double {
         calendar.dateInterval(of: .weekOfYear, for: date)?.start.timeIntervalSince1970 ?? 0
     }
+    
     private var firstWeekDate: Double? {
         let allDates = dateManager.allWeeks.flatMap { $0.date }
         return allDates.min()?.timeIntervalSince1970
@@ -40,6 +41,7 @@ final class TaskManager: TaskManagerProtocol {
         return allDates.max()?.timeIntervalSince1970
     }
     
+    //MARK: Tasks logic
     var tasks: [MainModel] {
         let models = casManager.models.values.filter { value in
             value.deleted.contains { $0.deletedFor == selectedDate } != true &&
@@ -93,24 +95,25 @@ final class TaskManager: TaskManagerProtocol {
         return false
     }
     
-    func preparedTask(task: UITaskModel, date: Date) -> UITaskModel {
-        let filledTask = task
-        
-        filledTask.notificationDate = date.timeIntervalSince1970
-        filledTask.endDate = task.endDate
-        filledTask.speechDescription = task.speechDescription
-        filledTask.done = task.done
-        filledTask.taskColor = task.taskColor
-        filledTask.repeatTask = task.repeatTask
-        filledTask.audio = task.audio
-        filledTask.voiceMode = task.voiceMode
-        filledTask.deleted = task.deleted
-        filledTask.markAsDeleted = task.markAsDeleted
-        filledTask.endDate = task.endDate
-        filledTask.secondNotificationDate = task.secondNotificationDate
-        
-        return filledTask
-    }
+    //MARK: - Prepeare task before save
+    //    func preparedTask(task: UITaskModel, date: Date) -> UITaskModel {
+    //        let filledTask = task
+    //
+    //        filledTask.notificationDate = date.timeIntervalSince1970
+    //        filledTask.endDate = task.endDate
+    //        filledTask.speechDescription = task.speechDescription
+    //        filledTask.done = task.done
+    //        filledTask.taskColor = task.taskColor
+    //        filledTask.repeatTask = task.repeatTask
+    //        filledTask.audio = task.audio
+    //        filledTask.voiceMode = task.voiceMode
+    //        filledTask.deleted = task.deleted
+    //        filledTask.markAsDeleted = task.markAsDeleted
+    //        filledTask.endDate = task.endDate
+    //        filledTask.secondNotificationDate = task.secondNotificationDate
+    //
+    //        return filledTask
+    //    }
     
     // MARK: - Completion Management
     func checkCompletedTaskForToday(task: UITaskModel) -> Bool {
@@ -170,12 +173,79 @@ final class TaskManager: TaskManagerProtocol {
         return newDeletedRecords
     }
     
+    //MARK: - Move to next Day
     func updateNotificationTimeForDueDate(task: MainModel) -> MainModel {
         let model = task
         
         model.notificationDate = dateManager.updateNotificationDate(model.notificationDate)
         
         return model
+    }
+    
+    //MARK: Deadline logic
+    func dayUntillDeadLine(_ task: MainModel) -> Int? {
+        print(Date(timeIntervalSince1970: task.notificationDate))
+        print(Date(timeIntervalSince1970: task.endDate!))
+        guard task.endDate != nil else {
+            return nil
+        }
+        
+        guard task.repeatTask != .never else {
+            return nil
+        }
+        
+        let today = Date(timeIntervalSince1970: currentTime)
+        let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
+        
+        var day: Date
+        var lastActualDay: Date
+        
+        if calendar.isDate(notificationDate, inSameDayAs: today) || notificationDate <= today {
+            day = today
+            lastActualDay = today
+            
+            while task.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) {
+                lastActualDay = day
+                
+                if task.repeatTask == .weekly {
+                    day = calendar.date(byAdding: .day, value: 7, to: day)!
+                } else if task.repeatTask == .monthly {
+                    day = calendar.date(byAdding: .month, value: 1, to: day)!
+                } else if task.repeatTask == .yearly {
+                    day = calendar.date(byAdding: .year, value: 1, to: day)!
+                } else {
+                    day = calendar.date(byAdding: .day, value: 1, to: day)!
+                }
+            }
+            
+            let difference = calendar.dateComponents([.day], from: today, to: lastActualDay)
+            print("okey \(difference.day)")
+            return difference.day ?? 0
+            
+        } else {
+            day = notificationDate
+            lastActualDay = notificationDate
+            
+            while task.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) {
+                lastActualDay = day
+                
+                if task.repeatTask == .weekly {
+                    day = calendar.date(byAdding: .day, value: 7, to: day)!
+                } else if task.repeatTask == .monthly {
+                    day = calendar.date(byAdding: .month, value: 1, to: day)!
+                } else if task.repeatTask == .yearly {
+                    day = calendar.date(byAdding: .year, value: 1, to: day)!
+                } else {
+                    day = calendar.date(byAdding: .day, value: 1, to: day)!
+                }
+            }
+            
+            let todayToNotification = calendar.dateComponents([.day], from: today, to: notificationDate)
+            let notificationToLast = calendar.dateComponents([.day], from: notificationDate, to: lastActualDay)
+            
+            print((todayToNotification.day ?? 0) + (notificationToLast.day ?? 0))
+            return (todayToNotification.day ?? 0) + (notificationToLast.day ?? 0)
+        }
     }
     
     private func isAfter9PM(_ date: Date) -> Bool {

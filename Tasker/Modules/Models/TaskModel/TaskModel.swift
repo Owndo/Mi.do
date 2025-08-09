@@ -194,7 +194,7 @@ public func mockModel() -> MainModel {
                 description: "",
                 createDate: Date.now.timeIntervalSince1970,
                 notificationDate: Date.now.timeIntervalSince1970,
-                dayOfWeek: [],
+                dayOfWeek: .default,
                 done: [],
                 deleted: []
             )

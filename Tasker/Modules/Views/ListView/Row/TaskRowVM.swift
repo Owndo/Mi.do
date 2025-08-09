@@ -33,7 +33,13 @@ final class TaskRowVM: HashableObject {
     
     var task: MainModel
     
-    var taskTitle = ""
+    var taskTitle: String {
+        if task.title != "" {
+            return task.title
+        } else {
+            return "New task"
+        }
+    }
     
     //MARK: - UI States
     var taskDoneTrigger = false
@@ -41,6 +47,7 @@ final class TaskRowVM: HashableObject {
     var listRowHeight = CGFloat(52)
     var startPlay = false
     var disabledScroll = false
+    var showDeadlinePicker = false
     
     //MARK: Confirmation dialog
     var confirmationDialogIsPresented = false
@@ -59,12 +66,7 @@ final class TaskRowVM: HashableObject {
     
     init(task: MainModel) {
         self.task = task
-        if task.title != "" {
-            taskTitle = task.title
-        } else {
-            taskTitle = "New task"
-        }
-        
+     
         if task.title.count < 20 {
             disabledScroll = true
         }
@@ -140,6 +142,35 @@ final class TaskRowVM: HashableObject {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskListView))))
         }
     }
+    
+    //MARK: - Deadline
+    func showDedalineButtonTapped() {
+        guard isTaskHasDeadline() else {
+            return
+        }
+        showDeadlinePicker.toggle()
+    }
+    
+    func isTaskHasDeadline() -> Bool {
+        guard task.endDate != nil else {
+            return false
+        }
+        return true
+    }
+    
+    func timeRemainingString() -> LocalizedStringKey {
+        guard let endTimestamp = task.endDate,
+              endTimestamp > dateManager.currentTime.timeIntervalSince1970 else {
+            return "Overdue"
+        }
+        
+        guard let lastDay = taskManager.dayUntillDeadLine(task) else {
+            return ""
+        }
+        
+        return "\(lastDay) days left"
+    }
+
     
     //MARK: Change date for overdue task
     func updateNotificationTimeForDueDateSwipped(task: MainModel) {

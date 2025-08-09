@@ -97,7 +97,6 @@ final class MockCas: CASManagerProtocol {
             let data = try Data(contentsOf: url)
             return try cas.add(data)
         } catch {
-            print("Something went wrong while adding audio: \(error)")
             return nil
         }
     }
@@ -106,7 +105,6 @@ final class MockCas: CASManagerProtocol {
         do {
             return try cas.add(photo)
         } catch {
-            print("Couldn't save the photo")
             return nil
         }
     }
@@ -119,7 +117,6 @@ final class MockCas: CASManagerProtocol {
                 return nil
             }
         } catch {
-            print("error")
             return nil
         }
     }
@@ -190,7 +187,6 @@ final class MockCas: CASManagerProtocol {
     //MARK: Create directory for CAS
     private static func createMainDirectory() -> URL? {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask).first else {
-            print("Couldn't get acces to file system")
             return nil
         }
         
@@ -200,7 +196,6 @@ final class MockCas: CASManagerProtocol {
             try FileManager.default.createDirectory(atPath: directoryPath.path(), withIntermediateDirectories: true)
             return directoryPath
         } catch {
-            print("Couldn't create directory")
             return nil
         }
     }

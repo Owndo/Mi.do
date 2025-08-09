@@ -37,7 +37,6 @@ final class StorageManager: StorageManagerProtocol {
             
             return tempUrl
         } catch {
-            print("Cannot work with file: \(error.localizedDescription)")
             return nil
         }
     }

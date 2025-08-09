@@ -244,7 +244,6 @@ public final class TaskVM: Identifiable {
         } else {
             backgroundColor = task.taskColor.color(for: colorScheme)
         }
-        print(backgroundColor)
     }
     
     func selectedColorButtonTapped(_ taskColor: TaskColor, colorScheme: ColorScheme) {

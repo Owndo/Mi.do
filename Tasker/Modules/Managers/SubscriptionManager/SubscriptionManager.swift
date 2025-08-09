@@ -80,7 +80,6 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
             showPaywall = false
             pending = false
         case let .success(.unverified(_, error)):
-            print("Valid purchase, but couldn't verified receipt \(error.localizedDescription)")
             await updatePurchase()
             showPaywall = false
             pending = false
@@ -89,7 +88,7 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
             pending = false
             break
         case .pending:
-            print("pending")
+            pending = true
         default:
             pending = false
         }

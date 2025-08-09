@@ -23,11 +23,13 @@ struct NotesView: View {
                 .font(.system(.callout, design: .rounded, weight: .semibold))
                 .foregroundStyle(.labelPrimary)
                 .focused($notesFocusState)
+                .scrollIndicators(.hidden)
                 .scrollDismissesKeyboard(.immediately)
                 .textEditorStyle(.plain)
                 .onSubmit {
                     vm.saveNotes()
                 }
+                .padding(.bottom, notesFocusState ? 20 : 80)
                 .safeAreaInset(edge: .bottom) {
                     KeyboardSafeAreaInset()
                 }
@@ -36,6 +38,7 @@ struct NotesView: View {
             MockView()
             
         }
+        .customBlurForContainer(colorScheme: colorScheme)
         .onChange(of: notesFocusState) { _, _ in
             vm.saveNotes()
         }

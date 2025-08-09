@@ -113,7 +113,6 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
             let tempPlayer = try AVAudioPlayer(contentsOf: audioURL)
             return tempPlayer.duration
         } catch {
-            print("Failed to get duration from temp player: \(error)")
             return 0
         }
     }

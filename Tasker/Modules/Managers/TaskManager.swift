@@ -184,8 +184,6 @@ final class TaskManager: TaskManagerProtocol {
     
     //MARK: Deadline logic
     func dayUntillDeadLine(_ task: MainModel) -> Int? {
-        print(Date(timeIntervalSince1970: task.notificationDate))
-        print(Date(timeIntervalSince1970: task.endDate!))
         guard task.endDate != nil else {
             return nil
         }
@@ -219,7 +217,6 @@ final class TaskManager: TaskManagerProtocol {
             }
             
             let difference = calendar.dateComponents([.day], from: today, to: lastActualDay)
-            print("okey \(difference.day)")
             return difference.day ?? 0
             
         } else {
@@ -243,7 +240,6 @@ final class TaskManager: TaskManagerProtocol {
             let todayToNotification = calendar.dateComponents([.day], from: today, to: notificationDate)
             let notificationToLast = calendar.dateComponents([.day], from: notificationDate, to: lastActualDay)
             
-            print((todayToNotification.day ?? 0) + (notificationToLast.day ?? 0))
             return (todayToNotification.day ?? 0) + (notificationToLast.day ?? 0)
         }
     }

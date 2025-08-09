@@ -71,12 +71,12 @@ struct TaskRow: View {
                                 Text(vm.timeRemainingString(), bundle: .module)
                                     .font(.system(.subheadline, design: .rounded, weight: .regular))
                                     .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                                    .underline(true, pattern: .dot, color: .gray)
+                                    .underline(true, pattern: .dot, color: .labelQuaternary)
                             } else {
                                 Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                                     .font(.system(.subheadline, design: .rounded, weight: .regular))
                                     .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                                    .underline(vm.isTaskHasDeadline() ? true : false, pattern: .dot, color: .gray)
+                                    .underline(vm.isTaskHasDeadline() ? true : false, pattern: .dot, color: .labelQuaternary)
                                     .padding(.leading, 6)
                                     .lineLimit(1)
                             }

@@ -178,7 +178,7 @@ public struct TaskView: View {
             //            } label: {
             //                Image(systemName: "square.and.arrow.up")
             //            }
-                .padding(.vertical, )
+                .padding(.vertical)
         }
         .tint(colorScheme.accentColor())
         .padding(.top, 14)

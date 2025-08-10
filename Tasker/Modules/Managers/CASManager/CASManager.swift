@@ -128,6 +128,17 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
+    // Save all models before app will close
+    func updateCASAfterWork(models: [MainModel]) {
+        for model in models {
+            do {
+                try cas.saveJsonModel(model.model)
+            } catch {
+                print("Error while saving model after end work: \(error)")
+            }
+        }
+    }
+    
     //MARK: - Profile data
     func fetchProfileData() -> ProfileData {
         let list = try! cas.listMutable()

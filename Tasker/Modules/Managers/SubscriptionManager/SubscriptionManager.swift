@@ -19,6 +19,7 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
     //    var profileModel: ProfileData?
     public var showPaywall = false
     public var pending = false
+    public var subscribed = false
     
     let productIDs = ["yearly_base_group", "monthly_base_group"]
     
@@ -79,7 +80,7 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
             await updatePurchase()
             showPaywall = false
             pending = false
-        case let .success(.unverified(_, error)):
+        case .success(.unverified(_, _)):
             await updatePurchase()
             showPaywall = false
             pending = false
@@ -112,6 +113,10 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
         }
         
         purchaseProductId = activeProducts
+        
+        if !purchaseProductId.isEmpty {
+            subscribed = true
+        }
     }
     
     //MARK: - Restore

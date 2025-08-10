@@ -158,6 +158,14 @@ final class TaskRowVM: HashableObject {
         return true
     }
     
+    func isTaskOverdue() -> Bool {
+        guard let endTimestamp = task.endDate,
+              endTimestamp < dateManager.currentTime.timeIntervalSince1970 else {
+            return false
+        }
+        return true
+    }
+    
     func timeRemainingString() -> LocalizedStringKey {
         guard let endTimestamp = task.endDate,
               endTimestamp > dateManager.currentTime.timeIntervalSince1970 else {

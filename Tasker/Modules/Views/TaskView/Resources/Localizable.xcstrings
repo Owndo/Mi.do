@@ -1204,7 +1204,74 @@
       }
     },
     "Deadline" : {
-
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha límite"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha límite"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha límite"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date limite"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date limite"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scadenza"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prazo final"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prazo final"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prazo final"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Крайний срок"
+          }
+        }
+      }
     },
     "Delete" : {
       "localizations" : {
@@ -2132,67 +2199,67 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ihre Stimme in der Benachrichtigung abspielen"
+            "value" : "Stimme in Benachrichtigung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproducir tu voz en la notificación"
+            "value" : "Reproducir voz en notificación"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproducir tu voz en la notificación"
+            "value" : "Reproducir voz en notificación"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproducir tu voz en la notificación"
+            "value" : "Reproducir voz en notificación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lire votre voix dans la notification"
+            "value" : "Lire la voix dans la notif"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lire votre voix dans la notification"
+            "value" : "Lire la voix dans la notif"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Riproduci la tua voce nella notifica"
+            "value" : "Riproduci voce nella notifica"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproduzir sua voz na notificação"
+            "value" : "Reproduzir voz na notificação"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproduzir sua voz na notificação"
+            "value" : "Reproduzir voz na notificação"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproduzir sua voz na notificação"
+            "value" : "Reproduzir voz na notificação"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Воспроизвести голос в уведомлении"
+            "value" : "Голосовое уведомление"
           }
         }
       }

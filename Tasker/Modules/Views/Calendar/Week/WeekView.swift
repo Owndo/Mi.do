@@ -56,9 +56,6 @@ public struct WeekView: View {
             TodayButton()
                 .padding(.top, 8)
         }
-        .onAppear {
-            vm.dateManager.initializeWeek()
-        }
         .padding(.bottom, 2)
         .animation(.default, value: vm.indexForWeek)
         .animation(.default, value: vm.selectedDate)
@@ -68,6 +65,7 @@ public struct WeekView: View {
         .sensoryFeedback(.impact, trigger: vm.trigger)
     }
     
+    //MARK: - Day of week
     @ViewBuilder
     private func DayOfWeeksView() -> some View {
         TabView(selection: $vm.dateManager.indexForWeek) {
@@ -77,15 +75,7 @@ public struct WeekView: View {
                         Button {
                             vm.selectedDateButtonTapped(day)
                         } label: {
-                            ZStack {
-                                SegmentedCircleView(date: day)
-                                    .frame(width: 40, height: 40)
-                                
-                                Text("\(day, format: .dateTime.day())")
-                                    .font(.system(size: 17, weight: vm.calendar.isDateInToday(day) ? .semibold : .regular, design: .default))
-                                    .foregroundStyle(!vm.calendar.isDateInToday(day) ? .labelQuaternary : .labelSecondary)
-                                    .frame(maxWidth: .infinity)
-                            }
+                            DayView(day: day)
                         }
                     }
                 }
@@ -96,6 +86,7 @@ public struct WeekView: View {
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
+    //MARK: - Today Button
     @ViewBuilder
     private func TodayButton() -> some View {
         Button {

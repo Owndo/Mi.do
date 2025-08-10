@@ -60,13 +60,13 @@ final class MockCas: CASManagerProtocol {
         
         updateTask()
         
-//        for i in models {
-//            print("models - \(i.notificationDate)")
-//        }
+        //        for i in models {
+        //            print("models - \(i.notificationDate)")
+        //        }
     }
     
     func updateTask() {
-//        NotificationCenter.default.post(name: NSNotification.Name("updateTasks"), object: nil)
+        //        NotificationCenter.default.post(name: NSNotification.Name("updateTasks"), object: nil)
     }
     
     //MARK: Actions for work with CAS
@@ -131,10 +131,21 @@ final class MockCas: CASManagerProtocol {
                     let task = UITaskModel(taskModel)
                     result[task.id] = task
                 }
-//                return UITaskModel(taskModel)
+                //                return UITaskModel(taskModel)
                 
             } catch {
                 print("Error while loading model: \(error)")
+            }
+        }
+    }
+    
+    // Save all models before app will close
+    func updateCASAfterWork(models: [MainModel]) {
+        for model in models {
+            do {
+                try cas.saveJsonModel(model.model)
+            } catch {
+                print("Error while saving model after end work: \(error)")
             }
         }
     }
@@ -202,9 +213,9 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: Predicate
     private func indexForDelete(_ task: MainModel) {
-           models.removeValue(forKey: task.id)
-       }
-       
+        models.removeValue(forKey: task.id)
+    }
+    
     private func completedTaskCount() {
         allCompletedTasksCount = 0
         
@@ -227,14 +238,14 @@ final class MockCas: CASManagerProtocol {
         
         let factory = ModelsFactory()
         
-//        saveModel(factory.create(.bestApp))
-//        saveModel(factory.create(.clearMind))
-//        saveModel(factory.create(.drinkWater))
-//        saveModel(factory.create(.planForTommorow))
-//        saveModel(factory.create(.randomHours))
-//        saveModel(factory.create(.readSomething))
-//        saveModel(factory.create(.withoutPhone))
-//        
+        saveModel(factory.create(.bestApp))
+        saveModel(factory.create(.clearMind))
+        saveModel(factory.create(.drinkWater))
+        saveModel(factory.create(.planForTommorow))
+        saveModel(factory.create(.randomHours))
+        saveModel(factory.create(.readSomething))
+        saveModel(factory.create(.withoutPhone))
+        
         profileModel.onboarding.firstTimeOpen = false
         saveProfileData(profileModel)
     }

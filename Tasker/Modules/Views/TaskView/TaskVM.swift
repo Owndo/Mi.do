@@ -26,7 +26,7 @@ public final class TaskVM: Identifiable {
     @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
     // MARK: - Model
-    //    var mainModel: MainModel = mockModel()
+    var mainModel: MainModel = mockModel()
     var task: MainModel = mockModel()
     var profileModel: ProfileData = mockProfileData()
     var backgroundColor: Color = .white
@@ -49,7 +49,17 @@ public final class TaskVM: Identifiable {
     var disabledButton = false
     var checkMarkTip = false
     var defaultTimeHasBeenSet = false
-    var showDeadline = false
+    
+    var showDeadline = false {
+        didSet {
+            if showDeadline == true {
+                guard subscriptionManager.hasSubscription() else {
+                    showDeadline = false
+                    return
+                }
+            }
+        }
+    }
     
     var initing = false
     
@@ -280,7 +290,11 @@ public final class TaskVM: Identifiable {
         createTempAudioFile(audioHash: task.audio ?? "")
         
         await notificationManager.createNotification()
+    }
+    
+    func closeButtonTapped() async {
         
+        await saveTask()
         // telemetry
         telemetryAction(.taskAction(.repeatTaskButtonTapped(task.repeatTask)))
         telemetryAction(.taskAction(.closeButtonTapped(.list)))
@@ -320,9 +334,9 @@ public final class TaskVM: Identifiable {
     }
     
     //MARK: Prepeare task
-//    private func preparedTask() -> UITaskModel {
-//        taskManager.preparedTask(task: task, date: notificationDate)
-//    }
+    //    private func preparedTask() -> UITaskModel {
+    //        taskManager.preparedTask(task: task, date: notificationDate)
+    //    }
     
     //MARK: - Date and time
     private func dateToString() -> LocalizedStringKey {
@@ -586,6 +600,8 @@ public final class TaskVM: Identifiable {
         Task { [weak self] in
             await self?.loadTotalTimeIfNeeded()
         }
+        
+        playButtonTrigger.toggle()
     }
     
     private func createTempAudioFile(audioHash: String) {
@@ -595,6 +611,20 @@ public final class TaskVM: Identifiable {
     private func changeDisabledButton() {
         disabledButton.toggle()
     }
+    
+    //MARK: Subscription
+    func deadlineButtonTapped() async {
+        guard !subscriptionManager.hasSubscription() else {
+            return
+        }
+        
+        while subscriptionManager.showPaywall {
+            try? await Task.sleep(for: .seconds(0.3))
+        }
+        
+        hasDeadline = subscriptionManager.subscribed
+    }
+    
     
     //MARK: - Telemetry action
     private func telemetryAction(_ action: EventType) {

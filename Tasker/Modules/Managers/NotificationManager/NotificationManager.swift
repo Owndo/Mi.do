@@ -162,7 +162,6 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
-        print("single request - \(request)")
         removeDeliveredNotification()
     }
     
@@ -268,7 +267,6 @@ final class NotificationManager: NotificationManagerProtocol {
             
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             notificationCenter.add(request)
-            print("repeat notification - \(request)")
         }
         
         removeDeliveredNotification()
@@ -315,7 +313,6 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: updatedID, content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
-        print("specific notification - \(request)")
         removeDeliveredNotification()
     }
     

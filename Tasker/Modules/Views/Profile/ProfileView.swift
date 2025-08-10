@@ -65,7 +65,7 @@ public struct ProfileView: View {
             .toolbarBackground(colorScheme.backgroundColor())
             .onAppear {
                 vm.onAppear()
-            }  
+            }
         }
         .onDisappear {
             vm.onDisappear()
@@ -119,6 +119,7 @@ public struct ProfileView: View {
             Image(systemName: "gearshape")
                 .foregroundStyle(colorScheme.accentColor())
                 .font(.system(size: 30))
+                .rotationEffect(Angle(degrees: vm.gearAnimation ? 270 : 0))
                 .padding(4)
                 .shadow(color: colorScheme.accentColor().opacity(0.5), radius: 16, y: 4)
                 .background(
@@ -127,6 +128,7 @@ public struct ProfileView: View {
                 )
         }
         .offset(vm.buttonOffset)
+        .animation(.spring(duration: 2), value: vm.gearAnimation)
     }
     
     //MARK: - Photo

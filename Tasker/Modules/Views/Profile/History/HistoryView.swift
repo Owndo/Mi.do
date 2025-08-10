@@ -17,12 +17,18 @@ struct HistoryView: View {
         ZStack {
             colorScheme.backgroundColor()
                 .ignoresSafeArea()
-            VStack {
+            VStack(spacing: 12) {
                 Text("Coming soon...", bundle: .module)
                     .font(.system(.title2, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.labelQuaternary)
+                
+                Text("one day, your steps will be here… but for now your story is just beginning.", bundle: .module)
+                    .font(.system(.body, design: .rounded, weight: .medium))
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.labelQuaternary)
             }
+            .padding(.horizontal, 45)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {

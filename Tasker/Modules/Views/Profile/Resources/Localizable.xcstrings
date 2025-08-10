@@ -259,6 +259,74 @@
         }
       }
     },
+    "but for now - look at the beautiful world in your mind and around you..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aber für jetzt - sieh dir die wunderbare Welt in deinem Inneren und um dich herum an..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pero por ahora - mira el mundo maravilloso en tu mente y a tu alrededor..."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pero por ahora - mira el mundo maravilloso en tu mente y a tu alrededor..."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "pero por ahora - mira el mundo maravilloso en tu mente y a tu alrededor..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mais pour l’instant - regarde le monde merveilleux dans ton esprit et autour de toi..."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mais pour l’instant - regarde le monde merveilleux dans ton esprit et autour de toi..."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ma per ora - guarda il meraviglioso mondo nella tua mente e intorno a te..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mas por agora - olhe para o mundo maravilhoso na sua mente e à sua volta..."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mas por agora - olhe para o mundo maravilhoso na sua mente e à sua volta..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "а пока - посмотри на чудесный мир в своей душе и вокруг тебя..."
+          }
+        }
+      }
+    },
+    "but for now - look at the wonderful world in your mind and around you..." : {
+
+    },
     "Close" : {
       "localizations" : {
         "de" : {
@@ -1157,6 +1225,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Понедельник"
+          }
+        }
+      }
+    },
+    "one day, your steps will be here… but for now your story is just beginning." : {
+
+    },
+    "one day, your steps will be here… but for now your story is just beginning..." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "eines Tages werden deine Schritte hier sein… aber für jetzt beginnt deine Geschichte erst..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un día, tus pasos estarán aquí… pero por ahora tu historia apenas comienza..."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un día, tus pasos estarán aquí… pero por ahora tu historia apenas comienza..."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un día, tus pasos estarán aquí… pero por ahora tu historia apenas comienza..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un jour, tes pas seront ici… mais pour l’instant ton histoire ne fait que commencer..."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un jour, tes pas seront ici… mais pour l’instant ton histoire ne fait que commencer..."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un giorno, i tuoi passi saranno qui… ma per ora la tua storia è appena iniziata..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "um dia, os teus passos estarão aqui… mas por agora a tua história está apenas a começar..."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "um dia, os teus passos estarão aqui… mas por agora a tua história está apenas a começar..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "однажды твои шаги будут здесь… а пока история только начинается..."
           }
         }
       }

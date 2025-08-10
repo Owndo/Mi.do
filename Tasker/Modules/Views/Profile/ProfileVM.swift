@@ -36,6 +36,7 @@ final class ProfileVM {
     var settingsScreenIsPresented = false
     
     // Animation
+    var gearAnimation = false
     var buttonOffset: CGSize = CGSize(
         width: CGFloat.random(in: 120...160),
         height: CGFloat.random(in: -50...50)
@@ -83,6 +84,7 @@ final class ProfileVM {
     }
     
     func onAppear() {
+        gearAnimation.toggle()
         //        startAnimation()
         
         //telemetry

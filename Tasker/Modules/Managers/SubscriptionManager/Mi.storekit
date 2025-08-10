@@ -20,7 +20,7 @@
     "_applicationInternalID" : "6749021753",
     "_developerTeamID" : "5M63H38ZMF",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 776052349.21949601,
+    "_lastSynchronizedDate" : 776485250.93744004,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -94,7 +94,7 @@
           "groupNumber" : 2,
           "internalID" : "6749557137",
           "introductoryOffer" : {
-            "internalID" : "9B71EE78",
+            "internalID" : "4F67015E",
             "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1W"
@@ -109,6 +109,16 @@
               "description" : "Pagamento mensal",
               "displayName" : "Mensal",
               "locale" : "pt_PT"
+            },
+            {
+              "description" : "Pagamento mensal",
+              "displayName" : "Mensal",
+              "locale" : "pt_BR"
+            },
+            {
+              "description" : "Pay once a month",
+              "displayName" : "Monthly",
+              "locale" : "en_US"
             },
             {
               "description" : "Оплата раз в месяц",
@@ -136,19 +146,9 @@
               "locale" : "fr"
             },
             {
-              "description" : "Pagamento mensal",
-              "displayName" : "Mensal",
-              "locale" : "pt_BR"
-            },
-            {
               "description" : "Monatliche Zahlung",
               "displayName" : "Monatlich",
               "locale" : "de"
-            },
-            {
-              "description" : "Pay once a month",
-              "displayName" : "Monthly",
-              "locale" : "en_US"
             }
           ],
           "productID" : "monthly_base_group",
@@ -184,6 +184,16 @@
               "locale" : "it"
             },
             {
+              "description" : "Pagamento anual",
+              "displayName" : "Anual",
+              "locale" : "pt_PT"
+            },
+            {
+              "description" : "Paiement annuel",
+              "displayName" : "Annuel",
+              "locale" : "fr"
+            },
+            {
               "description" : "Paiement annuel",
               "displayName" : "Annuel",
               "locale" : "fr"
@@ -212,16 +222,6 @@
               "description" : "Zahlung einmal im Jahr",
               "displayName" : "Jährlich",
               "locale" : "de"
-            },
-            {
-              "description" : "Paiement annuel",
-              "displayName" : "Annuel",
-              "locale" : "fr"
-            },
-            {
-              "description" : "Pagamento anual",
-              "displayName" : "Anual",
-              "locale" : "pt_PT"
             }
           ],
           "productID" : "yearly_base_group",

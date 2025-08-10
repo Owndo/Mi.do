@@ -72,7 +72,7 @@ public final class MainVM {
             }
             
             if presentationPosition == .fraction(0.20) {
-                subscriptionManager.closePaywall()
+//                subscriptionManager.closePaywall()
                 
                 // telemetry
                 telemetryAction(.mainViewAction(.showNotesButtonTapped))
@@ -394,6 +394,12 @@ public final class MainVM {
                 self?.dateManager.indexForWeek += 1
             }
         }
+    }
+    
+    //MARK: Function before closeApp
+    public func closeApp() async {
+        casManager.updateCASAfterWork(models: taskManager.tasks)
+        await updateNotifications()
     }
 }
 

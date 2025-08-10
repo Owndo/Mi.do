@@ -70,17 +70,18 @@ struct TaskRow: View {
                             if vm.showDeadlinePicker {
                                 Text(vm.timeRemainingString(), bundle: .module)
                                     .font(.system(.subheadline, design: .rounded, weight: .regular))
-                                    .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                                    .underline(true, pattern: .dot, color: .labelQuaternary)
+                                    .foregroundStyle(vm.isTaskOverdue() ? .accentRed : vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                                    .underline(true, pattern: .dot, color: vm.isTaskOverdue() ? .accentRed : .labelQuaternary)
                             } else {
                                 Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                                     .font(.system(.subheadline, design: .rounded, weight: .regular))
                                     .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                                    .underline(vm.isTaskHasDeadline() ? true : false, pattern: .dot, color: .labelQuaternary)
+                                    .underline(vm.isTaskHasDeadline() ? true : false, pattern: .dot, color: vm.isTaskOverdue() ? .accentRed : .labelQuaternary)
                                     .padding(.leading, 6)
                                     .lineLimit(1)
                             }
                         }
+                        .allowsHitTesting(vm.isTaskHasDeadline())
                         .onTapGesture {
                             vm.showDedalineButtonTapped()
                         }
@@ -95,7 +96,9 @@ struct TaskRow: View {
                 .padding(.vertical, 12)
                 .padding(.horizontal, 11)
                 .background(
-                    vm.task.taskRowColor(colorScheme: colorScheme)
+                    withAnimation {
+                        vm.task.taskRowColor(colorScheme: colorScheme)
+                    }
                 )
                 .frame(maxWidth: .infinity)
                 .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)

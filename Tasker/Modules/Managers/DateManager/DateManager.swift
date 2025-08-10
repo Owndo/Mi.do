@@ -20,11 +20,7 @@ final class DateManager: DateManagerProtocol {
     @ObservationIgnored
     @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
-    var calendar = Calendar.current {
-        didSet {
-            initializeWeek()
-        }
-    }
+    var calendar = Calendar.current
     
     var selectedDate = Date()
     
@@ -380,7 +376,6 @@ final class DateManager: DateManagerProtocol {
     }
     
     func backToToday() {
-        initializeWeek()
         selectedDate = currentTime
         initializeWeek()
         indexForWeek = 1

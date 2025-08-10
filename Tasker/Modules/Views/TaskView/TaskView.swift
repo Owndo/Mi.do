@@ -55,37 +55,8 @@ public struct TaskView: View {
                             
                             RepeatSelection()
                             
-                            VStack {
-                                HStack {
-                                    Button {
-                                        vm.showDedalineButtonTapped()
-                                    } label: {
-                                        Image(systemName: "flame.fill")
-                                            .foregroundStyle(colorScheme.accentColor())
-                                        
-                                        Text("Deadline", bundle: .module)
-                                            .font(.system(.body, design: .rounded, weight: .regular))
-                                            .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
-                                            .padding(.vertical, 13)
-                                        
-                                     Spacer()
-                                        
-                                        Toggle(isOn: $vm.hasDeadline) {}
-                                            .tint(colorScheme.accentColor())
-                                            .padding(.trailing, 2)
-                                    }
-                                }
-                                .padding(.leading, 17)
-                                .padding(.trailing, 14)
-                                
-                                if vm.showDeadline {
-                                    DatePicker("", selection: $vm.deadLineDate, displayedComponents: .date)
-                                        .datePickerStyle(.graphical)
-                                        .id(vm.deadLineDate)
-                                        .tint(colorScheme.accentColor())
-                                }
-                            }
-                            .clipped()
+                            Deadline()
+                            
                         }
                         .background(
                             RoundedRectangle(cornerRadius: 12)
@@ -258,7 +229,7 @@ public struct TaskView: View {
                 .foregroundStyle(colorScheme.accentColor())
             
             Toggle(isOn: $vm.task.voiceMode) {
-                Text("Play your voice in notification")
+                Text("Play your voice in notification", bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelPrimary)
             }
@@ -584,6 +555,49 @@ public struct TaskView: View {
         .padding(.vertical, 13)
     }
     
+    //MARK: - Deadline
+    @ViewBuilder
+    private func Deadline() -> some View {
+        VStack {
+            HStack {
+                Button {
+                    vm.showDedalineButtonTapped()
+                } label: {
+                    Image(systemName: "flame.fill")
+                        .foregroundStyle(colorScheme.accentColor())
+                    
+                    Text("Deadline", bundle: .module)
+                        .font(.system(.body, design: .rounded, weight: .regular))
+                        .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                        .padding(.vertical, 13)
+                    
+                    Spacer()
+                    
+                    Toggle(isOn: $vm.hasDeadline) {}
+                        .tint(colorScheme.accentColor())
+                        .padding(.trailing, 2)
+                }
+            }
+            .padding(.leading, 17)
+            .padding(.trailing, 14)
+            
+            if vm.showDeadline {
+                DatePicker("", selection: $vm.deadLineDate, displayedComponents: .date)
+                    .datePickerStyle(.graphical)
+                    .id(vm.deadLineDate)
+                    .tint(colorScheme.accentColor())
+            }
+        }
+        .onChange(of: vm.hasDeadline) { oldValue, newValue in
+            Task {
+                if newValue {
+                    await vm.deadlineButtonTapped()
+                }
+            }
+        }
+        .clipped()
+    }
+    
     //MARK: Save button
     @ViewBuilder
     private func SaveButton() -> some View {
@@ -615,7 +629,7 @@ public struct TaskView: View {
                     dismissButton()
                     
                     try await Task.sleep(nanoseconds: 50_000_000)
-                    await vm.saveTask()
+                    await vm.closeButtonTapped()
                 }
             } label: {
                 Text("Close", bundle: .module)

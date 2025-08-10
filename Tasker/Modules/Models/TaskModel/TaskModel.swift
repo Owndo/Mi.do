@@ -171,6 +171,17 @@ public class UITaskModel: TaskModelWrapper<TaskModel> {
         get { model.value.taskColor ?? .baseColor }
         set { model.value.taskColor = nilIfNeed(newValue, is: .baseColor) }
     }
+    
+    public func returnCopy() -> UITaskModel {
+           let modelCopy = Model.initial(self.model.value)
+           let copy = UITaskModel(modelCopy)
+           copy.id = self.id
+           return copy
+       }
+      public func applyChanges(to original: UITaskModel) {
+          original.model.value = self.model.value
+      }
+      
 }
 
 

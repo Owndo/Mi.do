@@ -12,6 +12,7 @@ public protocol SubscriptionManagerProtocol {
     var products: [Product] { get set }
     var showPaywall: Bool { get set }
     var pending: Bool { get set }
+    var subscribed: Bool { get set }
     
     func hasSubscription() -> Bool
     func makePurchase(_ product: Product) async throws

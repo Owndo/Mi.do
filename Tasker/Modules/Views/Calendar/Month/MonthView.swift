@@ -180,14 +180,16 @@ public struct MonthView: View {
                                 .fill(.backgroundTertiary)
                         }
                         
-                        SegmentedCircleView(date: day)
-                            .frame(width: 40, height: 40)
+                        DayView(day: day)
                         
-                        Text("\(day, format: .dateTime.day())")
-                            .font(.system(.body, design: .rounded, weight: .medium))
-                            .foregroundStyle(vm.isSameDay(day) ? .labelPrimary : .labelQuaternary)
-                            .frame(maxWidth: .infinity)
-                            .multilineTextAlignment(.center)
+//                        SegmentedCircleView(date: day)
+//                            .frame(width: 40, height: 40)
+//                        
+//                        Text("\(day, format: .dateTime.day())")
+//                            .font(.system(.body, design: .rounded, weight: .medium))
+//                            .foregroundStyle(vm.isSameDay(day) ? .labelPrimary : .labelQuaternary)
+//                            .frame(maxWidth: .infinity)
+//                            .multilineTextAlignment(.center)
                     }
                 }
             }

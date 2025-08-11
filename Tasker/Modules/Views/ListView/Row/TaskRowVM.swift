@@ -171,6 +171,11 @@ final class TaskRowVM: HashableObject {
     }
     
     func timeRemainingString() -> LocalizedStringKey {
+        
+        guard !task.done.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) else {
+            return "Completed"
+        }
+        
         guard let endTimestamp = task.endDate,
               endTimestamp > dateManager.currentTime.timeIntervalSince1970 else {
             

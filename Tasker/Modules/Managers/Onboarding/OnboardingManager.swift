@@ -37,6 +37,11 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     }
     
     public func firstTimeOpen() async {
+        if profileModel.onboarding.createButtonTip == true {
+            if profileModel.onboarding.requestedReview != true {
+                profileModel.onboarding.requestedReview = false
+            }
+        }
         
         if profileModel.onboarding.sayHello {
             sayHello = true

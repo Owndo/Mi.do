@@ -50,6 +50,7 @@ public final class MainVM {
     var showDetailsScreen = false
     var alert: AlertModel?
     var disabledButton = false
+    var askReview = false
     
     var onboardingComplete: Bool {
         onboardingManager.onboardingComplete
@@ -72,7 +73,7 @@ public final class MainVM {
             }
             
             if presentationPosition == .fraction(0.20) {
-//                subscriptionManager.closePaywall()
+                //                subscriptionManager.closePaywall()
                 
                 // telemetry
                 telemetryAction(.mainViewAction(.showNotesButtonTapped))
@@ -367,9 +368,10 @@ public final class MainVM {
         
         try? await Task.sleep(for: .seconds(0.8))
         
-        guard subscriptionManager.hasSubscription() else {
-            disabledButton = false
-            return
+        if profileModel.onboarding.requestedReview == false {
+            askReview = true
+            profileModel.onboarding.requestedReview = true
+            profileModelSave()
         }
         
         disabledButton = false
@@ -390,7 +392,7 @@ public final class MainVM {
         }
         
         onboardingManager.scrollWeek = { [weak self] _ in
-            withAnimation(.easeInOut(duration: 0.4)) {
+            withAnimation(.easeInOut(duration: 0.6)) {
                 self?.dateManager.indexForWeek += 1
             }
         }
@@ -402,7 +404,6 @@ public final class MainVM {
         await updateNotifications()
     }
 }
-
 
 //MARK: - Helpers not a VM
 enum PresentationMode: CGFloat, CaseIterable {

@@ -31,6 +31,10 @@ final class DayViewVM {
                 continue
             }
             
+            if i.done.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: day) }) {
+                return false
+            }
+            
             if calendar.isDate(Date(timeIntervalSince1970: endDate), inSameDayAs: day) {
                 return true
             }

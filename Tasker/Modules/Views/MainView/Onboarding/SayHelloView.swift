@@ -43,7 +43,7 @@ struct SayHelloView: View {
                 Spacer()
                 
                 Button {
-                    vm.continueButtontapped()
+                    dismissButton()
                 } label: {
                     Text("Continue", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .medium))

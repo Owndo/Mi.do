@@ -66,7 +66,7 @@ final class TaskRowVM: HashableObject {
     
     init(task: MainModel) {
         self.task = task
-     
+        
         if task.title.count < 20 {
             disabledScroll = true
         }
@@ -163,12 +163,23 @@ final class TaskRowVM: HashableObject {
               endTimestamp < dateManager.currentTime.timeIntervalSince1970 else {
             return false
         }
+        
+        if task.done.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.endDate!)) }) {
+            return false
+        }
         return true
     }
     
     func timeRemainingString() -> LocalizedStringKey {
         guard let endTimestamp = task.endDate,
               endTimestamp > dateManager.currentTime.timeIntervalSince1970 else {
+            
+            if task.done.contains(where: {
+                dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.endDate!)) &&
+                dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) {
+                return "Completed"
+            }
+            
             return "Overdue"
         }
         
@@ -178,7 +189,6 @@ final class TaskRowVM: HashableObject {
         
         return "\(lastDay) days left"
     }
-
     
     //MARK: Change date for overdue task
     func updateNotificationTimeForDueDateSwipped(task: MainModel) {

@@ -10,21 +10,23 @@ import SwiftUI
 
 public struct OnboardingModel: Codable, Equatable {
     /// Create models, init app
-    public var firstTimeOpen: Bool = true
+    public var firstTimeOpen = true
+    /// Request review
+    public var requestedReview: Bool?
     /// Greetengs for user when app will launch first time
-    public var sayHello: Bool = true
+    public var sayHello = true
     
     /// States for showing onboarding
-    public var dayTip: Bool = false
-    public var calendarTip: Bool = false
-    public var profileTip: Bool = false
-    public var noteTip: Bool = false
-    public var deleteTip: Bool = false
-    public var searchTasksTip: Bool = false
-    public var openSubtasksTip: Bool = false
-    public var checkMarkTip: Bool = false
-    public var listSwipeTip: Bool = false
-    public var createButtonTip: Bool = false
+    public var dayTip = false
+    public var calendarTip = false
+    public var profileTip = false
+    public var noteTip = false
+    public var deleteTip = false
+    public var searchTasksTip = false
+    public var openSubtasksTip = false
+    public var checkMarkTip = false
+    public var listSwipeTip = false
+    public var createButtonTip = false
     
     /// At this time onboarding has been created
     public var onboardingCreatedDate: Double = 1753717500.0

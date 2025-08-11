@@ -20,10 +20,10 @@ struct DayView: View {
                 .frame(width: 40, height: 40)
             
             if vm.showSmallFire, vm.lastDayForDeadline(day) {
-                Image(systemName: "flame.fill")
+                Image(systemName: "circle.fill")
                     .contentTransition(.symbolEffect(.replace))
                     .frame(width: 1, height: 1)
-                    .scaleEffect(0.5)
+                    .scaleEffect(0.2)
                     .foregroundStyle(vm.isOverdue(day: day) ? .accentRed : colorScheme.accentColor())
                     .offset(x: 0, y: 9)
             }

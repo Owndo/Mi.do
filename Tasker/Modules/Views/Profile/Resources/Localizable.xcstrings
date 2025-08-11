@@ -259,73 +259,69 @@
         }
       }
     },
-    "but for now - look at the beautiful world in your mind and around you..." : {
-      "extractionState" : "stale",
+    "but for now - look at the wonderful world within and around you..." : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "aber für jetzt - sieh dir die wunderbare Welt in deinem Inneren und um dich herum an..."
+            "value" : "aber für jetzt — sieh dir die wunderbare Welt in dir und um dich herum an..."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pero por ahora - mira el mundo maravilloso en tu mente y a tu alrededor..."
+            "value" : "pero por ahora — mira el mundo maravilloso dentro y a tu alrededor..."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pero por ahora - mira el mundo maravilloso en tu mente y a tu alrededor..."
+            "value" : "pero por ahora — mira el mundo maravilloso dentro y a tu alrededor..."
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "pero por ahora - mira el mundo maravilloso en tu mente y a tu alrededor..."
+            "value" : "pero por ahora — mira el mundo maravilloso dentro y a tu alrededor..."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mais pour l’instant - regarde le monde merveilleux dans ton esprit et autour de toi..."
+            "value" : "mais pour l’instant — regarde le monde merveilleux en toi et autour de toi..."
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mais pour l’instant - regarde le monde merveilleux dans ton esprit et autour de toi..."
+            "value" : "mais pour l’instant — regarde le monde merveilleux en toi et autour de toi..."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ma per ora - guarda il meraviglioso mondo nella tua mente e intorno a te..."
+            "value" : "ma per ora — guarda il meraviglioso mondo dentro e intorno a te..."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mas por agora - olhe para o mundo maravilhoso na sua mente e à sua volta..."
+            "value" : "mas por agora — olhe para o mundo maravilhoso dentro e à sua volta..."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "mas por agora - olhe para o mundo maravilhoso na sua mente e à sua volta..."
+            "value" : "mas por agora — olhe para o mundo maravilhoso dentro e à sua volta..."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "а пока - посмотри на чудесный мир в своей душе и вокруг тебя..."
+            "value" : "а пока - обрати внимание на чудесный мир внутри и вокруг тебя..."
           }
         }
       }
-    },
-    "but for now - look at the wonderful world in your mind and around you..." : {
-
     },
     "Close" : {
       "localizations" : {
@@ -1230,10 +1226,6 @@
       }
     },
     "one day, your steps will be here… but for now your story is just beginning." : {
-
-    },
-    "one day, your steps will be here… but for now your story is just beginning..." : {
-      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1292,7 +1284,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "однажды твои шаги будут здесь… а пока история только начинается..."
+            "value" : "однажды все твои шаги будут здесь… а пока твоя история только начинается..."
           }
         }
       }

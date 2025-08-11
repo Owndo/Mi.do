@@ -12,8 +12,10 @@ import ListView
 import TaskView
 import Profile
 import Paywall
+import StoreKit
 
 public struct MainView: View {
+    @Environment(\.requestReview) var requestReview
     @Environment(\.colorScheme) var colorScheme
     
     @Bindable var vm: MainVM
@@ -32,6 +34,7 @@ public struct MainView: View {
                 
                 NotesView(mainViewIsOpen: $vm.mainViewIsOpen)
                     .disabled(vm.showPaywall)
+                    .disabled(vm.presentationPosition == .fraction(0.96))
                 
                 if vm.showPaywall {
                     Color.backgroundDimDark.ignoresSafeArea()
@@ -217,6 +220,9 @@ public struct MainView: View {
                 .onDisappear {
                     vm.disappear()
                 }
+        }
+        .onChange(of: vm.askReview) { _ , newValue in
+            requestReview()
         }
         .alert(item: $vm.alert) { alert in
             alert.alert

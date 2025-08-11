@@ -23,7 +23,7 @@ struct ArticlesView: View {
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.labelQuaternary)
                 
-                Text("but for now - look at the wonderful world in your mind and around you...", bundle: .module)
+                Text("but for now - look at the wonderful world within and around you...", bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.labelQuaternary)

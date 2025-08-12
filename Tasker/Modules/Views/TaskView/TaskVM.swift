@@ -286,7 +286,7 @@ public final class TaskVM: Identifiable {
         task.dayOfWeek = dayOfWeek
         task.notificationDate = changeNotificationTime()
         
-        casManager.saveModel(task)
+        taskManager.saveTask(task)
         createTempAudioFile(audioHash: task.audio ?? "")
         
         await notificationManager.createNotification()

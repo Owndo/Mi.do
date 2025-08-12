@@ -101,7 +101,7 @@ final class TaskRowVM: HashableObject {
             
             self.task = task
             
-            casManager.saveModel(self.task)
+            taskManager.saveTask(self.task)
             
             await notificationManager.createNotification()
         }

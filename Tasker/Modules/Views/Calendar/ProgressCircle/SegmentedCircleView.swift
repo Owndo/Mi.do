@@ -38,6 +38,7 @@ struct SegmentedCircleView: View {
             }
         }
         .animation(.easeIn(duration: 0.3), value: vm.completedFlagsForToday)
+        .animation(.default, value: vm.updateTask)
         .frame(width: 36, height: 36)
         .task(id: date) {
             segmentProgress = 0

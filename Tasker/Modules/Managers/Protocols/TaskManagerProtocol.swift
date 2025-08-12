@@ -9,7 +9,7 @@ import Foundation
 import Models
 
 public protocol TaskManagerProtocol {
-    var tasks: [MainModel] { get }
+    var tasks: [String: MainModel] { get set }
     var activeTasks: [MainModel] { get }
     var completedTasks: [MainModel] { get }
     
@@ -17,8 +17,10 @@ public protocol TaskManagerProtocol {
     
     func thisWeekTasks(date: Double) async -> [MainModel]
     
-//    func preparedTask(task: UITaskModel, date: Date) -> UITaskModel
+    //    func preparedTask(task: UITaskModel, date: Date) -> UITaskModel
     
+    /// Save model
+    func saveTask(_ model: UITaskModel)
     /// Delete task
     func deleteTask(task: MainModel, deleteCompletely: Bool)
     
@@ -36,9 +38,9 @@ public protocol TaskManagerProtocol {
     /// last day in deadline
     func dayUntillDeadLine(_ task: MainModel) -> Int?
     
-//    /// Simple func for check case where task has complete or delete record
-//    func hasTaskCompleteOrDeleteMarkers(task: TaskModel) -> Bool
-//    
-//    /// Simple func for check case where task has complete or delete record in future
-//    func hasTaskCompleteOrDeleteMarkersInFuture(task: TaskModel) -> Bool
+    //    /// Simple func for check case where task has complete or delete record
+    //    func hasTaskCompleteOrDeleteMarkers(task: TaskModel) -> Bool
+    //
+    //    /// Simple func for check case where task has complete or delete record in future
+    //    func hasTaskCompleteOrDeleteMarkersInFuture(task: TaskModel) -> Bool
 }

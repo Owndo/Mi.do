@@ -26,6 +26,11 @@ public extension UITaskModel {
     //    }
     ///Function for check schedule task
     func isScheduledForDate(_ date: Double, calendar: Calendar = Calendar.current) -> Bool {
+        
+        guard !self.deleted.contains(where: { $0.deletedFor == calendar.startOfDay(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970 }) else {
+            return false
+        }
+        
         let taskNotificationDate = self.notificationDate
         
         if self.repeatTask == .never {

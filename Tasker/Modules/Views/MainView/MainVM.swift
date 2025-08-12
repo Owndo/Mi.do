@@ -400,7 +400,8 @@ public final class MainVM {
     
     //MARK: Function before closeApp
     public func closeApp() async {
-        casManager.updateCASAfterWork(models: taskManager.tasks)
+        let tasks = Array(taskManager.tasks.values)
+        casManager.updateCASAfterWork(models: tasks)
         await updateNotifications()
     }
 }

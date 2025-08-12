@@ -23,6 +23,7 @@ final class DateManager: DateManagerProtocol {
     var calendar = Calendar.current
     
     var selectedDate = Date()
+    var selectedDateHasBeenChange: ((Bool) -> Void)?
     
     var allWeeks: [PeriodModel] = []
     var allMonths: [PeriodModel] = []
@@ -76,7 +77,7 @@ final class DateManager: DateManagerProtocol {
     
     func selectedDateChange( _ day: Date) {
         selectedDate = day
-        NotificationCenter.default.post(name: NSNotification.Name("selectedDateChange"), object: nil)
+        selectedDateHasBeenChange?(true)
     }
     
     //MARK: - Logic for week

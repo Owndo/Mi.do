@@ -11,6 +11,8 @@ import Models
 import SwiftUICore
 
 public protocol DateManagerProtocol {
+    var selectedDateHasBeenChange: ((Bool) -> Void)? { get set }
+    
     var calendar: Calendar { get set }
     var currentTime: Date { get }
     var selectedDate: Date { get set }

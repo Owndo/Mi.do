@@ -39,7 +39,7 @@ public extension UITaskModel {
             return false
         }
         
-        if let endDate = self.endDate {
+        if let endDate = self.deadline {
             let endDateAsDate = Date(timeIntervalSince1970: endDate)
             let dateDay = calendar.startOfDay(for: dateAsDate)
             let endDay = calendar.startOfDay(for: endDateAsDate)

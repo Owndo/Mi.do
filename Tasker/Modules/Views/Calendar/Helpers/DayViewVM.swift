@@ -27,7 +27,7 @@ final class DayViewVM {
         let tasks = casManager.models.values
         
         for i in tasks {
-            guard let endDate = i.endDate else {
+            guard let endDate = i.deadline else {
                 continue
             }
             
@@ -48,7 +48,7 @@ final class DayViewVM {
         let today = Date()
         
         for task in tasks {
-            guard let endDate = task.endDate else {
+            guard let endDate = task.deadline else {
                 continue
             }
             

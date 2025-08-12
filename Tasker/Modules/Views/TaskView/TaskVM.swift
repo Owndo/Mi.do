@@ -173,7 +173,7 @@ public final class TaskVM: Identifiable {
         self.task = mainModel
         setupDayOfWeek()
         
-        if let endDate = task.endDate {
+        if let endDate = task.deadline {
             hasDeadline = true
             deadLineDate = Date(timeIntervalSince1970: endDate)
         }
@@ -380,7 +380,7 @@ public final class TaskVM: Identifiable {
     
     //MARK: - Deadline
     func setUpDeadlineDate() {
-        task.endDate = deadLineDate.timeIntervalSince1970
+        task.deadline = deadLineDate.timeIntervalSince1970
         if task.repeatTask == .never {
             task.repeatTask = .daily
         }
@@ -393,7 +393,7 @@ public final class TaskVM: Identifiable {
     
     func removeDeadlineFromTask() {
         showDeadline = false
-        task.endDate = nil
+        task.deadline = nil
     }
     
     private func checkTimeAfterDeadlineSelected() {

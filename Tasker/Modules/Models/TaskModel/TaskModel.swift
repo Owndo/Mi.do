@@ -22,6 +22,7 @@ public struct TaskModel: Codable {
     public var createDate = Date.now.timeIntervalSince1970
     public var notificationDate: Double?
     public var duration: Double?
+    public var deadline: Double?
     public var endDate: Double?
     public var secondNotificationDate: Double?
     public var voiceMode: Bool?
@@ -41,10 +42,10 @@ public struct TaskModel: Codable {
         description: String? = nil,
         speechDescription: String? = nil,
         audio: String? = nil,
-        createDate: Foundation.TimeInterval = Date.now.timeIntervalSince1970,
+        createDate: Double = Date.now.timeIntervalSince1970,
         notificationDate: Double? = nil,
         duration: Double? = nil,
-        endDate: Double? = nil,
+        deadline: Double? = nil,
         secondNotificationDate: Double? = nil,
         voiceMode: Bool? = nil,
         markAsDeleted: Bool? = nil,
@@ -61,7 +62,7 @@ public struct TaskModel: Codable {
         self.createDate = createDate
         self.notificationDate = notificationDate
         self.duration = duration
-        self.endDate = endDate
+        self.deadline = deadline
         self.secondNotificationDate = secondNotificationDate
         self.voiceMode = voiceMode
         self.markAsDeleted = markAsDeleted
@@ -123,9 +124,9 @@ public class UITaskModel: TaskModelWrapper<TaskModel> {
         set { model.value.duration = nilIfNeed(newValue, is: 0.0)}
     }
     
-    public var endDate: Double? {
-        get { model.value.endDate ?? nil }
-        set { model.value.endDate = nilIfNeed(newValue, is: nil)}
+    public var deadline: Double? {
+        get { model.value.deadline ?? nil }
+        set { model.value.deadline = nilIfNeed(newValue, is: nil)}
     }
     
     public var secondNotificationDate: Double {
@@ -171,17 +172,6 @@ public class UITaskModel: TaskModelWrapper<TaskModel> {
         get { model.value.taskColor ?? .baseColor }
         set { model.value.taskColor = nilIfNeed(newValue, is: .baseColor) }
     }
-    
-    public func returnCopy() -> UITaskModel {
-           let modelCopy = Model.initial(self.model.value)
-           let copy = UITaskModel(modelCopy)
-           copy.id = self.id
-           return copy
-       }
-      public func applyChanges(to original: UITaskModel) {
-          original.model.value = self.model.value
-      }
-      
 }
 
 

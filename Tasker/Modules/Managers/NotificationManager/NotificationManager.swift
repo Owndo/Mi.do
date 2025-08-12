@@ -95,7 +95,7 @@ final class NotificationManager: NotificationManagerProtocol {
                 
             }
             
-            guard task.endDate != nil else {
+            guard task.deadline != nil else {
                 createRepeatNotification(task)
                 return
             }
@@ -421,7 +421,7 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     private func checkDayBeforeDeadline(_ task: UITaskModel) -> Int {
-        guard let endDate = task.endDate else {
+        guard let endDate = task.deadline else {
             return 0
         }
         

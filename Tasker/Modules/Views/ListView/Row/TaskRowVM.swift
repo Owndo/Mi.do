@@ -152,19 +152,19 @@ final class TaskRowVM: HashableObject {
     }
     
     func isTaskHasDeadline() -> Bool {
-        guard task.endDate != nil else {
+        guard task.deadline != nil else {
             return false
         }
         return true
     }
     
     func isTaskOverdue() -> Bool {
-        guard let endTimestamp = task.endDate,
+        guard let endTimestamp = task.deadline,
               endTimestamp < dateManager.currentTime.timeIntervalSince1970 else {
             return false
         }
         
-        if task.done.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.endDate!)) }) {
+        if task.done.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.deadline!)) }) {
             return false
         }
         return true
@@ -176,11 +176,11 @@ final class TaskRowVM: HashableObject {
             return "Completed"
         }
         
-        guard let endTimestamp = task.endDate,
+        guard let endTimestamp = task.deadline,
               endTimestamp > dateManager.currentTime.timeIntervalSince1970 else {
             
             if task.done.contains(where: {
-                dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.endDate!)) &&
+                dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.deadline!)) &&
                 dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) {
                 return "Completed"
             }

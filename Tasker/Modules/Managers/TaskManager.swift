@@ -184,7 +184,7 @@ final class TaskManager: TaskManagerProtocol {
     
     //MARK: Deadline logic
     func dayUntillDeadLine(_ task: MainModel) -> Int? {
-        guard task.endDate != nil else {
+        guard task.deadline != nil else {
             return nil
         }
         

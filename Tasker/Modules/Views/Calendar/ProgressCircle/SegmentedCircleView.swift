@@ -52,9 +52,6 @@ struct SegmentedCircleView: View {
         .onChange(of: vm.updateTask) { _, _ in
             Task { await vm.updateTasks() }
         }
-        .onChange(of: vm.updateWeek) { _, _ in
-            Task { await vm.updateTasks() }
-        }
     }
     
     @ViewBuilder

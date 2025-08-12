@@ -60,7 +60,9 @@ final class TaskManager: TaskManagerProtocol {
         return sortedTasks(tasks: filtered)
     }
     
-    var thisWeekTasks: [MainModel] = []
+    private var thisWeekCasheTasks: [MainModel] = []
+    private var cacheWeekStart: Double = 0
+    private var cacheWeekEnd: Double = 0
     
     init() {
         updateTasks()
@@ -80,12 +82,12 @@ final class TaskManager: TaskManagerProtocol {
         }
     }
     
-    func thisWeekTasks(date: Double) async -> [MainModel] {
-        return casManager.models.values
-            .filter { task in
-                return task.deleted.contains { $0.deletedFor == date } != true
-            }
-    }
+//    func thisWeekTasks(date: Double) async -> [MainModel] {
+//        return casManager.models.values
+//            .filter { task in
+//                return task.deleted.contains { $0.deletedFor == date } != true
+//            }
+//    }
     
     func sortedTasks(tasks: [MainModel]) -> [MainModel] {
         tasks.sorted {
@@ -99,19 +101,31 @@ final class TaskManager: TaskManagerProtocol {
         }
     }
     
-    private func isTaskInWeeksRange(_ task: UITaskModel, startDate: Double, endDate: Double) -> Bool {
-        var currentInterval = startDate
-        
-        while currentInterval <= endDate {
-            if task.isScheduledForDate(currentInterval, calendar: calendar) {
-                return true
-            }
-            
-            currentInterval += 86400
-        }
-        
-        return false
-    }
+    func thisWeekTasks(date: Double) async -> [MainModel] {
+           if date >= cacheWeekStart && date <= cacheWeekEnd && !thisWeekCasheTasks.isEmpty {
+               print("here")
+               return thisWeekCasheTasks
+           }
+           
+           updateCache(for: date)
+           return thisWeekCasheTasks
+       }
+    
+    private func updateCache(for date: Double) {
+           let dateObj = Date(timeIntervalSince1970: date)
+           
+           guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: dateObj) else {
+               return
+           }
+           
+           cacheWeekStart = weekInterval.start.timeIntervalSince1970
+           cacheWeekEnd = weekInterval.end.timeIntervalSince1970
+           
+        thisWeekCasheTasks = casManager.models.values
+               .filter { task in
+                   return task.deleted.contains { $0.deletedFor == date } != true
+               }
+       }
     
     // MARK: - Completion Management
     func checkCompletedTaskForToday(task: UITaskModel) -> Bool {
@@ -152,6 +166,7 @@ final class TaskManager: TaskManagerProtocol {
     func saveTask(_ task: UITaskModel) {
         tasks[task.id] = task
         casManager.saveModel(task)
+        updateCache(for: selectedDate)
     }
     
     // MARK: - Deletion
@@ -170,6 +185,8 @@ final class TaskManager: TaskManagerProtocol {
             
             casManager.saveModel(model)
         }
+        
+        updateCache(for: selectedDate)
     }
     
     func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord] {

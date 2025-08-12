@@ -82,13 +82,6 @@ final class TaskManager: TaskManagerProtocol {
         }
     }
     
-//    func thisWeekTasks(date: Double) async -> [MainModel] {
-//        return casManager.models.values
-//            .filter { task in
-//                return task.deleted.contains { $0.deletedFor == date } != true
-//            }
-//    }
-    
     func sortedTasks(tasks: [MainModel]) -> [MainModel] {
         tasks.sorted {
             let hour1 = calendar.component(.hour, from: Date(timeIntervalSince1970: $0.notificationDate))
@@ -103,7 +96,6 @@ final class TaskManager: TaskManagerProtocol {
     
     func thisWeekTasks(date: Double) async -> [MainModel] {
            if date >= cacheWeekStart && date <= cacheWeekEnd && !thisWeekCasheTasks.isEmpty {
-               print("here")
                return thisWeekCasheTasks
            }
            

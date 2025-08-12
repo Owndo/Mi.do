@@ -35,6 +35,10 @@ final class DayViewVM {
                 return false
             }
             
+            if i.deleted.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.deletedFor), inSameDayAs: day) }) {
+                return false
+            }
+            
             if calendar.isDate(Date(timeIntervalSince1970: endDate), inSameDayAs: day) {
                 return true
             }

@@ -8,6 +8,7 @@
 import SwiftUI
 import Models
 import UIComponents
+import Paywall
 
 //TODO: - Keyboard ignore safe area
 public struct ProfileView: View {
@@ -31,6 +32,10 @@ public struct ProfileView: View {
                         selection: $vm.pickerSelection,
                         matching: .images
                     )
+                
+                if vm.showPaywall {
+                    PaywallView()
+                }
             }
             .navigationDestination(for: ProfileDestination.self) { desctination in
                 switch desctination {
@@ -50,10 +55,14 @@ public struct ProfileView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        dismissButton()
-                        
-                        // telemetry
-                        vm.closeButtonTapped()
+                        if vm.showPaywall {
+                            vm.closePaywallButtonTapped()
+                        } else {
+                            dismissButton()
+                            
+                            // telemetry
+                            vm.closeButtonTapped()
+                        }
                     } label: {
                         Text("Close", bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .medium))
@@ -71,6 +80,7 @@ public struct ProfileView: View {
             vm.onDisappear()
         }
         .sensoryFeedback(.levelChange, trigger: vm.navigationTriger)
+        .animation(.bouncy, value: vm.showPaywall)
     }
     
     //MARK: - Scroll View
@@ -292,6 +302,16 @@ public struct ProfileView: View {
             
             ButtonRow(icon: "clock.arrow.circlepath", title: "Task history") {
                 vm.goTo(.history)
+            }
+            
+            if vm.isnotActiveSubscription() {
+                CustomDivider()
+                    .frame(height: 1)
+                    .padding(.leading, 38)
+                
+                ButtonRow(icon: "crown", title: "Purchase a subscription") {
+                    vm.subscriptionButtonTapped()
+                }
             }
             
             Spacer()

@@ -31,11 +31,11 @@ final class DayViewVM {
                 continue
             }
             
-            if i.done.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: day) }) {
+            if i.completeRecords.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: day) }) {
                 return false
             }
             
-            if i.deleted.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.deletedFor), inSameDayAs: day) }) {
+            if i.deleteRecords.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.deletedFor), inSameDayAs: day) }) {
                 return false
             }
             

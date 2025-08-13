@@ -69,7 +69,7 @@ final class SegmentedCircleVM {
         let timeKey = currentDay.timeIntervalSince1970
         
         completedFlags = sorted.map {
-            $0.done.contains { $0.completedFor == timeKey }
+            $0.completeRecords.contains { $0.completedFor == timeKey }
         }
 
         allCompleted = !sorted.isEmpty && completedFlags.allSatisfy { $0 }

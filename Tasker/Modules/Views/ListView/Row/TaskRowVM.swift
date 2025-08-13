@@ -164,7 +164,7 @@ final class TaskRowVM: HashableObject {
             return false
         }
         
-        if task.done.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.deadline!)) }) {
+        if task.completeRecords.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.deadline!)) }) {
             return false
         }
         return true
@@ -172,14 +172,14 @@ final class TaskRowVM: HashableObject {
     
     func timeRemainingString() -> LocalizedStringKey {
         
-        guard !task.done.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) else {
+        guard !task.completeRecords.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) else {
             return "Completed"
         }
         
         guard let endTimestamp = task.deadline,
               endTimestamp > dateManager.currentTime.timeIntervalSince1970 else {
             
-            if task.done.contains(where: {
+            if task.completeRecords.contains(where: {
                 dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.deadline!)) &&
                 dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) {
                 return "Completed"

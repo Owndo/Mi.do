@@ -21,10 +21,10 @@ public struct TaskModel: Codable {
     
     public var createDate = Date.now.timeIntervalSince1970
     public var notificationDate: Double?
+    public var secondNotificationDate: Double?
     public var duration: Double?
     public var deadline: Double?
     public var endDate: Double?
-    public var secondNotificationDate: Double?
     public var voiceMode: Bool?
     
     public var markAsDeleted: Bool?
@@ -32,8 +32,8 @@ public struct TaskModel: Codable {
     public var repeatTask: RepeatTask?
     public var dayOfWeek: [DayOfWeek]?
     
-    public var done: [CompleteRecord]?
-    public var deleted: [DeleteRecord]?
+    public var completeRecords: [CompleteRecord]?
+    public var deleteRecords: [DeleteRecord]?
     
     public var taskColor: TaskColor?
     
@@ -44,9 +44,10 @@ public struct TaskModel: Codable {
         audio: String? = nil,
         createDate: Double = Date.now.timeIntervalSince1970,
         notificationDate: Double? = nil,
+        secondNotificationDate: Double? = nil,
         duration: Double? = nil,
         deadline: Double? = nil,
-        secondNotificationDate: Double? = nil,
+        endDate: Double? = nil,
         voiceMode: Bool? = nil,
         markAsDeleted: Bool? = nil,
         repeatTask: RepeatTask? = nil,
@@ -61,15 +62,16 @@ public struct TaskModel: Codable {
         self.audio = audio
         self.createDate = createDate
         self.notificationDate = notificationDate
+        self.secondNotificationDate = secondNotificationDate
         self.duration = duration
         self.deadline = deadline
-        self.secondNotificationDate = secondNotificationDate
+        self.endDate = endDate
         self.voiceMode = voiceMode
         self.markAsDeleted = markAsDeleted
         self.repeatTask = repeatTask
         self.dayOfWeek = dayOfWeek
-        self.done = done
-        self.deleted = deleted
+        self.completeRecords = done
+        self.deleteRecords = deleted
         self.taskColor = taskColor
     }
 }
@@ -158,14 +160,14 @@ public class UITaskModel: TaskModelWrapper<TaskModel> {
         }
     }
     
-    public var done: [CompleteRecord] {
-        get { model.value.done ?? [] }
-        set { model.value.done = nilIfNeed(newValue, is: []) }
+    public var completeRecords: [CompleteRecord] {
+        get { model.value.completeRecords ?? [] }
+        set { model.value.completeRecords = nilIfNeed(newValue, is: []) }
     }
     
-    public var deleted: [DeleteRecord] {
-        get { model.value.deleted ?? [] }
-        set { model.value.deleted = nilIfNeed(newValue, is: []) }
+    public var deleteRecords: [DeleteRecord] {
+        get { model.value.deleteRecords ?? [] }
+        set { model.value.deleteRecords = nilIfNeed(newValue, is: []) }
     }
     
     public var taskColor: TaskColor {

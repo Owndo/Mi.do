@@ -12,16 +12,12 @@ import Models
 
 @Observable
 public final class SubscriptionManager: SubscriptionManagerProtocol {
-    //    @ObservationIgnored
-    //    @Injected(\.casManager) var casManager
-    
     //MARK: States for UI
-    //    var profileModel: ProfileData?
     public var showPaywall = false
     public var pending = false
     public var subscribed = false
     
-    let productIDs = ["yearly_base_group", "monthly_base_group"]
+    let productIDs = ["yearly_basegroup", "monthly_basegroup"]
     
     public var products: [Product] = []
     
@@ -34,8 +30,6 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
             updatePurchase = backgroundTransactionUpdate()
             await loadProducts()
         }
-        
-        //        profileModel = casManager.profileModel
     }
     
     deinit {

@@ -37,7 +37,7 @@ final class MockCas: CASManagerProtocol {
     }
     
     var allCompletedTasks: [MainModel] {
-        models.values.filter { !$0.done.isEmpty }
+        models.values.filter { !$0.completeRecords.isEmpty }
     }
     
     var allCompletedTasksCount = Int()
@@ -220,11 +220,11 @@ final class MockCas: CASManagerProtocol {
         allCompletedTasksCount = 0
         
         for task in completedTasks {
-            guard !task.value.done.isEmpty else {
+            guard !task.value.completeRecords.isEmpty else {
                 continue
             }
             
-            for _ in task.value.done {
+            for _ in task.value.completeRecords {
                 allCompletedTasksCount += 1
             }
         }

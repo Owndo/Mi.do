@@ -25,6 +25,7 @@ final class ProfileVM {
     @ObservationIgnored @Injected(\.permissionManager) private var permissionManager: PermissionProtocol
     @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
     @ObservationIgnored @Injected(\.onboardingManager) private var onboardingManager: OnboardingManagerProtocol
+    @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
     var profileModel: ProfileData = mockProfileData()
     
@@ -77,10 +78,28 @@ final class ProfileVM {
         calendar.startOfDay(for: Date(timeIntervalSince1970: dateManager.currentTime.timeIntervalSince1970)).timeIntervalSince1970
     }
     
+    var showPaywall: Bool {
+        subscriptionManager.showPaywall
+    }
+    
     init() {
         profileModel = casManager.profileModel
         photoPosition = profileModel.photoPosition
         createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
+    }
+    
+    func isnotActiveSubscription() -> Bool {
+        !subscriptionManager.subscribed
+    }
+    
+    func subscriptionButtonTapped() {
+        guard subscriptionManager.hasSubscription() else {
+            return
+        }
+    }
+    
+    func closePaywallButtonTapped() {
+        subscriptionManager.closePaywall()
     }
     
     func onAppear() {
@@ -136,7 +155,7 @@ final class ProfileVM {
         case .today:
             tasks = casManager.models.values
                 .filter {
-                    $0.deleted.contains { $0.deletedFor == todayForFilter } != true &&
+                    $0.deleteRecords.contains { $0.deletedFor == todayForFilter } != true &&
                     $0.isScheduledForDate(todayForFilter, calendar: calendar)
                 }
             
@@ -236,11 +255,11 @@ final class ProfileVM {
     //            }
     //        }
     //    }
-    //    
+    //
     //    private func endAnimationButton() {
     //        animationTimer?.invalidate()
     //        animationTimer = nil
-    //        
+    //
     //    }
 }
 

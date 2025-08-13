@@ -34,7 +34,7 @@ final class CASManager: CASManagerProtocol {
     }
     
     var allCompletedTasks: [MainModel] {
-        models.values.filter { !$0.done.isEmpty }
+        models.values.filter { !$0.completeRecords.isEmpty }
     }
     
     var allCompletedTasksCount = Int()
@@ -117,7 +117,7 @@ final class CASManager: CASManagerProtocol {
                     let task = UITaskModel(taskModel)
                     result[task.id] = task
                     
-                    if !task.done.isEmpty {
+                    if !task.completeRecords.isEmpty {
                         completedTasks[task.id] = task
                     }
                 }
@@ -209,11 +209,11 @@ final class CASManager: CASManagerProtocol {
         allCompletedTasksCount = 0
         
         for task in models.values {
-            guard !task.done.isEmpty else {
+            guard !task.completeRecords.isEmpty else {
                 continue
             }
             
-            for _ in task.done {
+            for _ in task.completeRecords {
                 allCompletedTasksCount += 1
             }
         }

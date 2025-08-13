@@ -12,6 +12,8 @@ import Models
 public final class OnboardingManager: OnboardingManagerProtocol {
     @ObservationIgnored
     @Injected(\.casManager) var casManager
+    @ObservationIgnored
+    @Injected(\.subscriptionManager) var subscriptionManager
     
     var profileModel = mockProfileData()
     
@@ -148,6 +150,8 @@ public final class OnboardingManager: OnboardingManagerProtocol {
             }
             
             profileModel.onboarding.createButtonTip = true
+            
+            subscriptionManager.showPaywall = true
         }
         
         profileModel.onboarding.sayHello = false

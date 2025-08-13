@@ -46,7 +46,7 @@ final class TaskManager: TaskManagerProtocol {
     
     var activeTasks: [MainModel] {
         let filtered = tasks.values.filter {
-            $0.done.contains { $0.completedFor == selectedDate } != true
+            $0.completeRecords.contains { $0.completedFor == selectedDate } != true
         }
         
         return sortedTasks(tasks: filtered)
@@ -54,7 +54,7 @@ final class TaskManager: TaskManagerProtocol {
     
     var completedTasks: [MainModel] {
         let filtered = tasks.values.filter {
-            $0.done.contains { $0.completedFor == selectedDate }
+            $0.completeRecords.contains { $0.completedFor == selectedDate }
         }
         
         return sortedTasks(tasks: filtered)
@@ -97,7 +97,7 @@ final class TaskManager: TaskManagerProtocol {
     func thisWeekTasks(date: Double) async -> [MainModel] {
           return casManager.models.values
               .filter { task in
-                  return task.deleted.contains { $0.deletedFor == date } != true
+                  return task.deleteRecords.contains { $0.deletedFor == date } != true
               }
       }
     
@@ -117,28 +117,28 @@ final class TaskManager: TaskManagerProtocol {
     
     // MARK: - Completion Management
     func checkCompletedTaskForToday(task: UITaskModel) -> Bool {
-        task.done.contains(where: { $0.completedFor == selectedDate })
+        task.completeRecords.contains(where: { $0.completedFor == selectedDate })
     }
     
     func checkMarkTapped(task: UITaskModel) -> UITaskModel {
         let model = task
-        model.done = updateExistingTaskCompletion(task: task)
+        model.completeRecords = updateExistingTaskCompletion(task: task)
         return model
     }
     
     private func updateExistingTaskCompletion(task: UITaskModel) -> [CompleteRecord] {
-        guard !task.done.isEmpty else {
+        guard !task.completeRecords.isEmpty else {
             return [createNewTaskCompletion(task: task)]
         }
         
-        if let existingIndex = task.done.firstIndex(where: { $0.completedFor == selectedDate }) {
-            var updatedRecords = task.done
+        if let existingIndex = task.completeRecords.firstIndex(where: { $0.completedFor == selectedDate }) {
+            var updatedRecords = task.completeRecords
             updatedRecords.remove(at: existingIndex)
             // telemetry
             telemetryAction(.taskAction(.uncompleteButtonTapped))
             return updatedRecords
         } else {
-            var updatedRecords = task.done
+            var updatedRecords = task.completeRecords
             updatedRecords.append(createNewTaskCompletion(task: task))
             
             // telemetry
@@ -170,7 +170,7 @@ final class TaskManager: TaskManagerProtocol {
             tasks.removeValue(forKey: task.id)
             casManager.deleteModel(task)
         } else {
-            model.deleted = updateExistingTaskDeleted(task: model)
+            model.deleteRecords = updateExistingTaskDeleted(task: model)
             tasks.removeValue(forKey: model.id)
             
             casManager.saveModel(model)
@@ -178,7 +178,7 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord] {
-        var newDeletedRecords: [DeleteRecord] = task.deleted
+        var newDeletedRecords: [DeleteRecord] = task.deleteRecords
         newDeletedRecords.append(DeleteRecord(deletedFor: selectedDate, timeMark: currentTime))
         return newDeletedRecords
     }

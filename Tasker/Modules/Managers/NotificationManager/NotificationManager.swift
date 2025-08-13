@@ -407,11 +407,11 @@ final class NotificationManager: NotificationManagerProtocol {
     
     /// Days before task completed or deleted
     private func checkDaysBeforeSkip(_ task: UITaskModel) -> Int {
-        let datesBeforeSkip = task.done.map { Date(timeIntervalSince1970: $0.completedFor )}
+        let datesBeforeSkip = task.completeRecords.map { Date(timeIntervalSince1970: $0.completedFor )}
             .filter { $0.timeIntervalSince1970 > now.timeIntervalSince1970 }
             .sorted()
         
-        let dateBeforDelete = task.deleted.map { Date(timeIntervalSince1970: $0.deletedFor )}
+        let dateBeforDelete = task.deleteRecords.map { Date(timeIntervalSince1970: $0.deletedFor )}
             .filter { $0.timeIntervalSince1970 > now.timeIntervalSince1970 }
             .sorted()
         
@@ -470,14 +470,14 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     private func checkIsTaskActualyForThisDay(task: UITaskModel) -> Bool {
-        task.done.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: selectedDay)}) ||
-        task.deleted.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.deletedFor), inSameDayAs: selectedDay)})
+        task.completeRecords.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: selectedDay)}) ||
+        task.deleteRecords.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.deletedFor), inSameDayAs: selectedDay)})
     }
     
     //MARK: Check  completed or deleted record
     private func hasTaskCompleteOrDeleteMarkersInFuture(task: UITaskModel) -> Bool {
-        task.done.contains { $0.completedFor > now.timeIntervalSince1970 } ||
-        task.deleted.contains { $0.deletedFor > now.timeIntervalSince1970 }
+        task.completeRecords.contains { $0.completedFor > now.timeIntervalSince1970 } ||
+        task.deleteRecords.contains { $0.deletedFor > now.timeIntervalSince1970 }
     }
     
     //MARK: Task's in correct range

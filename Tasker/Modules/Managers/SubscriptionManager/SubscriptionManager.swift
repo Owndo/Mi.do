@@ -47,10 +47,6 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
     }
     
     public func hasSubscription() -> Bool {
-#if targetEnvironment(simulator)
-        return true
-#endif
-        
         guard purchaseProductId.isEmpty else {
             return true
         }

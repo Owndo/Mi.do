@@ -360,6 +360,10 @@ public final class TaskVM: Identifiable {
     }
     
     private func checkTimeAfterSelected() {
+        guard initing == false else {
+            return
+        }
+        
         debounceTimer?.invalidate()
         lastChangeTime = Date()
         
@@ -396,7 +400,12 @@ public final class TaskVM: Identifiable {
         task.deadline = nil
     }
     
+    //MARK: - Auto close functionality
     private func checkTimeAfterDeadlineSelected() {
+        guard initing == false else {
+            return
+        }
+        
         debounceTimer?.invalidate()
         lastChangeTime = Date()
         

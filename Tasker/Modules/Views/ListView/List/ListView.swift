@@ -26,15 +26,6 @@ public struct ListView: View {
                         
                         CompletedTasksList()
                     }
-                    .background(
-                        GeometryReader { contentGeometry in
-                            Color.clear
-                                .preference(
-                                    key: ContentHeightPreferenceKey.self,
-                                    value: contentGeometry.size.height
-                                )
-                        }
-                    )
                     
                     GestureDetectView()
                         .frame(height: vm.calculateGestureViewHeight(
@@ -53,9 +44,6 @@ public struct ListView: View {
                         }
                 }
             }
-            //            .onAppear {
-            //                vm.updateTasksList()
-            //            }
             .scrollIndicators(.hidden)
             .onPreferenceChange(ContentHeightPreferenceKey.self) { height in
                 vm.contentHeight = height
@@ -86,13 +74,11 @@ public struct ListView: View {
                     ForEach(vm.tasks) { task in
                         TaskRow(task: task)
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
                 .clipped()
             }
         }
-        //        .clipShape(RoundedRectangle(cornerRadius: 16))
-        //        .shadow(color: .profileShadow.opacity(0.5), radius: 5)
+        .transition(.opacity)
         .padding(.horizontal, 16)
     }
     
@@ -103,7 +89,7 @@ public struct ListView: View {
                 HStack {
                     Text("Completed task", bundle: .module)
                         .font(.system(.subheadline, design: .rounded, weight: .bold))
-                        .foregroundStyle(Color(.labelTertiary))
+                        .foregroundStyle(.labelTertiary)
                     
                     Spacer()
                     
@@ -117,20 +103,16 @@ public struct ListView: View {
                 .padding(.top, 18)
                 .padding(.bottom, 12)
                 
-                
                 if !vm.completedTasksHidden {
                     VStack(spacing: 2) {
                         ForEach(vm.completedTasks) { task in
                             TaskRow(task: task)
-                                .foregroundStyle(.labelPrimary)
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
                 }
             }
         }
-        //        .clipShape(RoundedRectangle(cornerRadius: 16))
-        //        .shadow(color: .profileShadow.opacity(0.5), radius: 5)
+        .transition(.opacity)
         .padding(.horizontal, 16)
     }
     

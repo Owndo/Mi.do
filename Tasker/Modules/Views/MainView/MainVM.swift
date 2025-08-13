@@ -127,6 +127,7 @@ public final class MainVM {
         casManager.profileUpdateTriger
     }
     
+    //MARK: - Init
     public init() {
         createCustomProfileModel()
         setupCallbacks()

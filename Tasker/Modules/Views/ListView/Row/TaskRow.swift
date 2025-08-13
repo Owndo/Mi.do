@@ -66,25 +66,11 @@ struct TaskRow: View {
                     }
                     
                     HStack(spacing: 12) {
-                        HStack {
-                            if vm.showDeadlinePicker {
-                                Text(vm.timeRemainingString(), bundle: .module)
-                                    .font(.system(.subheadline, design: .rounded, weight: .regular))
-                                    .foregroundStyle(vm.isTaskOverdue() ? .accentRed : vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                                    .underline(true, pattern: .dot, color: vm.isTaskOverdue() ? .accentRed : .labelQuaternary)
-                            } else {
-                                Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
-                                    .font(.system(.subheadline, design: .rounded, weight: .regular))
-                                    .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                                    .underline(vm.isTaskHasDeadline() ? true : false, pattern: .dot, color: vm.isTaskOverdue() ? .accentRed : .labelQuaternary)
-                                    .padding(.leading, 6)
-                                    .lineLimit(1)
+                        NotificationDeadlineDate()
+                            .allowsHitTesting(vm.isTaskHasDeadline())
+                            .onTapGesture {
+                                vm.showDedalineButtonTapped()
                             }
-                        }
-                        .allowsHitTesting(vm.isTaskHasDeadline())
-                        .onTapGesture {
-                            vm.showDedalineButtonTapped()
-                        }
                         
                         PlayButton()
                     }
@@ -113,20 +99,30 @@ struct TaskRow: View {
                         .tint(.red)
                 }
             }
-            //TODO: - Next day for task
-            //            .swipeActions(edge: .leading, allowsFullSwipe: false) {
-            //                Button {
-            //                    vm.updateNotificationTimeForDueDateSwipped(task: task)
-            //                } label: {
-            //                    Image(systemName: "arrow.forward.circle.fill")
-            //                        .tint(colorScheme.accentColor())
-            //                }
-            //            }
         }
+        .clipShape(RoundedRectangle(cornerRadius: 16))
         .listStyle(PlainListStyle())
         .listRowSeparator(.hidden)
         .frame(height: vm.listRowHeight)
         .scrollDisabled(true)
+    }
+    
+    //MARK: - Notification/Deadline date
+    @ViewBuilder
+    private func NotificationDeadlineDate() -> some View {
+        if vm.showDeadlinePicker {
+            Text(vm.timeRemainingString(), bundle: .module)
+                .font(.system(.subheadline, design: .rounded, weight: .regular))
+                .foregroundStyle(vm.isTaskOverdue() ? .accentRed : vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                .underline(true, pattern: .dot, color: vm.isTaskOverdue() ? .accentRed : .labelQuaternary)
+        } else {
+            Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
+                .font(.system(.subheadline, design: .rounded, weight: .regular))
+                .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                .underline(vm.isTaskHasDeadline() ? true : false, pattern: .dot, color: vm.isTaskOverdue() ? .accentRed : .labelQuaternary)
+                .padding(.leading, 6)
+                .lineLimit(1)
+        }
     }
     
     //MARK: - Play Button

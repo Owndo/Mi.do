@@ -152,7 +152,10 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     func saveTask(_ task: UITaskModel) {
-        tasks[task.id] = task
+        if task.isScheduledForDate(selectedDate, calendar: calendar) {
+            tasks[task.id] = task
+        }
+        
         casManager.saveModel(task)
     }
     

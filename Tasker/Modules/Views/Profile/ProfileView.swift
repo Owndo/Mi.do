@@ -130,6 +130,7 @@ public struct ProfileView: View {
                 .foregroundStyle(colorScheme.accentColor())
                 .font(.system(size: 30))
                 .rotationEffect(Angle(degrees: vm.gearAnimation ? 270 : 0))
+                .symbolEffect(.bounce,options: .speed(0.6), value: vm.gearAnimation)
                 .padding(4)
                 .shadow(color: colorScheme.accentColor().opacity(0.5), radius: 16, y: 4)
                 .background(

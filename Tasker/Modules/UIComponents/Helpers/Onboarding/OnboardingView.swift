@@ -27,16 +27,19 @@ public struct OnboardingView: View {
                     .font(.system(.body, design: .rounded, weight: .semibold))
                     .foregroundStyle(.labelPrimary)
                     .padding(.top, 2)
+                    .minimumScaleFactor(0.5)
                 
                 Text(type.typeOfTips.1, bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .medium))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.labelTertiary)
                     .padding(.bottom, 2)
+                    .minimumScaleFactor(0.5)
             }
-            .frame(maxWidth: 230)
+//            .frame(maxWidth: 230)
             .padding(12)
-            .fixedSize(horizontal: false, vertical: true)
+            .clipped()
+//            .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

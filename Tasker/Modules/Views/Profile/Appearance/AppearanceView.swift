@@ -100,6 +100,7 @@ struct AppearanceView: View {
                 Text(scheme.description, bundle: .module)
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelPrimary)
+                    .minimumScaleFactor(0.5)
                 
                 
                 if scheme == vm.profileData.settings.colorScheme {
@@ -156,6 +157,7 @@ struct AppearanceView: View {
                     .font(.system(.headline, design: .rounded, weight: .semibold))
                     .foregroundStyle(.labelPrimary)
                     .padding(.bottom, 4)
+                    .minimumScaleFactor(0.5)
                 
                 if value == vm.profileData.settings.minimalProgressMode {
                     Image(systemName: "checkmark.circle.fill")

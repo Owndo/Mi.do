@@ -99,7 +99,7 @@ public struct MonthView: View {
                         HStack {
                             Image(systemName: "arrow.uturn.backward")
                             
-                            Text("Today")
+                            Text("Today", bundle: .module)
                         }
                         .tint(.labelSecondary)
                         .padding(.vertical, 7)

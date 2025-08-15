@@ -28,6 +28,7 @@ struct SayHelloView: View {
                     .font(.system(.title, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelPrimary)
                     .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.5)
                 
                 VStack(alignment: .leading, spacing: 14) {
                     Description(image: "road.lanes.curved.right", text: vm.description1)
@@ -79,6 +80,7 @@ struct SayHelloView: View {
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(.labelSecondary)
                 .multilineTextAlignment(.leading)
+                .minimumScaleFactor(0.5)
         }
     }
     

@@ -97,8 +97,8 @@ struct SegmentedCircleView: View {
         
         AnimatedArcShape(startAngle: startAngle, endAngle: dynamicEnd)
             .stroke(
-                segmentColor.opacity(vm.useTaskColors
-                                     ? isCompleted ? 0.8 : 0.3
+                segmentColor.opacity(vm.useTaskColors ? task.taskColor != .baseColor
+                                     ? isCompleted ? 0.8 : 0.3 : isCompleted ? 1 : 0.6
                                      : isCompleted ? 0.8 : 1),
                 style: StrokeStyle(lineWidth: 3, lineCap: .round)
             )

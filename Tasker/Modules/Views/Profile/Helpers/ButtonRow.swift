@@ -33,6 +33,7 @@ struct ButtonRow: View {
                 Text(title, bundle: .module)
                     .font(.system(.callout, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelPrimary)
+                    .minimumScaleFactor(0.5)
                 
                 Spacer()
                 

@@ -22,7 +22,7 @@
     "_billingIssuesEnabled" : false,
     "_developerTeamID" : "5M63H38ZMF",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 776804817.86346102,
+    "_lastSynchronizedDate" : 776914688.03756905,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : true,
     "_storefront" : "USA",
@@ -97,7 +97,7 @@
           "groupNumber" : 2,
           "internalID" : "6750485670",
           "introductoryOffer" : {
-            "internalID" : "4486BA55",
+            "internalID" : "46559681",
             "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1W"

@@ -600,19 +600,19 @@
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantén pulsado el botón más para hablar o tócala para crear"
+            "value" : "Mantén pulsado el botón más para hablar\no tócala para crear"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantén pulsado el botón más para hablar o tócala para crear"
+            "value" : "Mantén pulsado el botón más para hablar\no tócala para crear"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maintiens le bouton plus pour parler ou appuie pour créer"
+            "value" : "Maintiens le bouton plus pour parler\nou appuie pour créer"
           }
         },
         "fr-CA" : {
@@ -624,25 +624,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tieni premuto il pulsante più per parlare o tocca per creare"
+            "value" : "Tieni premuto il pulsante più per parlare\no tocca per creare"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Segure o botão mais para falar ou toque para criar"
+            "value" : "Segure o botão mais para falar\nou toque para criar"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Segure o botão mais para falar ou toque para criar"
+            "value" : "Segure o botão mais para falar\nou toque para criar"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Удерживайте кнопку «плюс» и говорите, или просто нажмите, чтобы создать"
+            "value" : "Удерживайте кнопку «плюс» и говорите,\nили просто нажмите, чтобы создать"
           }
         }
       }

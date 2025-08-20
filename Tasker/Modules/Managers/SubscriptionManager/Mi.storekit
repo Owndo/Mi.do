@@ -22,7 +22,7 @@
     "_billingIssuesEnabled" : false,
     "_developerTeamID" : "5M63H38ZMF",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 776914688.03756905,
+    "_lastSynchronizedDate" : 777359888.63070202,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : true,
     "_storefront" : "USA",
@@ -97,7 +97,7 @@
           "groupNumber" : 2,
           "internalID" : "6750485670",
           "introductoryOffer" : {
-            "internalID" : "46559681",
+            "internalID" : "F0746DBA",
             "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1W"
@@ -112,6 +112,16 @@
               "description" : "Paiement chaque mois",
               "displayName" : "Mensuel",
               "locale" : "fr"
+            },
+            {
+              "description" : "Pagamento mensal",
+              "displayName" : "Mensal",
+              "locale" : "pt_BR"
+            },
+            {
+              "description" : "Pago mensual",
+              "displayName" : "Mensual",
+              "locale" : "es_ES"
             },
             {
               "description" : "Оплата раз в месяц",
@@ -147,16 +157,6 @@
               "description" : "Pay once a month",
               "displayName" : "Monthly",
               "locale" : "en_US"
-            },
-            {
-              "description" : "Pagamento mensal",
-              "displayName" : "Mensal",
-              "locale" : "pt_BR"
-            },
-            {
-              "description" : "Pago mensual",
-              "displayName" : "Mensual",
-              "locale" : "es_ES"
             }
           ],
           "productID" : "monthly_basegroup",

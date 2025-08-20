@@ -34,7 +34,7 @@ final class PaywallVM {
     
     init() {
         products = subscriptionManager.products
-        selecetedProduct = products.last
+        selecetedProduct = products.first
     }
     
     func makePurchase() async {

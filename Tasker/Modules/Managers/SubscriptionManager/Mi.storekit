@@ -22,7 +22,7 @@
     "_billingIssuesEnabled" : false,
     "_developerTeamID" : "5M63H38ZMF",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 777359888.63070202,
+    "_lastSynchronizedDate" : 777419191.33244002,
     "_locale" : "en_US",
     "_renewalBillingIssuesEnabled" : true,
     "_storefront" : "USA",
@@ -97,7 +97,7 @@
           "groupNumber" : 2,
           "internalID" : "6750485670",
           "introductoryOffer" : {
-            "internalID" : "F0746DBA",
+            "internalID" : "58D3F32B",
             "numberOfPeriods" : 1,
             "paymentMode" : "free",
             "subscriptionPeriod" : "P1W"
@@ -116,12 +116,12 @@
             {
               "description" : "Pagamento mensal",
               "displayName" : "Mensal",
-              "locale" : "pt_BR"
+              "locale" : "ar"
             },
             {
-              "description" : "Pago mensual",
-              "displayName" : "Mensual",
-              "locale" : "es_ES"
+              "description" : "Pagamento mensal",
+              "displayName" : "Mensal",
+              "locale" : "pt_BR"
             },
             {
               "description" : "Оплата раз в месяц",
@@ -132,11 +132,6 @@
               "description" : "Monatliche Zahlung",
               "displayName" : "Monatlich",
               "locale" : "de"
-            },
-            {
-              "description" : "Pagamento mensal",
-              "displayName" : "Mensal",
-              "locale" : "ar"
             },
             {
               "description" : "Pagamento mensile",
@@ -157,6 +152,11 @@
               "description" : "Pay once a month",
               "displayName" : "Monthly",
               "locale" : "en_US"
+            },
+            {
+              "description" : "Pago mensual",
+              "displayName" : "Mensual",
+              "locale" : "es_ES"
             }
           ],
           "productID" : "monthly_basegroup",
@@ -192,6 +192,11 @@
               "locale" : "fr"
             },
             {
+              "description" : "Zahlung einmal im Jahr",
+              "displayName" : "Jährlich",
+              "locale" : "de"
+            },
+            {
               "description" : "Оплата раз в год",
               "displayName" : "Год",
               "locale" : "ru"
@@ -225,11 +230,6 @@
               "description" : "Pago una vez al año",
               "displayName" : "Anual",
               "locale" : "es_MX"
-            },
-            {
-              "description" : "Zahlung einmal im Jahr",
-              "displayName" : "Jährlich",
-              "locale" : "de"
             }
           ],
           "productID" : "yearly_basegroup",

@@ -134,7 +134,9 @@ public struct PaywallView: View {
     @ViewBuilder
     private func SubscriptionRow(product: Product) -> some View {
         Button {
-            vm.selecetedProduct = product
+            Task {
+                await vm.selectProductButtonTapped(product)
+            }
         } label: {
             VStack {
                 Text(LocalizedStringKey(product.displayName), bundle: .module)

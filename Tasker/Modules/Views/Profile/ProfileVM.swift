@@ -114,6 +114,7 @@ final class ProfileVM {
         onboardingManager.showingProfile = nil
         //        endAnimationButton()
         profileModelSave()
+        subscriptionManager.showPaywall = false
         
         //telemetry
         telemetryAction(action: .openView(.profile(.close)))

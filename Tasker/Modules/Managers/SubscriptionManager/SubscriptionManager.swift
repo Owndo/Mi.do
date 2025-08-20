@@ -182,16 +182,40 @@ public extension Product {
 }
 
 public extension Product {
+    func isEligibleForFreeTrial() async -> Bool {
+        guard let subscription = self.subscription else {
+            return false
+        }
+        
+        return await subscription.isEligibleForIntroOffer
+    }
+    
     func intoductoryOffer() -> LocalizedStringKey? {
-        if let offer = self.subscription?.introductoryOffer {
-            switch offer.period {
-            case .weekly:
-                return "Free week"
-            default:
+        guard let offer = self.subscription?.introductoryOffer else {
+            return nil
+        }
+        
+        // TODO: - ask apple about this shit
+        // In case debug mode
+        guard offer.period.unit == .day else {
+            if offer.period == .weekly {
+                switch offer.period {
+                case .weekly:
+                    return "Free week"
+                default:
+                    return nil
+                }
+            } else {
                 return nil
             }
         }
-        return nil
+        
+        // In case release mode
+        if offer.period.value == 7 {
+            return "Free week"
+        } else {
+            return nil
+        }
     }
 }
 

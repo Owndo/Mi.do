@@ -92,7 +92,7 @@ public struct TaskView: View {
                 vm.stopAfterCheck(newValue)
             }
             .onDisappear {
-                vm.stopPlaying()
+                vm.disappear()
             }
             .taskDeleteDialog(
                 isPresented: $vm.confirmationDialogIsPresented,

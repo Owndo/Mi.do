@@ -67,6 +67,7 @@ public struct ProfileView: View {
                         Text("Close", bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .medium))
                             .foregroundStyle(colorScheme.accentColor())
+                            .opacity(vm.showPaywall ? 0 : 1)
                             .fixedSize()
                     }
                 }

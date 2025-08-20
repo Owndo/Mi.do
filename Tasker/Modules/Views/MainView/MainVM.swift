@@ -59,8 +59,9 @@ public final class MainVM {
     /// First time ever opened
     var sayHello = false
     
+    var mainViewPaywall = false
     var showPaywall: Bool {
-        subscriptionManager.showPaywall
+        mainViewPaywall && subscriptionManager.showPaywall
     }
     
     var presentationPosition: PresentationDetent = PresentationMode.base.detent {
@@ -151,7 +152,8 @@ public final class MainVM {
             try? await Task.sleep(for: .seconds(0.1))
         }
         
-        checkNotificationPermission()
+        await checkNotificationPermission()
+        
         await notificationManager.createNotification()
     }
     
@@ -354,16 +356,20 @@ public final class MainVM {
         disabledButton.toggle()
     }
     
-    private func checkNotificationPermission() {
-        Task {
-            await notificationManager.checkPermission()
-            alert = notificationManager.alert
+    private func checkNotificationPermission() async {
+        await notificationManager.checkPermission()
+        
+        guard let alert = notificationManager.alert else {
+            return
         }
+        
+        self.alert = alert
     }
     
     //MARK: - Onboarding
     private func onboardingStart() async {
         disabledButton = true
+        mainViewPaywall = true
         
         await onboardingManager.firstTimeOpen()
         
@@ -373,6 +379,10 @@ public final class MainVM {
             askReview = true
             profileModel.onboarding.requestedReview = true
             profileModelSave()
+        }
+        
+        if showPaywall == false {
+            mainViewPaywall = false
         }
         
         disabledButton = false

@@ -147,7 +147,7 @@ let project = Project(
                     .runAction(
                         configuration: .debug,
                         attachDebugger: false,
-                        options: .options(storeKitConfigurationPath: "Tasker/Modules/Managers/SubscriptionManager/Mi.storekit") ,
+                        options: .options(storeKitConfigurationPath: "Tasker/Modules/Managers/SubscriptionManager/Mi.storekit"),
                         expandVariableFromTarget: .target("Tasker"),
                         launchStyle: .automatically
                     ),
@@ -223,14 +223,14 @@ struct App {
     public static let bundleId = "mido.robocode"
     public static let teamId = "5M63H38ZMF"
     public static let deploymentTargets = DeploymentTargets.iOS("17.0")
-    public static let version = "1.1.1"
+    public static let version = "1.1.2"
 }
 
 
 extension SettingsDictionary {
     func setProjectVersions() -> SettingsDictionary {
-        let currentProjectVersion = "1.1.1"
-        let markettingVersion = "1.1.1"
+        let currentProjectVersion = "1.1.2"
+        let markettingVersion = "1.1.2"
         
         return appleGenericVersioningSystem().merging([
             "CURRENT_PROJECT_VERSION": SettingValue(stringLiteral: currentProjectVersion),

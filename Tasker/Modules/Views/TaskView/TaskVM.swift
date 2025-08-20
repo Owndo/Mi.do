@@ -183,7 +183,10 @@ public final class TaskVM: Identifiable {
         }
     }
     
-    
+    func disappear() {
+        stopPlaying()
+        subscriptionManager.showPaywall = false
+    }
     
     private func setUpTime() {
         sourseDateOfNotification = Date(timeIntervalSince1970: task.notificationDate)

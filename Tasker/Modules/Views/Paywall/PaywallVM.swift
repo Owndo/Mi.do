@@ -28,13 +28,35 @@ final class PaywallVM {
         subscriptionManager.pending
     }
     
-    var textForButton: LocalizedStringKey {
-        selecetedProduct?.intoductoryOffer() != nil ? "Try for free" : "Continue"
-    }
+    var textForButton: LocalizedStringKey = "Continue"
     
     init() {
         products = subscriptionManager.products
         selecetedProduct = products.first
+        
+        if let product = selecetedProduct {
+            Task {
+                await selectProductButtonTapped(product)
+            }
+        }
+    }
+    
+    func selectProductButtonTapped(_ product: Product) async {
+        selecetedProduct = product
+        
+        guard let selecetedProduct = self.selecetedProduct else {
+            return
+        }
+        
+        guard await selecetedProduct.isEligibleForFreeTrial() else {
+            return
+        }
+        
+        if selecetedProduct.intoductoryOffer() != nil {
+            textForButton = "Try for free"
+        } else {
+            textForButton = "Continue"
+        }
     }
     
     func makePurchase() async {

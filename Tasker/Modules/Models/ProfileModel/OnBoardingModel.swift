@@ -67,13 +67,13 @@ public enum OnboardingModelEnum {
         case .searchTasksTip:
             return ("Find what matters...", "Tap the search icon to begin")
         case .openSubtasksTip:
-            return ("Open subtasks...", "Double-tap to see the details")
+            return ("Open subtasks...", "Double - tap to see the details")
         case .checkMarkTip:
             return ("Tap to complete", "Mark it done when you’re ready")
         case .listSwipeTip:
-            return ("Navigate your days...", "Swipe to change, double tap to return")
+            return ("Switch days below...", "Swipe under tasks to change, double tap to return")
         case .createButtonTip:
-            return ("Plus button", "Hold for record or tap to create")
+            return ("Create tasks with your voice", "Hold the plus to speak, or just tap to create")
         }
     }
 }

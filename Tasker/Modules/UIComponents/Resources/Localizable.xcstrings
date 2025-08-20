@@ -191,7 +191,72 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Управление"
+            "value" : "Контролируй тут"
+          }
+        }
+      }
+    },
+    "Create tasks with your voice" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle Aufgaben mit deiner Stimme"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tareas con tu voz"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tareas con tu voz"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tareas con tu voz"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bouton Ajouter"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bouton Ajouter"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pulsante Aggiungi"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botão Adicionar"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Botão Adicionar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кнопка плюс"
           }
         }
       }
@@ -453,71 +518,6 @@
         }
       }
     },
-    "Hold for record or tap to create" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zum Aufnehmen halten oder zum Erstellen tippen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantén presionado para grabar o toca para crear"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantén presionado para grabar o toca para crear"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantén presionado para grabar o toca para crear"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuyez pour créer ou maintenez pour enregistrer"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Maintenez pour enregistrer ou touchez pour créer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tieni premuto per registrare o tocca per creare"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Segure para gravar ou toque para criar"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Segure para gravar ou toque para criar"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Удерживать для записи или нажать, чтобы создать"
-          }
-        }
-      }
-    },
     "Hold or tap the plus button\n to create" : {
       "localizations" : {
         "de" : {
@@ -578,6 +578,71 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Удерживать или нажать кнопку плюс\nчтобы начать"
+          }
+        }
+      }
+    },
+    "Hold the plus to speak, or just tap to create" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Halte das Plus, um zu sprechen, oder tippe, um zu erstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantén el botón plus para hablar o tócala para crear"
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantén pulsado el botón más para hablar o tócala para crear"
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantén pulsado el botón más para hablar o tócala para crear"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintiens le bouton plus pour parler ou appuie pour créer"
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintiens le bouton plus pour parler ou appuie pour créer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tieni premuto il pulsante più per parlare o tocca per creare"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segure o botão mais para falar ou toque para criar"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Segure o botão mais para falar ou toque para criar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Удерживайте кнопку «плюс» и говорите, или просто нажмите, чтобы создать"
           }
         }
       }
@@ -647,71 +712,6 @@
         }
       }
     },
-    "Navigate your days..." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Navigiere durch deine Tage..."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Navega por tus días..."
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Navega por tus días..."
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Navega por tus días..."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Naviguez dans vos journées..."
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Naviguez dans vos journées..."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Naviga tra i tuoi giorni..."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Navegue pelos seus dias..."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Navegue pelos seus dias..."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Управляй своими днями..."
-          }
-        }
-      }
-    },
     "Notes" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -773,71 +773,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Заметки"
-          }
-        }
-      }
-    },
-    "Plus button" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hinzufügen-Schaltfläche"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Botón Agregar"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Botón Agregar"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Botón Agregar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bouton Ajouter"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bouton Ajouter"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pulsante Aggiungi"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Botão Adicionar"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Botão Adicionar"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Кнопка плюс"
           }
         }
       }
@@ -1161,7 +1096,7 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Свайпай влево или вправо, чтобы сменить неделю"
+            "value" : "Переключай влево или вправо, чтобы сменить неделю"
           }
         }
       }
@@ -1226,54 +1161,54 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Свайпни влево, чтобы удалить"
+            "value" : "Потяни влево, чтобы удалить"
           }
         }
       }
     },
-    "Swipe to change, double tap to return" : {
+    "Swipe under tasks to change, double tap to return" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wischen zum Wechseln, Doppeltipp zurück"
+            "value" : "Wische unter den Aufgaben zum Wechseln,\nDoppeltipp zum Zurückkehren"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para cambiar, doble toque para volver"
+            "value" : "Desliza debajo de las tareas para cambiar,\ntoca dos veces para volver"
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para cambiar, doble toque para volver"
+            "value" : "Desliza debajo de las tareas para cambiar,\ntoca dos veces para volver"
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desliza para cambiar, doble toque para volver"
+            "value" : "Desliza debajo de las tareas para cambiar,\ntoca dos veces para volver"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez pour changer, double tapez pour revenir"
+            "value" : "Glisse sous les tâches pour changer,\ndouble-tape pour revenir"
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Glissez pour changer, double tapez pour revenir"
+            "value" : "Glisse sous les tâches pour changer,\ndouble-tape pour revenir"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scorri per cambiare, doppio tocco per tornare"
+            "value" : "Scorri sotto le attività per cambiare,\ndoppio tocco per tornare"
           }
         },
         "pt-BR" : {
@@ -1291,7 +1226,72 @@
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Свайп для смены, двойной тап - вернуться"
+            "value" : "Проведи влево или право для смены дня,\nдвойное нажатие - вернуться"
+          }
+        }
+      }
+    },
+    "Switch days below..." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tage unten wechseln..."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia los días abajo..."
+          }
+        },
+        "es-419" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia los días abajo..."
+          }
+        },
+        "es-US" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia los días abajo..."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change les jours ci-dessous..."
+          }
+        },
+        "fr-CA" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change les jours ci-dessous..."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambia i giorni sotto..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navegue pelos seus dias..."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Navegue pelos seus dias..."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Область под задачами…"
           }
         }
       }

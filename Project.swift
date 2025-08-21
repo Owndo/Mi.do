@@ -223,14 +223,14 @@ struct App {
     public static let bundleId = "mido.robocode"
     public static let teamId = "5M63H38ZMF"
     public static let deploymentTargets = DeploymentTargets.iOS("17.0")
-    public static let version = "1.1.2"
+    public static let version = "1.1.3"
 }
 
 
 extension SettingsDictionary {
     func setProjectVersions() -> SettingsDictionary {
-        let currentProjectVersion = "1.1.2"
-        let markettingVersion = "1.1.2"
+        let currentProjectVersion = "1.1.3"
+        let markettingVersion = "1.1.3"
         
         return appleGenericVersioningSystem().merging([
             "CURRENT_PROJECT_VERSION": SettingValue(stringLiteral: currentProjectVersion),

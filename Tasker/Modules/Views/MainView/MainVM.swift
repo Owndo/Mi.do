@@ -152,7 +152,7 @@ public final class MainVM {
             try? await Task.sleep(for: .seconds(0.1))
         }
         
-        await checkNotificationPermission()
+        checkNotificationPermission()
         
         await notificationManager.createNotification()
     }
@@ -356,14 +356,16 @@ public final class MainVM {
         disabledButton.toggle()
     }
     
-    private func checkNotificationPermission() async {
-        await notificationManager.checkPermission()
-        
-        guard let alert = notificationManager.alert else {
-            return
+    private func checkNotificationPermission() {
+        Task {
+            await notificationManager.checkPermission()
+            
+            guard let alert = notificationManager.alert else {
+                return
+            }
+            
+            self.alert = alert
         }
-        
-        self.alert = alert
     }
     
     //MARK: - Onboarding

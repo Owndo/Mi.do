@@ -13,18 +13,19 @@ struct GlowEffect: View {
     
     @State private var gradientStops: [Gradient.Stop] = []
     
-    let decibelLevel: Float // Добавляем параметр для уровня децибел
+    let decibelLevel: Float
     
     var body: some View {
         ZStack {
-            Effect(gradientStops: gradientStops, width: 6, blur: 2, decibelLevel: decibelLevel)
+            Effect(gradientStops: gradientStops, width: 3, blur: 1.5, decibelLevel: decibelLevel)
             
-            Effect(gradientStops: gradientStops, width: 9, blur: 4, decibelLevel: decibelLevel)
+            Effect(gradientStops: gradientStops, width: 5, blur: 3, decibelLevel: decibelLevel)
             
-            Effect(gradientStops: gradientStops, width: 11, blur: 12, decibelLevel: decibelLevel)
+            Effect(gradientStops: gradientStops, width: 7, blur: 6, decibelLevel: decibelLevel)
             
-            Effect(gradientStops: gradientStops, width: 15, blur: 15, decibelLevel: decibelLevel)
+            Effect(gradientStops: gradientStops, width: 9, blur: 9, decibelLevel: decibelLevel)
         }
+        
         .onAppear {
             withAnimation(.easeInOut(duration: 0.6)) {
                 gradientStops = generateGradientStops()
@@ -34,7 +35,7 @@ struct GlowEffect: View {
     
     private func generateGradientStops() -> [Gradient.Stop] {
         let c = colorScheme.accentColor()
-
+        
         let pairs: [(Double, Double)] = [
             (0.00, 0.5),
             (0.10, 0.6),
@@ -48,12 +49,11 @@ struct GlowEffect: View {
             (0.90, 0.6),
             (1.00, 0.5),
         ]
-
+        
         return pairs.map { loc, op in
-            .init(color: c.opacity(op), location: loc)
+                .init(color: c.opacity(op), location: loc)
         }
     }
-
 }
 
 struct Effect: View {

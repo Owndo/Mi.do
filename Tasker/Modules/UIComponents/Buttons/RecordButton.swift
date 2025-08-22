@@ -21,14 +21,14 @@ public struct RecordButton: View {
     
     var progress: Double
     var countOfSec: Double
-    var animationAmount: Float
+    var decivelsLVL: Float
     
-    public init(isRecording: Binding<Bool>, showTips: Bool, progress: Double, countOfSec: Double, animationAmount: Float) {
+    public init(isRecording: Binding<Bool>, showTips: Bool, progress: Double, countOfSec: Double, decivelsLVL: Float) {
         self._isRecording = isRecording
         self.showTips = showTips
         self.progress = progress
         self.countOfSec = countOfSec
-        self.animationAmount = animationAmount
+        self.decivelsLVL = decivelsLVL
     }
     
     public var body: some View {
@@ -121,11 +121,11 @@ public struct RecordButton: View {
                         .rotationEffect(Angle(degrees: 270))
                         .animation(.easeInOut(duration: 0.1), value: progress)
                         .overlay {
-                            if animationAmount > 0.8 {
+                            if decivelsLVL > 0.8 {
                                 AnimationView()
                             }
                         }
-                        .animation(.easeInOut(duration: 0.25), value: animationAmount)
+                        .animation(.easeInOut(duration: 0.25), value: decivelsLVL)
                         .animation(.spring, value: progress)
                 }
             )
@@ -136,27 +136,27 @@ public struct RecordButton: View {
         ZStack {
             Circle()
                 .stroke(colorScheme.accentColor().opacity(0.4), lineWidth: 0.7)
-                .scaleEffect(CGFloat(animationAmount) + 0.8)
-                .animation(.easeOut(duration: 0.3), value: animationAmount)
+                .scaleEffect(CGFloat(decivelsLVL) + 0.8)
+                .animation(.easeOut(duration: 0.3), value: decivelsLVL)
                 .shadow(color: colorScheme.accentColor(), radius: 3)
             
             Circle()
                 .stroke(colorScheme.accentColor().opacity(0.6), lineWidth: 1.0)
-                .scaleEffect(CGFloat(animationAmount) + 0.55)
-                .animation(.easeOut(duration: 0.3).delay(0.05), value: animationAmount)
+                .scaleEffect(CGFloat(decivelsLVL) + 0.55)
+                .animation(.easeOut(duration: 0.3).delay(0.05), value: decivelsLVL)
                 .shadow(color: colorScheme.accentColor(), radius: 2)
             
             Circle()
                 .stroke(colorScheme.accentColor().opacity(0.8), lineWidth: 1.5)
-                .scaleEffect(CGFloat(animationAmount) + 0.3)
-                .animation(.easeOut(duration: 0.3).delay(0.1), value: animationAmount)
+                .scaleEffect(CGFloat(decivelsLVL) + 0.3)
+                .animation(.easeOut(duration: 0.3).delay(0.1), value: decivelsLVL)
                 .shadow(color: colorScheme.accentColor(), radius: 1)
         }
     }
 }
 
 #Preview {
-    RecordButton(isRecording: .constant(false), showTips: true, progress: 0.7, countOfSec: 23.1, animationAmount: 1.1)
+    RecordButton(isRecording: .constant(false), showTips: true, progress: 0.7, countOfSec: 23.1, decivelsLVL: 1.1)
 }
 
 struct PopoverBubbleShape: Shape {

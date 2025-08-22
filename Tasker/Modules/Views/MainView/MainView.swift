@@ -42,6 +42,10 @@ public struct MainView: View {
             }
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
+                    .overlay(
+                        GlowEffect(decibelLevel: vm.decibelLvl)
+                            .opacity(vm.isRecording ? 1 : 0)
+                    )
                     .preferredColorScheme(colorScheme)
                     .sheet(isPresented: $vm.profileViewIsOpen) {
                         ProfileView()
@@ -240,7 +244,7 @@ public struct MainView: View {
         VStack {
             Spacer()
             
-            RecordButton(isRecording: $vm.isRecording, showTips: vm.showTips, progress: vm.progress, countOfSec: vm.currentlyTime, animationAmount: vm.decibelLvl)
+            RecordButton(isRecording: $vm.isRecording, showTips: vm.showTips, progress: vm.progress, countOfSec: vm.currentlyTime, decivelsLVL: vm.decibelLvl)
                 .padding(20)
                 .contentShape(.circle)
                 .disabled(vm.disabledButton)

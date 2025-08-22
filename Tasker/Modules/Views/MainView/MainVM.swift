@@ -190,7 +190,13 @@ public final class MainVM {
     }
     
     func startAfterChek() async throws {
+        mainViewPaywall = true
         guard subscriptionManager.hasSubscription() else {
+            while showPaywall {
+                try await Task.sleep(for: .seconds(0.1))
+            }
+            
+            mainViewPaywall = false
             return
         }
         
@@ -209,6 +215,7 @@ public final class MainVM {
             
             changeDisabledButton()
         } catch let error as MicrophonePermission {
+            mainViewPaywall = true
             switch error {
             case .silentError: return
             case .microphoneIsNotAvailable:

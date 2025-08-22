@@ -78,6 +78,7 @@ final class MonthVM {
     }
     
     func onDissapear() {
+        subscriptionManager.showPaywall = false
         onboardingManager.showingCalendar = nil
         telemetryAction(.openView(.calendar(.close)))
     }

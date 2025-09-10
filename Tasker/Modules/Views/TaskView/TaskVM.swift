@@ -52,12 +52,12 @@ public final class TaskVM: Identifiable {
     
     var showDeadline = false {
         didSet {
-            if showDeadline == true {
-                guard subscriptionManager.hasSubscription() else {
-                    showDeadline = false
-                    return
-                }
-            }
+//            if showDeadline == true {
+//                guard subscriptionManager.hasSubscription() else {
+//                    showDeadline = false
+//                    return
+//                }
+//            }
         }
     }
     
@@ -105,8 +105,12 @@ public final class TaskVM: Identifiable {
     /// First notification Date for task with repeat
     var sourseDateOfNotification = Date()
     
-    var dateForAppearence: LocalizedStringKey {
-        dateToString()
+    var textForNotificationDate: LocalizedStringKey {
+        notificationDateToText()
+    }
+    
+    var textForDeadlineDate: LocalizedStringKey {
+        deadlineToText()
     }
     
     var isPlaying: Bool {
@@ -181,6 +185,16 @@ public final class TaskVM: Identifiable {
         Task {
             await onboarding()
         }
+    }
+    
+    func onAppear(colorScheme: ColorScheme) -> Bool {
+        backgroundColorForTask(colorScheme: colorScheme)
+        
+        guard task.title == "" else {
+            return false
+        }
+        
+        return true
     }
     
     func disappear() {
@@ -342,8 +356,12 @@ public final class TaskVM: Identifiable {
     //    }
     
     //MARK: - Date and time
-    private func dateToString() -> LocalizedStringKey {
+    private func notificationDateToText() -> LocalizedStringKey {
         dateManager.dateToString(for: notificationDate, useForWeekView: false)
+    }
+    
+    private func deadlineToText() -> LocalizedStringKey {
+        dateManager.dateForDeadline(for: deadLineDate)
     }
     
     //MARK: - First time check
@@ -367,6 +385,10 @@ public final class TaskVM: Identifiable {
             return
         }
         
+        if notificationDate.timeIntervalSince1970 > deadLineDate.timeIntervalSince1970 {
+            deadLineDate = notificationDate
+        }
+        
         debounceTimer?.invalidate()
         lastChangeTime = Date()
         
@@ -388,9 +410,11 @@ public final class TaskVM: Identifiable {
     //MARK: - Deadline
     func setUpDeadlineDate() {
         task.deadline = deadLineDate.timeIntervalSince1970
+        
         if task.repeatTask == .never {
             task.repeatTask = .daily
         }
+        
         hasDeadline = true
     }
     

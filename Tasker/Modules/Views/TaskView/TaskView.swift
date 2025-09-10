@@ -19,9 +19,9 @@ public struct TaskView: View {
     
     var model: MainModel
     
-    @FocusState private var sectionInFocuse: SectionInFocuse?
+    @FocusState private var sectionInFocus: SectionInFocus?
     
-    enum SectionInFocuse: Hashable {
+    enum SectionInFocus: Hashable {
         case title
         case description
     }
@@ -82,11 +82,14 @@ public struct TaskView: View {
                 .scrollIndicators(.hidden)
                 .scrollDismissesKeyboard(.immediately)
                 
-                SaveButton()
-                
+                withAnimation(.default) {
+                    SaveButton()
+                }
             }
             .onAppear {
-                vm.backgroundColorForTask(colorScheme: colorScheme)
+                if vm.onAppear(colorScheme: colorScheme) {
+                    sectionInFocus = .title
+                }
             }
             .onChange(of: vm.currentlyRecordTime) { newValue, _ in
                 vm.stopAfterCheck(newValue)
@@ -296,12 +299,13 @@ public struct TaskView: View {
             ), prompt: Text("New task", bundle: .module)) {}
                 .font(.title2)
                 .fontWeight(.bold)
+                .tint(colorScheme.accentColor())
                 .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
-                .focused($sectionInFocuse, equals: .title)
+                .focused($sectionInFocus, equals: .title)
                 .onSubmit {
-                    sectionInFocuse = nil
+                    sectionInFocus = nil
                 }
             
             RoundedRectangle(cornerRadius: 1)
@@ -316,14 +320,15 @@ public struct TaskView: View {
                 ), prompt: Text("Add more information", bundle: .module), axis: .vertical) {}
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)
+                    .tint(colorScheme.accentColor())
                     .foregroundStyle(.labelPrimary)
                     .padding(.vertical, 13)
                     .padding(.horizontal, 16)
-                    .focused($sectionInFocuse, equals: .description)
+                    .focused($sectionInFocus, equals: .description)
             }
         }
         .onChange(of: vm.showDatePicker) { newValue, oldValue in
-            sectionInFocuse = nil
+            sectionInFocus = nil
         }
         .background(
             RoundedRectangle(cornerRadius: 12)
@@ -351,7 +356,7 @@ public struct TaskView: View {
                     
                     Spacer()
                     
-                    Text(vm.dateForAppearence, bundle: .module)
+                    Text(vm.textForNotificationDate, bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
                         .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
                 }
@@ -571,29 +576,36 @@ public struct TaskView: View {
                         .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
                         .padding(.vertical, 13)
                     
-                    Spacer()
+                        Spacer()
+                    
+                    if vm.task.deadline != nil {
+                        Text(vm.textForDeadlineDate, bundle: .module)
+                            .font(.system(.body, design: .rounded, weight: .regular))
+                            .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
+                    }
                     
                     Toggle(isOn: $vm.hasDeadline) {}
                         .tint(colorScheme.accentColor())
                         .padding(.trailing, 2)
+                        .fixedSize()
                 }
             }
             .padding(.leading, 17)
             .padding(.trailing, 14)
             
             if vm.showDeadline {
-                DatePicker("", selection: $vm.deadLineDate, displayedComponents: .date)
+                DatePicker("", selection: $vm.deadLineDate, in: vm.notificationDate..., displayedComponents: .date, )
                     .datePickerStyle(.graphical)
                     .id(vm.deadLineDate)
                     .tint(colorScheme.accentColor())
             }
         }
         .onChange(of: vm.hasDeadline) { oldValue, newValue in
-            Task {
-                if newValue {
-                    await vm.deadlineButtonTapped()
-                }
-            }
+            //            Task {
+            //                if newValue {
+            //                    await vm.deadlineButtonTapped()
+            //                }
+            //            }
         }
         .clipped()
     }
@@ -679,20 +691,4 @@ public struct TaskView: View {
 
 #Preview {
     TaskView(model: mockModel())
-}
-
-struct AnimatedPickerLabel: View {
-    let text: LocalizedStringKey
-    
-    @State private var previousText: String = ""
-    @State private var animate = false
-    
-    var body: some View {
-        Text(text)
-            .transition(.opacity.combined(with: .scale))
-            .animation(.easeInOut(duration: 0.25), value: text)
-            .onChange(of: text) { oldValue, newValue in
-                animate.toggle()
-            }
-    }
 }

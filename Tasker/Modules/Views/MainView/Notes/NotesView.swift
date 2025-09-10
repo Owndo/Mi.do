@@ -10,6 +10,7 @@ import UIComponents
 
 struct NotesView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     @Binding var mainViewIsOpen: Bool
     
@@ -18,29 +19,32 @@ struct NotesView: View {
     @State private var vm = NotesVM()
     
     var body: some View {
-        ZStack {
-            TextEditor(text: $vm.profileModel.notes)
-                .font(.system(.callout, design: .rounded, weight: .semibold))
-                .foregroundStyle(.labelPrimary)
-                .focused($notesFocusState)
-                .scrollIndicators(.hidden)
-                .scrollDismissesKeyboard(.immediately)
-                .textEditorStyle(.plain)
-                .onSubmit {
-                    vm.saveNotes()
-                }
-                .padding(.bottom, notesFocusState ? 20 : 80)
-                .safeAreaInset(edge: .bottom) {
+        NavigationStack {
+            ZStack {
+                TextEditor(text: $vm.profileModel.notes)
+                    .font(.system(.callout, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.labelPrimary)
+                    .focused($notesFocusState)
+                    .scrollIndicators(.hidden)
+                    .scrollDismissesKeyboard(.immediately)
+                    .textEditorStyle(.plain)
+                    .onSubmit {
+                        vm.saveNotes()
+                    }
+                    .padding([.top, .horizontal])
+                    .padding(.bottom, notesFocusState ? 20 : 80)
+                
+                MockView()
+            }
+            .toolbar {
+                ToolbarItem(placement: .keyboard) {
                     KeyboardSafeAreaInset()
                 }
-                .padding(.horizontal)
-            
-            MockView()
-            
-        }
-        .customBlurForContainer(colorScheme: colorScheme)
-        .onChange(of: notesFocusState) { _, _ in
-            vm.saveNotes()
+            }
+            .customBlurForContainer(colorScheme: colorScheme)
+            .onChange(of: notesFocusState) { _, _ in
+                vm.saveNotes()
+            }
         }
         .sensoryFeedback(.selection, trigger: mainViewIsOpen)
     }
@@ -64,7 +68,8 @@ struct NotesView: View {
     }
     
     //MARK: - Keyboard commands
-    @ViewBuilder private func KeyboardSafeAreaInset() -> some View {
+    @ViewBuilder
+    private func KeyboardSafeAreaInset() -> some View {
         if notesFocusState {
             HStack {
                 
@@ -79,10 +84,12 @@ struct NotesView: View {
                         .padding(.vertical, 9)
                 }
             }
+            .frame(maxHeight: .infinity)
             .padding(.horizontal, 16)
             .background(
                 colorScheme.backgroundColor()
             )
+            .padding(.horizontal, horizontalSizeClass == .regular ? -20 : -16)
         }
     }
 }

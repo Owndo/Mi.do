@@ -243,8 +243,12 @@ final class DateManager: DateManagerProtocol {
         }
     }
     
+    func dateForDeadline(for date: Date) -> LocalizedStringKey {
+        return formatterDate(date: date, useForDeadline: true)
+    }
     
-    private func formatterDate(date: Date, useForWeek: Bool) -> LocalizedStringKey {
+    
+    private func formatterDate(date: Date, useForWeek: Bool = false, useForDeadline: Bool = false) -> LocalizedStringKey {
         guard !useForWeek else {
             let formatter = DateFormatter()
             formatter.locale = Locale.current
@@ -257,6 +261,11 @@ final class DateManager: DateManagerProtocol {
                 dateString = date.formatted(.dateTime.weekday(.wide).day().month(.wide).year().locale(formatter.locale))
             }
             
+            return LocalizedStringKey("\(dateString.capitalized)")
+        }
+        
+        guard useForDeadline == false else {
+            let dateString = date.formatted(.dateTime.weekday().day().month(.abbreviated).locale(Locale.current))
             return LocalizedStringKey("\(dateString.capitalized)")
         }
         

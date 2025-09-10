@@ -133,7 +133,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Single notification
     private func createSingleNotification(_ task: UITaskModel) {
-        let localizedTitle = NSLocalizedString(task.title == "" ? "New Task" : task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedTitle = NSLocalizedString(task.title == "" ? "New task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
         notificationContent.title = localizedTitle
@@ -161,13 +161,12 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
-        print(request)
         removeDeliveredNotification()
     }
     
     //MARK: - Create repeat notification
     private func createRepeatNotification(_ task: UITaskModel) {
-        let localizedTitle = NSLocalizedString(task.title == "" ? "New Task" : task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedTitle = NSLocalizedString(task.title == "" ? "New task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
         var uniqueNotificationID = task.id
@@ -224,7 +223,6 @@ final class NotificationManager: NotificationManagerProtocol {
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             
             notificationCenter.add(request)
-            print(request)
         } else {
             guard !uniqueID.contains(uniqueNotificationID) else { return }
             
@@ -268,7 +266,6 @@ final class NotificationManager: NotificationManagerProtocol {
             
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             notificationCenter.add(request)
-            print(request)
         }
         
         removeDeliveredNotification()
@@ -276,7 +273,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Specific single notification
     private func createSpecificSingleNotification(_ task: UITaskModel, date: Date) {
-        let localizedTitle = NSLocalizedString(task.title == "" ? "New Task" : task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedTitle = NSLocalizedString(task.title == "" ? "New task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
         var dateComponents = DateComponents()

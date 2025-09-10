@@ -1553,7 +1553,7 @@
         }
       }
     },
-    "New Task" : {
+    "New task" : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {

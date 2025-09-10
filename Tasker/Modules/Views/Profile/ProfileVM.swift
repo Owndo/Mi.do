@@ -111,7 +111,6 @@ final class ProfileVM {
     }
     
     func onDisappear() {
-        onboardingManager.showingProfile = nil
         //        endAnimationButton()
         profileModelSave()
         subscriptionManager.showPaywall = false
@@ -236,7 +235,6 @@ final class ProfileVM {
     }
     
     func closeButtonTapped() {
-        onboardingManager.showingProfile = nil
         telemetryAction(action: .profileAction(.closeButtonTapped))
     }
     

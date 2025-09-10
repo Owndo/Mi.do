@@ -52,10 +52,6 @@ public final class MainVM {
     var disabledButton = false
     var askReview = false
     
-    var onboardingComplete: Bool {
-        onboardingManager.onboardingComplete
-    }
-    
     /// First time ever opened
     var sayHello = false
     
@@ -70,12 +66,9 @@ public final class MainVM {
                 if path.count > 0 {
                     path.removeLast()
                 }
-                onboardingManager.showingNotes = nil
             }
             
             if presentationPosition == .fraction(0.20) {
-                //                subscriptionManager.closePaywall()
-                
                 // telemetry
                 telemetryAction(.mainViewAction(.showNotesButtonTapped))
             }
@@ -131,7 +124,6 @@ public final class MainVM {
     //MARK: - Init
     public init() {
         createCustomProfileModel()
-        setupCallbacks()
         
         Task {
             await onboardingStart()
@@ -144,14 +136,6 @@ public final class MainVM {
     }
     
     public func updateNotifications() async {
-        guard profileModel.onboarding.createButtonTip else {
-            return
-        }
-        
-        while showPaywall == true {
-            try? await Task.sleep(for: .seconds(0.1))
-        }
-        
         checkNotificationPermission()
         
         await notificationManager.createNotification()
@@ -378,44 +362,23 @@ public final class MainVM {
     
     //MARK: - Onboarding
     private func onboardingStart() async {
-        disabledButton = true
-        mainViewPaywall = true
         
-        await onboardingManager.firstTimeOpen()
+        while onboardingManager.sayHello {
+            try? await Task.sleep(for: .seconds(0.1))
+        }
+        
+        // If first time - return
+        guard profileModel.onboarding.firstTimeOpen == false else {
+            return
+        }
         
         try? await Task.sleep(for: .seconds(0.8))
         
+        // If not a first time and request review is false - ask review
         if profileModel.onboarding.requestedReview == false {
             askReview = true
             profileModel.onboarding.requestedReview = true
             profileModelSave()
-        }
-        
-        if showPaywall == false {
-            mainViewPaywall = false
-        }
-        
-        disabledButton = false
-    }
-    
-    private func setupCallbacks() {
-        guard profileModel.onboarding.createButtonTip == false else {
-            return
-        }
-        onboardingManager.showingCalendar = { [weak self] _ in
-            self?.calendarButtonTapped()
-        }
-        onboardingManager.showingProfile = { [weak self] _ in
-            self?.profileViewButtonTapped()
-        }
-        onboardingManager.showingNotes = { [weak self] _ in
-            self?.presentationPosition = .fraction(0.20)
-        }
-        
-        onboardingManager.scrollWeek = { [weak self] _ in
-            withAnimation(.easeInOut(duration: 0.6)) {
-                self?.dateManager.indexForWeek += 1
-            }
         }
     }
     

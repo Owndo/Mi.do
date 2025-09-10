@@ -1675,6 +1675,9 @@
         }
       }
     },
+    "Sync with iCloud" : {
+
+    },
     "System" : {
       "extractionState" : "manual",
       "localizations" : {

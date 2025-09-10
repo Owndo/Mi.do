@@ -25,7 +25,13 @@ final class SettingsVM {
         subscriptionManager.showPaywall
     }
     
-    var syncWithIcloud = false
+    var syncWithIcloud = false {
+        didSet {
+            Task {
+                await changeToogleOfSync()
+            }
+        }
+    }
     
     var calendar: Calendar {
         dateManager.calendar
@@ -55,26 +61,11 @@ final class SettingsVM {
         profileModelSave()
     }
     
-    func turnOnSync() async {
-        guard subscriptionManager.hasSubscription() else {
-            
-            while showPaywall {
-                try? await Task.sleep(for: .seconds(0.2))
-            }
-            
-            if subscriptionManager.hasSubscription() {
-                profileModel.settings.iCloudSyncEnabled = syncWithIcloud
-                profileModelSave()
-            }
-            
-            syncWithIcloud = subscriptionManager.hasSubscription()
-            
-            return
-        }
-        
+    func changeToogleOfSync() async {
         profileModel.settings.iCloudSyncEnabled = syncWithIcloud
         profileModelSave()
-        casManager.syncCases()
+        
+        await casManager.syncCases()
     }
     
     /// Save profile to cas

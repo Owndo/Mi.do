@@ -36,130 +36,22 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     
     init() {
         profileModel = casManager.profileModel
+        firstTimeOpen()
     }
     
-    public func firstTimeOpen() async {
-        if profileModel.onboarding.createButtonTip == true {
-            if profileModel.onboarding.requestedReview != true {
-                profileModel.onboarding.requestedReview = false
-            }
-        }
-        
+    func firstTimeOpen() {
         if profileModel.onboarding.sayHello {
             sayHello = true
-            
-            while sayHello {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            sayHello = false
         }
-        
-        await onboardingStart()
     }
     
     //MARK: - Onboarding flow
     public func onboardingStart() async {
-        if profileModel.onboarding.dayTip == false {
-            dayTip = true
-            
-            while dayTip {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            scrollWeek?(true)
-            
-            try? await Task.sleep(for: .seconds(1))
-            
-            profileModel.onboarding.dayTip = true
-        }
-        
-        if profileModel.onboarding.calendarTip == false {
-            calendarTip = true
-            
-            while calendarTip {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            showingCalendar?(true)
-            
-            while (showingCalendar != nil) {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            profileModel.onboarding.calendarTip = true
-        }
-        
-        if profileModel.onboarding.profileTip == false {
-            profileTip = true
-            
-            while profileTip {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            showingProfile?(true)
-            
-            while (showingProfile != nil) {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            profileModel.onboarding.profileTip = true
-        }
-        
-        if profileModel.onboarding.noteTip == false {
-            notesTip = true
-            
-            while notesTip {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            showingNotes?(true)
-            
-            while (showingNotes != nil) {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            profileModel.onboarding.noteTip = true
-        }
-        
-        if profileModel.onboarding.deleteTip == false {
-            deleteTip = true
-            
-            while deleteTip {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            profileModel.onboarding.deleteTip = true
-        }
-        
-        if profileModel.onboarding.listSwipeTip == false {
-            listSwipeTip = true
-            
-            while listSwipeTip {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            profileModel.onboarding.listSwipeTip = true
-        }
-        
-        if profileModel.onboarding.createButtonTip == false {
-            createButtonTip = true
-            
-            while createButtonTip {
-                try? await Task.sleep(for: .seconds(0.1))
-            }
-            
-            profileModel.onboarding.createButtonTip = true
-            
-            subscriptionManager.showPaywall = true
-        }
-        
-        profileModel.onboarding.sayHello = false
-        
-        profileModelSave()
+   
     }
     
-    func profileModelSave() {
+    private func profileModelSave() {
+        profileModel.onboarding.sayHello = false
         casManager.saveProfileData(profileModel)
     }
 }

@@ -103,17 +103,6 @@ public struct MainView: View {
             .animation(.default, value: vm.isRecording)
             .sensoryFeedback(.selection, trigger: vm.profileViewIsOpen)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
-            .sensoryFeedback(
-                .increase,
-                trigger: [
-                    vm.onboardingManager.dayTip,
-                    vm.onboardingManager.calendarTip,
-                    vm.onboardingManager.profileTip,
-                    vm.onboardingManager.notesTip,
-                    vm.onboardingManager.deleteTip,
-                    vm.onboardingManager.listSwipeTip
-                ]
-            )
         }
     }
     
@@ -128,79 +117,11 @@ public struct MainView: View {
                 WeekView()
                     .padding(.top, 17)
                     .disabled(vm.disabledButton)
-                    .popover(
-                        isPresented: $vm.onboardingManager.calendarTip,
-                        attachmentAnchor: .point(.topLeading),
-                        arrowEdge: .top
-                    ) {
-                        OnboardingView(type: .calendarTip)
-                            .presentationCompactAdaptation(.popover)
-                    }
-                    .popover(
-                        isPresented: $vm.onboardingManager.dayTip,
-                        attachmentAnchor: .point(.center),
-                        arrowEdge: .top
-                    ) {
-                        OnboardingView(type: .dayTip)
-                            .presentationCompactAdaptation(.popover)
-                    }
-                    .popover(
-                        isPresented: $vm.onboardingManager.profileTip,
-                        attachmentAnchor: .point(.topTrailing),
-                        arrowEdge: .top
-                    ) {
-                        OnboardingView(type: .profileTip)
-                            .presentationCompactAdaptation(.popover)
-                    }
                 
                 ListView()
                     .disabled(vm.disabledButton)
-                    .popover(
-                        isPresented: $vm.onboardingManager.deleteTip,
-                        attachmentAnchor: .rect(
-                            .rect(
-                                CGRect(
-                                    x: UIScreen.main.bounds.width / 1.5,
-                                    y: UIScreen.main.bounds.height / 11,
-                                    width: 15,
-                                    height: 15
-                                )
-                            )
-                        ),
-                        arrowEdge: .bottom
-                    ) {
-                        OnboardingView(type: .deleteTip)
-                            .presentationCompactAdaptation(.popover)
-                    }
-                    .popover(
-                        isPresented: $vm.onboardingManager.listSwipeTip,
-                        attachmentAnchor: .rect(
-                            .rect(
-                                CGRect(
-                                    x: UIScreen.main.bounds.width / 2,
-                                    y: UIScreen.main.bounds.height / 2,
-                                    width: 15,
-                                    height: 15
-                                )
-                            )
-                        ),
-                        arrowEdge: .bottom
-                    ) {
-                        OnboardingView(type: .listSwipeTip)
-                            .presentationCompactAdaptation(.popover)
-                    }
-                
                 Spacer()
             }
-            .popover(
-                isPresented: $vm.onboardingManager.notesTip,
-                attachmentAnchor: .point(.top),
-                arrowEdge: .top
-            ) {
-                OnboardingView(type: .noteTip)
-                    .presentationCompactAdaptation(.popover)
-            }
-            .ignoresSafeArea(edges: .bottom)
             
             VStack {
                 

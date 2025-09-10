@@ -33,7 +33,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     var alert: AlertModel?
     
-    private var uniqueID = Set<String>()
+    private var uniqueID = [String]()
     private var selectedDay = Date()
     
     var calendar: Calendar {
@@ -141,7 +141,7 @@ final class NotificationManager: NotificationManagerProtocol {
         
         notificationContent.userInfo = ["taskID": task.id]
         
-        uniqueID.insert(task.id)
+        uniqueID.append(task.id)
         
         if task.voiceMode == false  {
             notificationContent.sound = .default
@@ -199,7 +199,7 @@ final class NotificationManager: NotificationManagerProtocol {
                 return
             }
             
-            uniqueID.insert(uniqueNotificationID)
+            uniqueID.append(uniqueNotificationID)
             
             let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
             
@@ -226,7 +226,7 @@ final class NotificationManager: NotificationManagerProtocol {
         } else {
             guard !uniqueID.contains(uniqueNotificationID) else { return }
             
-            uniqueID.insert(uniqueNotificationID)
+            uniqueID.append(uniqueNotificationID)
             
             let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
             var date = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: notificationDate)
@@ -291,7 +291,7 @@ final class NotificationManager: NotificationManagerProtocol {
         notificationContent.body = localizedDescription
         notificationContent.userInfo = ["taskID": updatedID]
         
-        uniqueID.insert(updatedID)
+        uniqueID.append(updatedID)
         
         if task.voiceMode == false {
             notificationContent.sound = .default

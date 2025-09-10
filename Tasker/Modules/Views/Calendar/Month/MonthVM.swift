@@ -70,16 +70,11 @@ final class MonthVM {
     }
     
     func checkSubscription() -> Bool {
-        guard onboardingManager.showingCalendar == nil else {
-            return true
-        }
-        
         return subscriptionManager.hasSubscription()
     }
     
     func onDissapear() {
         subscriptionManager.showPaywall = false
-        onboardingManager.showingCalendar = nil
         telemetryAction(.openView(.calendar(.close)))
     }
     

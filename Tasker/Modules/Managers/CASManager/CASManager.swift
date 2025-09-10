@@ -13,22 +13,16 @@ import Models
 final class CASManager: CASManagerProtocol {
     
     let cas: MultiCas
-    let remoteDirectory = "iCloud.mido.robocode"
-    
-    var localDirectory: URL
     
     var taskUpdateTrigger = false
-    
     var profileUpdateTriger = false
     
     var models: [String: MainModel] = [:]
-    
     var profileModel = mockProfileData()
-    
     var completedTasks: [String: MainModel] = [:]
     
-    
     var activeTasks = [MainModel]()
+    
     var deletedTasks: [MainModel] {
         models.values.filter { $0.markAsDeleted == true }
     }
@@ -40,14 +34,14 @@ final class CASManager: CASManagerProtocol {
     var allCompletedTasksCount = Int()
     
     init() {
-        let localDirectory = CASManager.createMainDirectory()!
-        self.localDirectory = localDirectory
+        let localDirectory = CASManager.createLocalDirectory()!
+        let remoteDirectory = CASManager.createiCloudDirectory() ?? localDirectory
         
         let localCas = FileCas(localDirectory)
-        let iCas = FileCas(FileManager.default.url(forUbiquityContainerIdentifier: remoteDirectory) ?? localDirectory)
+        let iCas = FileCas(remoteDirectory)
         
         cas = MultiCas(local: localCas, remote: iCas)
-        syncCases()
+//        syncCases()
         
         fetchModels()
         profileModel = fetchProfileData()
@@ -174,18 +168,23 @@ final class CASManager: CASManagerProtocol {
     }
     
     //MARK: - Sync with iCloud
-    //TODO: Doesent work
     func syncCases() {
-        //        do {
-        //            try cas.syncRemote()
-        //            print("sync cas")
-        //        } catch {
-        //            print("Sync error: \(error.localizedDescription)")
-        //        }
+        guard profileModel.onboarding.firstTimeOpen || profileModel.settings.iCloudSyncEnabled else {
+            print("Couldn't sync")
+            return
+        }
+        
+        print("start sync")
+        do {
+            try cas.syncRemote()
+        } catch {
+            print("Sync error: \(error.localizedDescription)")
+        }
+        print("end sync")
     }
     
     //MARK: Create directory for CAS
-    private static func createMainDirectory() -> URL? {
+    private static func createLocalDirectory() -> URL? {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask).first else {
             return nil
         }
@@ -198,6 +197,30 @@ final class CASManager: CASManagerProtocol {
         } catch {
             return nil
         }
+    }
+    
+    private static func createiCloudDirectory() -> URL? {
+        let container = "iCloud.mido.robocode"
+        
+        guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: container) else {
+            return nil
+        }
+        
+        let documentDirectory = iCloudURL.appendingPathComponent("Documents", isDirectory: true)
+        let directoryPath = documentDirectory.appendingPathComponent("modi.robocode", isDirectory: true)
+        
+        do {
+            try FileManager.default.createDirectory(
+                at: directoryPath,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            return directoryPath
+        } catch {
+            print("\(error.localizedDescription)")
+            return nil
+        }
+        
     }
     
     //MARK: Predicate
@@ -232,8 +255,5 @@ final class CASManager: CASManagerProtocol {
         saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
         saveModel(factory.create(.randomHours))
         saveModel(factory.create(.readSomething))
-        
-        profileModel.onboarding.firstTimeOpen = false
-        saveProfileData(profileModel)
     }
 }

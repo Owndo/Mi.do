@@ -56,7 +56,6 @@ final class ListVM {
     }
     
     init() {
-        deleteTip = casManager.profileModel.onboarding.deleteTip
         completedTasksHidden = casManager.profileModel.settings.completedTasksHidden
     }
     

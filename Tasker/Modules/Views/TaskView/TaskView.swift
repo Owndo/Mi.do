@@ -576,7 +576,7 @@ public struct TaskView: View {
                         .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
                         .padding(.vertical, 13)
                     
-                        Spacer()
+                    Spacer()
                     
                     if vm.task.deadline != nil {
                         Text(vm.textForDeadlineDate, bundle: .module)
@@ -601,11 +601,11 @@ public struct TaskView: View {
             }
         }
         .onChange(of: vm.hasDeadline) { oldValue, newValue in
-            //            Task {
-            //                if newValue {
-            //                    await vm.deadlineButtonTapped()
-            //                }
-            //            }
+            Task {
+                if newValue {
+                    await vm.deadlineButtonTapped()
+                }
+            }
         }
         .clipped()
     }
@@ -627,14 +627,6 @@ public struct TaskView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme))
             )
-            .popover(
-                isPresented: $vm.checkMarkTip,
-                attachmentAnchor: .point(.center),
-                arrowEdge: .bottom
-            ) {
-                OnboardingView(type: .checkMarkTip)
-                    .presentationCompactAdaptation(.popover)
-            }
             
             Button {
                 Task {

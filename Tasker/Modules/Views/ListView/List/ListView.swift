@@ -34,14 +34,6 @@ public struct ListView: View {
                             safeAreaTop: screenGeometry.safeAreaInsets.top,
                             safeAreaBottom: screenGeometry.safeAreaInsets.bottom
                         ))
-                        .popover(
-                            isPresented: $vm.onboardingManager.createButtonTip,
-                            attachmentAnchor: .point(.center),
-                            arrowEdge: .bottom
-                        ) {
-                            OnboardingView(type: .createButtonTip)
-                                .presentationCompactAdaptation(.popover)
-                        }
                 }
             }
             .scrollIndicators(.hidden)

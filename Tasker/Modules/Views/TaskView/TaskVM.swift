@@ -47,17 +47,16 @@ public final class TaskVM: Identifiable {
     var dateHasBeenChanged = false
     var alert: AlertModel?
     var disabledButton = false
-    var checkMarkTip = false
     var defaultTimeHasBeenSet = false
     
     var showDeadline = false {
         didSet {
-//            if showDeadline == true {
-//                guard subscriptionManager.hasSubscription() else {
-//                    showDeadline = false
-//                    return
-//                }
-//            }
+            if showDeadline == true {
+                guard subscriptionManager.hasSubscription() else {
+                    showDeadline = false
+                    return
+                }
+            }
         }
     }
     
@@ -180,10 +179,6 @@ public final class TaskVM: Identifiable {
         if let endDate = task.deadline {
             hasDeadline = true
             deadLineDate = Date(timeIntervalSince1970: endDate)
-        }
-        
-        Task {
-            await onboarding()
         }
     }
     
@@ -665,22 +660,5 @@ public final class TaskVM: Identifiable {
     //MARK: - Telemetry action
     private func telemetryAction(_ action: EventType) {
         telemetryManager.logEvent(action)
-    }
-    
-    //MARK: - Onboarding
-    func onboarding() async {
-        guard profileModel.onboarding.checkMarkTip == false else {
-            return
-        }
-        
-        checkMarkTip = true
-        
-        while checkMarkTip {
-            try? await Task.sleep(for: .seconds(0.3))
-        }
-        
-        profileModel.onboarding.checkMarkTip = true
-        
-        casManager.saveProfileData(profileModel)
     }
 }

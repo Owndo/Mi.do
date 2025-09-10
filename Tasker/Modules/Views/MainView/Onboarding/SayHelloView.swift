@@ -45,17 +45,18 @@ struct SayHelloView: View {
                 
                 Button {
                     dismissButton()
+                    vm.closeTriger.toggle()
                 } label: {
                     Text("Continue", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .medium))
                         .foregroundStyle(.labelPrimaryInverted)
-                        .padding(.vertical, 13)
+                        .padding(.vertical, 14)
                         .frame(maxWidth: .infinity)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
                                 .fill(colorScheme.accentColor())
                         )
-                        .padding(.horizontal, 16)
+                        .padding(.horizontal, 17)
                 }
             }
             .padding(.top, 16)

@@ -52,10 +52,6 @@ final class DateManager: DateManagerProtocol {
             } else if indexForWeek == allWeeks.first?.id {
                 prependWeeksBackward()
             }
-            
-            if indexForWeek != 2 {
-                onboardingManager.scrollWeek = nil
-            }
         }
         willSet {
             // telemetry

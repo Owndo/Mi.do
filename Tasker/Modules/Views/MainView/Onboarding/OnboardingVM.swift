@@ -33,11 +33,15 @@ final class OnboardingVM {
     }
     
     func continueButtontapped() {
-        guard onboardingManager.sayHello else {
-            return
-        }
-        
         closeTriger.toggle()
         onboardingManager.sayHello = false
+        
+        saveProfileModel()
+    }
+    
+    func saveProfileModel() {
+        profileModel.onboarding.sayHello = false
+        profileModel.onboarding.firstTimeOpen = false
+        casManager.saveProfileData(profileModel)
     }
 }

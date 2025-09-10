@@ -227,13 +227,11 @@ final class CASManager: CASManagerProtocol {
         
         let factory = ModelsFactory()
         
-        saveModel(factory.create(.bestApp))
-        saveModel(factory.create(.clearMind))
-        saveModel(factory.create(.drinkWater))
         saveModel(factory.create(.planForTommorow))
+        saveModel(factory.create(.bestApp))
+        saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
         saveModel(factory.create(.randomHours))
         saveModel(factory.create(.readSomething))
-        saveModel(factory.create(.withoutPhone))
         
         profileModel.onboarding.firstTimeOpen = false
         saveProfileData(profileModel)

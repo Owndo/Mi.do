@@ -7,27 +7,30 @@
 
 import SwiftUI
 
-struct GlowEffect: View {
+public struct GlowEffect: View {
     
     @Environment(\.colorScheme) var colorScheme
     
     @State private var gradientStops: [Gradient.Stop] = []
     
-    let decibelLevel: Float
+    var decibelLevel: Float
     
-    var body: some View {
+    public init(decibelLevel: Float) {
+        self.decibelLevel = decibelLevel
+    }
+    
+    public var body: some View {
         ZStack {
             Effect(gradientStops: gradientStops, width: 3, blur: 1.5, decibelLevel: decibelLevel)
             
-            Effect(gradientStops: gradientStops, width: 5, blur: 3, decibelLevel: decibelLevel)
+            Effect(gradientStops: gradientStops, width: 5, blur: 2, decibelLevel: decibelLevel)
             
-            Effect(gradientStops: gradientStops, width: 7, blur: 6, decibelLevel: decibelLevel)
+            Effect(gradientStops: gradientStops, width: 7, blur: 3, decibelLevel: decibelLevel)
             
-            Effect(gradientStops: gradientStops, width: 9, blur: 9, decibelLevel: decibelLevel)
+            Effect(gradientStops: gradientStops, width: 9, blur: 4, decibelLevel: decibelLevel)
         }
-        
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.6)) {
+            withAnimation(.easeInOut(duration: 0.8)) {
                 gradientStops = generateGradientStops()
             }
         }
@@ -63,7 +66,7 @@ struct Effect: View {
     let decibelLevel: Float
     
     private var maskHeight: CGFloat {
-        let minHeight: CGFloat = 50
+        let minHeight: CGFloat = 10
         let maxHeight: CGFloat = 400
         
         let normalizedLevel = max(0, min(1.5, decibelLevel)) / 1.5

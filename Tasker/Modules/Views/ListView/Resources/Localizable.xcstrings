@@ -562,25 +562,25 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nuovo compito"
+            "value" : "Nuova attività"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueva tarea"
+            "value" : "Nova tarefa"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nueva tarea"
+            "value" : "Nova tarefa"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Новая задача"
+            "value" : "Напоминание"
           }
         }
       }

@@ -18,7 +18,6 @@ final class NotificationManager: NotificationManagerProtocol {
     @ObservationIgnored
     @AppStorage("countOfNotificationDeinid") var countOfNotificationDeinid = 0
     
-    
     @ObservationIgnored
     @Injected(\.storageManager) private var storageManager
     @ObservationIgnored
@@ -34,7 +33,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     var alert: AlertModel?
     
-    var uniqueID = [String]()
+    private var uniqueID = Set<String>()
     private var selectedDay = Date()
     
     var calendar: Calendar {
@@ -134,7 +133,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Single notification
     private func createSingleNotification(_ task: UITaskModel) {
-        let localizedTitle = NSLocalizedString(task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedTitle = NSLocalizedString(task.title == "" ? "New Task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
         notificationContent.title = localizedTitle
@@ -142,7 +141,7 @@ final class NotificationManager: NotificationManagerProtocol {
         
         notificationContent.userInfo = ["taskID": task.id]
         
-        uniqueID.append(task.id)
+        uniqueID.insert(task.id)
         
         if task.voiceMode == false  {
             notificationContent.sound = .default
@@ -162,12 +161,13 @@ final class NotificationManager: NotificationManagerProtocol {
         
         let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
         notificationCenter.add(request)
+        print(request)
         removeDeliveredNotification()
     }
     
     //MARK: - Create repeat notification
     private func createRepeatNotification(_ task: UITaskModel) {
-        let localizedTitle = NSLocalizedString(task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedTitle = NSLocalizedString(task.title == "" ? "New Task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
         var uniqueNotificationID = task.id
@@ -200,7 +200,7 @@ final class NotificationManager: NotificationManagerProtocol {
                 return
             }
             
-            uniqueID.append(uniqueNotificationID)
+            uniqueID.insert(uniqueNotificationID)
             
             let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
             
@@ -224,10 +224,11 @@ final class NotificationManager: NotificationManagerProtocol {
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             
             notificationCenter.add(request)
+            print(request)
         } else {
             guard !uniqueID.contains(uniqueNotificationID) else { return }
             
-            uniqueID.append(uniqueNotificationID)
+            uniqueID.insert(uniqueNotificationID)
             
             let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
             var date = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: notificationDate)
@@ -267,6 +268,7 @@ final class NotificationManager: NotificationManagerProtocol {
             
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             notificationCenter.add(request)
+            print(request)
         }
         
         removeDeliveredNotification()
@@ -274,7 +276,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Specific single notification
     private func createSpecificSingleNotification(_ task: UITaskModel, date: Date) {
-        let localizedTitle = NSLocalizedString(task.title, bundle: .module, value: task.title, comment: "Task title")
+        let localizedTitle = NSLocalizedString(task.title == "" ? "New Task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
         var dateComponents = DateComponents()
@@ -292,7 +294,7 @@ final class NotificationManager: NotificationManagerProtocol {
         notificationContent.body = localizedDescription
         notificationContent.userInfo = ["taskID": updatedID]
         
-        uniqueID.append(updatedID)
+        uniqueID.insert(updatedID)
         
         if task.voiceMode == false {
             notificationContent.sound = .default
@@ -354,7 +356,9 @@ final class NotificationManager: NotificationManagerProtocol {
         case .authorized:
             countOfNotificationDeinid = 0
         case .denied:
-            guard countOfNotificationDeinid <= 1 else { return }
+            guard countOfNotificationDeinid % 2 == 0 && countOfNotificationDeinid <= 4 else { return }
+            
+            timesOfAskingPermission()
             
             if let notificationAlert = NotificationsAlert.deinit.showingAlert(action: timesOfAskingPermission) {
                 alert = AlertModel(id: UUID(), alert: notificationAlert)

@@ -282,6 +282,7 @@ public final class MainVM {
                     speechDescription: speechDescription(),
                     audio: audioHash,
                     notificationDate: defaultNotificationTime(),
+                    voiceMode: audioHash != nil ? true : nil,
                     taskColor: profileModel.settings.defaultTaskColor
                 )
             )

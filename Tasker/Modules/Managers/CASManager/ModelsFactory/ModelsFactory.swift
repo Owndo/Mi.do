@@ -17,33 +17,8 @@ final class ModelsFactory {
         calendar.startOfDay(for: now).timeIntervalSince1970
     }
     
-    func create(_ model: Models) -> MainModel {
+    func create(_ model: Models, repeatTask: RepeatTask? = .never) -> MainModel {
         switch model {
-        case .drinkWater:
-            UITaskModel(
-                .initial(
-                    TaskModel(
-                        title: "💧 Drink Water",
-                        description: "You’re not a cactus. Hydrate or evaporate.",
-                        notificationDate: Double(calendar.date(bySettingHour: 9, minute: 0, second: 0, of: now)!.timeIntervalSince1970),
-                        repeatTask: .daily,
-                        taskColor: .blue
-                    )
-                )
-            )
-        case .clearMind:
-            UITaskModel(
-                .initial(
-                    TaskModel(
-                        title: "🧹 Clear Your Mind",
-                        description: "Close mental tabs. Breathe. Meditate or journal, or just stare into the void.",
-                        createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Double(calendar.date(bySettingHour: 21, minute: 0, second: 0, of: now)!.timeIntervalSince1970),
-                        repeatTask: .daily,
-                        taskColor: .lime
-                    )
-                )
-            )
         case .bestApp:
             UITaskModel(
                 .initial(
@@ -64,23 +39,9 @@ final class ModelsFactory {
                         title: "🗓️ Plan Tomorrow",
                         description: "Maybe you'll save the world tomorrow. Might wanna write that down.",
                         createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Double(calendar.date(bySettingHour: 20, minute: 30, second: 0, of: now)!.timeIntervalSince1970),
-                        repeatTask: .daily,
+                        notificationDate: Double(calendar.date(bySettingHour: 20, minute: 30, second: 0, of: repeatTask == .never ? .now : sunday())!.timeIntervalSince1970),
+                        repeatTask: repeatTask,
                         taskColor: .mint
-                    )
-                )
-            )
-        case .withoutPhone:
-            UITaskModel(
-                .initial(
-                    TaskModel(
-                        title: "📵 10 Minutes Without Phone",
-                        description: "Put the glowing rectangle down. The world can wait. Breathe...",
-                        createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Double(calendar.date(bySetting: .hour, value: 14, of: now)!.timeIntervalSince1970),
-                        repeatTask: .daily,
-                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
-                        taskColor: .red
                     )
                 )
             )
@@ -91,9 +52,8 @@ final class ModelsFactory {
                         title: "💡 Random Hour",
                         description: "Google something you don’t understand. Quantum foam? Why cats scream at 3 AM? Choose your adventure.",
                         createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: wedensday())!.timeIntervalSince1970),
-                        repeatTask: .weekly,
-                        dayOfWeek: DayOfWeekEnum.dayOfWeekArray(for: calendar),
+                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: .now)!.timeIntervalSince1970),
+                        repeatTask: .never,
                         taskColor: .steelBlue
                     )
                 )
@@ -105,7 +65,7 @@ final class ModelsFactory {
                         title: "📚 Read Something That’s Not a Screen",
                         description: "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge.",
                         createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: saturday())!.timeIntervalSince1970),
+                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: thursday())!.timeIntervalSince1970),
                         repeatTask: .weekly,
                         taskColor: .brown
                     )
@@ -114,33 +74,32 @@ final class ModelsFactory {
         }
     }
     
-    func wedensday() -> Date {
+    func thursday() -> Date {
         let weekdayToday = calendar.component(.weekday, from: now)
         
-        let daysUntilWednesday = (4 - weekdayToday + 7) % 7
+        let daysUntilWednesday = (5 - weekdayToday + 7) % 7
         let targetDate = calendar.date(byAdding: .day, value: daysUntilWednesday, to: now)!
         
         return targetDate
     }
     
-    func saturday() -> Date {
+    func sunday() -> Date {
         let weekdayToday = calendar.component(.weekday, from: now)
         
-        let daysUntilWednesday = (7 - weekdayToday + 7) % 7
+        let daysUntilWednesday = (1 - weekdayToday + 7) % 7
         let targetDate = calendar.date(byAdding: .day, value: daysUntilWednesday, to: now)!
         
         return targetDate
     }
     
     enum Models {
-        case drinkWater
-        case clearMind
-        case bestApp
-        case planForTommorow
-        case withoutPhone
-        
-        /// every wedensday
         case randomHours
+        case bestApp
+        
+        /// Every sunday
+        case planForTommorow
+        
+        /// Every wedensday
         case readSomething
     }
 }

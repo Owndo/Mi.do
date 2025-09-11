@@ -15,6 +15,8 @@ public struct OnboardingModel: Codable, Equatable {
     public var requestedReview: Bool?
     /// Greetengs for user when app will launch first time
     public var sayHello = true
+    /// Base tasks for example have been created
+    public var baseTasksCreated: Bool?
     
 //    /// States for showing onboarding
 //    public var dayTip = false

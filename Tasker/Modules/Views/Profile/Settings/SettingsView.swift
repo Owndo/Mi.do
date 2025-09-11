@@ -80,7 +80,7 @@ struct SettingsView: View {
                         .foregroundStyle(.labelTertiary)
                         .padding(.bottom, 37)
                 }
-                .padding(.top, 43)
+                .padding(.top, 35)
                 .padding(.horizontal, 16)
             }
             .scrollIndicators(.hidden)

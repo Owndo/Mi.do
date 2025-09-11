@@ -55,6 +55,11 @@ public class MultiCas: Cas {
         try local.list()
     }
     
+    //MARK: - Remote CAS
+    public func listOfRemoteCAS() throws -> [String] {
+        try remote.list()
+    }
+    
     public func syncRemote() throws {
         try local.sync(remote)
     }

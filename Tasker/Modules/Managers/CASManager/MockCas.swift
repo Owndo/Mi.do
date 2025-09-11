@@ -13,24 +13,15 @@ import Models
 final class MockCas: CASManagerProtocol {
     
     let cas: MultiCas
-    let remoteDirectory = "iCloud.mido.robocode"
     
-    var localDirectory: URL
-    
-    var taskUpdateTrigger = false {
-        didSet {
-            updateTask()
-        }
-    }
-    
+    var taskUpdateTrigger = false
     var profileUpdateTriger = false
     
     var models: [String: MainModel] = [:]
     var profileModel = mockProfileData()
+    var completedTasks: [String: MainModel] = [:]
     
     var activeTasks = [MainModel]()
-    
-    var completedTasks: [String: MainModel] = [:]
     
     var deletedTasks: [MainModel] {
         models.values.filter { $0.markAsDeleted == true }
@@ -43,39 +34,30 @@ final class MockCas: CASManagerProtocol {
     var allCompletedTasksCount = Int()
     
     init() {
-        let localDirectory = MockCas.createMainDirectory()!
-        self.localDirectory = localDirectory
+        let localDirectory = MockCas.createLocalDirectory()!
+        let remoteDirectory = MockCas.createiCloudDirectory() ?? localDirectory
         
         let localCas = FileCas(localDirectory)
-        let iCas = FileCas(FileManager.default.url(forUbiquityContainerIdentifier: remoteDirectory) ?? localDirectory)
+        let iCas = FileCas(remoteDirectory)
         
         cas = MultiCas(local: localCas, remote: iCas)
-        
         syncCases()
         
         fetchModels()
         profileModel = fetchProfileData()
         
         firstTimeOpen()
-        
-        updateTask()
-        
-        //        for i in models {
-        //            print("models - \(i.notificationDate)")
-        //        }
-    }
-    
-    func updateTask() {
-        //        NotificationCenter.default.post(name: NSNotification.Name("updateTasks"), object: nil)
+        completedTaskCount()
     }
     
     //MARK: Actions for work with CAS
     func saveModel(_ task: MainModel) {
         do {
-            try cas.saveJsonModel(task.model)
-            indexForDelete(task)
+//            try cas.saveJsonModel(task.model)
             models[task.id] = task
             taskUpdateTrigger.toggle()
+            completedTaskCount()
+            syncCases()
         } catch {
             print("Couldn't save daat inside CAS")
         }
@@ -83,9 +65,9 @@ final class MockCas: CASManagerProtocol {
     
     func saveProfileData(_ data: ProfileData) {
         do {
-            try cas.saveJsonModel(data.model)
-            
+//            try cas.saveJsonModel(data.model)
             profileUpdateTriger.toggle()
+            syncCases()
         } catch {
             print("Couldn't save profile data inside CAS")
         }
@@ -95,7 +77,10 @@ final class MockCas: CASManagerProtocol {
         
         do {
             let data = try Data(contentsOf: url)
-            return try cas.add(data)
+            let audioHash = try cas.add(data)
+            syncCases()
+            
+            return audioHash
         } catch {
             return nil
         }
@@ -103,7 +88,10 @@ final class MockCas: CASManagerProtocol {
     
     func saveImage(_ photo: Data) -> String? {
         do {
-            return try cas.add(photo)
+            let imageHash = try cas.add(photo)
+            syncCases()
+            
+            return imageHash
         } catch {
             return nil
         }
@@ -130,8 +118,11 @@ final class MockCas: CASManagerProtocol {
                 if let taskModel: Model<TaskModel> = try cas.loadJsonModel(mutable) {
                     let task = UITaskModel(taskModel)
                     result[task.id] = task
+                    
+                    if !task.completeRecords.isEmpty {
+                        completedTasks[task.id] = task
+                    }
                 }
-                //                return UITaskModel(taskModel)
                 
             } catch {
                 print("Error while loading model: \(error)")
@@ -185,18 +176,38 @@ final class MockCas: CASManagerProtocol {
     }
     
     //MARK: - Sync with iCloud
-    //TODO: Doesent work
     func syncCases() {
-        //        do {
-        //            try cas.syncRemote()
-        //            print("sync cas")
-        //        } catch {
-        //            print("Sync error: \(error.localizedDescription)")
-        //        }
+        guard profileModel.onboarding.firstTimeOpen || profileModel.settings.iCloudSyncEnabled else {
+            print("Couldn't sync")
+            return
+        }
+        
+        do {
+            let status = try cas.listOfRemoteCAS()
+            print("here")
+            if !status.isEmpty {
+                for i in status {
+                    print(i)
+                }
+            }
+            print("remote cas is empty - \(status.isEmpty)")
+        } catch {
+            print("Error with remote cas \(error.localizedDescription)")
+        }
+        
+//        print("start sync")
+//        do {
+//            try cas.syncRemote()
+//            print("Sync completed")
+//        } catch {
+//            print("Sync error: \(error.localizedDescription)")
+//        }
+//        
+//        print("end sync")
     }
     
     //MARK: Create directory for CAS
-    private static func createMainDirectory() -> URL? {
+    private static func createLocalDirectory() -> URL? {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask).first else {
             return nil
         }
@@ -211,6 +222,33 @@ final class MockCas: CASManagerProtocol {
         }
     }
     
+    private static func createiCloudDirectory() -> URL? {
+        let container = "iCloud.mido.robocode"
+        
+        guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: container) else {
+            print("here")
+            return nil
+        }
+        
+        let documentDirectory = iCloudURL.appendingPathComponent("Documents", isDirectory: true)
+        let sourceDirectory = documentDirectory.appendingPathComponent("modi.robocode", isDirectory: true)
+        
+        do {
+            try FileManager.default.createDirectory(
+                at: sourceDirectory,
+                withIntermediateDirectories: true,
+                attributes: nil
+            )
+            
+            print(sourceDirectory)
+            return sourceDirectory
+        } catch {
+            print("\(error.localizedDescription)")
+            return nil
+        }
+        
+    }
+    
     //MARK: Predicate
     private func indexForDelete(_ task: MainModel) {
         models.removeValue(forKey: task.id)
@@ -219,12 +257,12 @@ final class MockCas: CASManagerProtocol {
     private func completedTaskCount() {
         allCompletedTasksCount = 0
         
-        for task in completedTasks {
-            guard !task.value.completeRecords.isEmpty else {
+        for task in models.values {
+            guard !task.completeRecords.isEmpty else {
                 continue
             }
             
-            for _ in task.value.completeRecords {
+            for _ in task.completeRecords {
                 allCompletedTasksCount += 1
             }
         }
@@ -232,18 +270,16 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: - Onboarding
     private func firstTimeOpen() {
-        guard profileModel.onboarding.firstTimeOpen else {
+        guard profileModel.onboarding.baseTasksCreated == nil else {
             return
         }
         
         let factory = ModelsFactory()
         
-        saveModel(factory.create(.bestApp))
         saveModel(factory.create(.planForTommorow))
+        saveModel(factory.create(.bestApp))
+        saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
         saveModel(factory.create(.randomHours))
         saveModel(factory.create(.readSomething))
-        
-        profileModel.onboarding.firstTimeOpen = false
-        saveProfileData(profileModel)
     }
 }

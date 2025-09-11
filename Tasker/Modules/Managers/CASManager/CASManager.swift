@@ -41,7 +41,8 @@ final class CASManager: CASManagerProtocol {
         let iCas = FileCas(remoteDirectory)
         
         cas = MultiCas(local: localCas, remote: iCas)
-//        syncCases()
+        
+        syncCases()
         
         fetchModels()
         profileModel = fetchProfileData()
@@ -174,13 +175,28 @@ final class CASManager: CASManagerProtocol {
             return
         }
         
-        print("start sync")
         do {
-            try cas.syncRemote()
+            let status = try cas.listOfRemoteCAS()
+            print("here")
+            if !status.isEmpty {
+                for i in status {
+                    print(i)
+                }
+            }
+            print("remote cas is empty - \(status.isEmpty)")
         } catch {
-            print("Sync error: \(error.localizedDescription)")
+            print("Error - \(error.localizedDescription)")
         }
-        print("end sync")
+        
+        print("start sync")
+//        do {
+//            try cas.syncRemote()
+//            print("Sync completed")
+//        } catch {
+//            print("Sync error: \(error.localizedDescription)")
+//        }
+//        
+//        print("end sync")
     }
     
     //MARK: Create directory for CAS
@@ -203,24 +219,25 @@ final class CASManager: CASManagerProtocol {
         let container = "iCloud.mido.robocode"
         
         guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: container) else {
+            print("here")
             return nil
         }
         
         let documentDirectory = iCloudURL.appendingPathComponent("Documents", isDirectory: true)
-        let directoryPath = documentDirectory.appendingPathComponent("modi.robocode", isDirectory: true)
+        let sourceDirectory = documentDirectory.appendingPathComponent("modi.robocode", isDirectory: true)
         
         do {
             try FileManager.default.createDirectory(
-                at: directoryPath,
+                at: sourceDirectory,
                 withIntermediateDirectories: true,
                 attributes: nil
             )
-            return directoryPath
+            
+            return sourceDirectory
         } catch {
-            print("\(error.localizedDescription)")
+            print("iCloud sync copy error: \(error.localizedDescription)")
             return nil
         }
-        
     }
     
     //MARK: Predicate
@@ -244,7 +261,7 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: - Onboarding
     private func firstTimeOpen() {
-        guard profileModel.onboarding.firstTimeOpen else {
+        guard profileModel.onboarding.baseTasksCreated == nil else {
             return
         }
         
@@ -255,5 +272,8 @@ final class CASManager: CASManagerProtocol {
         saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
         saveModel(factory.create(.randomHours))
         saveModel(factory.create(.readSomething))
+        
+        profileModel.onboarding.baseTasksCreated = true
+        saveProfileData(profileModel)
     }
 }

@@ -123,22 +123,48 @@ public final class MainVM {
     
     //MARK: - Init
     public init() {
+        print("init")
         createCustomProfileModel()
         
         Task {
             await onboardingStart()
             await updateNotifications()
         }
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleFirstTimeOpenDone),
+            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
+            object: nil
+        )
     }
     
     func disappear() {
         recordManager.resetDataFromText()
     }
     
+    //MARK: - Update notification
     public func updateNotifications() async {
-        try? await Task.sleep(for: .seconds(0.5))
+        guard profileModel.onboarding.firstTimeOpen == false else {
+            return
+        }
+        
+        try? await Task.sleep(for: .seconds(0.2))
         
         await notificationManager.createNotification()
+    }
+    
+    /// Only once time for ask notification reqest
+    @objc private func handleFirstTimeOpenDone() {
+        Task {
+            await updateNotifications()
+        }
+        
+        NotificationCenter.default.removeObserver(
+            self,
+            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
+            object: nil
+        )
     }
     
     public func mainScreenOpened() {
@@ -353,14 +379,14 @@ public final class MainVM {
     //MARK: - Onboarding
     private func onboardingStart() async {
         
-        while onboardingManager.sayHello {
-            try? await Task.sleep(for: .seconds(0.1))
-        }
-        
-        // If first time - return
-        guard profileModel.onboarding.firstTimeOpen == false else {
-            return
-        }
+        //        while onboardingManager.sayHello {
+        //            try? await Task.sleep(for: .seconds(0.1))
+        //        }
+        //
+        //        // If first time - return
+        //        guard profileModel.onboarding.firstTimeOpen == false else {
+        //            return
+        //        }
         
         try? await Task.sleep(for: .seconds(0.8))
         

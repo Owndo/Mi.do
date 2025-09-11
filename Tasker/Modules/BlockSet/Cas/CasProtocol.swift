@@ -41,6 +41,7 @@ private struct CasWithSet {
             guard let data = try b.cas.get(id) else {
                 continue
             }
+            print(id)
             try self.cas.add(data)
         }
     }
@@ -52,9 +53,13 @@ extension Cas {
     }
     
     public func sync(_ cas: Cas) throws {
+        print("here")
         let a = try self.withSet()
         let b = try cas.withSet()
+        print("there")
+        
         try a.fetchFrom(b)
+        print("End-------------------------------")
         try b.fetchFrom(a)
     }
     

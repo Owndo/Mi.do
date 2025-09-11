@@ -19,7 +19,16 @@ let project = Project(
                     "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",
                     "NSSpeechRecognitionUsageDescription": "Speech recognize access is needed to fill your tasks.",
                     "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery.",
-                    "NSUbiquitousKeyValueStoreUsageDescription": "iCloud is used to sync your data across devices.",
+                    // Background mode
+                    "UIBackgroundModes": ["fetch", "processing", "remote-notification"],
+                    // iCloud
+                    "NSUbiquitousContainers": [
+                      "iCloud.com.mido.robocode": [
+                        "NSUbiquitousContainerIsDocumentScopePublic": true,
+                        "NSUbiquitousContainerSupportedFolderLevels": ["ANY"],
+                        "NSUbiquitousContainerName": "Mi.dō"
+                      ]
+                    ],
                     "CFBundleLocalizations": [
                       "en",
                       "ru",
@@ -43,6 +52,7 @@ let project = Project(
                 ]
             )],
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
+            entitlements: nil,
             dependencies: [
                 .target(name: "MainView"),
             ],
@@ -164,6 +174,9 @@ let project = Project(
                         launchStyle: .automatically
                     ),
         )
+    ],
+    additionalFiles: [
+        "Tasker/Tasker.entitlements"
     ],
     
     resourceSynthesizers: [

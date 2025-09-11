@@ -11,7 +11,15 @@ import SwiftUICore
 
 final class ModelsFactory {
     var calendar = Calendar.current
-    var now = Date.now
+    var now = Date()
+    
+    var today = DateComponents()
+    
+    init() {
+        today.year = calendar.component(.year, from: Date.now)
+        today.month = calendar.component(.month, from: Date.now)
+        today.day = calendar.component(.day, from: Date.now)
+    }
     
     private var selectedDate: Double {
         calendar.startOfDay(for: now).timeIntervalSince1970
@@ -52,7 +60,7 @@ final class ModelsFactory {
                         title: "💡 Random Hour",
                         description: "Google something you don’t understand. Quantum foam? Why cats scream at 3 AM? Choose your adventure.",
                         createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: .now)!.timeIntervalSince1970),
+                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: calendar.date(from: today)!)!.timeIntervalSince1970),
                         repeatTask: .never,
                         taskColor: .steelBlue
                     )

@@ -40,18 +40,23 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     }
     
     func firstTimeOpen() {
-        if profileModel.onboarding.sayHello {
+        if profileModel.onboarding.firstTimeOpen {
             sayHello = true
         }
     }
     
+    public func firstTimeOpenDone() {
+        sayHello = false
+        profileModel.onboarding.firstTimeOpen = sayHello
+        profileModelSave()
+    }
+    
     //MARK: - Onboarding flow
     public func onboardingStart() async {
-   
+        
     }
     
     private func profileModelSave() {
-        profileModel.onboarding.sayHello = false
         casManager.saveProfileData(profileModel)
     }
 }

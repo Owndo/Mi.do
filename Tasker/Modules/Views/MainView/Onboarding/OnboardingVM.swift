@@ -34,14 +34,7 @@ final class OnboardingVM {
     
     func continueButtontapped() {
         closeTriger.toggle()
-        onboardingManager.sayHello = false
-        
-        saveProfileModel()
-    }
-    
-    func saveProfileModel() {
-        profileModel.onboarding.sayHello = false
-        profileModel.onboarding.firstTimeOpen = false
-        casManager.saveProfileData(profileModel)
+        onboardingManager.firstTimeOpenDone()
+        NotificationCenter.default.post(name: NSNotification.Name("firstTimeOpenHasBeenDone"), object: nil)
     }
 }

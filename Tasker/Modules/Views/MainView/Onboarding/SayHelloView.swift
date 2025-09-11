@@ -45,7 +45,7 @@ struct SayHelloView: View {
                 
                 Button {
                     dismissButton()
-                    vm.closeTriger.toggle()
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 } label: {
                     Text("Continue", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .medium))
@@ -65,7 +65,6 @@ struct SayHelloView: View {
         .onDisappear {
             vm.continueButtontapped()
         }
-        .sensoryFeedback(.start, trigger: vm.closeTriger)
     }
     
     //MARK: - Description

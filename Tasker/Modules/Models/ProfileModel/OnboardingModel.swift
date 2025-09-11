@@ -12,7 +12,7 @@ public struct OnboardingModel: Codable, Equatable {
     /// Create models, init app
     public var firstTimeOpen = true
     /// Request review
-    public var requestedReview = false
+    public var requestedReview: Bool?
     /// Greetengs for user when app will launch first time
     public var sayHello = true
     

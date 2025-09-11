@@ -136,7 +136,7 @@ public final class MainVM {
     }
     
     public func updateNotifications() async {
-        checkNotificationPermission()
+        try? await Task.sleep(for: .seconds(0.5))
         
         await notificationManager.createNotification()
     }
@@ -315,6 +315,8 @@ public final class MainVM {
         telemetryAction(.mainViewAction(.calendarButtonTapped))
     }
     
+    
+    //MARK: - Find tasks after notification
     private func extractBaseId(from fullId: String) -> String {
         return fullId.components(separatedBy: ".").first ?? fullId
     }
@@ -348,18 +350,6 @@ public final class MainVM {
         disabledButton.toggle()
     }
     
-    private func checkNotificationPermission() {
-        Task {
-            await notificationManager.checkPermission()
-            
-            guard let alert = notificationManager.alert else {
-                return
-            }
-            
-            self.alert = alert
-        }
-    }
-    
     //MARK: - Onboarding
     private func onboardingStart() async {
         
@@ -374,12 +364,13 @@ public final class MainVM {
         
         try? await Task.sleep(for: .seconds(0.8))
         
-        // If not a first time and request review is false - ask review
-        if profileModel.onboarding.requestedReview == false {
-            askReview = true
-            profileModel.onboarding.requestedReview = true
-            profileModelSave()
+        guard casManager.allCompletedTasksCount >= 23 && profileModel.onboarding.requestedReview == nil else {
+            return
         }
+        
+        askReview = true
+        profileModel.onboarding.requestedReview = true
+        profileModelSave()
     }
     
     //MARK: Function before closeApp

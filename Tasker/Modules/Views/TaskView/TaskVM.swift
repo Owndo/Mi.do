@@ -49,31 +49,7 @@ public final class TaskVM: Identifiable {
     var disabledButton = false
     var defaultTimeHasBeenSet = false
     
-    var showDeadline = false {
-        didSet {
-            if showDeadline == true {
-                guard subscriptionManager.hasSubscription() else {
-                    showDeadline = false
-                    return
-                }
-            }
-        }
-    }
-    
     var initing = false
-    
-    var hasDeadline = false {
-        didSet {
-            if hasDeadline == true {
-                guard !initing else {
-                    return
-                }
-                showDeadline = true
-            } else {
-                removeDeadlineFromTask()
-            }
-        }
-    }
     
     var showPaywall: Bool {
         subscriptionManager.showPaywall
@@ -94,10 +70,34 @@ public final class TaskVM: Identifiable {
         }
     }
     
+    var hasDeadline = false {
+        didSet {
+            if hasDeadline == true {
+                guard !initing else {
+                    return
+                }
+                showDeadline = true
+            } else {
+                removeDeadlineFromTask()
+            }
+        }
+    }
+    
     var deadLineDate = Date() {
         didSet {
             checkTimeAfterDeadlineSelected()
             setUpDeadlineDate()
+        }
+    }
+    
+    var showDeadline = false {
+        didSet {
+            if showDeadline == true {
+                guard subscriptionManager.hasSubscription() else {
+                    showDeadline = false
+                    return
+                }
+            }
         }
     }
     
@@ -380,9 +380,7 @@ public final class TaskVM: Identifiable {
             return
         }
         
-        if notificationDate.timeIntervalSince1970 > deadLineDate.timeIntervalSince1970 {
-            deadLineDate = notificationDate
-        }
+        isDeadlineInCorrectDate()
         
         debounceTimer?.invalidate()
         lastChangeTime = Date()
@@ -420,6 +418,16 @@ public final class TaskVM: Identifiable {
     func removeDeadlineFromTask() {
         showDeadline = false
         task.deadline = nil
+    }
+    
+    func isDeadlineInCorrectDate() {
+        guard hasDeadline else {
+            return
+        }
+        
+        if notificationDate.timeIntervalSince1970 > deadLineDate.timeIntervalSince1970 {
+            deadLineDate = notificationDate
+        }
     }
     
     //MARK: - Auto close functionality

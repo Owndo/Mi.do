@@ -75,7 +75,7 @@ struct SettingsView: View {
                     
                     Spacer()
                     
-                    Text("App Version \(ConfigurationFile().appVersion)", bundle: .module)
+                    Text("App Version \(vm.actuallAppVersion())", bundle: .module)
                         .font(.system(.subheadline, design: .default, weight: .regular))
                         .foregroundStyle(.labelTertiary)
                         .padding(.bottom, 37)

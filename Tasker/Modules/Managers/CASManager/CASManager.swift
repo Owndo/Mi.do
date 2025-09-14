@@ -13,6 +13,8 @@ import Models
 final class CASManager: CASManagerProtocol {
     
     let cas: MultiCas
+    let localDirectory: URL
+    let remoteDirectory: URL
     
     var taskUpdateTrigger = false
     var profileUpdateTriger = false
@@ -34,25 +36,26 @@ final class CASManager: CASManagerProtocol {
     var allCompletedTasksCount = Int()
     
     init() {
-        let localDirectory = CASManager.createLocalDirectory()!
-        let remoteDirectory = CASManager.createiCloudDirectory() ?? localDirectory
+        localDirectory = CASManager.createLocalDirectory()!
+        remoteDirectory = CASManager.createiCloudDirectory() ?? localDirectory
         
         let localCas = FileCas(localDirectory)
         let iCas = FileCas(remoteDirectory)
         
         cas = MultiCas(local: localCas, remote: iCas)
         
+        profileModel = fetchProfileData()
+        
         syncCases()
         
         fetchModels()
-        profileModel = fetchProfileData()
         
-        firstTimeOpen()
         completedTaskCount()
     }
     
     //MARK: Actions for work with CAS
     func saveModel(_ task: MainModel) {
+        
         do {
             try cas.saveJsonModel(task.model)
             models[task.id] = task
@@ -135,7 +138,7 @@ final class CASManager: CASManagerProtocol {
     }
     
     //MARK: - Profile data
-    func fetchProfileData() -> ProfileData {
+    private func fetchProfileData() -> ProfileData {
         let list = try! cas.listMutable()
         
         return list.compactMap { mutable in
@@ -170,33 +173,23 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: - Sync with iCloud
     func syncCases() {
-        guard profileModel.onboarding.firstTimeOpen || profileModel.settings.iCloudSyncEnabled else {
+        guard profileModel.settings.iCloudSyncEnabled else {
             print("Couldn't sync")
             return
         }
         
-        do {
-            let status = try cas.listOfRemoteCAS()
-            print("here")
-            if !status.isEmpty {
-                for i in status {
-                    print(i)
-                }
-            }
-            print("remote cas is empty - \(status.isEmpty)")
-        } catch {
-            print("Error - \(error.localizedDescription)")
-        }
+        //TODO: Has to add check, get url, and try again and again until youll not take container
         
-        print("start sync")
-//        do {
-//            try cas.syncRemote()
-//            print("Sync completed")
-//        } catch {
-//            print("Sync error: \(error.localizedDescription)")
-//        }
-//        
-//        print("end sync")
+//        var findRemoteURL = false
+        
+        //        do {
+        //            try cas.syncRemote()
+        //            print("Sync completed")
+        //        } catch {
+        //            print("Sync error: \(error.localizedDescription)")
+        //        }
+        //
+        //        print("end sync")
     }
     
     //MARK: Create directory for CAS
@@ -257,23 +250,5 @@ final class CASManager: CASManagerProtocol {
                 allCompletedTasksCount += 1
             }
         }
-    }
-    
-    //MARK: - Onboarding
-    private func firstTimeOpen() {
-        guard profileModel.onboarding.baseTasksCreated == nil else {
-            return
-        }
-        
-        let factory = ModelsFactory()
-        
-        saveModel(factory.create(.planForTommorow))
-        saveModel(factory.create(.bestApp))
-        saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
-        saveModel(factory.create(.randomHours))
-        saveModel(factory.create(.readSomething))
-        
-        profileModel.onboarding.baseTasksCreated = true
-        saveProfileData(profileModel)
     }
 }

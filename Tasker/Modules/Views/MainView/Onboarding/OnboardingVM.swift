@@ -35,6 +35,5 @@ final class OnboardingVM {
     func continueButtontapped() {
         closeTriger.toggle()
         onboardingManager.firstTimeOpenDone()
-        NotificationCenter.default.post(name: NSNotification.Name("firstTimeOpenHasBeenDone"), object: nil)
     }
 }

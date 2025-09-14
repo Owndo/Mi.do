@@ -25,7 +25,7 @@ public protocol Cas: AnyObject {
     func path(_ id: String) -> URL
 }
 
-extension Data {
+public extension Data {
     func sha256Id() -> String {
         SHA256.hash(data: self).base32()
     }
@@ -76,11 +76,13 @@ extension Cas {
         guard blobId != parent?.blobId else {
             return nil
         }
+        
         let commit = Commit(
             parent: parent.map { [$0.commitId] } ?? [],
-            blob: blobId)
-        let commitId = try self.add(
-            JSONEncoder().encode(commit))
+            blob: blobId
+        )
+        
+        let commitId = try self.add(JSONEncoder().encode(commit))
         mutable.parent = Parent(commitId: commitId, blobId: blobId)
         return commitId
     }

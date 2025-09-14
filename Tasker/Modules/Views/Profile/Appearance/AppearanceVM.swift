@@ -43,7 +43,7 @@ final class AppearanceVM {
     
     init() {
         profileData = casManager.profileModel
-        defaultTaskColor = profileData.settings.defaultTaskColor ?? .baseColor
+        defaultTaskColor = profileData.settings.defaultTaskColor
     }
     
     // MARK: - Change progress Mode

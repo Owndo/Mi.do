@@ -76,13 +76,13 @@ public struct TaskModel: Codable {
     }
 }
 
-public class TaskModelWrapper <T>: Identifiable, Equatable {
+public class TaskModelWrapper<T: Encodable>: Identifiable, Equatable {
     public var id: String
     public var model: Model<T>
     
     public init(_ model: Model<T>) {
         self.model = model
-        self.id = UUID().uuidString
+        self.id = hashID(model.value)
     }
     
     public static func == (lhs: TaskModelWrapper<T>, rhs: TaskModelWrapper<T>) -> Bool {

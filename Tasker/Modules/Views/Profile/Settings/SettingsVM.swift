@@ -65,7 +65,11 @@ final class SettingsVM {
         profileModel.settings.iCloudSyncEnabled = syncWithIcloud
         profileModelSave()
         
-        await casManager.syncCases()
+        casManager.syncCases()
+    }
+    
+    func actuallAppVersion() -> String {
+        profileModel.onboarding.latestVersion ?? "Latest Version"
     }
     
     /// Save profile to cas

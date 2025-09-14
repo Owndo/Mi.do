@@ -46,18 +46,16 @@ final class MockCas: CASManagerProtocol {
         fetchModels()
         profileModel = fetchProfileData()
         
-        firstTimeOpen()
         completedTaskCount()
     }
     
     //MARK: Actions for work with CAS
     func saveModel(_ task: MainModel) {
         do {
-//            try cas.saveJsonModel(task.model)
+            try cas.saveJsonModel(task.model)
             models[task.id] = task
             taskUpdateTrigger.toggle()
             completedTaskCount()
-            syncCases()
         } catch {
             print("Couldn't save daat inside CAS")
         }
@@ -65,9 +63,8 @@ final class MockCas: CASManagerProtocol {
     
     func saveProfileData(_ data: ProfileData) {
         do {
-//            try cas.saveJsonModel(data.model)
+            try cas.saveJsonModel(data.model)
             profileUpdateTriger.toggle()
-            syncCases()
         } catch {
             print("Couldn't save profile data inside CAS")
         }
@@ -177,23 +174,25 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: - Sync with iCloud
     func syncCases() {
-        guard profileModel.onboarding.firstTimeOpen || profileModel.settings.iCloudSyncEnabled else {
+        guard profileModel.settings.iCloudSyncEnabled else {
             print("Couldn't sync")
             return
         }
         
-        do {
-            let status = try cas.listOfRemoteCAS()
-            print("here")
-            if !status.isEmpty {
-                for i in status {
-                    print(i)
-                }
-            }
-            print("remote cas is empty - \(status.isEmpty)")
-        } catch {
-            print("Error with remote cas \(error.localizedDescription)")
-        }
+        print("sync start")
+        
+//        do {
+//            let status = try cas.listOfRemoteCAS()
+//            print("here")
+//            if !status.isEmpty {
+//                for i in status {
+//                    print(i)
+//                }
+//            }
+//            print("remote cas is empty - \(status.isEmpty)")
+//        } catch {
+//            print("Error with remote cas \(error.localizedDescription)")
+//        }
         
 //        print("start sync")
 //        do {
@@ -226,7 +225,7 @@ final class MockCas: CASManagerProtocol {
         let container = "iCloud.mido.robocode"
         
         guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: container) else {
-            print("here")
+            print("opa")
             return nil
         }
         
@@ -266,20 +265,5 @@ final class MockCas: CASManagerProtocol {
                 allCompletedTasksCount += 1
             }
         }
-    }
-    
-    //MARK: - Onboarding
-    private func firstTimeOpen() {
-        guard profileModel.onboarding.baseTasksCreated == nil else {
-            return
-        }
-        
-        let factory = ModelsFactory()
-        
-        saveModel(factory.create(.planForTommorow))
-        saveModel(factory.create(.bestApp))
-        saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
-        saveModel(factory.create(.randomHours))
-        saveModel(factory.create(.readSomething))
     }
 }

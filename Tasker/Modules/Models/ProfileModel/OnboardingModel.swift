@@ -9,27 +9,44 @@ import Foundation
 import SwiftUI
 
 public struct OnboardingModel: Codable, Equatable {
-    /// Create models, init app
-    public var firstTimeOpen = true
+    /// Check last user version fro showing what's new
+    public var latestVersion: String?
     /// Request review
     public var requestedReview: Bool?
-    /// Greetengs for user when app will launch first time
-    public var sayHello = true
-    /// Base tasks for example have been created
-    public var baseTasksCreated: Bool?
     
-//    /// States for showing onboarding
-//    public var dayTip = false
-//    public var calendarTip = false
-//    public var profileTip = false
-//    public var noteTip = false
-//    public var deleteTip = false
-//    public var searchTasksTip = false
-//    public var openSubtasksTip = false
-//    public var checkMarkTip = false
-//    public var listSwipeTip = false
-//    public var createButtonTip = false
-//    
     /// At this time onboarding has been created
     public var onboardingCreatedDate: Double = 1753717500.0
+}
+
+@Observable
+public final class UIOnboardingModel {
+    public var model: OnboardingModel {
+        didSet {
+            guard model != oldValue else { return }
+            onChange(model)
+        }
+    }
+    
+    private let onChange: (OnboardingModel) -> Void
+    
+    init(_ model: OnboardingModel, onChange: @escaping (OnboardingModel) -> Void) {
+        self.model = model
+        self.onChange = onChange
+    }
+    
+    public var latestVersion: String? {
+        get { model.latestVersion }
+        set { model.latestVersion = newValue }
+    }
+    
+    public var requestedReview: Bool {
+        get { model.requestedReview ?? false }
+        set { model.requestedReview = newValue ? true : nil }
+    }
+    
+    public var onboardingCreatedDate: Double { model.onboardingCreatedDate }
+}
+
+func defaultOnboardingModel() -> OnboardingModel {
+    OnboardingModel()
 }

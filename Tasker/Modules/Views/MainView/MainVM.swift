@@ -123,8 +123,7 @@ public final class MainVM {
     
     //MARK: - Init
     public init() {
-        print("init")
-        createCustomProfileModel()
+        downloadProfileModelFromCas()
         
         Task {
             await onboardingStart()
@@ -145,7 +144,7 @@ public final class MainVM {
     
     //MARK: - Update notification
     public func updateNotifications() async {
-        guard profileModel.onboarding.firstTimeOpen == false else {
+        guard onboardingManager.onboardingComplete == true else {
             return
         }
         
@@ -181,7 +180,7 @@ public final class MainVM {
         casManager.saveProfileData(profileModel)
     }
     
-    public func createCustomProfileModel() {
+    private func downloadProfileModelFromCas() {
         profileModel = casManager.profileModel
     }
     
@@ -390,7 +389,7 @@ public final class MainVM {
         
         try? await Task.sleep(for: .seconds(0.8))
         
-        guard casManager.allCompletedTasksCount >= 23 && profileModel.onboarding.requestedReview == nil else {
+        guard casManager.allCompletedTasksCount >= 23 && profileModel.onboarding.requestedReview == false else {
             return
         }
         

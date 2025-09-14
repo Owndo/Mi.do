@@ -17,22 +17,12 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     
     var profileModel = mockProfileData()
     
-    public var showingCalendar: ((Bool) -> Void)?
-    public var showingProfile: ((Bool) -> Void)?
-    public var showingNotes: ((Bool) -> Void)?
-    public var scrollWeek: ((Bool) -> Void)?
-    
     //MARK: - Onboarding flow
     public var sayHello = false
     
+    public var showWhatsNew = false
+    
     public var onboardingComplete = false
-    public var dayTip = false
-    public var calendarTip = false
-    public var profileTip = false
-    public var notesTip = false
-    public var deleteTip = false
-    public var listSwipeTip = false
-    public var createButtonTip = false
     
     init() {
         profileModel = casManager.profileModel
@@ -40,20 +30,45 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     }
     
     func firstTimeOpen() {
-        if profileModel.onboarding.firstTimeOpen {
+        guard let latestVersion = profileModel.onboarding.latestVersion else {
             sayHello = true
+            return
         }
+        
+        onboardingComplete = true
     }
     
     public func firstTimeOpenDone() {
         sayHello = false
-        profileModel.onboarding.firstTimeOpen = sayHello
+        onboardingComplete = true
+        
+        createBaseTasks()
+        
+        profileModel.onboarding.latestVersion = ConfigurationFile.appVersion
+        
         profileModelSave()
+        
+        NotificationCenter.default.post(name: NSNotification.Name("firstTimeOpenHasBeenDone"), object: nil)
     }
     
     //MARK: - Onboarding flow
     public func onboardingStart() async {
         
+    }
+    
+    //MARK: - Onboarding
+    private func createBaseTasks() {
+        guard profileModel.onboarding.latestVersion == nil else {
+            return
+        }
+        
+        let factory = ModelsFactory()
+        
+        casManager.saveModel(factory.create(.planForTommorow))
+        casManager.saveModel(factory.create(.bestApp))
+        casManager.saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
+        casManager.saveModel(factory.create(.randomHours))
+        casManager.saveModel(factory.create(.readSomething))
     }
     
     private func profileModelSave() {

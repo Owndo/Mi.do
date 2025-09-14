@@ -64,14 +64,34 @@ public final class UIProfileModel: ProfileModelWrapper<ProfileModel> {
         get { model.value.createdProfile }
     }
     
-    public var settings: SettingsModel {
-        get { model.value.settings ??  mockSettingsModel() }
-        set { model.value.settings = nilIfNeed(newValue, is: mockSettingsModel()) }
+    public var settings: UISettingsModel {
+        get {
+            let stored = model.value.settings ?? defaultSettingsModel()
+            return UISettingsModel(stored) { [weak self] updated in
+                self?.model.value.settings =
+                (updated == defaultSettingsModel()) ? nil : updated
+            }
+        }
+        set {
+            let updated = newValue.model
+            model.value.settings =
+            (updated == defaultSettingsModel()) ? nil : updated
+        }
     }
     
-    public var onboarding: OnboardingModel {
-        get { model.value.onboarding ?? OnboardingModel() }
-        set { model.value.onboarding = nilIfNeed(newValue, is: OnboardingModel()) }
+    public var onboarding: UIOnboardingModel {
+        get {
+            let stored = model.value.onboarding ?? defaultOnboardingModel()
+            return UIOnboardingModel(stored) { [weak self] updated in
+                self?.model.value.onboarding =
+                (updated == defaultOnboardingModel()) ? nil : updated
+            }
+        }
+        set {
+            let updated = newValue.model
+            model.value.onboarding =
+            (updated == defaultOnboardingModel()) ? nil : updated
+        }
     }
 }
 

@@ -387,6 +387,25 @@ final class DateManager: DateManagerProtocol {
         indexForWeek = 1
     }
     
+    //MARK: - Days of week
+    func thursday() -> Date {
+        let weekdayToday = calendar.component(.weekday, from: currentTime)
+        
+        let daysUntilWednesday = (5 - weekdayToday + 7) % 7
+        let targetDate = calendar.date(byAdding: .day, value: daysUntilWednesday, to: currentTime)!
+        
+        return targetDate
+    }
+    
+    func sunday() -> Date {
+        let weekdayToday = calendar.component(.weekday, from: currentTime)
+        
+        let daysUntilWednesday = (1 - weekdayToday + 7) % 7
+        let targetDate = calendar.date(byAdding: .day, value: daysUntilWednesday, to: currentTime)!
+        
+        return targetDate
+    }
+    
     
     private func updateWeekIndex(for date: Date) {
         let newWeekStart = startOfWeek(for: date)

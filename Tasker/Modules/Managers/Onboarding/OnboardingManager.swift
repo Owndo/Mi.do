@@ -14,6 +14,8 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     @Injected(\.casManager) var casManager
     @ObservationIgnored
     @Injected(\.subscriptionManager) var subscriptionManager
+    @ObservationIgnored
+    @Injected(\.dateManager) var dateManager
     
     var profileModel = mockProfileData()
     
@@ -64,11 +66,16 @@ public final class OnboardingManager: OnboardingManagerProtocol {
         
         let factory = ModelsFactory()
         
-        casManager.saveModel(factory.create(.planForTommorow))
         casManager.saveModel(factory.create(.bestApp))
         casManager.saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
         casManager.saveModel(factory.create(.randomHours))
         casManager.saveModel(factory.create(.readSomething))
+        
+        guard !dateManager.calendar.isDate(dateManager.currentTime, inSameDayAs: dateManager.sunday()) else {
+            return
+        }
+        
+        casManager.saveModel(factory.create(.planForTommorow))
     }
     
     private func profileModelSave() {

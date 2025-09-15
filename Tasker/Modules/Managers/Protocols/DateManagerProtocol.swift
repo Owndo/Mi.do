@@ -45,4 +45,6 @@ public protocol DateManagerProtocol {
     func addOneDay()
     /// Previous day after swip to right
     func subtractOneDay()
+    func thursday() -> Date
+    func sunday() -> Date
 }

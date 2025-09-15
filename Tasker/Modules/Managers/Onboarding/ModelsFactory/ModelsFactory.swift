@@ -9,16 +9,24 @@ import Foundation
 import Models
 import SwiftUICore
 
+@Observable
 final class ModelsFactory {
-    var calendar = Calendar.current
-    var now = Date()
+    @ObservationIgnored
+    @Injected(\.dateManager) var dateManager
+    
+    private var calendar: Calendar {
+        dateManager.calendar
+    }
+    private var now: Date {
+        dateManager.currentTime
+    }
     
     var today = DateComponents()
     
     init() {
-        today.year = calendar.component(.year, from: Date.now)
-        today.month = calendar.component(.month, from: Date.now)
-        today.day = calendar.component(.day, from: Date.now)
+        today.year = calendar.component(.year, from: now)
+        today.month = calendar.component(.month, from: now)
+        today.day = calendar.component(.day, from: now)
     }
     
     private var selectedDate: Double {
@@ -47,7 +55,7 @@ final class ModelsFactory {
                         title: "🗓️ Plan Tomorrow",
                         description: "Maybe you'll save the world tomorrow. Might wanna write that down.",
                         createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Double(calendar.date(bySettingHour: 20, minute: 30, second: 0, of: repeatTask == .never ? .now : sunday())!.timeIntervalSince1970),
+                        notificationDate: Double(calendar.date(bySettingHour: 20, minute: 30, second: 0, of: repeatTask == .never ? .now : dateManager.sunday())!.timeIntervalSince1970),
                         repeatTask: repeatTask,
                         taskColor: .mint
                     )
@@ -73,7 +81,7 @@ final class ModelsFactory {
                         title: "📚 Read Something That’s Not a Screen",
                         description: "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge.",
                         createDate: Date.now.timeIntervalSince1970,
-                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: thursday())!.timeIntervalSince1970),
+                        notificationDate: Double(calendar.date(bySetting: .hour, value: 19, of: dateManager.thursday())!.timeIntervalSince1970),
                         repeatTask: .weekly,
                         taskColor: .brown
                     )
@@ -82,23 +90,7 @@ final class ModelsFactory {
         }
     }
     
-    func thursday() -> Date {
-        let weekdayToday = calendar.component(.weekday, from: now)
-        
-        let daysUntilWednesday = (5 - weekdayToday + 7) % 7
-        let targetDate = calendar.date(byAdding: .day, value: daysUntilWednesday, to: now)!
-        
-        return targetDate
-    }
     
-    func sunday() -> Date {
-        let weekdayToday = calendar.component(.weekday, from: now)
-        
-        let daysUntilWednesday = (1 - weekdayToday + 7) % 7
-        let targetDate = calendar.date(byAdding: .day, value: daysUntilWednesday, to: now)!
-        
-        return targetDate
-    }
     
     enum Models {
         case randomHours

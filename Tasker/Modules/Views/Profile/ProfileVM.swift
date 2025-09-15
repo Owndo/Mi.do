@@ -30,6 +30,11 @@ final class ProfileVM {
     var profileModel: ProfileData = mockProfileData()
     
     //MARK: UI state
+    // Path for navigation
+    var path = NavigationPath()
+    // Profile created date
+    var createdDate = Date()
+    // Library showing
     var showLibrary = false
     var alert: AlertModel?
     var navigationTriger = false
@@ -38,33 +43,22 @@ final class ProfileVM {
     
     // Animation
     var gearAnimation = false
+    var rotationAngle: Double = 0
     var buttonOffset: CGSize = CGSize(
         width: CGFloat.random(in: 120...160),
         height: CGFloat.random(in: -50...50)
     )
     
-    var rotationAngle: Double = 0
-    private var orbitRadius: CGFloat = 25
-    var orbitRadiusY: CGFloat = 20
-    var orbitRadiusX: CGFloat = 35
-    var animationTimer: Timer?
-    
+    // MARK: - Photo
     var photoPosition = CGSize.zero
-    
-    @ObservationIgnored
-    var pickerSelection: PhotosPickerItem? {
+    var selectedItems = [PhotosPickerItem]() {
         didSet {
             Task {
-                if let imageData = try await pickerSelection?.loadTransferable(type: Data.self) {
-                    addPhotoToProfile(image: imageData)
-                }
+                await addSelectedImageFromPicker()
             }
         }
     }
-    
-    var path = NavigationPath()
-    
-    var createdDate = Date()
+    var selectedImage: Image?
     
     var calendar: Calendar {
         dateManager.calendar
@@ -83,7 +77,14 @@ final class ProfileVM {
     }
     
     init() {
+        setUpProfile()
+    }
+    
+    func setUpProfile() {
         profileModel = casManager.profileModel
+        if let data = getPhotoFromCAS() {
+            selectedImage = Image(uiImage: UIImage(data: data)!)
+        }
         photoPosition = profileModel.photoPosition
         createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
     }
@@ -188,21 +189,19 @@ final class ProfileVM {
         case completed
     }
     
-    func editAvatarButtonTapped() async {
-        
-        let premissionStatus = await permissionManager.permissionForGallery()
-        
-        guard premissionStatus else {
-            if let attentionAlert = permissionManager.alert {
-                alert = AlertModel(alert: attentionAlert)
-            }
-            return
-        }
-        
+    //MARK: - Avatar
+    func addPhotoButtonTapped() {
         showLibrary = true
-        
-        // telemtry
         telemetryAction(action: .profileAction(.addPhotoButtonTapped))
+    }
+    
+    func addSelectedImageFromPicker() async {
+        if let image = try? await selectedItems.first?.loadTransferable(type: Data.self) {
+            if let uiImage = UIImage(data: image) {
+                selectedImage = Image(uiImage: uiImage)
+                addPhotoToProfile(image: image)
+            }
+        }
     }
     
     func getPhotoFromCAS() -> Data? {
@@ -211,14 +210,20 @@ final class ProfileVM {
         return casManager.getData(hash)
     }
     
+    func profileHasPhoto() -> Bool {
+        casManager.getData(profileModel.photo) != nil
+    }
+    
     private func addPhotoToProfile(image: Data) {
         profileModel.photo = casManager.saveImage(image) ?? ""
         photoPosition = .zero
         profileModel.photoPosition = photoPosition
         casManager.saveProfileData(profileModel)
+        selectedItems.removeAll()
     }
     
     func deletePhotoFromProfile() {
+        selectedImage = nil
         profileModel.photo = ""
         photoPosition = .zero
         profileModel.photoPosition = photoPosition
@@ -242,24 +247,6 @@ final class ProfileVM {
     private func telemetryAction(action: EventType) {
         telemetryManager.logEvent(action)
     }
-    
-    //MARK: - Animation
-    //    private func startAnimation() {
-    //        animationTimer = Timer.scheduledTimer(withTimeInterval: 3.5, repeats: true) { _ in
-    //            withAnimation(.linear(duration: 3.5)) {
-    //                self.buttonOffset = CGSize(
-    //                    width: CGFloat.random(in: 120...160),
-    //                    height: CGFloat.random(in: -50...50)
-    //                )
-    //            }
-    //        }
-    //    }
-    //
-    //    private func endAnimationButton() {
-    //        animationTimer?.invalidate()
-    //        animationTimer = nil
-    //
-    //    }
 }
 
 enum ProfileDestination: Hashable {

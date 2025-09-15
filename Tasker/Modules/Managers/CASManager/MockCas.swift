@@ -108,21 +108,23 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: - Task models
     func fetchModels() {
-        let list = try! cas.listMutable()
+        let list = try? cas.listMutable()
         
-        models = list.reduce(into: [String : MainModel]()) { result, mutable in
-            do {
-                if let taskModel: Model<TaskModel> = try cas.loadJsonModel(mutable) {
-                    let task = UITaskModel(taskModel)
-                    result[task.id] = task
-                    
-                    if !task.completeRecords.isEmpty {
-                        completedTasks[task.id] = task
+        if let list = list {
+            models = list.reduce(into: [String : MainModel]()) { result, mutable in
+                do {
+                    if let taskModel: Model<TaskModel> = try cas.loadJsonModel(mutable) {
+                        let task = UITaskModel(taskModel)
+                        result[task.id] = task
+                        
+                        if !task.completeRecords.isEmpty {
+                            completedTasks[task.id] = task
+                        }
                     }
+                    
+                } catch {
+                    print("Error while loading model: \(error)")
                 }
-                
-            } catch {
-                print("Error while loading model: \(error)")
             }
         }
     }
@@ -140,20 +142,24 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: - Profile data
     func fetchProfileData() -> ProfileData {
-        let list = try! cas.listMutable()
+        let list = try? cas.listMutable()
         
-        return list.compactMap { mutable in
-            do {
-                guard let profileModel: Model<ProfileModel> = try cas.loadJsonModel(mutable) else {
+        if let list = list {
+            return list.compactMap { mutable in
+                do {
+                    guard let profileModel: Model<ProfileModel> = try cas.loadJsonModel(mutable) else {
+                        return nil
+                    }
+                    
+                    return UIProfileModel(profileModel)
+                    
+                } catch {
                     return nil
                 }
-                
-                return UIProfileModel(profileModel)
-                
-            } catch {
-                return nil
-            }
-        }.first ?? mockProfileData()
+            }.first ?? mockProfileData()
+        }
+        
+        return mockProfileData()
     }
     
     func pathToAudio(_ hash: String) -> URL {

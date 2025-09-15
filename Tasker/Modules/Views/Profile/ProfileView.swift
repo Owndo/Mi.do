@@ -9,6 +9,7 @@ import SwiftUI
 import Models
 import UIComponents
 import Paywall
+import PhotosUI
 
 //TODO: - Keyboard ignore safe area
 public struct ProfileView: View {
@@ -17,6 +18,9 @@ public struct ProfileView: View {
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
+    
+    @State private var avatarItem: PhotosPickerItem?
+    @State private var avatarImage: Image?
     
     public init() {}
     
@@ -29,7 +33,8 @@ public struct ProfileView: View {
                 ScrollViewContent()
                     .photosPicker(
                         isPresented: $vm.showLibrary,
-                        selection: $vm.pickerSelection,
+                        selection: $vm.selectedItems,
+                        maxSelectionCount: 1,
                         matching: .images
                     )
                 
@@ -82,6 +87,7 @@ public struct ProfileView: View {
         }
         .sensoryFeedback(.levelChange, trigger: vm.navigationTriger)
         .animation(.bouncy, value: vm.showPaywall)
+        .animation(.bouncy, value: vm.selectedImage)
     }
     
     //MARK: - Scroll View
@@ -148,9 +154,11 @@ public struct ProfileView: View {
     private func ProfilePhoto() -> some View {
         ZStack {
             VStack {
-                if let data = vm.getPhotoFromCAS() {
-                    if let image = UIImage(data: data) {
-                        Image(uiImage: image)
+                Button {
+                    vm.addPhotoButtonTapped()
+                } label: {
+                    if let image = vm.selectedImage {
+                        image
                             .resizable()
                             .scaledToFill()
                             .offset(vm.photoPosition)
@@ -163,16 +171,9 @@ public struct ProfileView: View {
                                         vm.savePhotoPosition()
                                     }
                             )
+                    } else {
+                        EmptyPhoto()
                     }
-                } else {
-                    Image(systemName: "person.crop.circle.badge.plus")
-                        .font(.system(size: 28))
-                        .foregroundStyle(.labelQuaternary)
-                        .padding(50)
-                        .background(
-                            RoundedRectangle(cornerRadius: 1)
-                                .fill(.backgroundTertiary)
-                        )
                 }
             }
             .clipShape(Circle())
@@ -196,15 +197,25 @@ public struct ProfileView: View {
         .sensoryFeedback(.selection, trigger: vm.showLibrary)
     }
     
+    //MARK: - Empty photo
+    @ViewBuilder
+    private func EmptyPhoto() -> some View {
+        Image(systemName: "person.crop.circle.badge.plus")
+            .font(.system(size: 28))
+            .foregroundStyle(.labelQuaternary)
+            .padding(50)
+            .background(
+                RoundedRectangle(cornerRadius: 1)
+                    .fill(.backgroundTertiary)
+            )
+    }
+    
     //MARK: - Context menu
     @ViewBuilder
     private func ContextMenu() -> some View {
         Menu {
-            
             Button {
-                Task {
-                    await vm.editAvatarButtonTapped()
-                }
+                vm.addPhotoButtonTapped()
             } label: {
                 HStack {
                     Text("Edit avatar", bundle: .module)

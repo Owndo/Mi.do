@@ -46,9 +46,9 @@ final class CASManager: CASManagerProtocol {
         
         profileModel = fetchProfileData()
         
-        syncCases()
-        
-        fetchModels()
+        Task {
+            await updateCASesWithICloud()
+        }
         
         completedTaskCount()
     }
@@ -70,6 +70,7 @@ final class CASManager: CASManagerProtocol {
         do {
             try cas.saveJsonModel(data.model)
             profileUpdateTriger.toggle()
+            saveProfileDataToICloud(data)
         } catch {
             print("Couldn't save profile data inside CAS")
         }
@@ -124,6 +125,8 @@ final class CASManager: CASManagerProtocol {
                 print("Error while loading model: \(error)")
             }
         }
+        
+        taskUpdateTrigger.toggle()
     }
     
     // Save all models before app will close
@@ -139,8 +142,20 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: - Profile data
     private func fetchProfileData() -> ProfileData {
-        let list = try! cas.listMutable()
+        guard let iCloudProfile = loadProfileFromIcloud() else {
+            return modelFromCas()
+        }
         
+        if iCloudProfile.settings.iCloudSyncEnabled {
+            saveProfileData(iCloudProfile)
+            return iCloudProfile
+        } else {
+            return modelFromCas()
+        }
+    }
+    
+    private func modelFromCas() -> ProfileData {
+        let list = try! cas.listMutable()
         return list.compactMap { mutable in
             do {
                 guard let profileModel: Model<ProfileModel> = try cas.loadJsonModel(mutable) else {
@@ -171,25 +186,36 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
-    //MARK: - Sync with iCloud
-    func syncCases() {
+    //MARK: - iCloud
+    func updateCASesWithICloud() async {
         guard profileModel.settings.iCloudSyncEnabled else {
-            print("Couldn't sync")
+            print("1")
+            fetchModels()
             return
         }
         
-        //TODO: Has to add check, get url, and try again and again until youll not take container
+        guard let remoteURL = CASManager.createiCloudDirectory() else {
+            print("2")
+            fetchModels()
+            return
+        }
         
-//        var findRemoteURL = false
+        guard hasFiles(at: remoteURL) else {
+            print("3")
+            fetchModels()
+            return
+        }
         
-        //        do {
-        //            try cas.syncRemote()
-        //            print("Sync completed")
-        //        } catch {
-        //            print("Sync error: \(error.localizedDescription)")
-        //        }
-        //
-        //        print("end sync")
+        do {
+            try await syncCases()
+            fetchModels()
+        } catch {
+            print("Couldn't sync")
+        }
+    }
+    
+    func syncCases() async throws {
+        try cas.syncRemote()
     }
     
     //MARK: Create directory for CAS
@@ -208,11 +234,12 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
+    //MARK: - iCloud CAS
     private static func createiCloudDirectory() -> URL? {
         let container = "iCloud.mido.robocode"
         
         guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: container) else {
-            print("here")
+            print("doesent have icloud container")
             return nil
         }
         
@@ -232,6 +259,38 @@ final class CASManager: CASManagerProtocol {
             return nil
         }
     }
+    
+    private func hasFiles(at url: URL) -> Bool {
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+            return !contents.isEmpty
+        } catch {
+            print("Error reading directory: \(error.localizedDescription)")
+            return false
+        }
+    }
+    
+    private func saveProfileDataToICloud(_ profileData: ProfileData) {
+        guard profileData.settings.iCloudSyncEnabled else { return }
+        
+        let store = NSUbiquitousKeyValueStore.default
+        if let data = try? JSONEncoder().encode(profileData.model.value) {
+            store.set(data, forKey: "profileData")
+            store.synchronize()
+        }
+    }
+    
+    private func loadProfileFromIcloud() -> ProfileData? {
+        let store = NSUbiquitousKeyValueStore.default
+        
+        if let data = store.data(forKey: "profileData") {
+            let profileData = try! JSONDecoder().decode(ProfileModel.self, from: data)
+            return ProfileData(.initial(profileData))
+        }
+        
+        return nil
+    }
+    
     
     //MARK: Predicate
     private func indexForDelete(_ task: MainModel) {

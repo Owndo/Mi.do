@@ -21,10 +21,6 @@ final class SettingsVM {
     @ObservationIgnored
     @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
-    var showPaywall: Bool {
-        subscriptionManager.showPaywall
-    }
-    
     var syncWithIcloud = false {
         didSet {
             Task {
@@ -33,22 +29,17 @@ final class SettingsVM {
         }
     }
     
-    var calendar: Calendar {
-        dateManager.calendar
-    }
-    
+    var calendar: Calendar = .current
     var profileModel: ProfileData = mockProfileData()
-    
     var createdDate = Date()
-    
-    var firstWeekday: LocalizedStringKey {
-        profileModel.settings.firstDayOfWeek == 1 ? "Sunday" : "Monday"
-    }
+    var firstWeekday: LocalizedStringKey = "Sunday"
     
     init() {
         profileModel = casManager.profileModel
+        firstWeekday = profileModel.settings.firstDayOfWeek == 1 ? "Sunday" : "Monday"
         createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
         syncWithIcloud = profileModel.settings.iCloudSyncEnabled
+        calendar = dateManager.calendar
     }
     
     func goTo(path: inout NavigationPath, destination: ProfileDestination) {
@@ -65,7 +56,7 @@ final class SettingsVM {
         profileModel.settings.iCloudSyncEnabled = syncWithIcloud
         profileModelSave()
         
-        casManager.syncCases()
+        guard profileModel.settings.iCloudSyncEnabled else { return }
     }
     
     func actuallAppVersion() -> String {

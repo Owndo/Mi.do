@@ -27,6 +27,6 @@ public protocol CASManagerProtocol {
     func fetchModels()
     func getData(_ hash: String) -> Data?
     func deleteModel(_ model: MainModel)
-    func syncCases()
+    func syncCases() async throws
     func updateCASAfterWork(models: [MainModel])
 }

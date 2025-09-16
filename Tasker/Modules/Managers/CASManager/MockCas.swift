@@ -41,10 +41,14 @@ final class MockCas: CASManagerProtocol {
         let iCas = FileCas(remoteDirectory)
         
         cas = MultiCas(local: localCas, remote: iCas)
-        syncCases()
+        
+        profileModel = fetchProfileData()
+        
+//        Task {
+////            await syncCases()
+//        }
         
         fetchModels()
-        profileModel = fetchProfileData()
         
         completedTaskCount()
     }
@@ -75,7 +79,6 @@ final class MockCas: CASManagerProtocol {
         do {
             let data = try Data(contentsOf: url)
             let audioHash = try cas.add(data)
-            syncCases()
             
             return audioHash
         } catch {
@@ -86,7 +89,6 @@ final class MockCas: CASManagerProtocol {
     func saveImage(_ photo: Data) -> String? {
         do {
             let imageHash = try cas.add(photo)
-            syncCases()
             
             return imageHash
         } catch {
@@ -179,13 +181,11 @@ final class MockCas: CASManagerProtocol {
     }
     
     //MARK: - Sync with iCloud
-    func syncCases() {
+    func syncCases() async throws {
         guard profileModel.settings.iCloudSyncEnabled else {
             print("Couldn't sync")
             return
         }
-        
-        print("sync start")
         
 //        do {
 //            let status = try cas.listOfRemoteCAS()

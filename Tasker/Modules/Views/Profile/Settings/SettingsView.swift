@@ -114,9 +114,6 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             
-            if vm.showPaywall {
-                PaywallView()
-            }
         }
     }
     

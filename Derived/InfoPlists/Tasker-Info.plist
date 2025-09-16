@@ -46,6 +46,8 @@
 	<dict>
 		<key>iCloud.com.mido.robocode</key>
 		<dict>
+			<key>NSUbiquitousContainerIdentifier</key>
+			<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>

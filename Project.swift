@@ -26,7 +26,8 @@ let project = Project(
                       "iCloud.com.mido.robocode": [
                         "NSUbiquitousContainerIsDocumentScopePublic": true,
                         "NSUbiquitousContainerSupportedFolderLevels": ["ANY"],
-                        "NSUbiquitousContainerName": "Mi.dō"
+                        "NSUbiquitousContainerName": "Mi.dō",
+                        "NSUbiquitousContainerIdentifier": "$(TeamIdentifierPrefix)$(CFBundleIdentifier)"
                       ]
                     ],
                     "CFBundleLocalizations": [
@@ -52,7 +53,7 @@ let project = Project(
                 ]
             )],
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
-            entitlements: nil,
+            entitlements: .file(path: "Tasker/Tasker.entitlements"),
             dependencies: [
                 .target(name: "MainView"),
             ],

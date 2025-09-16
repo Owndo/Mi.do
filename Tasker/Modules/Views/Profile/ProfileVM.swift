@@ -113,7 +113,6 @@ final class ProfileVM {
     
     func onDisappear() {
         //        endAnimationButton()
-        profileModelSave()
         subscriptionManager.showPaywall = false
         
         //telemetry

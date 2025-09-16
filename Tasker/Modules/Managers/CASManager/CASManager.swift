@@ -188,28 +188,30 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: - iCloud
     func updateCASesWithICloud() async {
+        // sync with icloud is turn off
         guard profileModel.settings.iCloudSyncEnabled else {
-            print("1")
             fetchModels()
             return
         }
         
+        // create directory for container
         guard let remoteURL = CASManager.createiCloudDirectory() else {
-            print("2")
             fetchModels()
             return
         }
         
+        // directory created, sync turn on but directory is empty
         guard hasFiles(at: remoteURL) else {
-            print("3")
             fetchModels()
             return
         }
         
+        // sync
         do {
             try await syncCases()
             fetchModels()
         } catch {
+            fetchModels()
             print("Couldn't sync")
         }
     }
@@ -239,7 +241,6 @@ final class CASManager: CASManagerProtocol {
         let container = "iCloud.mido.robocode"
         
         guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: container) else {
-            print("doesent have icloud container")
             return nil
         }
         

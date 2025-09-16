@@ -56,5 +56,8 @@ struct Tasker: App {
                 .animation(.default, value: appearanceManager.selectedColorScheme)
                 .animation(.bouncy, value: subscriptionManager.showPaywall)
         }
+        .backgroundTask(.appRefresh("mido.robocode.updateNotificationsAndSync")) {
+            await mainVM.backgroundUpdate()
+        }
     }
 }

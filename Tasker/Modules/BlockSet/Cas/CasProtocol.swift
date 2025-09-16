@@ -53,13 +53,10 @@ extension Cas {
     }
     
     public func sync(_ cas: Cas) throws {
-        print("here")
         let a = try self.withSet()
         let b = try cas.withSet()
-        print("there")
         
         try a.fetchFrom(b)
-        print("End-------------------------------")
         try b.fetchFrom(a)
     }
     

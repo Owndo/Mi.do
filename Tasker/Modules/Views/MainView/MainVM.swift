@@ -401,8 +401,17 @@ public final class MainVM {
     //MARK: Function before closeApp
     public func closeApp() async {
         let tasks = Array(taskManager.tasks.values)
+        let backgroundManager = BackgroundManager()
         casManager.updateCASAfterWork(models: tasks)
         await updateNotifications()
+        await backgroundManager.scheduleAppRefreshTask()
+    }
+    
+    //MARK: - Background update
+    public func backgroundUpdate() async {
+        let backgroundManager = BackgroundManager()
+        
+        await backgroundManager.backgroundUpdate()
     }
 }
 

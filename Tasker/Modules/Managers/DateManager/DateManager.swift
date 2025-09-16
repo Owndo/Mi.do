@@ -391,8 +391,8 @@ final class DateManager: DateManagerProtocol {
     func thursday() -> Date {
         let weekdayToday = calendar.component(.weekday, from: currentTime)
         
-        let daysUntilWednesday = (5 - weekdayToday + 7) % 7
-        let targetDate = calendar.date(byAdding: .day, value: daysUntilWednesday, to: currentTime)!
+        let daysUntilThursday = (5 - weekdayToday + 7) % 7
+        let targetDate = calendar.date(byAdding: .day, value: daysUntilThursday, to: currentTime)!
         
         return targetDate
     }

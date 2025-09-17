@@ -58,73 +58,94 @@ public struct ProfileView: View {
                 alert.alert
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        if vm.showPaywall {
-                            vm.closePaywallButtonTapped()
-                        } else {
+                if #available(iOS 26.0, *) {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
                             dismissButton()
                             
                             // telemetry
                             vm.closeButtonTapped()
+                        } label: {
+                            Text("Close", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
+                            
+                                .opacity(vm.showPaywall ? 0 : 1)
                         }
-                    } label: {
-                        Text("Close", bundle: .module)
-                            .font(.system(.body, design: .rounded, weight: .medium))
-                            .foregroundStyle(colorScheme.accentColor())
-                            .opacity(vm.showPaywall ? 0 : 1)
-                            .fixedSize()
+                    }
+                    .sharedBackgroundVisibility(.hidden)
+                } else {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            dismissButton()
+                            
+                            // telemetry
+                            vm.closeButtonTapped()
+                        } label: {
+                            Text("Close", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
+                                .opacity(vm.showPaywall ? 0 : 1)
+                        }
                     }
                 }
             }
-            .toolbarBackground(colorScheme.backgroundColor())
-            .onAppear {
-                vm.onAppear()
-            }
+        }
+        .onAppear {
+            vm.onAppear()
         }
         .onDisappear {
             vm.onDisappear()
         }
-        .sensoryFeedback(.levelChange, trigger: vm.navigationTriger)
+        .onChange(of: vm.path.count) { oldValue, newValue in
+            vm.navigationTriger.toggle()
+        }
+        .toolbarBackground(colorScheme.backgroundColor(), for: .navigationBar)
+        .presentationDragIndicator(.visible)
         .animation(.bouncy, value: vm.showPaywall)
         .animation(.bouncy, value: vm.selectedImage)
+        .sensoryFeedback(.selection, trigger: vm.navigationTriger)
     }
     
     //MARK: - Scroll View
     @ViewBuilder
     private func ScrollViewContent() -> some View {
-        VStack(spacing: 0) {
-            ZStack {
-                SettingsButton()
-                
-                ProfilePhoto()
-                    .padding(.bottom, 14)
-            }
-            .padding(.top, 25)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            TextField(text: $vm.profileModel.name, prompt: Text("Enter your name here", bundle: .module)) {}
-                .font(.system(.title2, design: .rounded, weight: .semibold))
-                .foregroundStyle(.labelPrimary)
-                .multilineTextAlignment(.center)
-                .tint(colorScheme.accentColor())
-                .onSubmit {
-                    vm.profileModelSave()
+        ScrollView {
+            VStack(spacing: 0) {
+                ZStack {
+                    SettingsButton()
+                    
+                    ProfilePhoto()
+                        .padding(.bottom, 14)
+                    
                 }
-            
-            TaskStatic()
-                .padding(.top, 20)
-                .padding(.bottom, 28)
-                .ignoresSafeArea(.keyboard)
-            
-            ButtonsList()
-                .padding(.bottom, 28)
-                .ignoresSafeArea(.keyboard)
-            
-            Spacer()
+                .padding(.top, 25)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+                TextField(text: $vm.profileModel.name, prompt: Text("Enter your name here", bundle: .module)) {}
+                    .font(.system(.title2, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.labelPrimary)
+                    .multilineTextAlignment(.center)
+                    .tint(colorScheme.accentColor())
+                    .onSubmit {
+                        vm.profileModelSave()
+                    }
+                
+                TaskStatic()
+                    .padding(.top, 20)
+                    .padding(.bottom, 28)
+                    .ignoresSafeArea(.keyboard)
+                
+                ButtonsList()
+                    .padding(.bottom, 28)
+                    .ignoresSafeArea(.keyboard)
+                
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .ignoresSafeArea(.keyboard)
         }
-        .padding(.horizontal, 16)
-        .ignoresSafeArea(.keyboard)
+        .scrollIndicators(.hidden)
     }
     
     //MARK: - Settings Button
@@ -133,20 +154,35 @@ public struct ProfileView: View {
         Button {
             vm.goTo(.settings)
         } label: {
-            Image(systemName: "gearshape")
-                .foregroundStyle(colorScheme.accentColor())
-                .font(.system(size: 30))
-                .rotationEffect(Angle(degrees: vm.gearAnimation ? 270 : 0))
-                .symbolEffect(.bounce,options: .speed(0.6), value: vm.gearAnimation)
-                .padding(4)
-                .shadow(color: colorScheme.accentColor().opacity(0.5), radius: 16, y: 4)
-                .background(
-                    Circle()
-                        .fill(.backgroundTertiary)
-                )
+            if #available(iOS 18.0, *) {
+                Image(systemName: "gearshape")
+                    .foregroundStyle(colorScheme.accentColor())
+                    .font(.system(size: 30))
+                    .rotationEffect(Angle(degrees: vm.gearAnimation ? 360 : 0))
+                    .symbolEffect(.bounce,options: .speed(0.6), value: vm.gearAnimation)
+                    .padding(4)
+                    .shadow(color: colorScheme.accentColor().opacity(0.5), radius: 16, y: 4)
+                    .background(
+                        Circle()
+                            .fill(.backgroundTertiary)
+                    )
+                    .animation(.spring(duration: 2), value: vm.gearAnimation)
+            } else {
+                Image(systemName: "gearshape")
+                    .foregroundStyle(colorScheme.accentColor())
+                    .font(.system(size: 30))
+                    .rotationEffect(Angle(degrees: vm.gearAnimation ? 270 : 0))
+                    .symbolEffect(.bounce,options: .speed(0.6), value: vm.gearAnimation)
+                    .padding(4)
+                    .shadow(color: colorScheme.accentColor().opacity(0.5), radius: 16, y: 4)
+                    .background(
+                        Circle()
+                            .fill(.backgroundTertiary)
+                    )
+                    .animation(.spring(duration: 2), value: vm.gearAnimation)
+            }
         }
         .offset(vm.buttonOffset)
-        .animation(.spring(duration: 2), value: vm.gearAnimation)
     }
     
     //MARK: - Photo
@@ -234,11 +270,18 @@ public struct ProfileView: View {
                 }
             }
         } label: {
-            Image(systemName: "ellipsis.circle.fill")
-                .foregroundStyle(colorScheme.accentColor())
-                .font(.system(size: 28))
+            if #available(iOS 26.0, *) {
+                Image(systemName: "ellipsis.circle.fill")
+                    .foregroundStyle(colorScheme.accentColor())
+                    .font(.system(size: 28))
+                    .glassEffect(.regular.interactive())
+            } else {
+                Image(systemName: "ellipsis.circle.fill")
+                    .foregroundStyle(colorScheme.accentColor())
+                    .font(.system(size: 28))
+            }
         }
-        .padding(3)
+        .padding(2)
         .background(
             Circle()
                 .fill(colorScheme.backgroundColor())
@@ -282,7 +325,7 @@ public struct ProfileView: View {
         .padding(.vertical, 18)
         .frame(maxHeight: 96)
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 26)
                 .fill(.backgroundTertiary)
         )
     }
@@ -330,8 +373,8 @@ public struct ProfileView: View {
             Spacer()
             
             CreatedDate()
+                .padding(.top, 28)
         }
-        .sensoryFeedback(.levelChange, trigger: vm.path)
     }
     
     //MARK: - Custom divider

@@ -49,8 +49,6 @@ final class MockCas: CASManagerProtocol {
 //        }
         
         fetchModels()
-        
-        completedTaskCount()
     }
     
     //MARK: Actions for work with CAS
@@ -59,7 +57,6 @@ final class MockCas: CASManagerProtocol {
             try cas.saveJsonModel(task.model)
             models[task.id] = task
             taskUpdateTrigger.toggle()
-            completedTaskCount()
         } catch {
             print("Couldn't save daat inside CAS")
         }
@@ -231,7 +228,6 @@ final class MockCas: CASManagerProtocol {
         let container = "iCloud.mido.robocode"
         
         guard let iCloudURL = FileManager.default.url(forUbiquityContainerIdentifier: container) else {
-            print("opa")
             return nil
         }
         
@@ -259,8 +255,8 @@ final class MockCas: CASManagerProtocol {
         models.removeValue(forKey: task.id)
     }
     
-    private func completedTaskCount() {
-        allCompletedTasksCount = 0
+    public func completedTaskCount() -> Int {
+        var allCompletedTasksCount = 0
         
         for task in models.values {
             guard !task.completeRecords.isEmpty else {
@@ -271,5 +267,7 @@ final class MockCas: CASManagerProtocol {
                 allCompletedTasksCount += 1
             }
         }
+        
+        return allCompletedTasksCount
     }
 }

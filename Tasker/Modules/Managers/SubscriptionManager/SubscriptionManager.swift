@@ -7,7 +7,7 @@
 
 import Foundation
 import StoreKit
-import SwiftUICore
+import SwiftUI
 import Models
 
 @Observable

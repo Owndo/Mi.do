@@ -26,11 +26,11 @@ public struct TaskCheckMark: View {
     
     public var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 6)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(task: task, colorScheme))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 6)
+                    RoundedRectangle(cornerRadius: 10)
                         .stroke(task.taskColor.color(for: colorScheme).invertedSeparartorSecondary(task: task, colorScheme), lineWidth: 1)
                 )
             

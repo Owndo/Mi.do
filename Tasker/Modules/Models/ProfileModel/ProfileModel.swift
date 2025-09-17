@@ -7,7 +7,7 @@
 
 import Foundation
 import BlockSet
-import SwiftUICore
+import SwiftUI
 import UIKit
 
 public typealias ProfileData = UIProfileModel

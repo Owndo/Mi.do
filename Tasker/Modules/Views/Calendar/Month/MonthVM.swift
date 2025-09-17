@@ -60,13 +60,13 @@ final class MonthVM {
     func onAppear() async {
         scrollID = 1
         
-        telemetryAction(.openView(.calendar(.open)))
-        
         try? await Task.sleep(for: .seconds(0.5))
         
-        guard checkSubscription() else {
-            return
-        }
+//        guard checkSubscription() else {
+//            return
+//        }
+        
+        telemetryAction(.openView(.calendar(.open)))
     }
     
     func checkSubscription() -> Bool {

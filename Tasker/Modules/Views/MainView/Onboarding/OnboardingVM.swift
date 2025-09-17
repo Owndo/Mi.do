@@ -8,7 +8,7 @@
 import Foundation
 import Managers
 import Models
-import SwiftUICore
+import SwiftUI
 
 @Observable
 final class OnboardingVM {

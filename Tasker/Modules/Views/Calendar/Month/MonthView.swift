@@ -31,7 +31,9 @@ public struct MonthView: View {
             
             VStack(spacing: 0) {
                 
-                CustomToolBar()
+                if osVersion.majorVersion < 26 {
+                    CustomToolBar()
+                }
                 
                 ScrollView {
                     LazyVStack {
@@ -69,6 +71,47 @@ public struct MonthView: View {
             
             if vm.showPaywall {
                 PaywallView()
+            }
+        }
+        .toolbar {
+            if osVersion.majorVersion >= 26 {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        vm.closeScreenButtonTapped(path: &path, mainViewIsOpen: &mainViewIsOpen)
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 17))
+                                .foregroundStyle(colorScheme.accentColor())
+                            
+                            Text("\(vm.selectedDate, format: .dateTime.month().day().year())")
+                                .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
+                        }
+                        .padding(.vertical, 7)
+                    }
+                    .disabled(vm.showPaywall)
+                }
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    if vm.selectedDayIsToday() {
+                        Button {
+                            vm.backToTodayButtonTapped()
+                        } label: {
+                            HStack {
+                                Image(systemName: "arrow.uturn.backward")
+                                    .font(.system(size: 17))
+                                
+                                Text("Today", bundle: .module)
+                                    .font(.system(.body, design: .rounded, weight: .medium))
+                            }
+                            .tint(.labelSecondary)
+                            .padding(.vertical, 7)
+                            .padding(.horizontal, 14)
+                        }
+                        .disabled(vm.showPaywall)
+                    }
+                }
             }
         }
         .animation(.bouncy, value: vm.showPaywall)

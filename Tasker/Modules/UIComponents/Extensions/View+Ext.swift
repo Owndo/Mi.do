@@ -10,11 +10,13 @@ import SwiftUI
 import Models
 
 public extension View {
-    func customBlurForContainer(colorScheme: ColorScheme) -> some View {
-        self
+    func customBlurForContainer(colorScheme: ColorScheme, apply: Bool? = nil) -> some View {
+        let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+        
+        return self
             .overlay(alignment: .top) {
                 LinearGradient(
-                    colors: [colorScheme.backgroundColor(), .clear],
+                    colors: [apply != nil ? colorScheme.backgroundColor() : osVersion.majorVersion < 26 ? colorScheme.backgroundColor() : .clear, .clear],
                     startPoint: .top,
                     endPoint: .bottom
                 )

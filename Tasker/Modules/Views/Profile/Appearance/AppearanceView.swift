@@ -34,22 +34,28 @@ struct AppearanceView: View {
                     }
                     .padding(.top, 27)
                     .padding(.bottom, 28)
+                    .padding(.horizontal, 16)
                     
                     ProgressMode()
                         .padding(.bottom, 28)
+                        .padding(.horizontal, 16)
                     
                     DefaultTaskColorSelector()
                         .padding(.bottom, 28)
+                        .padding(.horizontal, 16)
                     
                     AccentColorSelector()
                         .padding(.bottom, 28)
+                        .padding(.horizontal, 16)
                     
                     BackgroundColorSelector()
+                        .padding(.horizontal, 16)
                 }
                 .scrollIndicators(.hidden)
             }
-            .padding(.horizontal, 16)
-            .toolbar {
+        }
+        .toolbar {
+            if #available(iOS 26.0, *) {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         path.removeLast()
@@ -57,19 +63,38 @@ struct AppearanceView: View {
                         HStack {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 17))
+                                .foregroundStyle(colorScheme.accentColor())
                             
                             Text("Settings", bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
                         }
-                        .tint(colorScheme.accentColor())
+                    }
+                }
+                .sharedBackgroundVisibility(.hidden)
+            } else {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        path.removeLast()
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 17))
+                                .foregroundStyle(colorScheme.accentColor())
+                            
+                            Text("Settings", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
+                        }
                     }
                 }
             }
-            .navigationBarBackButtonHidden()
-            .navigationTitle(Text("Appearance", bundle: .module))
-            .navigationBarTitleDisplayMode(.inline)
-            .background(colorScheme.backgroundColor())
         }
+        .toolbarBackground(osVersion.majorVersion >= 26 ? .clear : colorScheme.backgroundColor(), for: .navigationBar)
+        .navigationBarBackButtonHidden()
+        .navigationTitle(Text("Appearance", bundle: .module))
+        .navigationBarTitleDisplayMode(.inline)
+        .background(colorScheme.backgroundColor())
         .animation(.default, value: colorScheme)
         .animation(.default, value: vm.profileData.settings.colorScheme)
         .animation(.default, value: vm.profileData.settings.background)
@@ -80,7 +105,9 @@ struct AppearanceView: View {
     @ViewBuilder
     private func SchemeSelector(_ scheme: ColorSchemeMode) -> some View {
         Button {
-            vm.changeScheme(scheme)
+            withAnimation {
+                vm.changeScheme(scheme)
+            }
         } label: {
             VStack(spacing: 12) {
                 switch scheme {
@@ -215,7 +242,7 @@ struct AppearanceView: View {
             }
             .padding(.vertical, 20)
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 26)
                     .fill(
                         .backgroundTertiary
                     )
@@ -276,7 +303,7 @@ struct AppearanceView: View {
                 }
                 .padding(20)
                 .background(
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: 26)
                         .fill(
                             .backgroundTertiary
                         )
@@ -333,7 +360,7 @@ struct AppearanceView: View {
             }
             .padding(20)
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 26)
                     .fill(
                         .backgroundTertiary
                     )

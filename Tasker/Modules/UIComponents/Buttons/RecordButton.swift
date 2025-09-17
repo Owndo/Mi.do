@@ -36,10 +36,22 @@ public struct RecordButton: View {
             
             CustomPopOver()
             
-            if isRecording {
-                StopRecording()
-            } else {
-                StartRecording()
+            VStack {
+                if isRecording {
+                    if #available(iOS 26.0, *) {
+                        StopRecording()
+                            .glassEffect(.regular.tint(colorScheme == .dark ? .clear : .white).interactive())
+                    } else {
+                        StopRecording()
+                    }
+                } else {
+                    if #available(iOS 26.0, *) {
+                        StartRecording()
+                            .glassEffect(.regular.tint(colorScheme == .dark ? .clear : .white).interactive())
+                    } else {
+                        StartRecording()
+                    }
+                }
             }
         }
         .animation(.default, value: showTips)

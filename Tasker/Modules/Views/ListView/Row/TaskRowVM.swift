@@ -8,7 +8,7 @@
 import Foundation
 import Managers
 import Models
-import SwiftUICore
+import SwiftUI
 import TaskView
 
 @Observable
@@ -30,6 +30,9 @@ final class TaskRowVM: HashableObject {
     //MARK: - Properties
     var playingTask: UITaskModel?
     var selectedTask: MainModel?
+    
+//    var showDetails = false
+    var taskVM: TaskVM?
     
     var task: MainModel
     
@@ -80,7 +83,7 @@ final class TaskRowVM: HashableObject {
     
     //MARK: Selected task
     func selectedTaskButtonTapped() {
-        selectedTask = task
+        taskVM = TaskVM(mainModel: task)
         stopToPlay()
         
         // telemetry

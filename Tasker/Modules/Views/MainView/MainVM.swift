@@ -40,8 +40,11 @@ public final class MainVM {
     
     //MARK: - Model
     var mainModel: MainModel?
-    
     var profileModel: ProfileData = mockProfileData()
+
+    var taskVM: TaskVM?
+    
+    var sheetDestination: SheetDestination?
     
     //MARK: - UI States
     var mainViewIsOpen = true
@@ -62,7 +65,7 @@ public final class MainVM {
     
     var presentationPosition: PresentationDetent = PresentationMode.base.detent {
         didSet {
-            if presentationPosition == .fraction(0.96) {
+            if presentationPosition == .fraction(0.93) {
                 if path.count > 0 {
                     path.removeLast()
                 }
@@ -74,6 +77,31 @@ public final class MainVM {
             }
         }
     }
+    
+    enum SheetDestination: Hashable, Identifiable {
+        case profile
+        case details(TaskVM)
+        
+        var id: Self { self }
+
+        static func == (lhs: SheetDestination, rhs: SheetDestination) -> Bool {
+            switch (lhs, rhs) {
+            case (.details, .details): return true
+            case (.profile, .profile): return true   // ⚠️ сравнение только по case, без учёта TaskVM
+            default: return false
+            }
+        }
+
+        func hash(into hasher: inout Hasher) {
+            switch self {
+            case .details:
+                hasher.combine(0)
+            case .profile:
+                hasher.combine(1)
+            }
+        }
+    }
+
     
     var recordingState: RecordingState = .idle
     
@@ -185,7 +213,8 @@ public final class MainVM {
     }
     
     func profileViewButtonTapped() {
-        profileViewIsOpen = true
+        sheetDestination = .profile
+//        profileViewIsOpen = true
         telemetryAction(.mainViewAction(.profileButtonTapped))
     }
     
@@ -297,7 +326,7 @@ public final class MainVM {
             )
         )
         
-        mainModel = model
+        sheetDestination = .details(TaskVM(mainModel: model))
     }
     
     //MARK: - Recognize data
@@ -389,7 +418,7 @@ public final class MainVM {
         
         try? await Task.sleep(for: .seconds(0.8))
         
-        guard casManager.allCompletedTasksCount >= 23 && profileModel.onboarding.requestedReview == false else {
+        guard casManager.completedTaskCount() >= 23 && profileModel.onboarding.requestedReview == false else {
             return
         }
         
@@ -417,7 +446,7 @@ public final class MainVM {
 
 //MARK: - Helpers not a VM
 enum PresentationMode: CGFloat, CaseIterable {
-    case base = 0.96
+    case base = 0.93
     case bottom = 0.20
     
     var detent: PresentationDetent {

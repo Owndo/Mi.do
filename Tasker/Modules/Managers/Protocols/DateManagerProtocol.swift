@@ -8,7 +8,7 @@
 import Combine
 import Foundation
 import Models
-import SwiftUICore
+import SwiftUI
 
 public protocol DateManagerProtocol {
     var selectedDateHasBeenChange: ((Bool) -> Void)? { get set }

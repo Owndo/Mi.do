@@ -52,7 +52,7 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         let session = AVAudioSession.sharedInstance()
         
         do {
-            try session.setCategory(.playAndRecord, mode: .default, options: [.allowAirPlay, .allowBluetooth, .allowBluetoothA2DP, .duckOthers])
+            try session.setCategory(.playAndRecord, mode: .default, options: [.allowAirPlay, .allowBluetoothHFP, .allowBluetoothA2DP, .duckOthers])
             try session.setActive(true)
             
             avAudioRecorder = try AVAudioRecorder(url: fileName, settings: setting)

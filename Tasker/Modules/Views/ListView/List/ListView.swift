@@ -41,7 +41,7 @@ public struct ListView: View {
                 vm.contentHeight = height
             }
         }
-        .customBlurForContainer(colorScheme: colorScheme)
+        .customBlurForContainer(colorScheme: colorScheme, apply: true)
         .animation(.default, value: vm.completedTasksHidden)
         .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
         .animation(.spring, value: vm.tasks)

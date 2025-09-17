@@ -15,8 +15,8 @@ struct ArticlesView: View {
     
     var body: some View {
         ZStack {
-            colorScheme.backgroundColor()
-                .ignoresSafeArea()
+            colorScheme.backgroundColor().ignoresSafeArea()
+            
             VStack(spacing: 12) {
                 Text("Coming soon...", bundle: .module)
                     .font(.system(.title2, design: .rounded, weight: .medium))
@@ -30,18 +30,38 @@ struct ArticlesView: View {
             }
             .padding(.horizontal, 45)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        path.removeLast()
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 17))
-                            
-                            Text("Profile", bundle: .module)
-                                .font(.system(.body, design: .rounded, weight: .medium))
+                if #available(iOS 26.0, *) {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            path.removeLast()
+                        } label: {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 17))
+                                    .foregroundStyle(colorScheme.accentColor())
+                                
+                                Text("Profile", bundle: .module)
+                                    .font(.system(.body, design: .rounded, weight: .medium))
+                                    .foregroundStyle(colorScheme.accentColor())
+                            }
                         }
-                        .tint(colorScheme.accentColor())
+                    }
+                    .sharedBackgroundVisibility(.hidden)
+                } else {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            path.removeLast()
+                        } label: {
+                            HStack {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 17))
+                                    .foregroundStyle(colorScheme.accentColor())
+                                
+                                Text("Profile", bundle: .module)
+                                    .font(.system(.body, design: .rounded, weight: .medium))
+                                    .foregroundStyle(colorScheme.accentColor())
+                            }
+                        }
                     }
                 }
             }

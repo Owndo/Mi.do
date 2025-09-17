@@ -20,28 +20,37 @@ struct NotesView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                TextEditor(text: $vm.profileModel.notes)
-                    .font(.system(.callout, design: .rounded, weight: .semibold))
-                    .foregroundStyle(.labelPrimary)
-                    .focused($notesFocusState)
-                    .scrollIndicators(.hidden)
-                    .scrollDismissesKeyboard(.immediately)
-                    .textEditorStyle(.plain)
-                    .onSubmit {
-                        vm.saveNotes()
+            ScrollView {
+                ZStack {
+                    VStack {
+                        Spacer()
+                        
+                        TextEditor(text: $vm.profileModel.notes)
+                            .font(.system(.callout, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.labelPrimary)
+                            .focused($notesFocusState)
+                            .scrollIndicators(.hidden)
+                            .scrollDismissesKeyboard(.immediately)
+                            .textEditorStyle(.plain)
+                            .onSubmit {
+                                vm.saveNotes()
+                            }
+                            .padding([.top, .horizontal])
+                            .padding(.bottom, notesFocusState ? 20 : 80)
+                        
+                        MockView()
                     }
-                    .padding([.top, .horizontal])
-                    .padding(.bottom, notesFocusState ? 20 : 80)
-                
-                MockView()
+                }
+            }
+            .onTapGesture {
+                notesFocusState = true
             }
             .toolbar {
                 ToolbarItem(placement: .keyboard) {
                     KeyboardSafeAreaInset()
                 }
             }
-            .customBlurForContainer(colorScheme: colorScheme)
+//            .customBlurForContainer(colorScheme: colorScheme)
             .onChange(of: notesFocusState) { _, _ in
                 vm.saveNotes()
             }
@@ -54,6 +63,8 @@ struct NotesView: View {
     private func MockView() -> some View {
         if vm.profileModel.notes.isEmpty && notesFocusState == false {
             VStack {
+                Spacer(minLength: 150)
+                
                 Image(systemName: "note.text.badge.plus")
                     .foregroundStyle(.labelQuintuple)
                     .scaleEffect(1.5)
@@ -71,25 +82,45 @@ struct NotesView: View {
     @ViewBuilder
     private func KeyboardSafeAreaInset() -> some View {
         if notesFocusState {
-            HStack {
-                
-                Spacer()
-                
-                Button {
-                    notesFocusState = false
-                    vm.saveNotes()
-                } label: {
-                    Text("Done", bundle: .module)
-                        .foregroundStyle(colorScheme.accentColor())
-                        .padding(.vertical, 9)
+            if #available(iOS 26.0, *) {
+                HStack {
+                    
+                    Spacer()
+                    
+                    Button {
+                        notesFocusState = false
+                        vm.saveNotes()
+                    } label: {
+                        Text("Done", bundle: .module)
+                            .foregroundStyle(colorScheme.accentColor())
+                            .padding(.vertical, 9)
+                    }
                 }
+                .frame(maxHeight: .infinity)
+                .padding(.horizontal, 16)
+                .glassEffect()
+            } else {
+                HStack {
+                    
+                    Spacer()
+                    
+                    Button {
+                        notesFocusState = false
+                        vm.saveNotes()
+                    } label: {
+                        
+                        Text("Done", bundle: .module)
+                            .foregroundStyle(colorScheme.accentColor())
+                            .padding(.vertical, 9)
+                    }
+                }
+                .frame(maxHeight: .infinity)
+                .padding(.horizontal, 16)
+                .background(
+                    colorScheme.backgroundColor()
+                )
+                .padding(.horizontal, horizontalSizeClass == .regular ? -20 : -16)
             }
-            .frame(maxHeight: .infinity)
-            .padding(.horizontal, 16)
-            .background(
-                colorScheme.backgroundColor()
-            )
-            .padding(.horizontal, horizontalSizeClass == .regular ? -20 : -16)
         }
     }
 }

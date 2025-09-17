@@ -42,7 +42,7 @@ final class PermissionManager: PermissionProtocol {
             throw MicrophonePermission.microphoneIsNotAvailable
         case .granted:
             do {
-                try avAudioSession.setCategory(.playAndRecord, mode: .default, options: [.allowAirPlay, .allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker])
+                try avAudioSession.setCategory(.playAndRecord, mode: .default, options: [.allowAirPlay, .allowBluetoothHFP, .allowBluetoothA2DP, .defaultToSpeaker])
                 try avAudioSession.setActive(true)
                 
                 if avAudioSession.isOtherAudioPlaying {

@@ -14,10 +14,10 @@ public struct WeekView: View {
     @State private var vm = WeekVM()
     
     let shape = UnevenRoundedRectangle(
-        topLeadingRadius: 16,
+        topLeadingRadius: 20,
         bottomLeadingRadius: 33,
         bottomTrailingRadius: 33,
-        topTrailingRadius: 16,
+        topTrailingRadius: 20,
         style: .circular
     )
     

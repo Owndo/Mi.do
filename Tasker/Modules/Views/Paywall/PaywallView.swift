@@ -60,7 +60,7 @@ public struct PaywallView: View {
                 .scaledToFit()
                 .frame(width: 98)
                 .clipShape(
-                    RoundedRectangle(cornerRadius: 12)
+                    RoundedRectangle(cornerRadius: 26)
                 )
                 .padding(.bottom, 12)
             
@@ -76,7 +76,7 @@ public struct PaywallView: View {
         .padding(.horizontal, 16)
         .frame(maxHeight: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: 24)
+            RoundedRectangle(cornerRadius: 26)
                 .fill(
                     colorScheme.backgroundColor()
                 )
@@ -194,7 +194,7 @@ public struct PaywallView: View {
                             .padding(.vertical, 4)
                             .padding(.horizontal, 10)
                             .background(
-                                RoundedRectangle(cornerRadius: 16)
+                                RoundedRectangle(cornerRadius: 26)
                                     .fill(
                                         colorScheme.accentColor()
                                     )
@@ -220,7 +220,7 @@ public struct PaywallView: View {
                 .padding(.vertical, 15)
                 .frame(maxWidth: .infinity)
                 .background(
-                    RoundedRectangle(cornerRadius: 10)
+                    RoundedRectangle(cornerRadius: 26)
                         .fill(
                             colorScheme.accentColor()
                         )

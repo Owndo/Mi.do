@@ -126,7 +126,7 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .default,
-            options: [.allowAirPlay, .allowBluetooth, .allowBluetoothA2DP, .duckOthers, .defaultToSpeaker]
+            options: [.allowAirPlay, .allowBluetoothHFP, .allowBluetoothA2DP, .duckOthers, .defaultToSpeaker]
         )
         try audioSession.setActive(true)
     }

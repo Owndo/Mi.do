@@ -31,6 +31,7 @@ public final class TaskVM: Identifiable {
     var profileModel: ProfileData = mockProfileData()
     var backgroundColor: Color = .white
     
+    var repeatTask = RepeatTask.never
     var dayOfWeek = [DayOfWeek]()
     
     // MARK: - UI States
@@ -253,6 +254,7 @@ public final class TaskVM: Identifiable {
     }
     
     private func setupDayOfWeek() {
+        repeatTask = task.repeatTask
         if task.repeatTask == .dayOfWeek {
             showDayOfWeekSelector = true
         }
@@ -293,9 +295,14 @@ public final class TaskVM: Identifiable {
         shareViewIsShowing.toggle()
     }
     
+    func typeOfRepeatHasBeenChanged(_ type: RepeatTask) {
+        repeatTask = type
+    }
+    
     //MARK: - Save task
     func saveTask() async {
         task.dayOfWeek = dayOfWeek
+        task.repeatTask = repeatTask
         task.notificationDate = changeNotificationTime()
         
         taskManager.saveTask(task)

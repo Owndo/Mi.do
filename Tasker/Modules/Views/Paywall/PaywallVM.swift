@@ -8,7 +8,7 @@
 import Foundation
 import Managers
 import StoreKit
-import SwiftUICore
+import SwiftUI
 
 @Observable
 final class PaywallVM {

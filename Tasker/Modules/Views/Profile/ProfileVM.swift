@@ -121,8 +121,6 @@ final class ProfileVM {
     
     //MARK: - Navigation to
     func goTo(_ destination: ProfileDestination) {
-        navigationTriger.toggle()
-        
         switch destination {
         case .articles:
             path.append(destination)
@@ -171,7 +169,7 @@ final class ProfileVM {
                 daysFromStartOfWeek = calendar.date(byAdding: .day, value: 1, to: daysFromStartOfWeek)!
             }
         case .completed:
-            count = casManager.allCompletedTasksCount
+            count = casManager.completedTaskCount()
         }
         
         if count >= 1000 {

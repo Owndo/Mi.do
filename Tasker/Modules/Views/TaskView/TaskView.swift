@@ -15,9 +15,7 @@ public struct TaskView: View {
     
     @Environment(\.dismiss) var dismissButton
     
-    @State private var vm: TaskVM
-    
-    var model: MainModel
+    @Bindable private var vm: TaskVM
     
     @FocusState private var sectionInFocus: SectionInFocus?
     
@@ -26,111 +24,130 @@ public struct TaskView: View {
         case description
     }
     
-    public init(model: MainModel) {
-        self._vm = State(initialValue: TaskVM(mainModel: model))
-        self.model = model
+    public init(taskVM: TaskVM) {
+        _vm = .init(taskVM)
     }
     
     public var body: some View {
-        ZStack {
-            LinearGradient(colors: [vm.backgroundColor, colorScheme.backgroundColor()], startPoint: .bottom, endPoint: .top)
-                .opacity(0.7)
-                .ignoresSafeArea()
-            
-            VStack(spacing: 0) {
+        NavigationStack {
+            ZStack {
+                LinearGradient(colors: [vm.backgroundColor, colorScheme.backgroundColor()], startPoint: .bottom, endPoint: .top)
+                    .opacity(0.7)
+                    .ignoresSafeArea()
                 
-                CustomTabBar()
-                
-                ScrollView {
-                    VStack(spacing: 28) {
-                        
-                        AudioSection()
-                        
-                        MainSection()
-                        
-                        VStack(spacing: 0) {
-                            DateSelection()
+                VStack(spacing: 0) {
+                    
+                    //                    CustomTabBar()
+                    
+                    ScrollView {
+                        VStack(spacing: 28) {
                             
-                            TimeSelection()
+                            AudioSection()
                             
-                            RepeatSelection()
+                            MainSection()
                             
-                            Deadline()
-                            
-                        }
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(
-                                    vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
-                                )
-                        )
-                        
-                        CustomColorPicker()
+                            VStack(spacing: 0) {
+                                DateSelection()
+                                
+                                TimeSelection()
+                                
+                                RepeatSelection()
+                                
+                                Deadline()
+                                
+                            }
                             .background(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 26)
                                     .fill(
                                         vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
                                     )
                             )
-                        
-                        CreatedDate()
-                        
-                        Spacer()
+                            
+                            CustomColorPicker()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 26)
+                                        .fill(
+                                            vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
+                                        )
+                                )
+                            
+                            CreatedDate()
+                            
+                            Spacer()
+                        }
                     }
+                    .ignoresSafeArea(edges: .bottom)
+                    .scrollIndicators(.hidden)
+                    .scrollDismissesKeyboard(.immediately)
+                    
+                    //                    withAnimation(.default) {
+                    //                        SaveButton()
+                    //                    }
                 }
-                .ignoresSafeArea(edges: .bottom)
-                .scrollIndicators(.hidden)
-                .scrollDismissesKeyboard(.immediately)
-                
-                withAnimation(.default) {
+                .safeAreaInset(edge: .bottom) {
                     SaveButton()
                 }
-            }
-            .onAppear {
-                if vm.onAppear(colorScheme: colorScheme) {
-                    sectionInFocus = .title
+                .onAppear {
+                    if vm.onAppear(colorScheme: colorScheme) {
+                        sectionInFocus = .title
+                    }
+                }
+                .onChange(of: vm.currentlyRecordTime) { newValue, _ in
+                    vm.stopAfterCheck(newValue)
+                }
+                .onDisappear {
+                    vm.disappear()
+                }
+                .alert(item: $vm.alert) { alert in
+                    alert.alert
+                }
+                .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
+                .sensoryFeedback(.selection, trigger: vm.notificationDate)
+                .sensoryFeedback(.selection, trigger: vm.showDeadline)
+                .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)
+                .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.isRecording)
+                .animation(.default, value: vm.task.audio)
+                .animation(.easeInOut, value: vm.showDatePicker)
+                .animation(.easeInOut, value: vm.showTimePicker)
+                .animation(.easeInOut, value: vm.showDeadline)
+                .animation(.easeInOut, value: vm.showDayOfWeekSelector)
+                .sheet(isPresented: $vm.shareViewIsShowing) {
+                    ShareView(activityItems: [vm.task])
+                        .presentationDetents([.medium])
+                }
+                .padding(.horizontal, 16)
+                
+                if vm.showPaywall {
+                    PaywallView()
                 }
             }
-            .onChange(of: vm.currentlyRecordTime) { newValue, _ in
-                vm.stopAfterCheck(newValue)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        vm.deleteTaskButtonTapped()
+                    } label: {
+                        Text("Delete", bundle: .module)
+                            .font(.system(.body, design: .rounded, weight: .regular))
+                            .foregroundStyle(.accentRed)
+                            .taskDeleteDialog(
+                                isPresented: $vm.confirmationDialogIsPresented,
+                                task: vm.task,
+                                message: vm.messageForDelete,
+                                isSingleTask: vm.singleTask,
+                                onDelete: vm.deleteButtonTapped,
+                                dismissButton: dismissButton
+                            )
+                    }
+                }
+                
+                //                ToolbarItem(placement: .bottomBar) {
+                //                    SaveButton()
+                //                }
             }
-            .onDisappear {
-                vm.disappear()
-            }
-            .taskDeleteDialog(
-                isPresented: $vm.confirmationDialogIsPresented,
-                task: vm.task,
-                message: vm.messageForDelete,
-                isSingleTask: vm.singleTask,
-                onDelete: vm.deleteButtonTapped,
-                dismissButton: dismissButton
-            )
-            .alert(item: $vm.alert) { alert in
-                alert.alert
-            }
-            .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
-            .sensoryFeedback(.selection, trigger: vm.notificationDate)
-            .sensoryFeedback(.selection, trigger: vm.showDeadline)
-            .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)
-            .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.isRecording)
-            .animation(.default, value: vm.task.audio)
-            .animation(.easeInOut, value: vm.showDatePicker)
-            .animation(.easeInOut, value: vm.showTimePicker)
-            .animation(.easeInOut, value: vm.showDeadline)
-            .animation(.easeInOut, value: vm.showDayOfWeekSelector)
-            .sheet(isPresented: $vm.shareViewIsShowing) {
-                ShareView(activityItems: [vm.task])
-                    .presentationDetents([.medium])
-            }
-            .padding(.horizontal, 16)
-            
-            if vm.showPaywall {
-                PaywallView()
-            }
+            .animation(.bouncy, value: vm.showPaywall)
+            .animation(.default, value: colorScheme)
+            .animation(.default, value: vm.task.taskColor)
         }
-        .animation(.bouncy, value: vm.showPaywall)
-        .animation(.default, value: colorScheme)
-        .animation(.default, value: vm.task.taskColor)
     }
     
     //MARK: TabBar
@@ -216,7 +233,7 @@ public struct TaskView: View {
         .padding(.vertical, 11)
         .padding(.horizontal, 16)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 26)
                 .fill(
                     .backgroundTertiary
                 )
@@ -240,7 +257,7 @@ public struct TaskView: View {
         .padding(.vertical, 11)
         .padding(.horizontal, 16)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 26)
                 .fill(
                     .backgroundTertiary
                 )
@@ -266,22 +283,30 @@ public struct TaskView: View {
                     await vm.recordButtonTapped()
                 }
             } label: {
-                ZStack {
-                    Circle()
-                        .fill(
-                            colorScheme.accentColor()
-                        )
-                        .frame(width: 34, height: 34)
-                    
+                if #available(iOS 26.0, *) {
                     Image(systemName: vm.isRecording ? "pause.fill" : "microphone.fill")
                         .foregroundStyle(.white)
+                        .padding(8)
+                        .glassEffect(.regular.tint(colorScheme.accentColor()).interactive(), in: .circle)
+                    
+                } else {
+                    ZStack {
+                        Circle()
+                            .fill(
+                                colorScheme.accentColor()
+                            )
+                            .frame(width: 34, height: 34)
+                        
+                        Image(systemName: vm.isRecording ? "pause.fill" : "microphone.fill")
+                            .foregroundStyle(.white)
+                    }
                 }
             }
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 16)
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 26)
                 .fill(
                     .backgroundTertiary
                 )
@@ -331,7 +356,7 @@ public struct TaskView: View {
             sectionInFocus = nil
         }
         .background(
-            RoundedRectangle(cornerRadius: 12)
+            RoundedRectangle(cornerRadius: 26)
                 .fill(
                     .backgroundTertiary
                 )
@@ -495,7 +520,7 @@ public struct TaskView: View {
     //MARK: ColorPicker
     @ViewBuilder
     private func CustomColorPicker() -> some View {
-        VStack {
+        VStack(spacing: 0) {
             HStack {
                 Text("Color task", bundle: .module)
                     .font(.system(.callout, design: .rounded, weight: .regular))
@@ -514,23 +539,34 @@ public struct TaskView: View {
                         Button {
                             vm.selectedColorButtonTapped(color, colorScheme: colorScheme)
                         } label: {
-                            Circle()
-                                .fill(color.color(for: colorScheme))
-                                .frame(width: 28, height: 28)
-                                .overlay(
-                                    ZStack {
-                                        Circle()
-                                            .stroke(.separatorPrimary, lineWidth: vm.checkColorForCheckMark(color, for: colorScheme) ? 1.5 : 0.3)
-                                            .shadow(radius: 8, y: 4)
-                                        
-                                        Image(systemName: "checkmark")
-                                            .symbolEffect(.bounce, value: vm.selectedColorTapped)
-                                            .foregroundStyle(
-                                                vm.checkColorForCheckMark(color, for: colorScheme) ? vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme) : .clear
-                                            )
-                                    }
-                                )
+                            if #available(iOS 26.0, *) {
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(
+                                        vm.checkColorForCheckMark(color, for: colorScheme) ? vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme) : .clear
+                                    )
+                                    .padding(6)
+                                    .symbolEffect(.bounce, value: vm.selectedColorTapped)
+                                    .glassEffect(.regular.tint(color.color(for: colorScheme)).interactive(), in: .circle)
+                            } else {
+                                Circle()
+                                    .fill(color.color(for: colorScheme))
+                                    .frame(width: 28, height: 28)
+                                    .overlay(
+                                        ZStack {
+                                            Circle()
+                                                .stroke(.separatorPrimary, lineWidth: vm.checkColorForCheckMark(color, for: colorScheme) ? 1.5 : 0.3)
+                                                .shadow(radius: 8, y: 4)
+                                            
+                                            Image(systemName: "checkmark")
+                                                .symbolEffect(.bounce, value: vm.selectedColorTapped)
+                                                .foregroundStyle(
+                                                    vm.checkColorForCheckMark(color, for: colorScheme) ? vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme) : .clear
+                                                )
+                                        }
+                                    )
+                            }
                         }
+                        .padding(.vertical, 8)
                         
                         Spacer()
                     }
@@ -552,9 +588,9 @@ public struct TaskView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 5)
-                .padding(.vertical, 1)
             }
+            .padding(.horizontal, 5)
+            .padding(.vertical, 1)
             .sensoryFeedback(.selection, trigger: vm.selectedColorTapped)
         }
         .padding(.vertical, 13)
@@ -624,31 +660,47 @@ public struct TaskView: View {
             }
             .padding(12)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 16)
                     .fill(vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme))
             )
             
-            Button {
-                Task {
-                    dismissButton()
-                    
-                    try await Task.sleep(nanoseconds: 50_000_000)
-                    await vm.closeButtonTapped()
-                }
-            } label: {
-                Text("Close", bundle: .module)
-                    .font(.system(.body, design: .rounded, weight: .regular))
-                    .foregroundStyle(.white)
-                    .padding(.vertical, 15)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(
-                                colorScheme.accentColor()
+            HStack {
+                Spacer()
+                
+                Button {
+                    Task {
+                        dismissButton()
+                        
+                        try await Task.sleep(nanoseconds: 50_000_000)
+                        await vm.closeButtonTapped()
+                    }
+                } label: {
+                    if #available(iOS 26.0, *) {
+                        Text("Close", bundle: .module)
+                            .font(.system(.body, design: .rounded, weight: .regular))
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 15)
+                            .frame(maxWidth: .infinity)
+                            .glassEffect(.regular.tint(colorScheme.accentColor()))
+                    } else {
+                        Text("Close", bundle: .module)
+                            .font(.system(.body, design: .rounded, weight: .regular))
+                            .foregroundStyle(.white)
+                            .padding(.vertical, 15)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 26)
+                                    .fill(
+                                        colorScheme.accentColor()
+                                    )
                             )
-                    )
+                    }
+                }
+                
+                Spacer()
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(.top, 5)
         .padding(.bottom, 10)
     }
@@ -682,5 +734,5 @@ public struct TaskView: View {
 }
 
 #Preview {
-    TaskView(model: mockModel())
+    TaskView(taskVM: TaskVM(mainModel: mockModel()))
 }

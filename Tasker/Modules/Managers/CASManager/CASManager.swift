@@ -33,8 +33,6 @@ final class CASManager: CASManagerProtocol {
         models.values.filter { !$0.completeRecords.isEmpty }
     }
     
-    var allCompletedTasksCount = Int()
-    
     init() {
         localDirectory = CASManager.createLocalDirectory()!
         remoteDirectory = CASManager.createiCloudDirectory() ?? localDirectory
@@ -45,12 +43,11 @@ final class CASManager: CASManagerProtocol {
         cas = MultiCas(local: localCas, remote: iCas)
         
         profileModel = fetchProfileData()
+        fetchModels()
         
         Task {
             await updateCASesWithICloud()
         }
-        
-        completedTaskCount()
     }
     
     //MARK: Actions for work with CAS
@@ -60,7 +57,6 @@ final class CASManager: CASManagerProtocol {
             try cas.saveJsonModel(task.model)
             models[task.id] = task
             taskUpdateTrigger.toggle()
-            completedTaskCount()
         } catch {
             print("Couldn't save daat inside CAS")
         }
@@ -190,19 +186,16 @@ final class CASManager: CASManagerProtocol {
     func updateCASesWithICloud() async {
         // sync with icloud is turn off
         guard profileModel.settings.iCloudSyncEnabled else {
-            fetchModels()
             return
         }
         
         // create directory for container
         guard let remoteURL = CASManager.createiCloudDirectory() else {
-            fetchModels()
             return
         }
         
         // directory created, sync turn on but directory is empty
         guard hasFiles(at: remoteURL) else {
-            fetchModels()
             return
         }
         
@@ -211,7 +204,6 @@ final class CASManager: CASManagerProtocol {
             try await syncCases()
             fetchModels()
         } catch {
-            fetchModels()
             print("Couldn't sync")
         }
     }
@@ -293,13 +285,14 @@ final class CASManager: CASManagerProtocol {
     }
     
     
-    //MARK: Predicate
+    //MARK: Delete
     private func indexForDelete(_ task: MainModel) {
         models.removeValue(forKey: task.id)
     }
     
-    private func completedTaskCount() {
-        allCompletedTasksCount = 0
+    //MARK: - Completed tasks from cas
+    public func completedTaskCount() -> Int {
+        var allCompletedTasksCount = 0
         
         for task in models.values {
             guard !task.completeRecords.isEmpty else {
@@ -310,5 +303,7 @@ final class CASManager: CASManagerProtocol {
                 allCompletedTasksCount += 1
             }
         }
+        
+        return allCompletedTasksCount
     }
 }

@@ -68,7 +68,8 @@ final class SettingsVM {
         casManager.saveProfileData(profileModel)
     }
     
-    func closeButtonTapped() {
+    func closeButtonTapped(_ path: inout NavigationPath) {
+        path.removeLast()
         telemetryAction(action: .profileAction(.closeButtonTapped))
     }
     

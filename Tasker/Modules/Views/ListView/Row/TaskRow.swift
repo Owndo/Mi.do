@@ -32,8 +32,8 @@ struct TaskRow: View {
                 isSingleTask: vm.singleTask,
                 onDelete: vm.deleteButtonTapped
             )
-            .sheet(item: $vm.selectedTask) { task in
-                TaskView(model: task)
+            .sheet(item: $vm.taskVM) { taskVM in
+                TaskView(taskVM: taskVM)
             }
             .sensoryFeedback(.selection, trigger: vm.selectedTask)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
@@ -100,7 +100,7 @@ struct TaskRow: View {
                 }
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
         .listStyle(PlainListStyle())
         .listRowSeparator(.hidden)
         .frame(height: vm.listRowHeight)

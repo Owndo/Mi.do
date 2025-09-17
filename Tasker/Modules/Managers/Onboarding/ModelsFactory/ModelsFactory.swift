@@ -7,7 +7,7 @@
 
 import Foundation
 import Models
-import SwiftUICore
+import SwiftUI
 
 @Observable
 final class ModelsFactory {

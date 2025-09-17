@@ -29,12 +29,11 @@ public struct MainView: View {
     public var body: some View {
         NavigationStack(path: $vm.path) {
             ZStack {
-                colorScheme.backgroundColor()
-                    .ignoresSafeArea()
+                CustomBackground()
                 
                 NotesView(mainViewIsOpen: $vm.mainViewIsOpen)
                     .disabled(vm.showPaywall)
-                    .disabled(vm.presentationPosition == .fraction(0.96))
+                    .disabled(vm.presentationPosition == .fraction(0.93))
                 
                 if vm.showPaywall {
                     Color.backgroundDimDark.ignoresSafeArea()
@@ -46,10 +45,19 @@ public struct MainView: View {
                         GlowEffect(decibelLevel: vm.decibelLvl)
                             .opacity(vm.isRecording ? 1 : 0)
                     )
-                    .preferredColorScheme(colorScheme)
-                    .sheet(isPresented: $vm.profileViewIsOpen) {
-                        ProfileView()
-                            .preferredColorScheme(colorScheme)
+                    .sheet(item: $vm.sheetDestination) { destination in
+                        switch destination {
+                        case .details(let taskModel):
+                            TaskView(taskVM: taskModel)
+                                .preferredColorScheme(colorScheme)
+                                .onDisappear {
+                                    vm.disappear()
+                                }
+                        case .profile:
+                            ProfileView()
+                                .preferredColorScheme(colorScheme)
+                        }
+                      
                     }
                     .sheet(isPresented: $vm.onboardingManager.sayHello) {
                         SayHelloView()
@@ -57,6 +65,7 @@ public struct MainView: View {
                             .presentationDragIndicator(.visible)
                     }
             }
+       
             .navigationDestination(for: MainVM.Destination.self) { destination in
                 switch destination {
                 case .main:
@@ -65,6 +74,7 @@ public struct MainView: View {
                     MonthView(mainViewIsOpen: $vm.mainViewIsOpen, path: $vm.path)
                 }
             }
+            //MARK: - Toolbar
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -81,7 +91,7 @@ public struct MainView: View {
                 ToolbarItem(placement: .principal) {
                     TextField(text: $vm.profileModel.customTitle, prompt: Text("Write title 🎯", bundle: .module)) {}
                         .font(.system(.headline, design: .default, weight: .semibold))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.labelPrimary)
                         .multilineTextAlignment(.center)
                         .onSubmit {
                             vm.profileModelSave()
@@ -99,8 +109,10 @@ public struct MainView: View {
                     .disabled(vm.disabledButton)
                 }
             }
+            .toolbarBackground(osVersion.majorVersion >= 26 ? .visible : .hidden, for: .navigationBar)
             .navigationBarTitleDisplayMode(.inline)
             .animation(.default, value: vm.isRecording)
+            .animation(.default, value: vm.presentationPosition)
             .sensoryFeedback(.selection, trigger: vm.profileViewIsOpen)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
         }
@@ -110,8 +122,7 @@ public struct MainView: View {
     @ViewBuilder
     private func MainViewBase() -> some View {
         ZStack {
-            colorScheme.backgroundColor()
-                .ignoresSafeArea()
+            colorScheme.backgroundColor().ignoresSafeArea()
             
             VStack(spacing: 0) {
                 WeekView()
@@ -120,6 +131,7 @@ public struct MainView: View {
                 
                 ListView()
                     .disabled(vm.disabledButton)
+                
                 Spacer()
             }
             
@@ -140,23 +152,22 @@ public struct MainView: View {
                 PaywallView()
             }
         }
-        .sheet(item: $vm.mainModel) { model in
-            TaskView(model: model)
-                .onDisappear {
-                    vm.disappear()
-                }
-        }
+        .overlay(
+            GlowEffect(decibelLevel: vm.decibelLvl)
+                .opacity(vm.isRecording ? 1 : 0)
+        )
         .onChange(of: vm.askReview) { _ , newValue in
             requestReview()
         }
         .alert(item: $vm.alert) { alert in
             alert.alert
         }
+        .preferredColorScheme(colorScheme)
         .presentationDetents(PresentationMode.detents, selection: $vm.presentationPosition)
         .presentationDragIndicator(.visible)
         .presentationBackgroundInteraction(.enabled)
         .interactiveDismissDisabled(true)
-        .presentationCornerRadius(16)
+        .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
     }
     
     //MARK: - Create Button
@@ -213,6 +224,20 @@ public struct MainView: View {
             .font(.system(size: 18))
             .foregroundStyle(colorScheme.accentColor())
         //        }
+    }
+    
+    @ViewBuilder
+    private func CustomBackground() -> some View {
+        if osVersion.majorVersion >= 26 && vm.presentationPosition == .fraction(0.93) {
+            colorScheme.backgroundColor().ignoresSafeArea()
+            
+            Color.black.opacity(0.10).ignoresSafeArea()
+        } else if osVersion.majorVersion >= 26 && vm.presentationPosition != .fraction(0.93) {
+            LinearGradient(colors: [.black.opacity(0.15), colorScheme.backgroundColor(), colorScheme.backgroundColor()], startPoint: .bottom, endPoint: .top)
+                .ignoresSafeArea()
+        } else {
+            colorScheme.backgroundColor().ignoresSafeArea()
+        }
     }
 }
 

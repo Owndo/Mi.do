@@ -175,7 +175,7 @@ public final class TaskVM: Identifiable {
     private func preSetTask(_ mainModel: MainModel) {
         profileModel = casManager.profileModel
         self.task = mainModel
-        setupDayOfWeek()
+        setUpRepeat()
         
         if let endDate = task.deadline {
             hasDeadline = true
@@ -253,11 +253,13 @@ public final class TaskVM: Identifiable {
         }
     }
     
-    private func setupDayOfWeek() {
+    private func setUpRepeat() {
         repeatTask = task.repeatTask
+        
         if task.repeatTask == .dayOfWeek {
             showDayOfWeekSelector = true
         }
+        
         dayOfWeek = task.dayOfWeek.actualyDayOFWeek(calendar)
     }
     

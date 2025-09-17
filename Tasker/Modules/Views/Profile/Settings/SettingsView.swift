@@ -33,6 +33,26 @@ struct SettingsView: View {
                         .frame(height: 1)
                         .padding(.leading, 38)
                     
+                    Image(systemName: "calendar.badge.checkmark")
+                        .foregroundStyle(colorScheme.accentColor())
+                        .frame(width: 32, height: 32)
+                    
+                    Text("Week start day", bundle: .module)
+                        .font(.system(.callout, design: .rounded, weight: .regular))
+                        .foregroundStyle(.labelPrimary)
+                        .minimumScaleFactor(0.5)
+                    
+                    Spacer()
+                    
+                    
+                    Picker(selection: $vm.firstDayOfWeek) {
+                        ForEach(SettingsVM.FirstWeekDay.allCases, id: \.self) { day in
+                            
+                        }
+                    } label: {
+                        
+                    }
+                    
                     ButtonRow(icon: "calendar.badge.checkmark", title: "Week start day", actionIcon: "chevron.up.chevron.down", action: {}, button1: {
                         vm.changeFirstDayOfWeek(1)
                     }, button2: {

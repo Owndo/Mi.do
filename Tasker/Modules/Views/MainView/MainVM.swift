@@ -87,7 +87,7 @@ public final class MainVM {
         static func == (lhs: SheetDestination, rhs: SheetDestination) -> Bool {
             switch (lhs, rhs) {
             case (.details, .details): return true
-            case (.profile, .profile): return true   // ⚠️ сравнение только по case, без учёта TaskVM
+            case (.profile, .profile): return true
             default: return false
             }
         }

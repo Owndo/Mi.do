@@ -16,6 +16,7 @@ public struct TaskView: View {
     @Environment(\.dismiss) var dismissButton
     
     @Bindable private var vm: TaskVM
+    @State private var _renderTick = false
     
     @FocusState private var sectionInFocus: SectionInFocus?
     
@@ -25,7 +26,7 @@ public struct TaskView: View {
     }
     
     public init(taskVM: TaskVM) {
-        _vm = .init(taskVM)
+        self.vm = taskVM
     }
     
     public var body: some View {
@@ -36,8 +37,6 @@ public struct TaskView: View {
                     .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    
-                    //                    CustomTabBar()
                     
                     ScrollView {
                         VStack(spacing: 28) {
@@ -79,11 +78,9 @@ public struct TaskView: View {
                     .ignoresSafeArea(edges: .bottom)
                     .scrollIndicators(.hidden)
                     .scrollDismissesKeyboard(.immediately)
-                    
-                    //                    withAnimation(.default) {
-                    //                        SaveButton()
-                    //                    }
                 }
+                .padding(.horizontal, 16)
+                
                 .safeAreaInset(edge: .bottom) {
                     SaveButton()
                 }
@@ -115,7 +112,6 @@ public struct TaskView: View {
                     ShareView(activityItems: [vm.task])
                         .presentationDetents([.medium])
                 }
-                .padding(.horizontal, 16)
                 
                 if vm.showPaywall {
                     PaywallView()
@@ -457,14 +453,14 @@ public struct TaskView: View {
                 
                 Spacer()
                 
-                Picker(selection: $vm.task.repeatTask) {
+                Picker(selection: $vm.repeatTask) {
                     ForEach(RepeatTask.allCases, id: \.self) { type in
                         Text(type.description, bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
                     }
                 } label: {
                     HStack {
-                        Text(vm.task.repeatTask.description)
+                        Text(vm.repeatTask.description)
                             .font(.system(.body, design: .rounded, weight: .regular))
                     }
                 }
@@ -529,6 +525,7 @@ public struct TaskView: View {
                 Spacer()
             }
             .padding(.horizontal, 17)
+            .offset(y: 10)
             
             ScrollView(.horizontal) {
                 HStack {
@@ -547,6 +544,7 @@ public struct TaskView: View {
                                     .padding(6)
                                     .symbolEffect(.bounce, value: vm.selectedColorTapped)
                                     .glassEffect(.regular.tint(color.color(for: colorScheme)).interactive(), in: .circle)
+                                    .glassEffectTransition(.matchedGeometry)
                             } else {
                                 Circle()
                                     .fill(color.color(for: colorScheme))
@@ -566,7 +564,8 @@ public struct TaskView: View {
                                     )
                             }
                         }
-                        .padding(.vertical, 8)
+                        .padding(.top, 23)
+                        .padding(.bottom, 13)
                         
                         Spacer()
                     }
@@ -589,11 +588,14 @@ public struct TaskView: View {
                     }
                 }
             }
-            .padding(.horizontal, 5)
-            .padding(.vertical, 1)
+            .clipShape(
+                RoundedRectangle(cornerRadius: 26)
+            )
+            //            .padding(.horizontal, 25)
+            //            .padding(.vertical, 1)
             .sensoryFeedback(.selection, trigger: vm.selectedColorTapped)
         }
-        .padding(.vertical, 13)
+        //        .padding(.top, 13)
     }
     
     //MARK: - Deadline
@@ -700,9 +702,22 @@ public struct TaskView: View {
                 Spacer()
             }
         }
-        .frame(maxWidth: .infinity)
-        .padding(.top, 5)
-        .padding(.bottom, 10)
+        .padding(.vertical, 10)
+        .padding(.horizontal, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 26)
+                .fill(
+                    colorScheme.backgroundColor()
+                        .opacity(
+                            vm.showDatePicker ||
+                            vm.showTimePicker ||
+                            vm.showDeadline ||
+                            vm.repeatTask == .dayOfWeek ||
+                            sectionInFocus != nil
+                            ? 0.9 : 0.0)
+                )
+                .blur(radius: 4)
+        )
     }
     
     //MARK: - Created Date
@@ -734,5 +749,8 @@ public struct TaskView: View {
 }
 
 #Preview {
-    TaskView(taskVM: TaskVM(mainModel: mockModel()))
+    Color.clear
+        .sheet(isPresented: .constant(true)) {
+            TaskView(taskVM: TaskVM(mainModel: mockModel()))
+        }
 }

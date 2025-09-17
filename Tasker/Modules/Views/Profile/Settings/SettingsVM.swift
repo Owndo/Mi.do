@@ -21,6 +21,23 @@ final class SettingsVM {
     @ObservationIgnored
     @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
+    
+    var firstDayOfWeek: FirstWeekDay = .sunday
+    
+    enum FirstWeekDay: Int, CaseIterable, Hashable {
+        case sunday = 1
+        case monday = 2
+        
+        var description: LocalizedStringKey {
+            switch self {
+            case .sunday:
+                return "Sunday"
+            case .monday:
+                return "Monday"
+            }
+        }
+    }
+    
     var syncWithIcloud = false {
         didSet {
             Task {
@@ -36,7 +53,8 @@ final class SettingsVM {
     
     init() {
         profileModel = casManager.profileModel
-        firstWeekday = profileModel.settings.firstDayOfWeek == 1 ? "Sunday" : "Monday"
+        firstDayOfWeek = profileModel.settings.firstDayOfWeek == 1 ? .sunday : .monday
+        
         createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
         syncWithIcloud = profileModel.settings.iCloudSyncEnabled
         calendar = dateManager.calendar

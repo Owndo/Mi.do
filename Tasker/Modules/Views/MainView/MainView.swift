@@ -41,23 +41,18 @@ public struct MainView: View {
             }
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
-                    .overlay(
-                        GlowEffect(decibelLevel: vm.decibelLvl)
-                            .opacity(vm.isRecording ? 1 : 0)
-                    )
                     .sheet(item: $vm.sheetDestination) { destination in
                         switch destination {
                         case .details(let taskModel):
                             TaskView(taskVM: taskModel)
-                                .preferredColorScheme(colorScheme)
+//                                .preferredColorScheme(colorScheme)
                                 .onDisappear {
                                     vm.disappear()
                                 }
                         case .profile:
                             ProfileView()
-                                .preferredColorScheme(colorScheme)
+//                                .preferredColorScheme(colorScheme)
                         }
-                      
                     }
                     .sheet(isPresented: $vm.onboardingManager.sayHello) {
                         SayHelloView()
@@ -113,7 +108,7 @@ public struct MainView: View {
             .navigationBarTitleDisplayMode(.inline)
             .animation(.default, value: vm.isRecording)
             .animation(.default, value: vm.presentationPosition)
-            .sensoryFeedback(.selection, trigger: vm.profileViewIsOpen)
+            .sensoryFeedback(.selection, trigger: vm.sheetDestination)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
         }
     }
@@ -163,11 +158,11 @@ public struct MainView: View {
             alert.alert
         }
         .preferredColorScheme(colorScheme)
-        .presentationDetents(PresentationMode.detents, selection: $vm.presentationPosition)
         .presentationDragIndicator(.visible)
         .presentationBackgroundInteraction(.enabled)
         .interactiveDismissDisabled(true)
         .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
+        .presentationDetents(PresentationMode.detents, selection: $vm.presentationPosition)
     }
     
     //MARK: - Create Button

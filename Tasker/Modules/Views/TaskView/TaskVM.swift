@@ -358,13 +358,13 @@ public final class TaskVM: Identifiable {
         return notificationDate.timeIntervalSince1970
     }
     
-    // MARK: Prepeare task
-    // MARK: Logic for save repeat
+    // MARK: - Prepeare task
+    
+    // MARK: - Logic for save repeat
     private func saveRepeat() {
         task.repeatTask = repeatTask
         
         guard task.repeatTask == .dayOfWeek else {
-            print("non day of week")
             dayOfWeek = []
             return
         }
@@ -372,7 +372,6 @@ public final class TaskVM: Identifiable {
         let emptyDayOfWeek = dayOfWeek.count == 7 && dayOfWeek.allSatisfy { $0.value == false }
         
         if emptyDayOfWeek {
-            print("Empty day of week")
             task.repeatTask = .never
         }
         

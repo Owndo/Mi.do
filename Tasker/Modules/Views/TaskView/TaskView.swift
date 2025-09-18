@@ -335,14 +335,14 @@ public struct TaskView: View {
                 .frame(height: 1)
                 .padding(.leading, 16)
             
-                TextField("", text: $vm.task.description, prompt: Text("Add more information", bundle: .module), axis: .vertical)
-                    .font(.system(.body, design: .rounded, weight: .regular))
-                    .frame(minHeight: 70, alignment: .top)
-                    .tint(colorScheme.accentColor())
-                    .foregroundStyle(.labelPrimary)
-                    .padding(.vertical, 13)
-                    .padding(.horizontal, 16)
-                    .focused($sectionInFocus, equals: .description)
+            TextField("", text: $vm.task.description, prompt: Text("Add more information", bundle: .module), axis: .vertical)
+                .font(.system(.body, design: .rounded, weight: .regular))
+                .frame(minHeight: 70, alignment: .top)
+                .tint(colorScheme.accentColor())
+                .foregroundStyle(.labelPrimary)
+                .padding(.vertical, 13)
+                .padding(.horizontal, 16)
+                .focused($sectionInFocus, equals: .description)
         }
         .onChange(of: vm.showDatePicker) { newValue, oldValue in
             sectionInFocus = nil
@@ -540,7 +540,7 @@ public struct TaskView: View {
                                         Circle()
                                             .stroke(.separatorPrimary, lineWidth: vm.checkColorForCheckMark(color, for: colorScheme) ? 1.5 : 0.3)
                                             .shadow(radius: 8, y: 4)
-                                            .liquidIfAvailable(glass: colorScheme == .dark ? .clear : .regular, isInteractive: true)
+                                            .liquidIfAvailable(glass: .clear, isInteractive: true)
                                         
                                         Image(systemName: "checkmark")
                                             .symbolEffect(.bounce, value: vm.selectedColorTapped)
@@ -578,11 +578,8 @@ public struct TaskView: View {
             .clipShape(
                 RoundedRectangle(cornerRadius: 26)
             )
-            //            .padding(.horizontal, 25)
-            //            .padding(.vertical, 1)
             .sensoryFeedback(.selection, trigger: vm.selectedColorTapped)
         }
-        //        .padding(.top, 13)
     }
     
     //MARK: - Deadline

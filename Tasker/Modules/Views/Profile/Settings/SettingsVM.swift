@@ -49,7 +49,6 @@ final class SettingsVM {
     var calendar: Calendar = .current
     var profileModel: ProfileData = mockProfileData()
     var createdDate = Date()
-    var firstWeekday: LocalizedStringKey = "Sunday"
     
     init() {
         profileModel = casManager.profileModel
@@ -64,9 +63,10 @@ final class SettingsVM {
         path.append(destination)
     }
     
-    func changeFirstDayOfWeek(_ firstDayOfWeek: Int) {
-        dateManager.calendar.firstWeekday = firstDayOfWeek
-        profileModel.settings.firstDayOfWeek = firstDayOfWeek
+    func changeFirstDayOfWeek(_ firstDayOfWeek: FirstWeekDay) {
+        self.firstDayOfWeek = firstDayOfWeek
+        dateManager.calendar.firstWeekday = firstDayOfWeek.rawValue
+        profileModel.settings.firstDayOfWeek = firstDayOfWeek.rawValue
         profileModelSave()
     }
     

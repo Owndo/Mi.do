@@ -31,7 +31,15 @@ public final class TaskVM: Identifiable {
     var profileModel: ProfileData = mockProfileData()
     var backgroundColor: Color = .white
     
-    var repeatTask = RepeatTask.never
+    var repeatTask = RepeatTask.never {
+        didSet {
+            if repeatTask == .dayOfWeek {
+                showDayOfWeekSelector = true
+            } else {
+                showDayOfWeekSelector = false
+            }
+        }
+    }
     var dayOfWeek = [DayOfWeek]()
     
     // MARK: - UI States
@@ -183,14 +191,8 @@ public final class TaskVM: Identifiable {
         }
     }
     
-    func onAppear(colorScheme: ColorScheme) -> Bool {
+    func onAppear(colorScheme: ColorScheme) {
         backgroundColorForTask(colorScheme: colorScheme)
-        
-        guard task.title == "" else {
-            return false
-        }
-        
-        return true
     }
     
     func disappear() {
@@ -303,8 +305,8 @@ public final class TaskVM: Identifiable {
     
     //MARK: - Save task
     func saveTask() async {
-        task.dayOfWeek = dayOfWeek
-        task.repeatTask = repeatTask
+        saveRepeat()
+        
         task.notificationDate = changeNotificationTime()
         
         taskManager.saveTask(task)
@@ -327,6 +329,8 @@ public final class TaskVM: Identifiable {
         if recorderManager.dateTimeFromtext != nil && notificationDate != recorderManager.dateTimeFromtext {
             telemetryAction(.taskAction(.correctionDate))
         }
+        
+        recorderManager.resetDataFromText()
     }
     
     
@@ -354,7 +358,34 @@ public final class TaskVM: Identifiable {
         return notificationDate.timeIntervalSince1970
     }
     
-    //MARK: Prepeare task
+    // MARK: Prepeare task
+    // MARK: Logic for save repeat
+    private func saveRepeat() {
+        task.repeatTask = repeatTask
+        
+        guard task.repeatTask == .dayOfWeek else {
+            print("non day of week")
+            dayOfWeek = []
+            return
+        }
+        
+        let emptyDayOfWeek = dayOfWeek.count == 7 && dayOfWeek.allSatisfy { $0.value == false }
+        
+        if emptyDayOfWeek {
+            print("Empty day of week")
+            task.repeatTask = .never
+        }
+        
+        let everyDay = dayOfWeek.count == 7 && dayOfWeek.allSatisfy { $0.value == true }
+        
+        guard everyDay else {
+            task.dayOfWeek = dayOfWeek
+            return
+        }
+        
+        task.repeatTask = .daily
+        task.dayOfWeek = dayOfWeek
+    }
     //    private func preparedTask() -> UITaskModel {
     //        taskManager.preparedTask(task: task, date: notificationDate)
     //    }

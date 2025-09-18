@@ -34,10 +34,6 @@ public struct MainView: View {
                 NotesView(mainViewIsOpen: $vm.mainViewIsOpen)
                     .disabled(vm.showPaywall)
                     .disabled(vm.presentationPosition == .fraction(0.93))
-                
-                if vm.showPaywall {
-                    Color.backgroundDimDark.ignoresSafeArea()
-                }
             }
             .sheet(isPresented: $vm.mainViewIsOpen) {
                 MainViewBase()
@@ -45,13 +41,10 @@ public struct MainView: View {
                         switch destination {
                         case .details(let taskModel):
                             TaskView(taskVM: taskModel)
-//                                .preferredColorScheme(colorScheme)
-                                .onDisappear {
-                                    vm.disappear()
-                                }
+                                .preferredColorScheme(colorScheme)
                         case .profile:
                             ProfileView()
-//                                .preferredColorScheme(colorScheme)
+                                .preferredColorScheme(colorScheme)
                         }
                     }
                     .sheet(isPresented: $vm.onboardingManager.sayHello) {
@@ -60,7 +53,6 @@ public struct MainView: View {
                             .presentationDragIndicator(.visible)
                     }
             }
-       
             .navigationDestination(for: MainVM.Destination.self) { destination in
                 switch destination {
                 case .main:
@@ -107,7 +99,7 @@ public struct MainView: View {
             .toolbarBackground(osVersion.majorVersion >= 26 ? .visible : .hidden, for: .navigationBar)
             .navigationBarTitleDisplayMode(.inline)
             .animation(.default, value: vm.isRecording)
-            .animation(.default, value: vm.presentationPosition)
+            .animation(.default, value: vm.backgroundAnimation)
             .sensoryFeedback(.selection, trigger: vm.sheetDestination)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
         }
@@ -122,10 +114,9 @@ public struct MainView: View {
             VStack(spacing: 0) {
                 WeekView()
                     .padding(.top, 17)
-                    .disabled(vm.disabledButton)
                 
                 ListView()
-                    .disabled(vm.disabledButton)
+                    .presentationContentInteraction(.scrolls)
                 
                 Spacer()
             }
@@ -134,7 +125,7 @@ public struct MainView: View {
                 
                 Spacer()
                 
-                if vm.presentationPosition == PresentationMode.base.detent {
+                if vm.presentationPosition != .fraction(0.20) {
                     withAnimation {
                         CreateButton()
                             .fixedSize()

@@ -41,10 +41,16 @@ public final class MainVM {
     //MARK: - Model
     var mainModel: MainModel?
     var profileModel: ProfileData = mockProfileData()
-
+    
     var taskVM: TaskVM?
     
-    var sheetDestination: SheetDestination?
+    var sheetDestination: SheetDestination? {
+        didSet {
+            if sheetDestination == nil {
+                presentationPosition = .fraction(0.93)
+            }
+        }
+    }
     
     //MARK: - UI States
     var mainViewIsOpen = true
@@ -55,16 +61,20 @@ public final class MainVM {
     var disabledButton = false
     var askReview = false
     
+    var backgroundAnimation = false
+    
     /// First time ever opened
     var sayHello = false
     
     var mainViewPaywall = false
+    
     var showPaywall: Bool {
         mainViewPaywall && subscriptionManager.showPaywall
     }
     
     var presentationPosition: PresentationDetent = PresentationMode.base.detent {
         didSet {
+            backgroundAnimation.toggle()
             if presentationPosition == .fraction(0.93) {
                 if path.count > 0 {
                     path.removeLast()
@@ -166,10 +176,6 @@ public final class MainVM {
         )
     }
     
-    func disappear() {
-        recordManager.resetDataFromText()
-    }
-    
     //MARK: - Update notification
     public func updateNotifications() async {
         guard onboardingManager.onboardingComplete == true else {
@@ -213,6 +219,8 @@ public final class MainVM {
     }
     
     func profileViewButtonTapped() {
+        presentationPosition = .fraction(1.00)
+        
         sheetDestination = .profile
 //        profileViewIsOpen = true
         telemetryAction(.mainViewAction(.profileButtonTapped))
@@ -313,6 +321,8 @@ public final class MainVM {
     
     //MARK: - Create task
     func createTask(with audioHash: String? = nil) {
+        presentationPosition = .fraction(1.00)
+        
         let model = MainModel(
             .initial(
                 TaskModel(
@@ -446,6 +456,7 @@ public final class MainVM {
 
 //MARK: - Helpers not a VM
 enum PresentationMode: CGFloat, CaseIterable {
+    case full = 1.00
     case base = 0.93
     case bottom = 0.20
     

@@ -58,35 +58,18 @@ public struct ProfileView: View {
                 alert.alert
             }
             .toolbar {
-                if #available(iOS 26.0, *) {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button {
-                            dismissButton()
-                            
-                            // telemetry
-                            vm.closeButtonTapped()
-                        } label: {
-                            Text("Close", bundle: .module)
-                                .font(.system(.body, design: .rounded, weight: .medium))
-                                .foregroundStyle(colorScheme.accentColor())
-                            
-                                .opacity(vm.showPaywall ? 0 : 1)
-                        }
-                    }
-                    .sharedBackgroundVisibility(.hidden)
-                } else {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button {
-                            dismissButton()
-                            
-                            // telemetry
-                            vm.closeButtonTapped()
-                        } label: {
-                            Text("Close", bundle: .module)
-                                .font(.system(.body, design: .rounded, weight: .medium))
-                                .foregroundStyle(colorScheme.accentColor())
-                                .opacity(vm.showPaywall ? 0 : 1)
-                        }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismissButton()
+                        
+                        // telemetry
+                        vm.closeButtonTapped()
+                    } label: {
+                        Text("Close", bundle: .module)
+                            .font(.system(.body, design: .rounded, weight: .medium))
+                            .foregroundStyle(colorScheme.accentColor())
+                        
+                            .opacity(vm.showPaywall ? 0 : 1)
                     }
                 }
             }
@@ -99,8 +82,10 @@ public struct ProfileView: View {
         }
         .onChange(of: vm.path.count) { oldValue, newValue in
             vm.navigationTriger.toggle()
+            vm.gearAnimation.toggle()
         }
         .toolbarBackground(colorScheme.backgroundColor(), for: .navigationBar)
+        .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
         .presentationDragIndicator(.visible)
         .animation(.bouncy, value: vm.showPaywall)
         .animation(.bouncy, value: vm.selectedImage)
@@ -154,19 +139,14 @@ public struct ProfileView: View {
         Button {
             vm.goTo(.settings)
         } label: {
-            if #available(iOS 18.0, *) {
+            if #available(iOS 26.0, *) {
                 Image(systemName: "gearshape")
                     .foregroundStyle(colorScheme.accentColor())
                     .font(.system(size: 30))
                     .rotationEffect(Angle(degrees: vm.gearAnimation ? 360 : 0))
                     .symbolEffect(.bounce,options: .speed(0.6), value: vm.gearAnimation)
-                    .padding(4)
-                    .shadow(color: colorScheme.accentColor().opacity(0.5), radius: 16, y: 4)
-                    .background(
-                        Circle()
-                            .fill(.backgroundTertiary)
-                    )
-                    .animation(.spring(duration: 2), value: vm.gearAnimation)
+                    .padding(5)
+                    .glassEffect(.regular.interactive())
             } else {
                 Image(systemName: "gearshape")
                     .foregroundStyle(colorScheme.accentColor())
@@ -182,6 +162,7 @@ public struct ProfileView: View {
                     .animation(.spring(duration: 2), value: vm.gearAnimation)
             }
         }
+        .animation(.spring(duration: 2), value: vm.gearAnimation)
         .offset(vm.buttonOffset)
     }
     

@@ -33,31 +33,50 @@ struct SettingsView: View {
                         .frame(height: 1)
                         .padding(.leading, 38)
                     
-                    Image(systemName: "calendar.badge.checkmark")
-                        .foregroundStyle(colorScheme.accentColor())
-                        .frame(width: 32, height: 32)
-                    
-                    Text("Week start day", bundle: .module)
-                        .font(.system(.callout, design: .rounded, weight: .regular))
-                        .foregroundStyle(.labelPrimary)
-                        .minimumScaleFactor(0.5)
-                    
-                    Spacer()
-                    
-                    
-                    Picker(selection: $vm.firstDayOfWeek) {
-                        ForEach(SettingsVM.FirstWeekDay.allCases, id: \.self) { day in
-                            
-                        }
-                    } label: {
+                    HStack {
+                        Image(systemName: "calendar.badge.checkmark")
+                            .foregroundStyle(colorScheme.accentColor())
+                            .frame(width: 32, height: 32)
                         
+                        Text("Week start day", bundle: .module)
+                            .font(.system(.callout, design: .rounded, weight: .regular))
+                            .foregroundStyle(.labelPrimary)
+                            .minimumScaleFactor(0.5)
+                        
+                        Spacer()
+                        
+                        
+                        Menu {
+                            Button {
+                                vm.changeFirstDayOfWeek(.sunday)
+                            } label: {
+                                if vm.firstDayOfWeek.description == "Sunday" {
+                                    Image(systemName: "checkmark")
+                                }
+                                
+                                Text("Sunday", bundle: .module)
+                            }
+                            
+                            Button {
+                                vm.changeFirstDayOfWeek(.monday)
+                            } label: {
+                                if vm.firstDayOfWeek.description == "Monday" {
+                                    Image(systemName: "checkmark")
+                                }
+                                
+                                Text("Monday", bundle: .module)
+                            }
+                        } label: {
+                            HStack {
+                                Text(vm.firstDayOfWeek.description, bundle: .module)
+                                    .font(.system(.callout, design: .rounded, weight: .regular))
+                                
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .padding(.vertical, 12)
+                            }
+                        }
+                        .tint(.labelQuaternary)
                     }
-                    
-                    ButtonRow(icon: "calendar.badge.checkmark", title: "Week start day", actionIcon: "chevron.up.chevron.down", action: {}, button1: {
-                        vm.changeFirstDayOfWeek(1)
-                    }, button2: {
-                        vm.changeFirstDayOfWeek(2)
-                    }, firstDayOfWeek: vm.firstWeekday)
                     
                     CustomDivider()
                         .frame(height: 1)
@@ -104,37 +123,18 @@ struct SettingsView: View {
             }
             .scrollIndicators(.hidden)
             .toolbar {
-                if #available(iOS 26.0, *) {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            vm.closeButtonTapped(&path)
-                        } label: {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 17))
-                                    .foregroundStyle(colorScheme.accentColor())
-                                
-                                Text("Profile", bundle: .module)
-                                    .font(.system(.body, design: .rounded, weight: .medium))
-                                    .foregroundStyle(colorScheme.accentColor())
-                            }
-                        }
-                    }
-                    .sharedBackgroundVisibility(.hidden)
-                } else {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            vm.closeButtonTapped(&path)
-                        } label: {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 17))
-                                    .foregroundStyle(colorScheme.accentColor())
-                                
-                                Text("Profile", bundle: .module)
-                                    .font(.system(.body, design: .rounded, weight: .medium))
-                                    .foregroundStyle(colorScheme.accentColor())
-                            }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        vm.closeButtonTapped(&path)
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 17))
+                                .foregroundStyle(colorScheme.accentColor())
+                            
+                            Text("Profile", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
                         }
                     }
                 }

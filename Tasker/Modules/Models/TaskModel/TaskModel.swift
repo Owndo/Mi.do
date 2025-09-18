@@ -240,7 +240,7 @@ public struct DeleteRecord: Codable, Equatable {
     }
 }
 
-public enum RepeatTask: CaseIterable, Codable, Identifiable, Equatable {
+public enum RepeatTask: CaseIterable, Codable, Identifiable, Equatable, Hashable {
     case never
     case daily
     case weekly

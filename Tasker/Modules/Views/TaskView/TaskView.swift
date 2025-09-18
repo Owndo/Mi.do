@@ -18,9 +18,9 @@ public struct TaskView: View {
     @Bindable private var vm: TaskVM
     @State private var _renderTick = false
     
-    @FocusState private var sectionInFocus: SectionInFocus?
+    @FocusState var sectionInFocus: SectionInFocus?
     
-    enum SectionInFocus: Hashable {
+    public enum SectionInFocus: Hashable {
         case title
         case description
     }
@@ -80,14 +80,12 @@ public struct TaskView: View {
                     .scrollDismissesKeyboard(.immediately)
                 }
                 .padding(.horizontal, 16)
-                
                 .safeAreaInset(edge: .bottom) {
                     SaveButton()
+                        .padding(.horizontal, 10)
                 }
                 .onAppear {
-                    if vm.onAppear(colorScheme: colorScheme) {
-                        sectionInFocus = .title
-                    }
+                    vm.onAppear(colorScheme: colorScheme)
                 }
                 .onChange(of: vm.currentlyRecordTime) { newValue, _ in
                     vm.stopAfterCheck(newValue)
@@ -134,16 +132,15 @@ public struct TaskView: View {
                                 dismissButton: dismissButton
                             )
                     }
+                    .opacity(vm.showPaywall ? 0.0 : 1)
+                    .disabled(vm.showPaywall)
                 }
-                
-                //                ToolbarItem(placement: .bottomBar) {
-                //                    SaveButton()
-                //                }
             }
             .animation(.bouncy, value: vm.showPaywall)
             .animation(.default, value: colorScheme)
             .animation(.default, value: vm.task.taskColor)
         }
+        .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
     }
     
     //MARK: TabBar
@@ -314,10 +311,7 @@ public struct TaskView: View {
     @ViewBuilder
     private func MainSection() -> some View {
         VStack(spacing: 0) {
-            TextField(text: Binding(
-                get: { NSLocalizedString(vm.task.title, bundle: .module, comment: "") },
-                set: { vm.task.title = $0 }
-            ), prompt: Text("New task", bundle: .module)) {}
+            TextField("", text: $vm.task.title, prompt: Text("New task", bundle: .module))
                 .font(.title2)
                 .fontWeight(.bold)
                 .tint(colorScheme.accentColor())
@@ -335,10 +329,7 @@ public struct TaskView: View {
                 .padding(.leading, 16)
             
             VStack {
-                TextField(text: Binding(
-                    get: { NSLocalizedString(vm.task.description, bundle: .module, comment: "") },
-                    set: { vm.task.description = $0 }
-                ), prompt: Text("Add more information", bundle: .module), axis: .vertical) {}
+                TextField("", text: $vm.task.description, prompt: Text("Add more information", bundle: .module), axis: .vertical)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)
                     .tint(colorScheme.accentColor())
@@ -536,33 +527,23 @@ public struct TaskView: View {
                         Button {
                             vm.selectedColorButtonTapped(color, colorScheme: colorScheme)
                         } label: {
-                            if #available(iOS 26.0, *) {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(
-                                        vm.checkColorForCheckMark(color, for: colorScheme) ? vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme) : .clear
-                                    )
-                                    .padding(6)
-                                    .symbolEffect(.bounce, value: vm.selectedColorTapped)
-                                    .glassEffect(.regular.tint(color.color(for: colorScheme)).interactive(), in: .circle)
-                                    .glassEffectTransition(.matchedGeometry)
-                            } else {
-                                Circle()
-                                    .fill(color.color(for: colorScheme))
-                                    .frame(width: 28, height: 28)
-                                    .overlay(
-                                        ZStack {
-                                            Circle()
-                                                .stroke(.separatorPrimary, lineWidth: vm.checkColorForCheckMark(color, for: colorScheme) ? 1.5 : 0.3)
-                                                .shadow(radius: 8, y: 4)
-                                            
-                                            Image(systemName: "checkmark")
-                                                .symbolEffect(.bounce, value: vm.selectedColorTapped)
-                                                .foregroundStyle(
-                                                    vm.checkColorForCheckMark(color, for: colorScheme) ? vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme) : .clear
-                                                )
-                                        }
-                                    )
-                            }
+                            Circle()
+                                .fill(color.color(for: colorScheme))
+                                .frame(width: 28, height: 28)
+                                .overlay(
+                                    ZStack {
+                                        Circle()
+                                            .stroke(.separatorPrimary, lineWidth: vm.checkColorForCheckMark(color, for: colorScheme) ? 1.5 : 0.3)
+                                            .shadow(radius: 8, y: 4)
+                                            .liquidIfAvailable(glass: .regular, isInteractive: true)
+                                        
+                                        Image(systemName: "checkmark")
+                                            .symbolEffect(.bounce, value: vm.selectedColorTapped)
+                                            .foregroundStyle(
+                                                vm.checkColorForCheckMark(color, for: colorScheme) ? vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme) : .clear
+                                            )
+                                    }
+                                )
                         }
                         .padding(.top, 23)
                         .padding(.bottom, 13)
@@ -586,6 +567,7 @@ public struct TaskView: View {
                                 .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
                         }
                     }
+                    .offset(y: 5)
                 }
             }
             .clipShape(
@@ -702,8 +684,7 @@ public struct TaskView: View {
                 Spacer()
             }
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 16)
+        .padding(.vertical, 5)
         .background(
             RoundedRectangle(cornerRadius: 26)
                 .fill(
@@ -714,7 +695,7 @@ public struct TaskView: View {
                             vm.showDeadline ||
                             vm.repeatTask == .dayOfWeek ||
                             sectionInFocus != nil
-                            ? 0.9 : 0.0)
+                            ? 0.6 : 0.0)
                 )
                 .blur(radius: 4)
         )
@@ -753,4 +734,81 @@ public struct TaskView: View {
         .sheet(isPresented: .constant(true)) {
             TaskView(taskVM: TaskVM(mainModel: mockModel()))
         }
+}
+
+
+import SwiftUI
+import UIKit
+
+// MARK: - UIKit контейнер
+struct UIKitTextInputView: UIViewControllerRepresentable {
+    @Binding var text: String
+    
+    func makeUIViewController(context: Context) -> UIKitTextInputViewController {
+        let vc = UIKitTextInputViewController()
+        vc.text = text
+        vc.onTextChanged = { newText in
+            self.text = newText
+        }
+        return vc
+    }
+    
+    func updateUIViewController(_ uiViewController: UIKitTextInputViewController, context: Context) {
+        uiViewController.text = text
+    }
+}
+
+// MARK: - UIViewController с UITextView
+final class UIKitTextInputViewController: UIViewController {
+    var text: String = ""
+    var onTextChanged: ((String) -> Void)?
+    
+    private lazy var textView: UITextView = {
+        let tv = UITextView()
+        tv.font = UIFont.preferredFont(forTextStyle: .body)
+        tv.backgroundColor = .systemBackground
+        tv.translatesAutoresizingMaskIntoConstraints = false
+        return tv
+    }()
+    
+    private let placeholderLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Введите текст..."
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .systemBackground
+        view.addSubview(textView)
+        textView.addSubview(placeholderLabel)
+        
+        NSLayoutConstraint.activate([
+            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            textView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
+            
+            placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor, constant: 5),
+            placeholderLabel.topAnchor.constraint(equalTo: textView.topAnchor, constant: 8)
+        ])
+        
+        textView.delegate = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        DispatchQueue.main.async {
+            self.textView.becomeFirstResponder()
+        }
+    }
+}
+
+extension UIKitTextInputViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+        onTextChanged?(textView.text)
+    }
 }

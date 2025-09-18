@@ -55,37 +55,18 @@ struct AppearanceView: View {
             }
         }
         .toolbar {
-            if #available(iOS 26.0, *) {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        path.removeLast()
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 17))
-                                .foregroundStyle(colorScheme.accentColor())
-                            
-                            Text("Settings", bundle: .module)
-                                .font(.system(.body, design: .rounded, weight: .medium))
-                                .foregroundStyle(colorScheme.accentColor())
-                        }
-                    }
-                }
-                .sharedBackgroundVisibility(.hidden)
-            } else {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        path.removeLast()
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 17))
-                                .foregroundStyle(colorScheme.accentColor())
-                            
-                            Text("Settings", bundle: .module)
-                                .font(.system(.body, design: .rounded, weight: .medium))
-                                .foregroundStyle(colorScheme.accentColor())
-                        }
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    path.removeLast()
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 17))
+                            .foregroundStyle(colorScheme.accentColor())
+                        
+                        Text("Settings", bundle: .module)
+                            .font(.system(.body, design: .rounded, weight: .medium))
+                            .foregroundStyle(colorScheme.accentColor())
                     }
                 }
             }
@@ -131,15 +112,10 @@ struct AppearanceView: View {
                     .minimumScaleFactor(0.5)
                 
                 
-                if scheme == vm.profileData.settings.colorScheme {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelPrimary)
-                } else {
-                    Image(systemName: "circle")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelQuaternary)
-                }
+                Image(systemName: scheme == vm.profileData.settings.colorScheme ? "checkmark.circle.fill" : "circle")
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.labelPrimary)
+                    .liquidIfAvailable(glass: .regular, isInteractive: true)
             }
         }
         .animation(.default, value: vm.appearanceManager.selectedColorScheme)
@@ -172,6 +148,8 @@ struct AppearanceView: View {
     //MARK: - Progress row Button
     @ViewBuilder
     private func ProgressRowButton(_ image: Image, text: LocalizedStringKey, value: Bool, action: @escaping () -> Void) -> some View {
+        @State var isSelected: Bool = value == vm.profileData.settings.minimalProgressMode
+        
         Button {
             action()
         } label: {
@@ -187,15 +165,16 @@ struct AppearanceView: View {
                     .padding(.bottom, 4)
                     .minimumScaleFactor(0.5)
                 
-                if value == vm.profileData.settings.minimalProgressMode {
-                    Image(systemName: "checkmark.circle.fill")
+//                if value == vm.profileData.settings.minimalProgressMode {
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                         .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelPrimary)
-                } else {
-                    Image(systemName: "circle")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                        .foregroundStyle(.labelQuaternary)
-                }
+                        .symbolEffect(.bounce, value: isSelected)
+                        .foregroundStyle(isSelected ? .labelPrimary : .labelQuaternary)
+//                } else {
+//                    Image(systemName: "circle")
+//                        .font(.system(.body, design: .rounded, weight: .semibold))
+//                        .foregroundStyle(.labelQuaternary)
+//                }
             }
         }
     }
@@ -217,21 +196,22 @@ struct AppearanceView: View {
                         Button {
                             vm.selectedDefaultTaskColorButtonTapped(color)
                         } label: {
-                            Circle()
-                                .fill(color.color(for: colorScheme))
-                                .frame(width: 28, height: 28)
-                                .overlay(
-                                    ZStack {
+                            ZStack {
+                                Circle()
+                                    .fill(color.color(for: colorScheme))
+                                    .frame(width: 28, height: 28)
+                                    .padding(.vertical, 20)
+                                    .overlay(
                                         Circle()
                                             .stroke(.separatorPrimary, lineWidth: vm.checkColorForCheckMark(color: color) ? 1.5 : 0.3)
                                             .shadow(radius: 8, y: 4)
-                                        
-                                        Image(systemName: "checkmark")
-                                            .foregroundStyle(vm.checkColorForCheckMark(color: color) ? .labelPrimaryInverted : .clear)
-                                            .symbolEffect(.bounce, value: vm.defaultTaskColor)
-                                            .foregroundStyle(.labelSecondary)
-                                    }
-                                )
+                                            .liquidIfAvailable(glass: .clear, isInteractive: true)
+                                    )
+                                
+                                Image(systemName: "checkmark")
+                                    .foregroundStyle(vm.checkColorForCheckMark(color: color) ? .labelPrimary : .clear)
+                                    .symbolEffect(.bounce, value: vm.defaultTaskColor)
+                            }
                         }
                         
                         Spacer()
@@ -240,7 +220,9 @@ struct AppearanceView: View {
                 .padding(.horizontal, 5)
                 .padding(.vertical, 1)
             }
-            .padding(.vertical, 20)
+            .clipShape(
+                RoundedRectangle(cornerRadius: 26)
+            )
             .background(
                 RoundedRectangle(cornerRadius: 26)
                     .fill(
@@ -275,11 +257,12 @@ struct AppearanceView: View {
                                     .overlay(
                                         Circle()
                                             .stroke(.separatorPrimary, lineWidth: 1)
+                                            .liquidIfAvailable(glass: .clear, isInteractive: true)
                                     )
                                 
                                 Image(systemName: "checkmark")
                                     .font(.system(.body, design: .rounded, weight: .semibold))
-                                    .foregroundStyle(vm.checkAccentColor(color) ? .labelPrimaryInverted : .clear)
+                                    .foregroundStyle(vm.checkAccentColor(color) ? .labelPrimary : .clear)
                                     .symbolEffect(.bounce, value: vm.accentSymbolAnimate)
                             }
                         }
@@ -331,6 +314,7 @@ struct AppearanceView: View {
                                 .overlay(
                                     Circle()
                                         .stroke(.separatorPrimary, lineWidth: 1)
+                                        .liquidIfAvailable(glass: .clear, isInteractive: true)
                                 )
                             
                             Image(systemName: "checkmark")

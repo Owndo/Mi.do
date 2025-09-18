@@ -30,37 +30,18 @@ struct ArticlesView: View {
             }
             .padding(.horizontal, 45)
             .toolbar {
-                if #available(iOS 26.0, *) {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            path.removeLast()
-                        } label: {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 17))
-                                    .foregroundStyle(colorScheme.accentColor())
-                                
-                                Text("Profile", bundle: .module)
-                                    .font(.system(.body, design: .rounded, weight: .medium))
-                                    .foregroundStyle(colorScheme.accentColor())
-                            }
-                        }
-                    }
-                    .sharedBackgroundVisibility(.hidden)
-                } else {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            path.removeLast()
-                        } label: {
-                            HStack {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 17))
-                                    .foregroundStyle(colorScheme.accentColor())
-                                
-                                Text("Profile", bundle: .module)
-                                    .font(.system(.body, design: .rounded, weight: .medium))
-                                    .foregroundStyle(colorScheme.accentColor())
-                            }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        path.removeLast()
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 17))
+                                .foregroundStyle(colorScheme.accentColor())
+                            
+                            Text("Profile", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
                         }
                     }
                 }

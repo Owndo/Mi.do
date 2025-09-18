@@ -8,6 +8,7 @@
 import SwiftUI
 import UIComponents
 import TaskView
+import Models
 
 public struct ListView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -17,31 +18,105 @@ public struct ListView: View {
     public init() {}
     
     public var body: some View {
-        GeometryReader { screenGeometry in
-            ScrollView {
-                VStack(spacing: 0) {
-                    
-                    VStack(spacing: 0) {
-                        TasksList()
-                        
-                        CompletedTasksList()
+        List {
+            //MARK: Tasks section
+            if !vm.tasks.isEmpty {
+                Text("Tasks", bundle: .module)
+                    .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.labelTertiary)
+                    .listRowBackground(Color.clear)
+            }
+            
+            ForEach(vm.tasks) { task in
+                TaskRow(task: task)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 2)
+                    .contextMenu {
+                        Button {
+                            
+                        } label: {
+                            Label("Delete task?", systemImage: "trash")
+                                .tint(.red)
+                        }
                     }
+           
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button {
+                            //                                          vm.deleteTaskButtonSwiped()
+                        } label: {
+                            if #available(iOS 26, *) {
+                                Image(systemName: "trash")
+                                    .tint(.accentRed)
+                            } else {
+                                Image(uiImage: .paywall)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .tint(colorScheme.backgroundColor())
+                            }
+                        }
+                    }
+            }
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets())
+            
+            //MARK: - Completed tasks section
+            if !vm.completedTasks.isEmpty {
+                HStack {
+                    Text("Completed task", bundle: .module)
+                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.labelTertiary)
                     
-                    GestureDetectView()
-                        .frame(height: vm.calculateGestureViewHeight(
-                            screenHeight: screenGeometry.size.height,
-                            contentHeight: vm.contentHeight,
-                            safeAreaTop: screenGeometry.safeAreaInsets.top,
-                            safeAreaBottom: screenGeometry.safeAreaInsets.bottom
-                        ))
+                    Spacer()
+                    
+                    Image(systemName: vm.completedTasksHidden ? "chevron.down" : "chevron.up")
+                        .foregroundStyle(.labelTertiary)
+                        .bold()
+                }
+                .listRowBackground(Color.clear)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    vm.completedTaskViewChange()
                 }
             }
-            .scrollIndicators(.hidden)
-            .onPreferenceChange(ContentHeightPreferenceKey.self) { height in
-                vm.contentHeight = height
+            
+            if !vm.completedTasksHidden {
+                ForEach(vm.completedTasks) { task in
+                    TaskRow(task: task)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 2)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button {
+                                //                                          vm.deleteTaskButtonSwiped()
+                            } label: {
+                                if #available(iOS 26, *) {
+                                    Image(systemName: "trash")
+                                        .tint(.accentRed)
+                                } else {
+                                    Image(uiImage: .paywall)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .tint(colorScheme.backgroundColor())
+                                }
+                            }
+                        }
+                }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets())
+            } else {
+                RoundedRectangle(cornerRadius: 26)
+                    .fill(.clear)
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets())
             }
         }
         .customBlurForContainer(colorScheme: colorScheme, apply: true)
+        .listSectionSpacing(.compact)
+        .scrollContentBackground(.hidden)
+        .listStyle(.inset)
+        .ignoresSafeArea(edges: .top)
         .animation(.default, value: vm.completedTasksHidden)
         .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
         .animation(.spring, value: vm.tasks)
@@ -62,9 +137,18 @@ public struct ListView: View {
                 .padding(.top, 18)
                 .padding(.bottom, 12)
                 
-                VStack(spacing: 2) {
+                List {
                     ForEach(vm.tasks) { task in
                         TaskRow(task: task)
+                        
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button {
+                                    //                                              vm.deleteTaskButtonSwiped()
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .tint(.red)
+                                }
+                            }
                     }
                 }
                 .clipped()

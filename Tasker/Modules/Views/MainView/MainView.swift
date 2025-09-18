@@ -40,7 +40,7 @@ public struct MainView: View {
                     .sheet(item: $vm.sheetDestination) { destination in
                         switch destination {
                         case .details(let taskModel):
-                            TaskView(taskVM: taskModel)
+                            TaskView(taskVM: taskModel, titleFocused: true)
                                 .preferredColorScheme(colorScheme)
                         case .profile:
                             ProfileView()

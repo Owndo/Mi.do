@@ -91,7 +91,16 @@ public class TaskModelWrapper<T: Encodable>: Identifiable, Equatable {
 }
 
 @Observable
-public class UITaskModel: TaskModelWrapper<TaskModel> {
+public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable {
+    
+    public static func == (lhs: UITaskModel, rhs: UITaskModel) -> Bool {
+        lhs.model.id == rhs.model.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(model.id)
+    }
+    
     public var title: String {
         get { model.value.title ?? ""}
         set { model.value.title = nilIfNeed(newValue, is: "") }

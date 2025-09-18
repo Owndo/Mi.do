@@ -8,6 +8,7 @@
 import SwiftUI
 import Models
 import UIComponents
+import UIKit
 import Paywall
 
 public struct TaskView: View {
@@ -16,17 +17,19 @@ public struct TaskView: View {
     @Environment(\.dismiss) var dismissButton
     
     @Bindable private var vm: TaskVM
-    @State private var _renderTick = false
     
     @FocusState var sectionInFocus: SectionInFocus?
+    
+    var titleFocused: Bool = false
     
     public enum SectionInFocus: Hashable {
         case title
         case description
     }
     
-    public init(taskVM: TaskVM) {
+    public init(taskVM: TaskVM, titleFocused: Bool = false) {
         self.vm = taskVM
+        self.titleFocused = titleFocused
     }
     
     public var body: some View {
@@ -86,6 +89,10 @@ public struct TaskView: View {
                 }
                 .onAppear {
                     vm.onAppear(colorScheme: colorScheme)
+                    
+                    if titleFocused {
+                        sectionInFocus = .title
+                    }
                 }
                 .onChange(of: vm.currentlyRecordTime) { newValue, _ in
                     vm.stopAfterCheck(newValue)
@@ -328,7 +335,6 @@ public struct TaskView: View {
                 .frame(height: 1)
                 .padding(.leading, 16)
             
-            VStack {
                 TextField("", text: $vm.task.description, prompt: Text("Add more information", bundle: .module), axis: .vertical)
                     .font(.system(.body, design: .rounded, weight: .regular))
                     .frame(minHeight: 70, alignment: .top)
@@ -337,7 +343,6 @@ public struct TaskView: View {
                     .padding(.vertical, 13)
                     .padding(.horizontal, 16)
                     .focused($sectionInFocus, equals: .description)
-            }
         }
         .onChange(of: vm.showDatePicker) { newValue, oldValue in
             sectionInFocus = nil
@@ -535,7 +540,7 @@ public struct TaskView: View {
                                         Circle()
                                             .stroke(.separatorPrimary, lineWidth: vm.checkColorForCheckMark(color, for: colorScheme) ? 1.5 : 0.3)
                                             .shadow(radius: 8, y: 4)
-                                            .liquidIfAvailable(glass: .regular, isInteractive: true)
+                                            .liquidIfAvailable(glass: colorScheme == .dark ? .clear : .regular, isInteractive: true)
                                         
                                         Image(systemName: "checkmark")
                                             .symbolEffect(.bounce, value: vm.selectedColorTapped)
@@ -665,7 +670,7 @@ public struct TaskView: View {
                             .foregroundStyle(.white)
                             .padding(.vertical, 15)
                             .frame(maxWidth: .infinity)
-                            .glassEffect(.regular.tint(colorScheme.accentColor()))
+                            .glassEffect(.regular.tint(colorScheme.accentColor()).interactive())
                     } else {
                         Text("Close", bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
@@ -734,81 +739,4 @@ public struct TaskView: View {
         .sheet(isPresented: .constant(true)) {
             TaskView(taskVM: TaskVM(mainModel: mockModel()))
         }
-}
-
-
-import SwiftUI
-import UIKit
-
-// MARK: - UIKit контейнер
-struct UIKitTextInputView: UIViewControllerRepresentable {
-    @Binding var text: String
-    
-    func makeUIViewController(context: Context) -> UIKitTextInputViewController {
-        let vc = UIKitTextInputViewController()
-        vc.text = text
-        vc.onTextChanged = { newText in
-            self.text = newText
-        }
-        return vc
-    }
-    
-    func updateUIViewController(_ uiViewController: UIKitTextInputViewController, context: Context) {
-        uiViewController.text = text
-    }
-}
-
-// MARK: - UIViewController с UITextView
-final class UIKitTextInputViewController: UIViewController {
-    var text: String = ""
-    var onTextChanged: ((String) -> Void)?
-    
-    private lazy var textView: UITextView = {
-        let tv = UITextView()
-        tv.font = UIFont.preferredFont(forTextStyle: .body)
-        tv.backgroundColor = .systemBackground
-        tv.translatesAutoresizingMaskIntoConstraints = false
-        return tv
-    }()
-    
-    private let placeholderLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Введите текст..."
-        label.textColor = .secondaryLabel
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        view.addSubview(textView)
-        textView.addSubview(placeholderLabel)
-        
-        NSLayoutConstraint.activate([
-            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            textView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16),
-            
-            placeholderLabel.leadingAnchor.constraint(equalTo: textView.leadingAnchor, constant: 5),
-            placeholderLabel.topAnchor.constraint(equalTo: textView.topAnchor, constant: 8)
-        ])
-        
-        textView.delegate = self
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        DispatchQueue.main.async {
-            self.textView.becomeFirstResponder()
-        }
-    }
-}
-
-extension UIKitTextInputViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        placeholderLabel.isHidden = !textView.text.isEmpty
-        onTextChanged?(textView.text)
-    }
 }

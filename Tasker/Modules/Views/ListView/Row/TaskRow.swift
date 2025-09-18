@@ -45,66 +45,49 @@ struct TaskRow: View {
     //MARK: Task row
     @ViewBuilder
     private func TaskRow() -> some View {
-        List {
-            ForEach(0..<1) { _ in
-                HStack(spacing: 0) {
-                    HStack(spacing: 12) {
-                        TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task) {
-                            vm.checkMarkTapped()
-                        }
-                        
-                        ScrollView(.horizontal) {
-                            Text(LocalizedStringKey(vm.taskTitle), bundle: .module)
-                                .font(.system(.body, design: .rounded, weight: .regular))
-                                .multilineTextAlignment(.leading)
-                                .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedPrimaryLabel(task: vm.task, colorScheme))
-                                .font(.callout)
-                                .lineLimit(1)
-                        }
-                        .scrollDisabled(vm.disabledScroll)
-                        .scrollIndicators(.hidden)
-                    }
-                    
-                    HStack(spacing: 12) {
-                        NotificationDeadlineDate()
-                            .allowsHitTesting(vm.isTaskHasDeadline())
-                            .onTapGesture {
-                                vm.showDedalineButtonTapped()
-                            }
-                        
-                        PlayButton()
-                    }
+        HStack(spacing: 0) {
+            HStack(spacing: 12) {
+                TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task) {
+                    vm.checkMarkTapped()
                 }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    vm.selectedTaskButtonTapped()
+                
+                ScrollView(.horizontal) {
+                    Text(LocalizedStringKey(vm.taskTitle), bundle: .module)
+                        .font(.system(.body, design: .rounded, weight: .regular))
+                        .multilineTextAlignment(.leading)
+                        .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedPrimaryLabel(task: vm.task, colorScheme))
+                        .font(.callout)
+                        .lineLimit(1)
                 }
-                .padding(.vertical, 12)
-                .padding(.horizontal, 11)
-                .background(
-                    withAnimation {
-                        vm.task.taskRowColor(colorScheme: colorScheme)
-                    }
-                )
-                .frame(maxWidth: .infinity)
-                .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
+                .scrollDisabled(vm.disabledScroll)
+                .scrollIndicators(.hidden)
             }
-            .listRowSeparator(.hidden)
-            .listRowInsets(EdgeInsets())
-            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                Button {
-                    vm.deleteTaskButtonSwiped()
-                } label: {
-                    Image(systemName: "trash")
-                        .tint(.red)
-                }
+            
+            HStack(spacing: 12) {
+                NotificationDeadlineDate()
+                    .allowsHitTesting(vm.isTaskHasDeadline())
+                    .onTapGesture {
+                        vm.showDedalineButtonTapped()
+                    }
+                
+                PlayButton()
             }
         }
+        //                .contentShape(Rectangle())
+        //                .onTapGesture {
+        //                    vm.selectedTaskButtonTapped()
+        //                }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 11)
+        .background(
+            withAnimation {
+                vm.task.taskRowColor(colorScheme: colorScheme)
+            }
+        )
+        .frame(maxWidth: .infinity)
+        .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
         .clipShape(RoundedRectangle(cornerRadius: 20))
-        .listStyle(PlainListStyle())
-        .listRowSeparator(.hidden)
         .frame(height: vm.listRowHeight)
-        .scrollDisabled(true)
     }
     
     //MARK: - Notification/Deadline date

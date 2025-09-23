@@ -42,9 +42,12 @@ public struct LiquidIfAvailable: ViewModifier {
         @available(iOS 26.0, *)
         func asGlass() -> Glass {
             switch self {
-            case .clear:    return .clear
-            case .identity: return .identity
-            case .regular:  return .regular
+            case .clear:
+                return .clear
+            case .identity:
+                return .identity
+            case .regular:
+                return .regular
             }
         }
     }

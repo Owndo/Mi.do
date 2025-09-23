@@ -12,7 +12,7 @@ import Managers
 import TaskView
 
 @Observable
-final class ListVM {
+public final class ListVM {
     @ObservationIgnored
     @Injected(\.casManager) private var casManager: CASManagerProtocol
     @ObservationIgnored
@@ -28,12 +28,21 @@ final class ListVM {
     @ObservationIgnored
     @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
+    public var onTaskSelected: ((MainModel) -> Void)?
+    var taskForDeleted: MainModel = mockModel()
+    var taskVM: TaskVM?
+    
     //MARK: UI State
-    var startSwipping = false
+    var showDeleteDialog = false
     var contentHeight: CGFloat = 0
     
+    //MARK: Confirmation dialog
+    var taskForConfirmation: MainModel?
+    var confirmationDialogIsPresented = false
+    var messageForDelete: LocalizedStringKey = ""
+    var singleTask = true
+    
     var completedTasksHidden = false
-    var deleteTip = false
     
     var tasks: [MainModel] {
         taskManager.activeTasks
@@ -41,10 +50,6 @@ final class ListVM {
     
     var completedTasks: [MainModel] {
         taskManager.completedTasks
-    }
-    
-    var countOfTodayTasks: Int {
-        tasks.count + completedTasks.count
     }
     
     private var calendar: Calendar {
@@ -55,8 +60,64 @@ final class ListVM {
         calendar.startOfDay(for: dateManager.selectedDate).timeIntervalSince1970
     }
     
-    init() {
+    public init() {
         completedTasksHidden = casManager.profileModel.settings.completedTasksHidden
+    }
+    
+    func taskTapped(_ task: MainModel) {
+        onTaskSelected?(task)
+    }
+    
+    //MARK: - Complete task
+    func checkMarkTapped(_ task: MainModel) {
+            let task = taskManager.checkMarkTapped(task: task)
+            
+            taskManager.saveTask(task)
+    }
+    
+    //MARK: - Delete functions
+    func deleteTaskButtonSwiped(task: MainModel) {
+        taskForDeleted = task
+        
+        guard task.repeatTask == .never else {
+            messageForDelete = "This's a recurring task."
+            singleTask = false
+            confirmationDialogIsPresented.toggle()
+            return
+        }
+        
+        messageForDelete = "Delete task?"
+        singleTask = true
+        confirmationDialogIsPresented.toggle()
+    }
+    
+    func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) {
+//        Task {
+            taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+//            taskDeleteTrigger.toggle()
+            
+            
+//            await notificationManager.createNotification()
+//        }
+        
+        if task.repeatTask == .never {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))
+        }
+        
+        if task.repeatTask != .never && deleteCompletely == true {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskListView))))
+        }
+        
+        if task.repeatTask != .never && deleteCompletely == false {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskListView))))
+        }
+    }
+    
+    func dialogBinding(for task: MainModel) -> Binding<Bool> {
+        Binding(
+            get: { self.confirmationDialogIsPresented && self.taskForDeleted.id == task.id },
+            set: { newValue in self.confirmationDialogIsPresented = newValue }
+        )
     }
     
     //MARK: - Check for visible
@@ -70,37 +131,6 @@ final class ListVM {
     
     func previousDaySwiped() {
         dateManager.subtractOneDay()
-    }
-    
-    //MARK: - Calculate size for gestureView
-    func calculateGestureViewHeight(screenHeight: CGFloat, contentHeight: CGFloat, safeAreaTop: CGFloat, safeAreaBottom: CGFloat) -> CGFloat {
-        let availableScreenHeight = screenHeight - safeAreaTop - safeAreaBottom
-        let remainingHeight = availableScreenHeight - contentHeight
-        
-        let minGestureHeight: CGFloat = 50
-        var maxGestureHeight: CGFloat = 250
-        
-        switch countOfTodayTasks {
-        case 0: maxGestureHeight = 800
-        case 1...2: maxGestureHeight = 500
-        case 3: maxGestureHeight = 400
-        case 4: maxGestureHeight = 350
-        case 5: maxGestureHeight = 300
-        default: break
-        }
-        
-        let idealGestureHeight: CGFloat = 150
-        
-        switch remainingHeight {
-        case let height where height >= idealGestureHeight:
-            return min(height, maxGestureHeight)
-            
-        case let height where height >= minGestureHeight:
-            return height
-            
-        default:
-            return minGestureHeight
-        }
     }
     
     func completedTaskViewChange() {

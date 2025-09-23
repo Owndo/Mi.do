@@ -40,7 +40,7 @@ public struct MainView: View {
                     .sheet(item: $vm.sheetDestination) { destination in
                         switch destination {
                         case .details(let taskModel):
-                            TaskView(taskVM: taskModel, titleFocused: true)
+                            TaskView(taskVM: taskModel)
                                 .preferredColorScheme(colorScheme)
                         case .profile:
                             ProfileView()
@@ -115,7 +115,7 @@ public struct MainView: View {
                 WeekView()
                     .padding(.top, 17)
                 
-                ListView()
+                ListView(vm: vm.listVM)
                     .presentationContentInteraction(.scrolls)
                 
                 Spacer()

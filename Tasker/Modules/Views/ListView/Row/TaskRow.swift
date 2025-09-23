@@ -16,10 +16,12 @@ struct TaskRow: View {
     @State private var vm: TaskRowVM
     
     var task: MainModel
+    var preview = false
     
-    init(task: MainModel) {
+    init(task: MainModel, preview: Bool = false) {
         self._vm = State(wrappedValue: TaskRowVM(task: task))
         self.task = task
+        self.preview = preview
     }
     
     //MARK: - Body
@@ -51,17 +53,19 @@ struct TaskRow: View {
                     vm.checkMarkTapped()
                 }
                 
-                ScrollView(.horizontal) {
+                HStack {
                     Text(LocalizedStringKey(vm.taskTitle), bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
                         .multilineTextAlignment(.leading)
                         .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedPrimaryLabel(task: vm.task, colorScheme))
                         .font(.callout)
                         .lineLimit(1)
+                    
+                    Spacer()
                 }
-                .scrollDisabled(vm.disabledScroll)
-                .scrollIndicators(.hidden)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
+            .padding(.trailing, preview ? 50 : 0)
             
             HStack(spacing: 12) {
                 NotificationDeadlineDate()
@@ -73,21 +77,19 @@ struct TaskRow: View {
                 PlayButton()
             }
         }
-        //                .contentShape(Rectangle())
-        //                .onTapGesture {
-        //                    vm.selectedTaskButtonTapped()
-        //                }
         .padding(.vertical, 12)
         .padding(.horizontal, 11)
         .background(
             withAnimation {
-                vm.task.taskRowColor(colorScheme: colorScheme)
+                RoundedRectangle(cornerRadius: 22)
+                    .fill(
+                        vm.task.taskRowColor(colorScheme: colorScheme)
+                    )
             }
         )
         .frame(maxWidth: .infinity)
         .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .frame(height: vm.listRowHeight)
+        .frame(height: 52)
     }
     
     //MARK: - Notification/Deadline date

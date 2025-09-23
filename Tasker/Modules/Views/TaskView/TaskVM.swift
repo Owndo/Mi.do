@@ -43,6 +43,7 @@ public final class TaskVM: Identifiable {
     var dayOfWeek = [DayOfWeek]()
     
     // MARK: - UI States
+    var titleFocused = false
     var showDatePicker = false
     var showTimePicker = false
     var showDayOfWeekSelector = false
@@ -167,8 +168,9 @@ public final class TaskVM: Identifiable {
     private var lastNotificationDate = Date()
     
     // MARK: - Init
-    public init(mainModel: MainModel) {
+    public init(mainModel: MainModel, titleFocused: Bool = false) {
         initing = true
+        self.titleFocused = titleFocused
         setUPViewModel(mainModel)
         initing = false
     }

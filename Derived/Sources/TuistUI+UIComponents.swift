@@ -1131,6 +1131,50 @@ public extension SwiftUI.Image {
     }
 }
 #endif
+public extension UIComponentsImages.Image {
+    static var delete: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Task/delete", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Task/delete"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Task/delete")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var delete: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Task/delete", bundle: bundle)
+    }
+}
+#endif
+public extension UIComponentsImages.Image {
+    static var trashRed: UIComponentsImages.Image {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsImages.Image(named: "Task/trashRed", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return bundle.image(forResource: NSImage.Name("Task/trashRed"))!
+        #elseif os(watchOS)
+        return UIComponentsImages.Image(named: "Task/trashRed")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Image {
+    static var trashRed: SwiftUI.Image {
+        let bundle = Bundle.module
+        return SwiftUI.Image("Task/trashRed", bundle: bundle)
+    }
+}
+#endif
 
 
 // swiftlint:enable all

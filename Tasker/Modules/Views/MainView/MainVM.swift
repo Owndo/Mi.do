@@ -10,6 +10,7 @@ import SwiftUI
 import Managers
 import Models
 import TaskView
+import ListView
 
 @MainActor
 @Observable
@@ -42,12 +43,15 @@ public final class MainVM {
     var mainModel: MainModel?
     var profileModel: ProfileData = mockProfileData()
     
+    let listVM = ListVM()
     var taskVM: TaskVM?
     
     var sheetDestination: SheetDestination? {
         didSet {
             if sheetDestination == nil {
                 presentationPosition = .fraction(0.93)
+            } else {
+                presentationPosition = .fraction(1.0)
             }
         }
     }
@@ -93,7 +97,7 @@ public final class MainVM {
         case details(TaskVM)
         
         var id: Self { self }
-
+        
         static func == (lhs: SheetDestination, rhs: SheetDestination) -> Bool {
             switch (lhs, rhs) {
             case (.details, .details): return true
@@ -101,7 +105,7 @@ public final class MainVM {
             default: return false
             }
         }
-
+        
         func hash(into hasher: inout Hasher) {
             switch self {
             case .details:
@@ -111,7 +115,7 @@ public final class MainVM {
             }
         }
     }
-
+    
     
     var recordingState: RecordingState = .idle
     
@@ -174,6 +178,11 @@ public final class MainVM {
             name: NSNotification.Name("firstTimeOpenHasBeenDone"),
             object: nil
         )
+        
+        listVM.onTaskSelected = { [weak self] task in
+            guard let self else { return }
+            sheetDestination = .details(TaskVM(mainModel: task))
+        }
     }
     
     //MARK: - Update notification
@@ -219,10 +228,9 @@ public final class MainVM {
     }
     
     func profileViewButtonTapped() {
-        presentationPosition = .fraction(1.00)
         
         sheetDestination = .profile
-//        profileViewIsOpen = true
+        //        profileViewIsOpen = true
         telemetryAction(.mainViewAction(.profileButtonTapped))
     }
     
@@ -321,8 +329,6 @@ public final class MainVM {
     
     //MARK: - Create task
     func createTask(with audioHash: String? = nil) {
-        presentationPosition = .fraction(1.00)
-        
         let model = MainModel(
             .initial(
                 TaskModel(
@@ -336,7 +342,7 @@ public final class MainVM {
             )
         )
         
-        sheetDestination = .details(TaskVM(mainModel: model))
+        sheetDestination = .details(TaskVM(mainModel: model, titleFocused: true))
     }
     
     //MARK: - Recognize data

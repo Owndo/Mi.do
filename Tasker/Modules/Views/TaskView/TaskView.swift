@@ -20,16 +20,13 @@ public struct TaskView: View {
     
     @FocusState var sectionInFocus: SectionInFocus?
     
-    var titleFocused: Bool = false
-    
     public enum SectionInFocus: Hashable {
         case title
         case description
     }
     
-    public init(taskVM: TaskVM, titleFocused: Bool = false) {
+    public init(taskVM: TaskVM) {
         self.vm = taskVM
-        self.titleFocused = titleFocused
     }
     
     public var body: some View {
@@ -90,7 +87,7 @@ public struct TaskView: View {
                 .onAppear {
                     vm.onAppear(colorScheme: colorScheme)
                     
-                    if titleFocused {
+                    if vm.titleFocused {
                         sectionInFocus = .title
                     }
                 }
@@ -122,32 +119,56 @@ public struct TaskView: View {
                     PaywallView()
                 }
             }
+            // MARK: - Tool Bar
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        vm.deleteTaskButtonTapped()
-                    } label: {
-                        Text("Delete", bundle: .module)
-                            .font(.system(.body, design: .rounded, weight: .regular))
-                            .foregroundStyle(.accentRed)
-                            .taskDeleteDialog(
-                                isPresented: $vm.confirmationDialogIsPresented,
-                                task: vm.task,
-                                message: vm.messageForDelete,
-                                isSingleTask: vm.singleTask,
-                                onDelete: vm.deleteButtonTapped,
-                                dismissButton: dismissButton
-                            )
+                if #available(iOS 26.0, *) {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            vm.deleteTaskButtonTapped()
+                        } label: {
+                            Text("Delete", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .regular))
+                                .foregroundStyle(.accentRed)
+                                .taskDeleteDialog(
+                                    isPresented: $vm.confirmationDialogIsPresented,
+                                    task: vm.task,
+                                    message: vm.messageForDelete,
+                                    isSingleTask: vm.singleTask,
+                                    onDelete: vm.deleteButtonTapped,
+                                    dismissButton: dismissButton
+                                )
+                        }
+                        .opacity(vm.showPaywall ? 0 : 1)
+                        .disabled(vm.showPaywall)
                     }
-                    .opacity(vm.showPaywall ? 0.0 : 1)
-                    .disabled(vm.showPaywall)
+                    .sharedBackgroundVisibility(vm.showPaywall ? .hidden : .visible)
+                } else {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            vm.deleteTaskButtonTapped()
+                        } label: {
+                            Text("Delete", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .regular))
+                                .foregroundStyle(.accentRed)
+                                .taskDeleteDialog(
+                                    isPresented: $vm.confirmationDialogIsPresented,
+                                    task: vm.task,
+                                    message: vm.messageForDelete,
+                                    isSingleTask: vm.singleTask,
+                                    onDelete: vm.deleteButtonTapped,
+                                    dismissButton: dismissButton
+                                )
+                        }
+                        .opacity(vm.showPaywall ? 0 : 1)
+                        .disabled(vm.showPaywall)
+                    }
                 }
             }
-            .animation(.bouncy, value: vm.showPaywall)
-            .animation(.default, value: colorScheme)
-            .animation(.default, value: vm.task.taskColor)
         }
         .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
+        .animation(.bouncy, value: vm.showPaywall)
+        .animation(.default, value: colorScheme)
+        .animation(.default, value: vm.task.taskColor)
     }
     
     //MARK: TabBar
@@ -646,7 +667,7 @@ public struct TaskView: View {
             }
             .padding(12)
             .background(
-                RoundedRectangle(cornerRadius: 16)
+                Circle()
                     .fill(vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme))
             )
             

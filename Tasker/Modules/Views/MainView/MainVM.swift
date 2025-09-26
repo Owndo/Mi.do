@@ -155,8 +155,8 @@ public final class MainVM {
         recordManager.decibelLevel
     }
     
-    var showTips: Bool {
-        taskManager.tasks.isEmpty
+    var showTip: Bool {
+        taskManager.activeTasks.isEmpty && taskManager.completedTasks.isEmpty
     }
     
     public var profileUpdateTrigger: Bool {
@@ -445,9 +445,8 @@ public final class MainVM {
     
     //MARK: Function before closeApp
     public func closeApp() async {
-        let tasks = Array(taskManager.tasks.values)
         let backgroundManager = BackgroundManager()
-        casManager.updateCASAfterWork(models: tasks)
+        casManager.updateCASAfterWork()
         await updateNotifications()
         await backgroundManager.scheduleAppRefreshTask()
     }

@@ -169,6 +169,7 @@ public final class TaskVM: Identifiable {
     
     // MARK: - Init
     public init(mainModel: MainModel, titleFocused: Bool = false) {
+        print(mainModel.id)
         initing = true
         self.titleFocused = titleFocused
         setUPViewModel(mainModel)
@@ -313,8 +314,6 @@ public final class TaskVM: Identifiable {
         
         taskManager.saveTask(task)
         createTempAudioFile(audioHash: task.audio ?? "")
-        
-        await notificationManager.createNotification()
     }
     
     func closeButtonTapped() async {
@@ -501,10 +500,8 @@ public final class TaskVM: Identifiable {
     
     //MARK: - Complete tasks
     func checkMarkTapped() async {
-        task = taskManager.checkMarkTapped(task: task)
+        taskManager.checkMarkTapped(task: task)
         taskDoneTrigger.toggle()
-        await saveTask()
-        await notificationManager.createNotification()
         
         // telemetry
         telemetryAction(.taskAction(.checkMarkButtonTapped(.taskView)))

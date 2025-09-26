@@ -11,6 +11,7 @@ import Models
 
 @Observable
 final class MockCas: CASManagerProtocol {
+    var casHasBeenUpdated: ((Bool) -> Void)?
     
     let cas: MultiCas
     
@@ -129,10 +130,10 @@ final class MockCas: CASManagerProtocol {
     }
     
     // Save all models before app will close
-    func updateCASAfterWork(models: [MainModel]) {
+    func updateCASAfterWork() {
         for model in models {
             do {
-                try cas.saveJsonModel(model.model)
+                try cas.saveJsonModel(model.value.model)
             } catch {
                 print("Error while saving model after end work: \(error)")
             }

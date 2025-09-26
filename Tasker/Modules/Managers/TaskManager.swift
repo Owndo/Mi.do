@@ -10,7 +10,7 @@ final class TaskManager: TaskManagerProtocol {
     @ObservationIgnored
     @Injected(\.notificationManager) var notificationManager
     @ObservationIgnored
-    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+    @Injected(\.telemetryManager) private var telemetryManager
     
     private var weekTasksCache: [Double: [MainModel]] = [:] // key: startOfWeek timestamp
     
@@ -41,23 +41,13 @@ final class TaskManager: TaskManagerProtocol {
         return allDates.max()?.timeIntervalSince1970
     }
     
-    //MARK: Tasks logic
+    //MARK: Tasks properties
     var tasks = [String: MainModel]()
-    
     var activeTasks: [MainModel] {
-        let filtered = tasks.values.filter {
-            $0.completeRecords.contains { $0.completedFor == selectedDate } != true
-        }
-        
-        return sortedTasks(tasks: filtered)
+        returnActivaTasks()
     }
-    
     var completedTasks: [MainModel] {
-        let filtered = tasks.values.filter {
-            $0.completeRecords.contains { $0.completedFor == selectedDate }
-        }
-        
-        return sortedTasks(tasks: filtered)
+        returnCompletedTasks()
     }
     
     private var thisWeekCasheTasks: [MainModel] = []
@@ -66,22 +56,43 @@ final class TaskManager: TaskManagerProtocol {
     
     init() {
         updateTasks()
-        datehasBeenCganged()
     }
     
-    func updateTasks() {
-        let models = casManager.models.filter { value in
+    //MARK: - Update tasks
+    private func updateTasks() {
+        tasks = casManager.models.filter { value in
             value.value.isScheduledForDate(selectedDate, calendar: calendar)
         }
-        tasks = models
-    }
-    
-    func datehasBeenCganged() {
+        
         dateManager.selectedDateHasBeenChange = { [weak self] _ in
+            self?.updateTasks()
+        }
+        
+        casManager.casHasBeenUpdated = { [weak self] _ in
+            print("sync done")
             self?.updateTasks()
         }
     }
     
+    //MARK: Return active tasks
+    private func returnActivaTasks() -> [MainModel] {
+        let filtered = tasks.values.filter { value in
+            value.completeRecords.contains { $0.completedFor == selectedDate } != true
+        }
+        
+        return sortedTasks(tasks: filtered)
+    }
+    
+    //MARK: Return completed tasks
+    private func returnCompletedTasks() -> [MainModel] {
+        let filtered = tasks.values.filter { value in
+            value.completeRecords.contains { $0.completedFor == selectedDate }
+        }
+        
+        return sortedTasks(tasks: filtered)
+    }
+    
+    //MARK: - Sorted tasks
     func sortedTasks(tasks: [MainModel]) -> [MainModel] {
         tasks.sorted {
             let hour1 = calendar.component(.hour, from: Date(timeIntervalSince1970: $0.notificationDate))
@@ -94,36 +105,45 @@ final class TaskManager: TaskManagerProtocol {
         }
     }
     
+    //MARK: - Cashs for week
     func thisWeekTasks(date: Double) async -> [MainModel] {
-          return casManager.models.values
-              .filter { task in
-                  return task.deleteRecords.contains { $0.deletedFor == date } != true
-              }
-      }
+        return casManager.models.values
+            .filter { task in
+                return task.deleteRecords.contains { $0.deletedFor == date } != true
+            }
+    }
     
     private func isTaskInWeeksRange(_ task: UITaskModel, startDate: Double, endDate: Double) -> Bool {
-         var currentInterval = startDate
-         
-         while currentInterval <= endDate {
-             if task.isScheduledForDate(currentInterval, calendar: calendar) {
-                 return true
-             }
-             
-             currentInterval += 86400
-         }
-         
-         return false
-     }
+        var currentInterval = startDate
+        
+        while currentInterval <= endDate {
+            if task.isScheduledForDate(currentInterval, calendar: calendar) {
+                return true
+            }
+            
+            currentInterval += 86400
+        }
+        
+        return false
+    }
     
     // MARK: - Completion Management
     func checkCompletedTaskForToday(task: UITaskModel) -> Bool {
         task.completeRecords.contains(where: { $0.completedFor == selectedDate })
     }
-    
-    func checkMarkTapped(task: UITaskModel) -> UITaskModel {
+    // MARK: - Check mark tapped
+    func checkMarkTapped(task: UITaskModel) {
+        let id = task.id
+        
         let model = task
         model.completeRecords = updateExistingTaskCompletion(task: task)
-        return model
+        
+        tasks[id] = model
+        saveTask(model)
+        
+        Task {
+            await notificationManager.createNotification()
+        }
     }
     
     private func updateExistingTaskCompletion(task: UITaskModel) -> [CompleteRecord] {
@@ -159,7 +179,7 @@ final class TaskManager: TaskManagerProtocol {
         casManager.saveModel(task)
     }
     
-    // MARK: - Deletion
+    // MARK: - Delete task
     func deleteTask(task: MainModel, deleteCompletely: Bool = false) {
         guard task.markAsDeleted == false else {
             return

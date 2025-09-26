@@ -31,7 +31,6 @@ final class TaskRowVM: HashableObject {
     var playingTask: UITaskModel?
     var selectedTask: MainModel?
     
-//    var showDetails = false
     var taskVM: TaskVM?
     
     var task: MainModel
@@ -96,18 +95,10 @@ final class TaskRowVM: HashableObject {
     }
     
     func checkMarkTapped() {
-        Task {
-            let task = taskManager.checkMarkTapped(task: task)
-            
-            taskDoneTrigger.toggle()
-            stopToPlay()
-            
-            self.task = task
-            
-            taskManager.saveTask(self.task)
-            
-            await notificationManager.createNotification()
-        }
+        taskManager.checkMarkTapped(task: task)
+        
+        taskDoneTrigger.toggle()
+        stopToPlay()
     }
     
     //MARK: - Delete functions

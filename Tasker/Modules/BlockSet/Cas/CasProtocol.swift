@@ -49,12 +49,15 @@ private struct CasWithSet {
 
 extension Cas {
     private func withSet() throws -> CasWithSet {
-        CasWithSet(cas: self, set: Set(try list()))
+        let list = try self.list()
+        
+        return CasWithSet(cas: self, set: Set(list))
     }
     
     public func sync(_ cas: Cas) throws {
         let a = try self.withSet()
         let b = try cas.withSet()
+
         
         try a.fetchFrom(b)
         try b.fetchFrom(a)
@@ -88,6 +91,7 @@ extension Cas {
         guard let blobId = mutable.parent?.blobId else {
             return nil
         }
+        
         return try get(blobId)
     }
     

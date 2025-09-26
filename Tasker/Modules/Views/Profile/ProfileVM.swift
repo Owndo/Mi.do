@@ -82,8 +82,12 @@ final class ProfileVM {
     
     func setUpProfile() {
         profileModel = casManager.profileModel
+        print("settings - \(profileModel.photo)")
         if let data = getPhotoFromCAS() {
-            selectedImage = Image(uiImage: UIImage(data: data)!)
+            if let uiImage = UIImage(data: data) {
+                print("aga")
+                selectedImage = Image(uiImage: uiImage)
+            }
         }
         photoPosition = profileModel.photoPosition
         createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)

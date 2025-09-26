@@ -70,9 +70,7 @@ public final class ListVM {
     
     //MARK: - Complete task
     func checkMarkTapped(_ task: MainModel) {
-            let task = taskManager.checkMarkTapped(task: task)
-            
-            taskManager.saveTask(task)
+        taskManager.checkMarkTapped(task: task)
     }
     
     //MARK: - Delete functions

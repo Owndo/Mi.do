@@ -19,19 +19,11 @@ final class CASManager: CASManagerProtocol {
     var taskUpdateTrigger = false
     var profileUpdateTriger = false
     
-    var models: [String: MainModel] = [:]
+    //MARK: - Models
     var profileModel = mockProfileData()
-    var completedTasks: [String: MainModel] = [:]
+    var models: [String: MainModel] = [:]
     
-    var activeTasks = [MainModel]()
-    
-    var deletedTasks: [MainModel] {
-        models.values.filter { $0.markAsDeleted == true }
-    }
-    
-    var allCompletedTasks: [MainModel] {
-        models.values.filter { !$0.completeRecords.isEmpty }
-    }
+    var casHasBeenUpdated: ((Bool) -> Void)?
     
     init() {
         localDirectory = CASManager.createLocalDirectory()!
@@ -65,7 +57,6 @@ final class CASManager: CASManagerProtocol {
     func saveProfileData(_ data: ProfileData) {
         do {
             try cas.saveJsonModel(data.model)
-            profileUpdateTriger.toggle()
             saveProfileDataToICloud(data)
         } catch {
             print("Couldn't save profile data inside CAS")
@@ -111,10 +102,6 @@ final class CASManager: CASManagerProtocol {
                 if let taskModel: Model<TaskModel> = try cas.loadJsonModel(mutable) {
                     let task = UITaskModel(taskModel)
                     result[task.id] = task
-                    
-                    if !task.completeRecords.isEmpty {
-                        completedTasks[task.id] = task
-                    }
                 }
                 
             } catch {
@@ -126,10 +113,10 @@ final class CASManager: CASManagerProtocol {
     }
     
     // Save all models before app will close
-    func updateCASAfterWork(models: [MainModel]) {
+    func updateCASAfterWork() {
         for model in models {
             do {
-                try cas.saveJsonModel(model.model)
+                try cas.saveJsonModel(model.value.model)
             } catch {
                 print("Error while saving model after end work: \(error)")
             }
@@ -203,6 +190,7 @@ final class CASManager: CASManagerProtocol {
         do {
             try await syncCases()
             fetchModels()
+            casHasBeenUpdated?(true)
         } catch {
             print("Couldn't sync")
         }

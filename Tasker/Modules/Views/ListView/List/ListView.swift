@@ -19,6 +19,8 @@ public struct ListView: View {
         self.vm = vm
     }
     
+    @State private var showBlur = false
+    
     public var body: some View {
         List {
             //MARK: Tasks section
@@ -66,7 +68,7 @@ public struct ListView: View {
                         Label("Delete task", systemImage: "trash")
                     }
                 } preview: {
-                    TaskRow(task: task, preview: true)
+                    TaskRow(task: task)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button {
@@ -146,7 +148,7 @@ public struct ListView: View {
                             Label("Delete task", systemImage: "trash")
                         }
                     } preview: {
-                        TaskRow(task: task, preview: true)
+                        TaskRow(task: task)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button {
@@ -182,8 +184,11 @@ public struct ListView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets())
         }
+        .onAppear {
+            showBlur = true
+        }
         .padding(.trailing, 10)
-        .customBlurForContainer(colorScheme: colorScheme, apply: true)
+        .customBlurForContainer(colorScheme: colorScheme, apply: showBlur)
         .listSectionSpacing(.compact)
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)

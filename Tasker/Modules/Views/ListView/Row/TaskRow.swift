@@ -16,12 +16,10 @@ struct TaskRow: View {
     @State private var vm: TaskRowVM
     
     var task: MainModel
-    var preview = false
     
-    init(task: MainModel, preview: Bool = false) {
+    init(task: MainModel) {
         self._vm = State(wrappedValue: TaskRowVM(task: task))
         self.task = task
-        self.preview = preview
     }
     
     //MARK: - Body
@@ -65,7 +63,6 @@ struct TaskRow: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .padding(.trailing, preview ? 50 : 0)
             
             HStack(spacing: 12) {
                 NotificationDeadlineDate()
@@ -87,7 +84,6 @@ struct TaskRow: View {
                     )
             }
         )
-        .frame(maxWidth: .infinity)
         .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
         .frame(height: 52)
     }

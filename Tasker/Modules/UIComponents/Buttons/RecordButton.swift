@@ -172,7 +172,7 @@ public struct RecordButton: View {
 }
 
 struct PopoverBubbleShape: Shape {
-    var cornerRadius: CGFloat = 12
+    var cornerRadius: CGFloat = 26
     var arrowSize: CGSize = CGSize(width: 20, height: 10)
     var arrowOffset: CGFloat = 0
     

@@ -11,10 +11,9 @@ import Models
 public protocol CASManagerProtocol {
     var models: [String: MainModel] { get }
     var profileModel: ProfileData { get }
-    var activeTasks: [MainModel] { get }
-    var completedTasks: [String: MainModel] { get }
-    var deletedTasks: [MainModel] { get }
-    var allCompletedTasks: [MainModel] { get }
+    
+    var casHasBeenUpdated: ((Bool) -> Void)? { get set }
+    
     var taskUpdateTrigger: Bool { get }
     var profileUpdateTriger: Bool { get }
     
@@ -27,6 +26,6 @@ public protocol CASManagerProtocol {
     func getData(_ hash: String) -> Data?
     func deleteModel(_ model: MainModel)
     func syncCases() async throws
-    func updateCASAfterWork(models: [MainModel])
+    func updateCASAfterWork()
     func completedTaskCount() -> Int 
 }

@@ -82,7 +82,8 @@ public struct TaskView: View {
                 .padding(.horizontal, 16)
                 .safeAreaInset(edge: .bottom) {
                     SaveButton()
-                        .padding(.horizontal, 10)
+                        .padding(.leading, 16)
+                        .padding(.trailing, 10)
                 }
                 .onAppear {
                     vm.onAppear(colorScheme: colorScheme)

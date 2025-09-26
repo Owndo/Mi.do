@@ -9,7 +9,7 @@ import Foundation
 import Models
 
 public protocol TaskManagerProtocol {
-    var tasks: [String: MainModel] { get set }
+//    var tasks: [String: MainModel] { get set }
     var activeTasks: [MainModel] { get }
     var completedTasks: [MainModel] { get }
     
@@ -28,7 +28,7 @@ public protocol TaskManagerProtocol {
     func checkCompletedTaskForToday(task: UITaskModel) -> Bool
     
     /// Toggles the task's completion state and saves the updated model.
-    func checkMarkTapped(task: UITaskModel) -> UITaskModel
+    func checkMarkTapped(task: UITaskModel)
     
     /// Updates the list of deletion records for the given task by appending today's deletion record.
     func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord]

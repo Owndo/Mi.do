@@ -19,9 +19,35 @@ public struct ListView: View {
         self.vm = vm
     }
     
-    @State private var showBlur = false
-    
     public var body: some View {
+        TabView(selection: $vm.indexForList) {
+            ForEach(vm.indexes.indices, id: \.self) { tag in
+                VStack {
+                        CustomList()
+                            .simultaneousGesture(DragGesture())
+                    
+                    Spacer()
+                }
+//                .tag(tag)
+            }
+        }
+        .onTapGesture(count: 2) {
+            vm.backToTodayButtonTapped()
+        }
+        .ignoresSafeArea(edges: [.top, .horizontal])
+        .tabViewStyle(.page(indexDisplayMode: .never))
+        .animation(.default, value: vm.completedTasksHidden)
+        .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
+        .animation(.spring, value: vm.tasks)
+        .animation(.spring, value: vm.completedTasks)
+        .animation(.spring, value: vm.indexForList)
+    }
+    
+    
+    
+    //MARK: ListView
+    @ViewBuilder
+    private func CustomList() -> some View {
         List {
             //MARK: Tasks section
             if !vm.tasks.isEmpty {
@@ -44,11 +70,9 @@ public struct ListView: View {
                             onDelete: vm.deleteButtonTapped
                         )
                         .contentShape(Rectangle())
-                        .padding(.leading, 16)
-                        .padding(.trailing, 6)
+                        .padding(.leading, 2)
                         .padding(.vertical, 2)
                 }
-                
                 .contextMenu {
                     Button {
                         vm.taskTapped(task)
@@ -78,7 +102,7 @@ public struct ListView: View {
                             Image(systemName: "trash")
                                 .tint(.accentRed)
                         } else {
-                            Image(uiImage: .delete)
+                            Image(systemName: "trash")
                                 .resizable()
                                 .frame(width: 10, height: 10)
                                 .tint(colorScheme.backgroundColor())
@@ -125,8 +149,7 @@ public struct ListView: View {
                                 isSingleTask: vm.singleTask,
                                 onDelete: vm.deleteButtonTapped
                             )
-                            .padding(.leading, 16)
-                            .padding(.trailing, 6)
+                            .padding(.leading, 2)
                             .padding(.vertical, 2)
                     }
                     .contextMenu {
@@ -158,7 +181,7 @@ public struct ListView: View {
                                 Image(systemName: "trash")
                                     .tint(.accentRed)
                             } else {
-                                Image(uiImage: .trashRed)
+                                Image(systemName: "trash")
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 5, height: 5)
@@ -184,46 +207,27 @@ public struct ListView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets())
         }
-        .onAppear {
-            showBlur = true
+        .overlay(alignment: .leading) {
+            LinearGradient(
+                colors: [
+                    colorScheme.backgroundColor(),
+                    colorScheme.backgroundColor().opacity(0.5),
+                    colorScheme.backgroundColor().opacity(0.2)
+                ],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(maxWidth: 2)
         }
-        .padding(.trailing, 10)
-        .customBlurForContainer(colorScheme: colorScheme, apply: showBlur)
+        .padding(.leading, 20)
+        .padding(.trailing, 22)
+        .customBlurForContainer(colorScheme: colorScheme, apply: true)
         .listSectionSpacing(.compact)
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
         .listStyle(.inset)
-        .ignoresSafeArea(edges: .top)
-        .animation(.default, value: vm.completedTasksHidden)
-        .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
-        .animation(.spring, value: vm.tasks)
-        .animation(.spring, value: vm.completedTasks)
-    }
-    
-    //MARK: Gesture dectectView
-    @ViewBuilder
-    private func GestureDetectView() -> some View {
-        Color.clear
-            .contentShape(Rectangle())
-            .gesture(
-                DragGesture(minimumDistance: 1)
-                    .onEnded { value in
-                        if value.translation.width < -75 {
-                            vm.nextDaySwiped()
-                        } else if value.translation.width > 75 {
-                            vm.previousDaySwiped()
-                        }
-                        
-                        if value.translation.height < -75 {
-                            
-                        } else if value.translation.height > 75 {
-                            
-                        }
-                    }
-            )
-            .onTapGesture(count: 2) {
-                vm.backToTodayButtonTapped()
-            }
+        .frame(maxHeight: vm.heightOfList())
+        .clipped()
     }
 }
 

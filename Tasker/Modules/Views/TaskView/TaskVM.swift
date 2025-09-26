@@ -169,7 +169,6 @@ public final class TaskVM: Identifiable {
     
     // MARK: - Init
     public init(mainModel: MainModel, titleFocused: Bool = false) {
-        print(mainModel.id)
         initing = true
         self.titleFocused = titleFocused
         setUPViewModel(mainModel)

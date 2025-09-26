@@ -33,6 +33,29 @@ public final class ListVM {
     var taskVM: TaskVM?
     
     //MARK: UI State
+    var indexForList: Int = 54 {
+        willSet {
+            if newValue > indexForList {
+                withAnimation {
+                    nextDaySwiped()
+                }
+            } else {
+                withAnimation {
+                    previousDaySwiped()
+                }
+            }
+        }
+        didSet {
+            if oldValue >= indexes.last! - 10 {
+                indexForList = 54
+            } else if oldValue <= indexes.first! + 10 {
+                indexForList = 54
+            }
+        }
+    }
+    
+    var indexes = Array(0...99)
+    
     var showDeleteDialog = false
     var contentHeight: CGFloat = 0
     
@@ -50,14 +73,6 @@ public final class ListVM {
     
     var completedTasks: [MainModel] {
         taskManager.completedTasks
-    }
-    
-    private var calendar: Calendar {
-        dateManager.calendar
-    }
-    
-    private var selectedDate: Double {
-        calendar.startOfDay(for: dateManager.selectedDate).timeIntervalSince1970
     }
     
     public init() {
@@ -90,13 +105,13 @@ public final class ListVM {
     }
     
     func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) {
-//        Task {
-            taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
-//            taskDeleteTrigger.toggle()
-            
-            
-//            await notificationManager.createNotification()
-//        }
+        //        Task {
+        taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+        //            taskDeleteTrigger.toggle()
+        
+        
+        //            await notificationManager.createNotification()
+        //        }
         
         if task.repeatTask == .never {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))
@@ -118,19 +133,6 @@ public final class ListVM {
         )
     }
     
-    //MARK: - Check for visible
-    func backToTodayButtonTapped() {
-        dateManager.backToToday()
-    }
-    
-    func nextDaySwiped() {
-        dateManager.addOneDay()
-    }
-    
-    func previousDaySwiped() {
-        dateManager.subtractOneDay()
-    }
-    
     func completedTaskViewChange() {
         let model = casManager.profileModel
         completedTasksHidden.toggle()
@@ -145,6 +147,30 @@ public final class ListVM {
             telemetryAction(.taskAction(.hideCompletedButtonTapped))
         }
     }
+    
+    func heightOfList() -> CGFloat {
+        CGFloat((tasks.count + completedTasks.count) * 52 + 170)
+    }
+    
+    //MARK: - Date
+    func backToTodayButtonTapped() {
+        dateManager.backToToday()
+        indexForList = 54
+    }
+    
+    private func indexResetWithDate() -> Bool {
+        dateManager.selectedDayIsToday()
+    }
+    
+    
+    private func nextDaySwiped() {
+        dateManager.addOneDay()
+    }
+    
+    private func previousDaySwiped() {
+        dateManager.subtractOneDay()
+    }
+    
     
     //MARK: - Telemetry action
     private func telemetryAction(_ action: EventType) {

@@ -142,39 +142,7 @@ final class DateManager: DateManagerProtocol {
         calendar.isDate(selectedDate, inSameDayAs: currentTime)
     }
     
-    private func generateWeek(for date: Date) -> [Date] {
-        let startOfWeek = startOfWeek(for: date)
-        return (0..<7).map { dayOffset in
-            calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)!
-        }
-    }
-    
-    private func generateMonth(for date: Date) -> [Date] {
-        var dates: [Date] = []
-        
-        guard let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
-              let range = calendar.range(of: .day, in: .month, for: startOfMonth) else {
-            return []
-        }
-        
-        for day in range {
-            if let dayDate = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth) {
-                dates.append(dayDate)
-            }
-        }
-        
-        return dates
-    }
-    
-    private func getMonthName(from date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.calendar = calendar
-        formatter.dateFormat = "LLLL"
-        return formatter.string(from: date).capitalized
-    }
-    
-    
+    //MARK: - Weeks
     func appendWeeksForward() {
         guard let lastWeekStart = allWeeks.last?.date.first else { return }
         for i in 1...24 {
@@ -193,6 +161,14 @@ final class DateManager: DateManagerProtocol {
         }
     }
     
+    private func generateWeek(for date: Date) -> [Date] {
+        let startOfWeek = startOfWeek(for: date)
+        return (0..<7).map { dayOffset in
+            calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)!
+        }
+    }
+    
+    //MARK: - Months
     func appendMonthsBackward() {
         guard let firstMonthStart = allMonths.first?.date.first,
               let firstID = allMonths.first?.id else { return }
@@ -223,6 +199,33 @@ final class DateManager: DateManagerProtocol {
         }
     }
     
+    private func generateMonth(for date: Date) -> [Date] {
+        var dates: [Date] = []
+        
+        guard let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
+              let range = calendar.range(of: .day, in: .month, for: startOfMonth) else {
+            return []
+        }
+        
+        for day in range {
+            if let dayDate = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth) {
+                dates.append(dayDate)
+            }
+        }
+        
+        return dates
+    }
+    
+    private func getMonthName(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.calendar = calendar
+        formatter.dateFormat = "LLLL"
+        return formatter.string(from: date).capitalized
+    }
+    
+    
+    //MARK: - Date to string
     func dateToString(for date: Date, useForWeekView: Bool) -> LocalizedStringKey {
         if useForWeekView {
             return formatterDate(date: date, useForWeek: useForWeekView)

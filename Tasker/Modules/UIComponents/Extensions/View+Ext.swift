@@ -76,3 +76,13 @@ public extension View {
         modifier(LiquidIfAvailable(glass: glass, isInteractive: isInteractive))
     }
 }
+
+//MARK: - Check TaskView for preview
+public extension View {
+    @ViewBuilder
+    func ifHidden(_ shouldHide: Bool) -> some View {
+        if !shouldHide {
+            self
+        }
+    }
+}

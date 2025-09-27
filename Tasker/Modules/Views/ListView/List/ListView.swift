@@ -23,24 +23,15 @@ public struct ListView: View {
         TabView(selection: $vm.indexForList) {
             ForEach(vm.indexes.indices, id: \.self) { tag in
                 VStack {
-                        CustomList()
-                            .simultaneousGesture(DragGesture())
-                    
-                    Spacer()
+                    CustomList()
+                        .simultaneousGesture(DragGesture())
                 }
-//                .tag(tag)
             }
-        }
-        .onTapGesture(count: 2) {
-            vm.backToTodayButtonTapped()
         }
         .ignoresSafeArea(edges: [.top, .horizontal])
         .tabViewStyle(.page(indexDisplayMode: .never))
         .animation(.default, value: vm.completedTasksHidden)
         .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
-        .animation(.spring, value: vm.tasks)
-        .animation(.spring, value: vm.completedTasks)
-        .animation(.spring, value: vm.indexForList)
     }
     
     
@@ -70,7 +61,6 @@ public struct ListView: View {
                             onDelete: vm.deleteButtonTapped
                         )
                         .contentShape(Rectangle())
-                        .padding(.leading, 2)
                         .padding(.vertical, 2)
                 }
                 .contextMenu {
@@ -92,7 +82,7 @@ public struct ListView: View {
                         Label("Delete task", systemImage: "trash")
                     }
                 } preview: {
-                    TaskRow(task: task)
+                    TaskView(taskVM: TaskVM(mainModel: task), preview: true)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button {
@@ -149,7 +139,6 @@ public struct ListView: View {
                                 isSingleTask: vm.singleTask,
                                 onDelete: vm.deleteButtonTapped
                             )
-                            .padding(.leading, 2)
                             .padding(.vertical, 2)
                     }
                     .contextMenu {
@@ -171,7 +160,7 @@ public struct ListView: View {
                             Label("Delete task", systemImage: "trash")
                         }
                     } preview: {
-                        TaskRow(task: task)
+                        TaskView(taskVM: TaskVM(mainModel: task), preview: true)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button {
@@ -207,27 +196,15 @@ public struct ListView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets())
         }
-        .overlay(alignment: .leading) {
-            LinearGradient(
-                colors: [
-                    colorScheme.backgroundColor(),
-                    colorScheme.backgroundColor().opacity(0.5),
-                    colorScheme.backgroundColor().opacity(0.2)
-                ],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-            .frame(maxWidth: 2)
-        }
-        .padding(.leading, 20)
-        .padding(.trailing, 22)
+        .padding(.horizontal, 22)
         .customBlurForContainer(colorScheme: colorScheme, apply: true)
         .listSectionSpacing(.compact)
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
         .listStyle(.inset)
-        .frame(maxHeight: vm.heightOfList())
-        .clipped()
+        .animation(.default, value: vm.completedTasksHidden)
+        .animation(.spring, value: vm.tasks)
+        .animation(.spring, value: vm.completedTasks)
     }
 }
 

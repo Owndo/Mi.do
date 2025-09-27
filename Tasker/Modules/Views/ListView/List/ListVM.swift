@@ -105,13 +105,7 @@ public final class ListVM {
     }
     
     func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) {
-        //        Task {
         taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
-        //            taskDeleteTrigger.toggle()
-        
-        
-        //            await notificationManager.createNotification()
-        //        }
         
         if task.repeatTask == .never {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))

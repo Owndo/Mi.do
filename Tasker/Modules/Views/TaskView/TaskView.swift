@@ -20,13 +20,16 @@ public struct TaskView: View {
     
     @FocusState var sectionInFocus: SectionInFocus?
     
+    var preview: Bool = false
+    
     public enum SectionInFocus: Hashable {
         case title
         case description
     }
     
-    public init(taskVM: TaskVM) {
+    public init(taskVM: TaskVM, preview: Bool = false) {
         self.vm = taskVM
+        self.preview = preview
     }
     
     public var body: some View {
@@ -42,6 +45,7 @@ public struct TaskView: View {
                         VStack(spacing: 28) {
                             
                             AudioSection()
+                                .ifHidden(preview)
                             
                             MainSection()
                             
@@ -62,6 +66,7 @@ public struct TaskView: View {
                                     )
                             )
                             
+                            
                             CustomColorPicker()
                                 .background(
                                     RoundedRectangle(cornerRadius: 26)
@@ -69,6 +74,7 @@ public struct TaskView: View {
                                             vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
                                         )
                                 )
+                                .ifHidden(preview)
                             
                             CreatedDate()
                             
@@ -79,9 +85,11 @@ public struct TaskView: View {
                     .scrollIndicators(.hidden)
                     .scrollDismissesKeyboard(.immediately)
                 }
+                .padding(.top, preview ? 30 : 0)
                 .padding(.horizontal, 16)
                 .safeAreaInset(edge: .bottom) {
                     SaveButton()
+                        .ifHidden(preview)
                         .padding(.leading, 16)
                         .padding(.trailing, 10)
                 }
@@ -122,46 +130,48 @@ public struct TaskView: View {
             }
             // MARK: - Tool Bar
             .toolbar {
-                if #available(iOS 26.0, *) {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button {
-                            vm.deleteTaskButtonTapped()
-                        } label: {
-                            Text("Delete", bundle: .module)
-                                .font(.system(.body, design: .rounded, weight: .regular))
-                                .foregroundStyle(.accentRed)
-                                .taskDeleteDialog(
-                                    isPresented: $vm.confirmationDialogIsPresented,
-                                    task: vm.task,
-                                    message: vm.messageForDelete,
-                                    isSingleTask: vm.singleTask,
-                                    onDelete: vm.deleteButtonTapped,
-                                    dismissButton: dismissButton
-                                )
+                if !preview {
+                    if #available(iOS 26.0, *) {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button {
+                                vm.deleteTaskButtonTapped()
+                            } label: {
+                                Text("Delete", bundle: .module)
+                                    .font(.system(.body, design: .rounded, weight: .regular))
+                                    .foregroundStyle(.accentRed)
+                                    .taskDeleteDialog(
+                                        isPresented: $vm.confirmationDialogIsPresented,
+                                        task: vm.task,
+                                        message: vm.messageForDelete,
+                                        isSingleTask: vm.singleTask,
+                                        onDelete: vm.deleteButtonTapped,
+                                        dismissButton: dismissButton
+                                    )
+                            }
+                            .opacity(vm.showPaywall ? 0 : 1)
+                            .disabled(vm.showPaywall)
                         }
-                        .opacity(vm.showPaywall ? 0 : 1)
-                        .disabled(vm.showPaywall)
-                    }
-                    .sharedBackgroundVisibility(vm.showPaywall ? .hidden : .visible)
-                } else {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button {
-                            vm.deleteTaskButtonTapped()
-                        } label: {
-                            Text("Delete", bundle: .module)
-                                .font(.system(.body, design: .rounded, weight: .regular))
-                                .foregroundStyle(.accentRed)
-                                .taskDeleteDialog(
-                                    isPresented: $vm.confirmationDialogIsPresented,
-                                    task: vm.task,
-                                    message: vm.messageForDelete,
-                                    isSingleTask: vm.singleTask,
-                                    onDelete: vm.deleteButtonTapped,
-                                    dismissButton: dismissButton
-                                )
+                        .sharedBackgroundVisibility(vm.showPaywall ? .hidden : .visible)
+                    } else {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button {
+                                vm.deleteTaskButtonTapped()
+                            } label: {
+                                Text("Delete", bundle: .module)
+                                    .font(.system(.body, design: .rounded, weight: .regular))
+                                    .foregroundStyle(.accentRed)
+                                    .taskDeleteDialog(
+                                        isPresented: $vm.confirmationDialogIsPresented,
+                                        task: vm.task,
+                                        message: vm.messageForDelete,
+                                        isSingleTask: vm.singleTask,
+                                        onDelete: vm.deleteButtonTapped,
+                                        dismissButton: dismissButton
+                                    )
+                            }
+                            .opacity(vm.showPaywall ? 0 : 1)
+                            .disabled(vm.showPaywall)
                         }
-                        .opacity(vm.showPaywall ? 0 : 1)
-                        .disabled(vm.showPaywall)
                     }
                 }
             }

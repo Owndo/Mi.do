@@ -105,7 +105,7 @@ final class TaskManager: TaskManagerProtocol {
         }
     }
     
-    //MARK: - Cashs for week
+    //MARK: - Cashe for week
     func thisWeekTasks(date: Double) async -> [MainModel] {
         return casManager.models.values
             .filter { task in
@@ -194,6 +194,10 @@ final class TaskManager: TaskManagerProtocol {
             tasks.removeValue(forKey: model.id)
             
             casManager.saveModel(model)
+        }
+        
+        Task {
+            await notificationManager.createNotification()
         }
     }
     

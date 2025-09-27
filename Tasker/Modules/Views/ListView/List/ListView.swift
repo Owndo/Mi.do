@@ -20,18 +20,10 @@ public struct ListView: View {
     }
     
     public var body: some View {
-        TabView(selection: $vm.indexForList) {
-            ForEach(vm.indexes.indices, id: \.self) { tag in
-                VStack {
-                    CustomList()
-                        .simultaneousGesture(DragGesture())
-                }
-            }
-        }
-        .ignoresSafeArea(edges: [.top, .horizontal])
-        .tabViewStyle(.page(indexDisplayMode: .never))
-        .animation(.default, value: vm.completedTasksHidden)
-        .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
+            CustomList()
+            .ignoresSafeArea(edges: [.top, .horizontal])
+            .animation(.default, value: vm.completedTasksHidden)
+            .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
     }
     
     

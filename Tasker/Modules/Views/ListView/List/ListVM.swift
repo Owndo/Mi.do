@@ -33,28 +33,26 @@ public final class ListVM {
     var taskVM: TaskVM?
     
     //MARK: UI State
-    var indexForList: Int = 54 {
-        willSet {
-            if newValue > indexForList {
-                withAnimation {
-                    nextDaySwiped()
-                }
-            } else {
-                withAnimation {
-                    previousDaySwiped()
-                }
-            }
-        }
-        didSet {
-            if oldValue >= indexes.last! - 10 {
-                indexForList = 54
-            } else if oldValue <= indexes.first! + 10 {
-                indexForList = 54
-            }
-        }
-    }
-    
-    var indexes = Array(0...99)
+    // TODO: - Until best days
+//    var indexForList: Int = 54 {
+//        didSet {
+//            if oldValue < indexForList {
+//                withAnimation {
+//                    nextDaySwiped()
+//                }
+//            } else {
+//                withAnimation {
+//                    previousDaySwiped()
+//                }
+//            }
+//            if oldValue >= indexes.last! - 10 {
+//                indexForList = 54
+//            } else if oldValue <= indexes.first! + 10 {
+//                indexForList = 54
+//            }
+//        }
+//    }
+//    var indexes = Array(0...99)
     
     var showDeleteDialog = false
     var contentHeight: CGFloat = 0
@@ -149,7 +147,7 @@ public final class ListVM {
     //MARK: - Date
     func backToTodayButtonTapped() {
         dateManager.backToToday()
-        indexForList = 54
+//        indexForList = 54
     }
     
     private func indexResetWithDate() -> Bool {

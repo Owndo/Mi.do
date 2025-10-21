@@ -22,11 +22,35 @@ extension URL {
     }
     
     func list(_ p: String = "") throws -> [String] {
-        try FileManager.default.contentsOfDirectory(
-            at: self, includingPropertiesForKeys: nil
-        ).flatMap {
+        try FileManager.default.contentsOfDirectory(at: self, includingPropertiesForKeys: nil).flatMap {
             let x = p + $0.lastPathComponent
             return try $0.isDirectory() ? try $0.list(x) : [x]
+        }
+    }
+    
+    func asyncList(_ prefix: String = "") async throws -> [String] {
+        try await withThrowingTaskGroup(of: [String].self) { group in
+            let items = try FileManager.default.contentsOfDirectory(at: self, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            
+            for item in items {
+                let name = prefix + item.lastPathComponent
+                
+                group.addTask {
+                    if try item.isDirectory() {
+                        return try await item.asyncList(name + "/")
+                    } else {
+                        return [name]
+                    }
+                }
+            }
+            
+            var list: [String] = []
+            
+            for try await i in group {
+                list.append(contentsOf: i)
+            }
+            
+            return list
         }
     }
 }
@@ -52,10 +76,11 @@ public class FileCas: Cas {
     
     public func add(_ data: Data) throws -> String {
         let id = id(data)
-        let p = path(id)
-        try FileManager.default.createDirectory(
-            at: p.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try data.write(to: p)
+        let path = path(id)
+        
+        try FileManager.default.createDirectory(at: path.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try data.write(to: path)
+        
         return id
     }
     
@@ -83,12 +108,12 @@ extension Cas {
         return Model(ModelStruct(mutable: mutable, value: value))
     }
     
-//    public func loadDeletedModel<T: Decodable>(_ mutable: Mutable) throws -> Model<T>? {
-////        guard let value: T = try loadJson(mutable) else {
-////            return nil
-////        }
-////        return Model(ModelStruct(mutable: mutable, value: value))
-//    }
+    //    public func loadDeletedModel<T: Decodable>(_ mutable: Mutable) throws -> Model<T>? {
+    ////        guard let value: T = try loadJson(mutable) else {
+    ////            return nil
+    ////        }
+    ////        return Model(ModelStruct(mutable: mutable, value: value))
+    //    }
     @discardableResult
     public func deleteModel<T>(_ model: Model<T>) throws -> String? {
         try delete(model.s.mutable)

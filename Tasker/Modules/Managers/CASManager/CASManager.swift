@@ -14,7 +14,7 @@ final class CASManager: CASManagerProtocol {
     
     let cas: MultiCas
     let localDirectory: URL
-    let remoteDirectory: URL
+//    let remoteDirectory: URL
     
     var taskUpdateTrigger = false
     var profileUpdateTriger = false
@@ -27,10 +27,10 @@ final class CASManager: CASManagerProtocol {
     
     init() {
         localDirectory = CASManager.createLocalDirectory()!
-        remoteDirectory = CASManager.createiCloudDirectory() ?? localDirectory
+//        remoteDirectory = CASManager.createiCloudDirectory() ?? localDirectory
         
         let localCas = FileCas(localDirectory)
-        let iCas = FileCas(remoteDirectory)
+        let iCas = FileCas(localDirectory)
         
         cas = MultiCas(local: localCas, remote: iCas)
         
@@ -197,7 +197,7 @@ final class CASManager: CASManagerProtocol {
     }
     
     func syncCases() async throws {
-        try cas.syncRemote()
+//        try cas.syncRemote()
     }
     
     //MARK: Create directory for CAS

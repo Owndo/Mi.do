@@ -7,38 +7,41 @@
 
 import Foundation
 
-public class MultiCas: Cas {
-    private var local: Cas
-    private var remote: Cas
+public class MultiCas: AsyncableCasProtocol {
+    public var decoder: JSONDecoder = .init()
+    public var encoder: JSONEncoder = .init()
     
-    public init(local: Cas, remote: Cas) {
+    private var local: AsyncableCasProtocol
+    private var remote: AsyncableCasProtocol
+    
+    public init(local: AsyncableCasProtocol, remote: AsyncableCasProtocol) {
         self.local = local
         self.remote = remote
     }
     
-    public func id(_ data: Data) -> String {
-        local.id(data)
+    public func hash(for data: Data) async -> String {
+        await local.hash(for: data)
     }
     
-    public func add(_ data: Data) throws -> String {
-        let id = try local.add(data)
+    public func store(_ data: Data) async throws -> String {
+        let id = try await local.store(data)
         
         do {
-            try remote.add(data)
+            try await remote.store(data)
         } catch {
             print("Couldn't remote add")
         }
         return id
     }
     
-    public func get(_ id: String) throws -> Data? {
-        if let data = try local.get(id) {
+    public func retriev(_ id: String) async throws -> Data? {
+        if let data = try await local.retriev(id) {
             return data
         }
         
         do {
-            if let data = try remote.get(id) {
-                try local.add(data)
+            if let data = try await remote.retriev(id) {
+                try await local.store(data)
                 return data
             }
         } catch {
@@ -47,20 +50,20 @@ public class MultiCas: Cas {
         return nil
     }
     
-    public func path(_ id: String) -> URL {
-        local.path(id)
+    public func allIdentifiers() async throws -> [String] {
+        try await local.allIdentifiers()
     }
     
-    public func list() throws -> [String] {
-        try local.list()
+    public func fileURL(forHash hash: String) async throws -> URL {
+        try await local.fileURL(forHash: hash)
     }
     
     //MARK: - Remote CAS
-    public func listOfRemoteCAS() throws -> [String] {
-        try remote.list()
+    public func listOfRemoteCAS() async throws -> [String] {
+        try await remote.allIdentifiers()
     }
     
     public func syncRemote() throws {
-        try local.sync(remote)
+//        try local.sync(remote)
     }
 }

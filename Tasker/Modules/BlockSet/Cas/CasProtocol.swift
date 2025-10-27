@@ -29,6 +29,10 @@ public extension Data {
     func sha256Id() -> String {
         SHA256.hash(data: self).base32()
     }
+    
+    func sha256Id() async -> String {
+        SHA256.hash(data: self).base32()
+    }
 }
 
 private struct CasWithSet {
@@ -94,15 +98,7 @@ extension Cas {
         
         return try get(blobId)
     }
-    
-//    public func loadDeleteData(_ mutable: Mutable) throws -> Data? {
-//        guard let blobId = mutable.parent?.blobId else {
-//
-//        }
-//        
-//        return try get(blobId)
-//    }
-    
+
     @discardableResult
     public func delete(_ mutable: Mutable) throws -> String? {
         try saveData(mutable, nil)

@@ -8,8 +8,8 @@
 import Foundation
 
 public class MultiCas: AsyncableCasProtocol {
-    public var decoder: JSONDecoder = .init()
-    public var encoder: JSONEncoder = .init()
+    public var decoder = JSONDecoder()
+    public var encoder = JSONEncoder()
     
     private var local: AsyncableCasProtocol
     private var remote: AsyncableCasProtocol
@@ -34,13 +34,13 @@ public class MultiCas: AsyncableCasProtocol {
         return id
     }
     
-    public func retriev(_ id: String) async throws -> Data? {
-        if let data = try await local.retriev(id) {
+    public func retrieve(_ id: String) async throws -> Data? {
+        if let data = try await local.retrieve(id) {
             return data
         }
         
         do {
-            if let data = try await remote.retriev(id) {
+            if let data = try await remote.retrieve(id) {
                 try await local.store(data)
                 return data
             }

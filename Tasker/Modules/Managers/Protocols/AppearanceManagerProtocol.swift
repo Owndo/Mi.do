@@ -10,13 +10,13 @@ import SwiftUI
 import Models
 
 public protocol AppearanceManagerProtocol {
-    var profileData: ProfileData { get }
+    var profileModel: ProfileData { get }
     var selectedColorScheme: ColorScheme? { get }
     
     func currentColorScheme() -> ColorScheme?
     
-    func setColorScheme(_ mode: ColorSchemeMode) 
-    func changeAccentColor(_ color: AccentColorEnum)
-    func changeBackgroundColor(_ color: BackgroundColorEnum)
-    func changeProgressMode(_ value: Bool)
+    func setColorScheme(_ mode: ColorSchemeMode) async throws
+    func changeAccentColor(_ color: AccentColorEnum) async throws
+    func changeBackgroundColor(_ color: BackgroundColorEnum) async throws
+    func changeProgressMode(_ value: Bool) async throws
 }

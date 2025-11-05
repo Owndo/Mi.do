@@ -1,8 +1,12 @@
 import Foundation
 import NaturalLanguage
 
-final class MagicManager {
-    @Injected(\.dateManager) private var dateManager
+public final class MagicManager {
+    private var dateManager: DateManagerProtocol
+    
+    init(dateManager: DateManagerProtocol) {
+        self.dateManager = dateManager
+    }
     
     private var calendar: Calendar {
         dateManager.calendar

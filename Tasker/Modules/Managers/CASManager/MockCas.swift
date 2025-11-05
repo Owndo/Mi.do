@@ -1,5 +1,5 @@
 //
-//  CasManager.swift
+//  MockCas.swift
 //  Tasker
 //
 //  Created by Rodion Akhmedov on 5/6/25.
@@ -8,205 +8,166 @@
 import Foundation
 import BlockSet
 import Models
+import Combine
 
-@Observable
 final class MockCas: CASManagerProtocol {
-    var casHasBeenUpdated: ((Bool) -> Void)?
-    
-    let cas: MultiCas
-    
-    var taskUpdateTrigger = false
-    var profileUpdateTriger = false
-    
-    var models: [String: MainModel] = [:]
-    var profileModel = mockProfileData()
-    var completedTasks: [String: MainModel] = [:]
-    
-    var activeTasks = [MainModel]()
-    
-    var deletedTasks: [MainModel] {
-        models.values.filter { $0.markAsDeleted == true }
+    let cas: FileCas
+    let allIdentifiers: [Mutable]
+
+    private init(cas: FileCas, allIdentifiers: [Mutable]) {
+        self.cas = cas
+        self.allIdentifiers = allIdentifiers
     }
     
-    var allCompletedTasks: [MainModel] {
-        models.values.filter { !$0.completeRecords.isEmpty }
+    //MARK: - Static methods for init
+    
+    static func createCASManager() async -> CASManagerProtocol {
+        let localDirectory = createLocalDirectory()!
+        
+        let cas = FileCas(localDirectory)
+        let list = await fetchList(cas: cas)
+        
+        let casManager = MockCas(cas: cas, allIdentifiers: list)
+        return casManager
     }
     
-    var allCompletedTasksCount = Int()
+    //MARK: - Fetch list
     
-    init() {
-        let localDirectory = MockCas.createLocalDirectory()!
-        let remoteDirectory = MockCas.createiCloudDirectory() ?? localDirectory
-        
-        let localCas = FileCas(localDirectory)
-        let iCas = FileCas(remoteDirectory)
-        
-        cas = MultiCas(local: localCas, remote: iCas)
-        
-        profileModel = fetchProfileData()
-        
-//        Task {
-////            await syncCases()
-//        }
-        
-        fetchModels()
-    }
-    
-    //MARK: Actions for work with CAS
-    func saveModel(_ task: MainModel) {
+    static private func fetchList(cas: AsyncableCasProtocol) async -> [Mutable] {
         do {
-            try cas.saveJsonModel(task.model)
-            models[task.id] = task
-            taskUpdateTrigger.toggle()
+            return try await cas.listMutables()
         } catch {
-            print("Couldn't save daat inside CAS")
+            return []
         }
     }
     
-    func saveProfileData(_ data: ProfileData) {
-        do {
-            try cas.saveJsonModel(data.model)
-            profileUpdateTriger.toggle()
-        } catch {
-            print("Couldn't save profile data inside CAS")
-        }
-    }
+    //MARK: - Fetch models
     
-    func saveAudio(url: URL) -> String? {
+    public func fetchModels<T: Codable>(_ model: T.Type) async -> [T] {
+        var models = [T]()
         
-        do {
-            let data = try Data(contentsOf: url)
-            let audioHash = try cas.add(data)
-            
-            return audioHash
-        } catch {
-            return nil
-        }
-    }
-    
-    func saveImage(_ photo: Data) -> String? {
-        do {
-            let imageHash = try cas.add(photo)
-            
-            return imageHash
-        } catch {
-            return nil
-        }
-    }
-    
-    func getData(_ hash: String) -> Data? {
-        do {
-            if let data = try cas.get(hash) {
-                return data
-            } else {
-                return nil
+        await withTaskGroup(of: Model<T>?.self) { group in
+            for i in allIdentifiers {
+                group.addTask {
+                    return try? await self.cas.loadJSONModel(i)
+                }
             }
-        } catch {
-            return nil
-        }
-    }
-    
-    //MARK: - Task models
-    func fetchModels() {
-        let list = try? cas.listMutable()
-        
-        if let list = list {
-            models = list.reduce(into: [String : MainModel]()) { result, mutable in
-                do {
-                    if let taskModel: Model<TaskModel> = try cas.loadJsonModel(mutable) {
-                        let task = UITaskModel(taskModel)
-                        result[task.id] = task
-                        
-                        if !task.completeRecords.isEmpty {
-                            completedTasks[task.id] = task
-                        }
-                    }
-                    
-                } catch {
-                    print("Error while loading model: \(error)")
+            
+            for await model in group {
+                if let model = model {
+                    models.append(model.value)
                 }
             }
         }
+        
+        return models
     }
     
+    //MARK: - Retriev data from cas
+    
+    func retrieve(_ hash: String) async throws -> Data? {
+        try await cas.retrieve(hash)
+    }
+    
+    //MARK: - Save model
+    
+    func saveModel<T: Codable>(_ model: Model<T>) async throws {
+        try await cas.saveJSONModel(model)
+    }
+    
+    //MARK: - Save audio
+    
+    func storeAudio(url: URL) async throws -> String? {
+        let data = try Data(contentsOf: url)
+        return try await cas.store(data)
+    }
+    
+    //MARK: Save image
+    
+    func storeImage(_ photo: Data) async throws -> String? {
+        return try await cas.store(photo)
+    }
+    
+    //MARK: - Update CAS after work
+    
     // Save all models before app will close
-    func updateCASAfterWork() {
-        for model in models {
-            do {
-                try cas.saveJsonModel(model.value.model)
-            } catch {
-                print("Error while saving model after end work: \(error)")
-            }
-        }
+    func updateCASAfterWork() async throws {
+        //        for model in models {
+        //            try await cas.saveJSONModel(model.value.model)
+        //        }
     }
     
     //MARK: - Profile data
-    func fetchProfileData() -> ProfileData {
-        let list = try? cas.listMutable()
-        
-        if let list = list {
-            return list.compactMap { mutable in
-                do {
-                    guard let profileModel: Model<ProfileModel> = try cas.loadJsonModel(mutable) else {
-                        return nil
-                    }
-                    
-                    return UIProfileModel(profileModel)
-                    
-                } catch {
-                    return nil
-                }
-            }.first ?? mockProfileData()
-        }
-        
-        return mockProfileData()
-    }
+    //    private func fetchProfileData() async -> ProfileData {
+    //        guard let iCloudProfile = loadProfileFromIcloud() else {
+    //            return modelFromCas()
+    //        }
+    //
+    //        if iCloudProfile.settings.iCloudSyncEnabled {
+    //            await saveProfileData(iCloudProfile)
+    //            return iCloudProfile
+    //        } else {
+    //            return modelFromCas()
+    //        }
+    //    }
     
-    func pathToAudio(_ hash: String) -> URL {
-        let url = cas.path(hash)
-        return url
+    //    private func modelFromCas() -> ProfileData {
+    //        let list = try! cas.listMutable()
+    //        return list.compactMap { mutable in
+    //            do {
+    //                guard let profileModel: Model<ProfileModel> = try cas.loadJsonModel(mutable) else {
+    //                    return nil
+    //                }
+    //
+    //                return UIProfileModel(profileModel)
+    //
+    //            } catch {
+    //                return nil
+    //            }
+    //        }.first ?? mockProfileData()
+    //    }
+    
+    //MARK: - Path to file
+    
+    func pathToFile(_ hash: String) async throws -> URL {
+        try await cas.fileURL(forHash: hash)
     }
     
     //MARK: Delete model
-    func deleteModel(_ task: MainModel) {
-        do {
-            try cas.deleteModel(task.model)
-            indexForDelete(task)
-            taskUpdateTrigger.toggle()
-        } catch {
-            print("Couldn't delete data: \(error)")
-        }
+    
+    func deleteModel<T: Codable>(_ model: Model<T>) async throws {
+        try await cas.deleteModel(model)
     }
     
-    //MARK: - Sync with iCloud
-    func syncCases() async throws {
-        guard profileModel.settings.iCloudSyncEnabled else {
-            print("Couldn't sync")
+    //MARK: - iCloud
+    
+    func updateCASesWithICloud() async {
+        // sync with icloud is turn off
+        //        guard profileModel.settings.iCloudSyncEnabled else {
+        //            return
+        //        }
+        
+        // create directory for container
+        guard let remoteURL = MockCas.createiCloudDirectory() else {
             return
         }
         
-//        do {
-//            let status = try cas.listOfRemoteCAS()
-//            print("here")
-//            if !status.isEmpty {
-//                for i in status {
-//                    print(i)
-//                }
-//            }
-//            print("remote cas is empty - \(status.isEmpty)")
-//        } catch {
-//            print("Error with remote cas \(error.localizedDescription)")
-//        }
+        // directory created, sync turn on but directory is empty
+        guard hasFiles(at: remoteURL) else {
+            return
+        }
         
-//        print("start sync")
-//        do {
-//            try cas.syncRemote()
-//            print("Sync completed")
-//        } catch {
-//            print("Sync error: \(error.localizedDescription)")
-//        }
-//        
-//        print("end sync")
+        // sync
+        do {
+            try await syncCases()
+            //            fetchModels()
+        } catch {
+            print("Couldn't sync")
+        }
+    }
+    
+    func syncCases() async throws {
+        //        try cas.syncRemote()
     }
     
     //MARK: Create directory for CAS
@@ -217,6 +178,18 @@ final class MockCas: CASManagerProtocol {
         
         let directoryPath = documentDirectory.appending(path: "Storage", directoryHint: .isDirectory)
         
+        if FileManager.default.fileExists(atPath: directoryPath.path) {
+            do {
+                let contents = try FileManager.default.contentsOfDirectory(at: directoryPath, includingPropertiesForKeys: nil)
+                for fileURL in contents {
+                    try FileManager.default.removeItem(at: fileURL)
+                }
+            } catch {
+                print("couldn't remove file: \(error.localizedDescription)")
+            }
+        }
+        
+        
         do {
             try FileManager.default.createDirectory(atPath: directoryPath.path(), withIntermediateDirectories: true)
             return directoryPath
@@ -225,6 +198,7 @@ final class MockCas: CASManagerProtocol {
         }
     }
     
+    //MARK: - iCloud CAS
     private static func createiCloudDirectory() -> URL? {
         let container = "iCloud.mido.robocode"
         
@@ -242,33 +216,41 @@ final class MockCas: CASManagerProtocol {
                 attributes: nil
             )
             
-            print(sourceDirectory)
             return sourceDirectory
         } catch {
-            print("\(error.localizedDescription)")
+            print("iCloud sync copy error: \(error.localizedDescription)")
             return nil
         }
-        
     }
     
-    //MARK: Predicate
-    private func indexForDelete(_ task: MainModel) {
-        models.removeValue(forKey: task.id)
+    private func hasFiles(at url: URL) -> Bool {
+        do {
+            let contents = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+            return !contents.isEmpty
+        } catch {
+            print("Error reading directory: \(error.localizedDescription)")
+            return false
+        }
     }
     
-    public func completedTaskCount() -> Int {
-        var allCompletedTasksCount = 0
+    private func saveProfileDataToICloud(_ profileData: ProfileData) {
+        guard profileData.settings.iCloudSyncEnabled else { return }
         
-        for task in models.values {
-            guard !task.completeRecords.isEmpty else {
-                continue
-            }
-            
-            for _ in task.completeRecords {
-                allCompletedTasksCount += 1
-            }
+        let store = NSUbiquitousKeyValueStore.default
+        if let data = try? JSONEncoder().encode(profileData.model.value) {
+            store.set(data, forKey: "profileData")
+            store.synchronize()
+        }
+    }
+    
+    private func loadProfileFromIcloud() -> ProfileData? {
+        let store = NSUbiquitousKeyValueStore.default
+        
+        if let data = store.data(forKey: "profileData") {
+            let profileData = try! JSONDecoder().decode(ProfileModel.self, from: data)
+            return ProfileData(.initial(profileData))
         }
         
-        return allCompletedTasksCount
+        return nil
     }
 }

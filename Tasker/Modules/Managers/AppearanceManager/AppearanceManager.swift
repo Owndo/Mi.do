@@ -11,57 +11,52 @@ import Models
 
 @Observable
 final public class AppearanceManager: AppearanceManagerProtocol {
-    @ObservationIgnored
-    @Injected(\.casManager) var casManager
     
-    public var profileData: ProfileData = mockProfileData()
+    private var profileManager: ProfileManagerProtocol
     
-    public var selectedColorScheme: ColorScheme?
+    public var profileModel: UIProfileModel {
+        get { profileManager.profileModel }
+        set { profileManager.profileModel = newValue }
+    }
     
-    init() {
-        profileData = casManager.profileModel
-        selectedColorScheme = currentColorScheme()
+    public var selectedColorScheme: ColorScheme? {
+        currentColorScheme()
+    }
+    
+    init(profileManager: ProfileManagerProtocol) {
+        self.profileManager = profileManager
     }
     
     public func backgroundColor() -> Color {
-        profileData.settings.backgroundColor().hexColor()
+        profileModel.settings.backgroundColor().hexColor()
     }
     
     public func currentColorScheme() -> ColorScheme? {
-        switch profileData.settings.colorScheme {
-        case .dark:
-            return .dark
-        case .light:
-            return .light
-        default:
-            return ColorScheme(.unspecified)
+        switch profileModel.settings.colorScheme {
+        case .dark: return .dark
+        case .light: return .light
+        default: return ColorScheme(.unspecified)
         }
     }
     
-    public func setColorScheme(_ mode: ColorSchemeMode) {
-        profileData.settings.colorScheme = mode
-        selectedColorScheme = mode.colorScheme
-        
-        saveProfileData()
+    public func setColorScheme(_ mode: ColorSchemeMode) async throws {
+        profileManager.profileModel.settings.colorScheme = mode
+        try await profileManager.updateProfileModel()
     }
     
-    public func changeProgressMode(_ value: Bool) {
-        profileData.settings.minimalProgressMode = value
-        saveProfileData()
+    public func changeProgressMode(_ value: Bool) async throws {
+        profileManager.profileModel.settings.minimalProgressMode = value
+        try await profileManager.updateProfileModel()
     }
     
-    public func changeAccentColor(_ color: AccentColorEnum) {
-        profileData.settings.accentColor = color.setUpColor()
-        saveProfileData()
+    public func changeAccentColor(_ color: AccentColorEnum) async throws {
+        profileManager.profileModel.settings.accentColor = color.setUpColor()
+        try await profileManager.updateProfileModel()
     }
     
-    public func changeBackgroundColor(_ color: BackgroundColorEnum) {
-        profileData.settings.background = color.setUpColor()
-        saveProfileData()
-    }
-    
-    func saveProfileData() {
-        casManager.saveProfileData(profileData)
+    public func changeBackgroundColor(_ color: BackgroundColorEnum) async throws {
+        profileManager.profileModel.settings.background = color.setUpColor()
+        try await profileManager.updateProfileModel()
     }
 }
 

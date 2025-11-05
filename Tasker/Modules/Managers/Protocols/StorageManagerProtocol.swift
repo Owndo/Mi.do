@@ -10,6 +10,6 @@ import Foundation
 public protocol StorageManagerProtocol {
     var baseDirectory: URL { get }
     
-    func createFileInSoundsDirectory(hash: String) -> URL?
+    func createFileInSoundsDirectory(hash: String) async -> URL?
     func deleteAudiFromDirectory(hash: String?)
 }

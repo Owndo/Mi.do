@@ -2,7 +2,12 @@ import ProjectDescription
 
 let project = Project(
     name: "Tasker",
-    settings: .settings(base: .init().automaticCodeSigning(devTeam: App.teamId), debug: SettingsDictionary().setProjectVersions(), release: SettingsDictionary().setProjectVersions(), defaultSettings: .recommended),
+    settings: .settings(
+        base: .init().automaticCodeSigning(devTeam: App.teamId),
+        debug: SettingsDictionary().setProjectVersions(),
+        release: SettingsDictionary().setProjectVersions(),
+        defaultSettings: .recommended
+    ),
     targets: [
         .target(
             name: App.name,
@@ -75,16 +80,18 @@ let project = Project(
         .module(name: "UIComponents", dependencies: [.target(name: "Models"), .target(name: "Managers")]),
         .module(name: "Managers", dependencies: [.target(name: "Models"), .external(name: "PostHog")]),
         .target(
-            name: "ManagersTests",
+            name: "Tests",
             destinations: App.destinations,
             product: .unitTests,
-            bundleId: App.bundleId + ".ManagersTests",
+            bundleId: App.bundleId + ".Tests",
             deploymentTargets: App.deploymentTargets,
             infoPlist: .default,
-            sources: ["Tasker/Tests/ManagersTests/**"],
+            sources: ["Tasker/Tests**"],
             dependencies: [
-                .target(name: "Managers"),
-                .target(name: "Models")
+                .target(name: "BlockSet"),
+                .target(name: "Models"),
+                .target(name: "Managers")
+//                .target(name: "Tasker")
             ]
         ),
         .module(
@@ -159,7 +166,7 @@ let project = Project(
             buildAction: .buildAction(targets: ["Tasker"]),
             runAction:
                     .runAction(
-                        configuration: .debug,
+                        configuration: .release,
                         attachDebugger: false,
                         options: .options(storeKitConfigurationPath: "Tasker/Modules/Managers/SubscriptionManager/Mi.storekit"),
                         expandVariableFromTarget: .target("Tasker"),
@@ -170,6 +177,7 @@ let project = Project(
             name: "Debug",
             shared: true,
             buildAction: .buildAction(targets: ["Tasker"]),
+            testAction: TestAction.targets(["Tests"], arguments: nil, configuration: .debug),
             runAction:
                     .runAction(
                         configuration: .debug,
@@ -246,8 +254,8 @@ struct App {
 
 extension SettingsDictionary {
     func setProjectVersions() -> SettingsDictionary {
-        let currentProjectVersion = "1.1.3"
-        let markettingVersion = "1.1.3"
+        let currentProjectVersion = App.version
+        let markettingVersion = App.version
         
         return appleGenericVersioningSystem().merging([
             "CURRENT_PROJECT_VERSION": SettingValue(stringLiteral: currentProjectVersion),

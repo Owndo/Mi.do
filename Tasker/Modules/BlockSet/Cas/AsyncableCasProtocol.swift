@@ -19,7 +19,7 @@ public protocol AsyncableCasProtocol {
     func store(_ data: Data) async throws -> String
     
     /// Use hash for getting any data from cas
-    func retriev(_ hash: String) async throws -> Data?
+    func retrieve(_ hash: String) async throws -> Data?
     
     /// Lists all stored identifiers.
     func allIdentifiers() async throws -> [String]
@@ -81,7 +81,7 @@ extension AsyncableCasProtocol {
             return nil
         }
         
-        return try await retriev(blobId)
+        return try await retrieve(blobId)
     }
     
     //MARK: - Delete
@@ -125,11 +125,11 @@ extension AsyncableCasProtocol {
         var commitId = mutable.parent?.commitId
         
         while let id = commitId,
-            let commitData = try await self.retriev(id) {
+            let commitData = try await self.retrieve(id) {
             let commit = try decoder.decode(Commit.self, from: commitData)
             
             if let blobId = commit.blob,
-               let data = try await self.retriev(blobId) {
+               let data = try await self.retrieve(blobId) {
                 return try decoder.decode(T.self, from: data)
             }
             
@@ -143,7 +143,7 @@ extension AsyncableCasProtocol {
     /// Loads a commit by its identifier.
     func loadCommit(_ commitId: String) async throws -> Commit? {
         guard
-            let commitData = try await self.retriev(commitId)
+            let commitData = try await self.retrieve(commitId)
         else {
             return nil
         }

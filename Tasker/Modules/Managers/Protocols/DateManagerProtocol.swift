@@ -11,7 +11,7 @@ import Models
 import SwiftUI
 
 public protocol DateManagerProtocol {
-    var selectedDateHasBeenChange: ((Bool) -> Void)? { get set }
+    var dateChanges: AsyncStream<Date> { get }
     
     var calendar: Calendar { get set }
     var currentTime: Date { get }
@@ -21,7 +21,7 @@ public protocol DateManagerProtocol {
     var allMonths: [PeriodModel] { get set }
     
     func initializeWeek()
-    func initializeMonth()
+    func initializeMonth() async
     func startOfWeek(for date: Date) -> Date
     func selectedDateChange(_ day: Date)
     func appendWeeksForward()

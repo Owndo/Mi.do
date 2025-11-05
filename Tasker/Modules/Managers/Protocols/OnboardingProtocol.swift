@@ -11,5 +11,5 @@ public protocol OnboardingManagerProtocol {
     var sayHello: Bool { get set }
     var onboardingComplete: Bool { get set }
     
-    func firstTimeOpenDone()
+    func firstTimeOpenDone() async throws
 }

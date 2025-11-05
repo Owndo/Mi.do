@@ -4,33 +4,35 @@ import Speech
 import NaturalLanguage
 
 @Observable
-final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
-    @ObservationIgnored
-    @Injected(\.telemetryManager) private var telemetryManager
+public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
+    private var telemetryManager: TelemetryManagerProtocol
+    private var dateManager: DateManagerProtocol
     
-    private var titleExtractor = MagicManager()
+    private var titleExtractor: MagicManager
     private var avAudioRecorder: AVAudioRecorder?
     
-    var timer: Timer?
-    var currentlyTime = 0.0
-    var progress = 0.00
-    var maxDuration = 15.00
-    var decibelLevel: Float = 0.0
-    var isRecording = false
+    private var baseDirectoryURL: URL = FileManager.default.temporaryDirectory
+    
+    public var timer: Timer?
+    public var currentlyTime = 0.0
+    public var progress = 0.00
+    public var maxDuration = 15.00
+    public var decibelLevel: Float = 0.0
+    public var isRecording = false
     
     private var previousDecibelLevel: Float = 0.0
     
     // MARK: - Speech Recognition Properties
-    var recognizedText = ""
-    var dateTimeFromtext: Date?
-    var wholeDescription: String?
+    public var recognizedText = ""
+    public var dateTimeFromtext: Date?
+    public var wholeDescription: String?
     
     private var audioEngine: AVAudioEngine?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let speechRecognizer: SFSpeechRecognizer?
     
-    let setting: [String: Any] = [
+    public let setting: [String: Any] = [
         AVFormatIDKey: Int(kAudioFormatLinearPCM),
         AVSampleRateKey: 44100,
         AVNumberOfChannelsKey: 1,
@@ -40,14 +42,17 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue,
     ]
     
-    var fileName: URL?
+    public var fileName: URL?
     
-    init() {
+    init(telemetryManager: TelemetryManagerProtocol, dateManager: DateManagerProtocol) {
+        self.telemetryManager = telemetryManager
+        self.dateManager = dateManager
+        titleExtractor = MagicManager(dateManager: dateManager)
         speechRecognizer = SFSpeechRecognizer(locale: Locale.current)
     }
     
     // MARK: - Start recording with speech recognition
-    func startRecording() async {
+    public func startRecording() async {
         let fileName = baseDirectoryURL.appending(path: "\(UUID().uuidString).wav")
         let session = AVAudioSession.sharedInstance()
         
@@ -73,11 +78,7 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         }
     }
     
-    var baseDirectoryURL: URL {
-        FileManager.default.temporaryDirectory
-    }
-    
-    func clearFileFromDirectory() {
+    public func clearFileFromDirectory() {
         guard let file = fileName else {
             return
         }
@@ -92,7 +93,7 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
     }
     
     // MARK: - Stop recording and speech recognition
-    func stopRecording() -> URL? {
+    public func stopRecording() -> URL? {
         timer?.invalidate()
         timer = nil
         avAudioRecorder?.stop()
@@ -167,7 +168,7 @@ final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
         }
     }
     
-    func resetDataFromText() {
+    public func resetDataFromText() {
         recognizedText = ""
         dateTimeFromtext = nil
     }

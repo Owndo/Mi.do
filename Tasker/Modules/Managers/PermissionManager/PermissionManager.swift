@@ -14,21 +14,24 @@ import Photos
 import Speech
 
 @Observable
-final class PermissionManager: PermissionProtocol {
+public final class PermissionManager: PermissionProtocol {
     @ObservationIgnored
     @AppStorage("recognizePermission") var recognizePermission = 0
     
-    @ObservationIgnored
-    @Injected(\.telemetryManager) var telemetryManager
+    private var telemetryManager: TelemetryManagerProtocol
     
-    var allowedMicro = false
-    var allowedNotification = false
-    var allowedSpeechRecognition = false
+    public var allowedMicro = false
+    public var allowedNotification = false
+    public var allowedSpeechRecognition = false
     
-    var alert: Alert?
+    public var alert: Alert?
+    
+    public init(telemetryManager: TelemetryManagerProtocol) {
+        self.telemetryManager = telemetryManager
+    }
     
     //MARK: Function for install session setup
-    func peremissionSessionForRecording() throws {
+    public func peremissionSessionForRecording() throws {
         
         let permissionSession = AVAudioApplication.shared
         let avAudioSession = AVAudioSession.sharedInstance()
@@ -73,13 +76,13 @@ final class PermissionManager: PermissionProtocol {
     }
     
     //MARK: Function request for use microphone
-    func requestRecordPermission() {
+    public func requestRecordPermission() {
         AVAudioApplication.requestRecordPermission { [weak self] granted in
             self?.allowedMicro = granted
         }
     }
     
-    func permissionForSpeechRecognition() async throws {
+    public func permissionForSpeechRecognition() async throws {
         let status = SFSpeechRecognizer.authorizationStatus()
         
         switch status {
@@ -99,7 +102,7 @@ final class PermissionManager: PermissionProtocol {
     }
     
     
-    func permissionForGallery() async -> Bool {
+    public func permissionForGallery() async -> Bool {
         let readWriteStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         
         switch readWriteStatus {

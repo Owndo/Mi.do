@@ -2,15 +2,12 @@ import Foundation
 import Models
 
 @Observable
-final class TaskManager: TaskManagerProtocol {
-    @ObservationIgnored
-    @Injected(\.casManager) private var casManager
-    @ObservationIgnored
-    @Injected(\.dateManager) private var dateManager
-    @ObservationIgnored
-    @Injected(\.notificationManager) var notificationManager
-    @ObservationIgnored
-    @Injected(\.telemetryManager) private var telemetryManager
+public final class TaskManager: TaskManagerProtocol {
+    
+    private var casManager: CASManagerProtocol
+    private var dateManager: DateManagerProtocol
+    private var notificationManager: NotificationManagerProtocol
+    private var telemetryManager: TelemetryManagerProtocol
     
     private var weekTasksCache: [Double: [MainModel]] = [:] // key: startOfWeek timestamp
     
@@ -42,39 +39,67 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     //MARK: Tasks properties
-    var tasks = [String: MainModel]()
-    var activeTasks: [MainModel] {
-        returnActivaTasks()
-    }
-    var completedTasks: [MainModel] {
-        returnCompletedTasks()
-    }
+    private var tasks = [String: UITaskModel]()
+    
+    public var activeTasks: [MainModel] { returnActivaTasks() }
+    public var completedTasks: [MainModel] { returnCompletedTasks() }
     
     private var thisWeekCasheTasks: [MainModel] = []
     private var cacheWeekStart: Double = 0
     private var cacheWeekEnd: Double = 0
     
-    init() {
-        updateTasks()
+    private var dateObserverTask: Task<Void, Never>?
+    
+    //MARK: - Init
+    
+    init(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, telemetryManager: TelemetryManagerProtocol) {
+        self.casManager = casManager
+        self.dateManager = dateManager
+        self.notificationManager = notificationManager
+        self.telemetryManager = telemetryManager
+    }
+    
+    //MARK: - Deinit
+    
+    deinit {
+        dateObserverTask?.cancel()
+    }
+    
+    static func createTaskManager(
+        casManager: CASManagerProtocol,
+        dateManager: DateManagerProtocol,
+        notificationManager: NotificationManagerProtocol,
+        telemetryManager: TelemetryManagerProtocol
+    ) async -> TaskManagerProtocol {
+        let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager, telemetryManager: telemetryManager)
+        manager.tasks = await manager.updateTasks()
+        
+        return manager
     }
     
     //MARK: - Update tasks
-    private func updateTasks() {
-        tasks = casManager.models.filter { value in
-            value.value.isScheduledForDate(selectedDate, calendar: calendar)
+    
+    private func updateTasks() async -> [String: UITaskModel] {
+        dateObserverTask = Task { [weak self] in
+            guard let self = self else { return }
+            
+            for await _ in self.dateManager.dateChanges {
+                guard !Task.isCancelled else { break }
+                
+                self.tasks = await self.updateTasks()
+            }
         }
         
-        dateManager.selectedDateHasBeenChange = { [weak self] _ in
-            self?.updateTasks()
-        }
-        
-        casManager.casHasBeenUpdated = { [weak self] _ in
-            print("sync done")
-            self?.updateTasks()
-        }
+        return await casManager.fetchModels(TaskModel.self)
+            .reduce(into: [String: UITaskModel]()) { dict, model in
+                let uiModel = UITaskModel(.initial(model))
+                guard uiModel.isScheduledForDate(selectedDate, calendar: calendar) else { return }
+                dict[uiModel.id] = uiModel
+            }
     }
     
     //MARK: Return active tasks
+    
     private func returnActivaTasks() -> [MainModel] {
         let filtered = tasks.values.filter { value in
             value.completeRecords.contains { $0.completedFor == selectedDate } != true
@@ -84,6 +109,7 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     //MARK: Return completed tasks
+    
     private func returnCompletedTasks() -> [MainModel] {
         let filtered = tasks.values.filter { value in
             value.completeRecords.contains { $0.completedFor == selectedDate }
@@ -93,7 +119,7 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     //MARK: - Sorted tasks
-    func sortedTasks(tasks: [MainModel]) -> [MainModel] {
+    private func sortedTasks(tasks: [MainModel]) -> [MainModel] {
         tasks.sorted {
             let hour1 = calendar.component(.hour, from: Date(timeIntervalSince1970: $0.notificationDate))
             let hour2 = calendar.component(.hour, from: Date(timeIntervalSince1970: $1.notificationDate))
@@ -106,8 +132,9 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     //MARK: - Cashe for week
-    func thisWeekTasks(date: Double) async -> [MainModel] {
-        return casManager.models.values
+    
+    public func thisWeekTasks(date: Double) async -> [UITaskModel] {
+        return tasks.values
             .filter { task in
                 return task.deleteRecords.contains { $0.deletedFor == date } != true
             }
@@ -128,22 +155,19 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     // MARK: - Completion Management
-    func checkCompletedTaskForToday(task: UITaskModel) -> Bool {
+    
+    public func checkCompletedTaskForToday(task: UITaskModel) -> Bool {
         task.completeRecords.contains(where: { $0.completedFor == selectedDate })
     }
     // MARK: - Check mark tapped
-    func checkMarkTapped(task: UITaskModel) {
-        let id = task.id
-        
+    
+    public func checkMarkTapped(task: UITaskModel) async throws {
         let model = task
         model.completeRecords = updateExistingTaskCompletion(task: task)
         
-        tasks[id] = model
-        saveTask(model)
+        try await saveTask(model)
         
-        Task {
-            await notificationManager.createNotification()
-        }
+        await updateNotifications()
     }
     
     private func updateExistingTaskCompletion(task: UITaskModel) -> [CompleteRecord] {
@@ -171,44 +195,47 @@ final class TaskManager: TaskManagerProtocol {
         CompleteRecord(completedFor: selectedDate, timeMark: currentTime)
     }
     
-    func saveTask(_ task: UITaskModel) {
-        if task.isScheduledForDate(selectedDate, calendar: calendar) {
-            tasks[task.id] = task
-        }
+    //MARK: - Save Task
+    
+    public func saveTask(_ task: UITaskModel) async throws {
+        try await casManager.saveModel(task.model)
         
-        casManager.saveModel(task)
+        guard calendar.isDate(Date(timeIntervalSince1970: task.notificationDate), inSameDayAs: dateManager.selectedDate) else {
+            return
+        }
+        tasks[task.id] = task
     }
     
     // MARK: - Delete task
-    func deleteTask(task: MainModel, deleteCompletely: Bool = false) {
+    public func deleteTask(task: UITaskModel, deleteCompletely: Bool = false) async throws {
         guard task.markAsDeleted == false else {
             return
         }
         
         let model = task
         if deleteCompletely {
+            try await casManager.deleteModel(task.model)
             tasks.removeValue(forKey: task.id)
-            casManager.deleteModel(task)
         } else {
             model.deleteRecords = updateExistingTaskDeleted(task: model)
-            tasks.removeValue(forKey: model.id)
-            
-            casManager.saveModel(model)
+            try await saveTask(task)
         }
         
-        Task {
-            await notificationManager.createNotification()
-        }
+        await updateNotifications()
     }
     
-    func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord] {
+    public func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord] {
         var newDeletedRecords: [DeleteRecord] = task.deleteRecords
         newDeletedRecords.append(DeleteRecord(deletedFor: selectedDate, timeMark: currentTime))
         return newDeletedRecords
     }
     
+    public func updateNotifications() async {
+        await notificationManager.createNotification(tasks: tasks.map{ $0.value })
+    }
+    
     //MARK: - Move to next Day
-    func updateNotificationTimeForDueDate(task: MainModel) -> MainModel {
+    public func updateNotificationTimeForDueDate(task: MainModel) -> MainModel {
         let model = task
         
         model.notificationDate = dateManager.updateNotificationDate(model.notificationDate)
@@ -217,7 +244,7 @@ final class TaskManager: TaskManagerProtocol {
     }
     
     //MARK: Deadline logic
-    func dayUntillDeadLine(_ task: MainModel) -> Int? {
+    public func dayUntillDeadLine(_ task: MainModel) -> Int? {
         guard task.deadline != nil else {
             return nil
         }

@@ -11,41 +11,36 @@ import Models
 import SwiftUI
 
 @Observable
-final class NotificationManager: NotificationManagerProtocol {
-    @ObservationIgnored
-    @Injected(\.subscriptionManager) var subscriptionManager: SubscriptionManagerProtocol
-    
+public final class NotificationManager: NotificationManagerProtocol {
     @ObservationIgnored
     @AppStorage("countOfNotificationDeinid") var countOfNotificationDeinid = 0
     
-    @ObservationIgnored
-    @Injected(\.storageManager) private var storageManager
-    @ObservationIgnored
-    @Injected(\.taskManager) private var taskManager
-    @ObservationIgnored
-    @Injected(\.dateManager) private var dateManager
-    @ObservationIgnored
-    @Injected(\.casManager) private var casManager
+    private var subscriptionManager: SubscriptionManagerProtocol
+    private var storageManager: StorageManagerProtocol
+    private var dateManager: DateManagerProtocol
     
-    let notificationContent = UNMutableNotificationContent()
-    var notificationCenter = UNUserNotificationCenter.current()
-    let authorizationOption: UNAuthorizationOptions = [.alert, .badge, .carPlay, .sound, .providesAppNotificationSettings]
+    private let notificationContent = UNMutableNotificationContent()
+    private var notificationCenter = UNUserNotificationCenter.current()
+    private let authorizationOption: UNAuthorizationOptions = [.alert, .badge, .carPlay, .sound, .providesAppNotificationSettings]
     
-    var alert: AlertModel?
+    public var alert: AlertModel?
     
     private var uniqueID = [String]()
     private var selectedDay = Date()
     
-    var calendar: Calendar {
-        dateManager.calendar
-    }
+    private var calendar: Calendar
+    private var now: Date = Date()
     
-    var now: Date {
-        dateManager.currentTime
+    init(subscriptionManager: SubscriptionManagerProtocol, storageManager: StorageManagerProtocol, dateManager: DateManagerProtocol) {
+        self.subscriptionManager = subscriptionManager
+        self.storageManager = storageManager
+        self.dateManager = dateManager
+        
+        self.calendar = dateManager.calendar
     }
     
     //update cash
-    func createNotification() async {
+    public func createNotification(tasks: [UITaskModel]) async {
         let settings = await notificationCenter.notificationSettings()
         
         if settings.authorizationStatus != .authorized {
@@ -56,10 +51,10 @@ final class NotificationManager: NotificationManagerProtocol {
         var countOfDay = 0
         
         while permissibleQuantity() && countOfDay < 365 {
-            let tasks = tasksForSpecificDay(day: selectedDay)
+            let tasks = tasksForSpecificDay(tasks: tasks, day: selectedDay)
             
             for task in tasks {
-                scheduleNotification(task)
+                await scheduleNotification(task)
             }
             
             selectedDay = calendar.date(byAdding: .day, value: 1, to: selectedDay)!
@@ -69,7 +64,7 @@ final class NotificationManager: NotificationManagerProtocol {
     
     
     //MARK: - Main function for scheduling notification
-    private func scheduleNotification(_ task: UITaskModel) {
+    private func scheduleNotification(_ task: UITaskModel) async {
         guard permissibleQuantity() else {
             return
         }
@@ -83,34 +78,34 @@ final class NotificationManager: NotificationManagerProtocol {
                 return
             }
             
-            createSingleNotification(task)
+            await createSingleNotification(task)
             return
         }
         
         guard hasTaskCompleteOrDeleteMarkersInFuture(task: task) else {
             guard checkTaskInCorrectRange(task: task) else {
-                createSpecificSingleNotification(task, date: selectedDay)
+                await createSpecificSingleNotification(task, date: selectedDay)
                 return
                 
             }
             
             guard task.deadline != nil else {
-                createRepeatNotification(task)
+                await createRepeatNotification(task)
                 return
             }
             
             guard checkDayBeforeDeadline(task) <= 5 else {
-                createRepeatNotification(task)
+                await createRepeatNotification(task)
                 return
             }
             
-            createSpecificSingleNotification(task, date: selectedDay)
+            await createSpecificSingleNotification(task, date: selectedDay)
             return
             
         }
         
         guard checkDaysBeforeSkip(task) <= 5 else {
-            createRepeatNotification(task)
+            await createRepeatNotification(task)
             return
         }
         
@@ -119,20 +114,20 @@ final class NotificationManager: NotificationManagerProtocol {
         }
         
         guard task.repeatTask == .dayOfWeek else {
-            createSpecificSingleNotification(task, date: selectedDay)
+            await createSpecificSingleNotification(task, date: selectedDay)
             return
         }
         
         guard checkTaskInCorrectRange(task: task) else {
-            createSpecificSingleNotification(task, date: selectedDay)
+            await createSpecificSingleNotification(task, date: selectedDay)
             return
         }
         
-        createRepeatNotification(task)
+        await createRepeatNotification(task)
     }
     
     //MARK: - Single notification
-    private func createSingleNotification(_ task: UITaskModel) {
+    private func createSingleNotification(_ task: UITaskModel) async {
         let localizedTitle = NSLocalizedString(task.title == "" ? "New task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
@@ -148,7 +143,7 @@ final class NotificationManager: NotificationManagerProtocol {
         } else {
             if let audio = task.audio {
                 if hasSubscription() {
-                    _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                    _ = await storageManager.createFileInSoundsDirectory(hash: audio)
                     notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
                 } else {
                     notificationContent.sound = .default
@@ -160,12 +155,16 @@ final class NotificationManager: NotificationManagerProtocol {
         let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
         
         let request = UNNotificationRequest(identifier: task.id , content: notificationContent, trigger: trigger)
-        notificationCenter.add(request)
+        do {
+            try await notificationCenter.add(request)
+        } catch {
+            
+        }
         removeDeliveredNotification()
     }
     
     //MARK: - Create repeat notification
-    private func createRepeatNotification(_ task: UITaskModel) {
+    private func createRepeatNotification(_ task: UITaskModel) async {
         let localizedTitle = NSLocalizedString(task.title == "" ? "New task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
@@ -195,7 +194,7 @@ final class NotificationManager: NotificationManagerProtocol {
             guard !uniqueID.contains(uniqueNotificationID) else { return }
             
             guard checkDiffBetweenDayOfWeek(dateFromCurrentWeek: now, dateFromSelectedWeek: selectedDay, task: task) else {
-                createSpecificSingleNotification(task, date: selectedDay)
+                await createSpecificSingleNotification(task, date: selectedDay)
                 return
             }
             
@@ -211,7 +210,7 @@ final class NotificationManager: NotificationManagerProtocol {
             } else {
                 if let audio = task.audio {
                     if hasSubscription() {
-                        _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                        _ = await storageManager.createFileInSoundsDirectory(hash: audio)
                         notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
                     } else {
                         notificationContent.sound = .default
@@ -222,7 +221,11 @@ final class NotificationManager: NotificationManagerProtocol {
             let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
             
-            notificationCenter.add(request)
+            do {
+                try await notificationCenter.add(request)
+            } catch {
+                
+            }
         } else {
             guard !uniqueID.contains(uniqueNotificationID) else { return }
             
@@ -256,7 +259,7 @@ final class NotificationManager: NotificationManagerProtocol {
             } else {
                 if let audio = task.audio {
                     if hasSubscription() {
-                        _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                        _ = await storageManager.createFileInSoundsDirectory(hash: audio)
                         notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
                     } else {
                         notificationContent.sound = .default
@@ -265,14 +268,19 @@ final class NotificationManager: NotificationManagerProtocol {
             }
             
             let request = UNNotificationRequest(identifier: uniqueNotificationID, content: notificationContent, trigger: trigger)
-            notificationCenter.add(request)
+            
+            do {
+                try await notificationCenter.add(request)
+            } catch {
+                
+            }
         }
         
         removeDeliveredNotification()
     }
     
     //MARK: - Specific single notification
-    private func createSpecificSingleNotification(_ task: UITaskModel, date: Date) {
+    private func createSpecificSingleNotification(_ task: UITaskModel, date: Date) async {
         let localizedTitle = NSLocalizedString(task.title == "" ? "New task" : task.title, bundle: .module, value: task.title, comment: "Task title")
         let localizedDescription = NSLocalizedString(task.description, bundle: .module, value: task.description, comment: "Task description")
         
@@ -298,7 +306,7 @@ final class NotificationManager: NotificationManagerProtocol {
         } else {
             if let audio = task.audio {
                 if hasSubscription() {
-                    _ = storageManager.createFileInSoundsDirectory(hash: audio)
+                    _ = await storageManager.createFileInSoundsDirectory(hash: audio)
                     notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
                 } else {
                     notificationContent.sound = .default
@@ -311,7 +319,13 @@ final class NotificationManager: NotificationManagerProtocol {
         let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: false)
         
         let request = UNNotificationRequest(identifier: updatedID, content: notificationContent, trigger: trigger)
-        notificationCenter.add(request)
+        
+        do {
+            try await notificationCenter.add(request)
+        } catch {
+            
+        }
+        
         removeDeliveredNotification()
     }
     
@@ -329,7 +343,7 @@ final class NotificationManager: NotificationManagerProtocol {
         }
     }
     
-    func removeAllEvents() {
+    public func removeAllEvents() {
         notificationCenter.removeAllDeliveredNotifications()
         notificationCenter.removeAllPendingNotificationRequests()
         uniqueID.removeAll()
@@ -346,7 +360,7 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     //MARK: - Permission for notification
-    func checkPermission() async {
+    public func checkPermission() async {
         let settings = await notificationCenter.notificationSettings()
         
         switch settings.authorizationStatus {
@@ -387,11 +401,9 @@ final class NotificationManager: NotificationManagerProtocol {
     }
     
     /// Avalible tasks for day
-    private func tasksForSpecificDay(day: Date) -> [UITaskModel] {
-        casManager.models.values
-            .filter {
-                $0
-                    .isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) &&
+    private func tasksForSpecificDay(tasks: [UITaskModel], day: Date) -> [UITaskModel] {
+        tasks.filter {
+                $0.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) &&
                 isTaskTimeAfterCurrent($0, for: day) }
             .sorted { sortedTasksForCurrentTime(task1: $0, task2: $1) }
     }

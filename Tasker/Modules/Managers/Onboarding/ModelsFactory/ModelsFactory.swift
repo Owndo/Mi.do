@@ -11,8 +11,7 @@ import SwiftUI
 
 @Observable
 final class ModelsFactory {
-    @ObservationIgnored
-    @Injected(\.dateManager) var dateManager
+    private var dateManager: DateManagerProtocol
     
     private var calendar: Calendar {
         dateManager.calendar
@@ -23,7 +22,9 @@ final class ModelsFactory {
     
     var today = DateComponents()
     
-    init() {
+    init(dateManager: DateManagerProtocol) {
+        self.dateManager = dateManager
+        
         today.year = calendar.component(.year, from: now)
         today.month = calendar.component(.month, from: now)
         today.day = calendar.component(.day, from: now)

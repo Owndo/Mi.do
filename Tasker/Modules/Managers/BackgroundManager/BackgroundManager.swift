@@ -9,10 +9,11 @@ import Foundation
 import BackgroundTasks
 
 public final class BackgroundManager {
-    @Injected(\.casManager) var casManager
-    @Injected(\.notificationManager) var notificationManager
+    private var taskManager: TaskManagerProtocol
     
-    public init() {}
+    public init(taskManager: TaskManagerProtocol) {
+        self.taskManager = taskManager
+    }
     
     public func scheduleAppRefreshTask() async {
         let request = BGAppRefreshTaskRequest(identifier: "mido.robocode.updateNotificationsAndSync")
@@ -25,7 +26,7 @@ public final class BackgroundManager {
     }
     
     public func backgroundUpdate() async {
-        await notificationManager.createNotification()
-        try? await casManager.syncCases()
+        await taskManager.updateNotifications()
+//        try? await casManager.syncCases()
     }
 }

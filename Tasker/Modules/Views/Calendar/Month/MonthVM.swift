@@ -17,11 +17,7 @@ final class MonthVM {
     @ObservationIgnored
     @Injected(\.appearanceManager) var appearanceManager
     @ObservationIgnored
-    @Injected(\.telemetryManager) var telemetryManager
-    @ObservationIgnored
     @Injected(\.subscriptionManager) var subscriptionManager
-    @ObservationIgnored
-    @Injected(\.onboardingManager) var onboardingManager
     
     var showPaywall: Bool {
         subscriptionManager.showPaywall

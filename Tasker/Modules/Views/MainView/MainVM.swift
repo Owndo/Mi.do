@@ -11,6 +11,7 @@ import Managers
 import Models
 import TaskView
 import ListView
+import BlockSet
 
 @MainActor
 @Observable
@@ -38,6 +39,9 @@ public final class MainVM {
     @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     @ObservationIgnored
     @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
+    
+    var cas = FileCas(dir)
+    
     
     //MARK: - Model
     var mainModel: MainModel?
@@ -314,7 +318,7 @@ public final class MainVM {
         var hashOfAudio: String?
         
         if let audioURLString = recordManager.stopRecording() {
-            hashOfAudio = casManager.saveAudio(url: audioURLString)
+            hashOfAudio = casManager.storeAudio(url: audioURLString)
         }
         
         createTask(with: hashOfAudio)

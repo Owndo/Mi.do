@@ -8,11 +8,3 @@
 import Foundation
 import Photos
 import SwiftUI
-
-final class PhotoManager {
-    @Injected(\.permissionManager) var permissionManager
-    @Injected(\.casManager) var casManager
-    
-    var alert: Alert?
-
-}

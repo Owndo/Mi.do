@@ -62,7 +62,7 @@ struct AsyncFileCasTests {
         let data = Data([1, 2, 3, 4, 5])
         let hash = try await cas.store(data)
         
-        let dataFromCas = try await cas.retriev(hash)
+        let dataFromCas = try await cas.retrieve(hash)
         
         #expect(dataFromCas == data)
         #expect(dataFromCas != wrongDataForTest)
@@ -92,7 +92,7 @@ struct AsyncFileCasTests {
         let _ = try await cas.saveJSON(mutable, modelForTest)
         
         // check JSON payload
-        let d = try await cas.retriev(modelDeleted!)!
+        let d = try await cas.retrieve(modelDeleted!)!
         let s = String(data: d, encoding: .utf8)!
         #expect(s == "{\"parent\":[\"\(nameEdited!)\"]}")
         
@@ -237,7 +237,7 @@ struct AsyncFileCasTests {
         
         #expect(list.count == 5)
         
-        let dataFromCas = try await cas.retriev(hashForDescription!)
+        let dataFromCas = try await cas.retrieve(hashForDescription!)
         
         #expect(dataFromCas == descriptionForModel.data(using: .utf8)!)
         
@@ -298,26 +298,26 @@ struct AsyncFileCasTests {
         
         #expect(model.value == deletedModel)
     }
+}
+
+//MARK: - Helpers
+//MARK:  Create Directory
+func createDirectory() -> URL? {
+    guard let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
+        return nil
+    }
     
-    //MARK: - Helpers
-    //MARK:  Create Directory
-    private func createDirectory() -> URL? {
-        guard let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
-            return nil
+    let path = dir.appending(path: "Storage", directoryHint: .isDirectory)
+    
+    do {
+        
+        if FileManager.default.fileExists(atPath: path.path) {
+            try FileManager.default.removeItem(at: path)
         }
         
-        let path = dir.appending(path: "Storage", directoryHint: .isDirectory)
-        
-        do {
-            
-            if FileManager.default.fileExists(atPath: path.path) {
-                try FileManager.default.removeItem(at: path)
-            }
-            
-            try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
-            return path
-        } catch {
-            return nil
-        }
+        try FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
+        return path
+    } catch {
+        return nil
     }
 }

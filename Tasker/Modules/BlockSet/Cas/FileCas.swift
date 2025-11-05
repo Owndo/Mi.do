@@ -7,8 +7,8 @@
 import Foundation
 
 public class FileCas: AsyncableCasProtocol, Cas {
-    public var decoder: JSONDecoder = JSONDecoder()
-    public var encoder: JSONEncoder = JSONEncoder()
+    public var decoder = JSONDecoder()
+    public var encoder = JSONEncoder()
     
     // private:
     private let dir: URL
@@ -64,7 +64,7 @@ public class FileCas: AsyncableCasProtocol, Cas {
         return id
     }
     
-    public func retriev(_ hash: String) async throws -> Data? {
+    public func retrieve(_ hash: String) async throws -> Data? {
         // TODO: check errors. if the file doesn't exist, return nil
         // otherwise, throw the error
         try? Data(contentsOf: try await fileURL(forHash: hash))

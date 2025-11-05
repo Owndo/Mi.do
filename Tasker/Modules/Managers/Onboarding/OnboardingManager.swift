@@ -10,14 +10,18 @@ import Models
 
 @Observable
 public final class OnboardingManager: OnboardingManagerProtocol {
-    @ObservationIgnored
-    @Injected(\.casManager) var casManager
-    @ObservationIgnored
-    @Injected(\.subscriptionManager) var subscriptionManager
-    @ObservationIgnored
-    @Injected(\.dateManager) var dateManager
+    private var profileManager: ProfileManagerProtocol
+    private var taskManager: TaskManagerProtocol
+    private var dateManager: DateManagerProtocol
     
-    var profileModel = mockProfileData()
+    private var profileModel: UIProfileModel {
+        get {
+            profileManager.profileModel
+        }
+        set {
+            profileManager.profileModel = newValue
+        }
+    }
     
     //MARK: - Onboarding flow
     public var sayHello = false
@@ -26,8 +30,11 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     
     public var onboardingComplete = false
     
-    init() {
-        profileModel = casManager.profileModel
+    init(profileManager: ProfileManagerProtocol, taskManager: TaskManagerProtocol, dateManager: DateManagerProtocol) {
+        self.taskManager = taskManager
+        self.profileManager = profileManager
+        self.dateManager = dateManager
+        
         firstTimeOpen()
     }
     
@@ -40,17 +47,11 @@ public final class OnboardingManager: OnboardingManagerProtocol {
         onboardingComplete = true
     }
     
-    public func firstTimeOpenDone() {
+    public func firstTimeOpenDone() async throws {
         sayHello = false
-        onboardingComplete = true
         
-        createBaseTasks()
-        
-        profileModel.onboarding.latestVersion = ConfigurationFile.appVersion
-        
-        profileModelSave()
-        
-        NotificationCenter.default.post(name: NSNotification.Name("firstTimeOpenHasBeenDone"), object: nil)
+        try await createBaseTasks()
+        try await profileModelSave()
     }
     
     //MARK: - Onboarding flow
@@ -58,27 +59,31 @@ public final class OnboardingManager: OnboardingManagerProtocol {
         
     }
     
-    //MARK: - Onboarding
-    private func createBaseTasks() {
+    //MARK: - Create base Task
+    
+    private func createBaseTasks() async throws {
         guard profileModel.onboarding.latestVersion == nil else {
             return
         }
         
-        let factory = ModelsFactory()
+        let factory = ModelsFactory(dateManager: dateManager)
         
-        casManager.saveModel(factory.create(.bestApp))
-        casManager.saveModel(factory.create(.planForTommorow, repeatTask: .weekly))
-        casManager.saveModel(factory.create(.randomHours))
-        casManager.saveModel(factory.create(.readSomething))
+        try await taskManager.saveTask(factory.create(.bestApp))
+        try await taskManager.saveTask(factory.create(.planForTommorow, repeatTask: .weekly))
+        try await taskManager.saveTask(factory.create(.randomHours))
+        try await taskManager.saveTask(factory.create(.readSomething))
+        
         
         guard !dateManager.calendar.isDate(dateManager.currentTime, inSameDayAs: dateManager.sunday()) else {
             return
         }
         
-        casManager.saveModel(factory.create(.planForTommorow))
+        try await taskManager.saveTask(factory.create(.planForTommorow))
     }
     
-    private func profileModelSave() {
-        casManager.saveProfileData(profileModel)
+    private func profileModelSave() async throws {
+        profileModel.onboarding.latestVersion = ConfigurationFile.appVersion
+        
+        try await profileManager.updateProfileModel()
     }
 }

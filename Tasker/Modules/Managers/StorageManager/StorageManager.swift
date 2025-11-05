@@ -9,22 +9,25 @@ import Foundation
 import Models
 
 @Observable
-final class StorageManager: StorageManagerProtocol {
-    @ObservationIgnored
-    @Injected(\.casManager) var casManager
+public final class StorageManager: StorageManagerProtocol {
+    public var casManager: CASManagerProtocol
     
-    var baseDirectory: URL {
+    public var baseDirectory: URL {
         FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!.appending(path: "Sounds")
     }
     
-    func createFileInSoundsDirectory(hash: String) -> URL? {
+    public init(casManager: CASManagerProtocol) {
+        self.casManager = casManager
+    }
+    
+    public func createFileInSoundsDirectory(hash: String) async -> URL? {
         let soundsDirectory = createSoundsDirectory()
-        
-        let pathToAudio = casManager.pathToAudio(hash)
         
         let tempUrl = soundsDirectory.appendingPathComponent(hash + ".wav")
         
         do {
+            let pathToAudio = try await casManager.pathToFile(hash)
+            
             guard FileManager.default.fileExists(atPath: pathToAudio.path) else {
                 return tempUrl
             }
@@ -41,7 +44,7 @@ final class StorageManager: StorageManagerProtocol {
         }
     }
     
-    func deleteAudiFromDirectory(hash: String? = nil) {
+    public func deleteAudiFromDirectory(hash: String? = nil) {
         guard let hash = hash else {
             return
         }

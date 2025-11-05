@@ -9,38 +9,29 @@ import Foundation
 import Models
 
 public protocol TaskManagerProtocol {
-//    var tasks: [String: MainModel] { get set }
-    var activeTasks: [MainModel] { get }
-    var completedTasks: [MainModel] { get }
+//    var tasks: [String: UITaskModel] { get set }
+    var activeTasks: [UITaskModel] { get }
+    var completedTasks: [UITaskModel] { get }
     
-    func sortedTasks(tasks: [MainModel]) -> [MainModel]
-    
-    func thisWeekTasks(date: Double) async -> [MainModel]
-    
-    //    func preparedTask(task: UITaskModel, date: Date) -> UITaskModel
+    func thisWeekTasks(date: Double) async -> [UITaskModel]
     
     /// Save model
-    func saveTask(_ model: UITaskModel)
+    func saveTask(_ task: UITaskModel) async throws
     /// Delete task
-    func deleteTask(task: MainModel, deleteCompletely: Bool)
+    func deleteTask(task: UITaskModel, deleteCompletely: Bool) async throws
     
     /// Checks whether the task has been marked as completed for the current day.
     func checkCompletedTaskForToday(task: UITaskModel) -> Bool
     
     /// Toggles the task's completion state and saves the updated model.
-    func checkMarkTapped(task: UITaskModel)
+    func checkMarkTapped(task: UITaskModel) async throws
     
     /// Updates the list of deletion records for the given task by appending today's deletion record.
     func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord]
     
-    func updateNotificationTimeForDueDate(task: MainModel) -> MainModel
+    func updateNotificationTimeForDueDate(task: UITaskModel) -> MainModel
     
     /// last day in deadline
-    func dayUntillDeadLine(_ task: MainModel) -> Int?
-    
-    //    /// Simple func for check case where task has complete or delete record
-    //    func hasTaskCompleteOrDeleteMarkers(task: TaskModel) -> Bool
-    //
-    //    /// Simple func for check case where task has complete or delete record in future
-    //    func hasTaskCompleteOrDeleteMarkersInFuture(task: TaskModel) -> Bool
+    func dayUntillDeadLine(_ task: UITaskModel) -> Int?
+    func updateNotifications() async
 }

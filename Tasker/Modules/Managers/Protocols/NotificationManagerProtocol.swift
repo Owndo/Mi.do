@@ -11,9 +11,9 @@ import UserNotifications
 
 public protocol NotificationManagerProtocol {
     var alert: AlertModel? { get }
-    var notificationCenter: UNUserNotificationCenter { get set }
+//    var notificationCenter: UNUserNotificationCenter { get set }
     
-    func createNotification() async
+    func createNotification(tasks: [UITaskModel]) async
     func removeAllEvents()
     func checkPermission() async
 }

@@ -11,15 +11,15 @@ import Foundation
 import Models
 
 @Observable
-final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
-    @ObservationIgnored
-    @Injected(\.storageManager) var storageManager
+public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
+    
+    var storageManager: StorageManagerProtocol
     
     // MARK: - Public properties
-    var isPlaying = false
-    var currentTime: TimeInterval = 0.0
-    var totalTime: TimeInterval = 0.0
-    var task: UITaskModel?
+    public var isPlaying = false
+    public var currentTime: TimeInterval = 0.0
+    public var totalTime: TimeInterval = 0.0
+    public var task: UITaskModel?
     
     // MARK: - Private properties
     private let audioSession = AVAudioSession.sharedInstance()
@@ -31,9 +31,13 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     // Cash: [audioHash: URL]
     private var tempAudioCache: [String: URL] = [:]
     
+    public init(storageManager: StorageManagerProtocol) {
+        self.storageManager = storageManager
+    }
+    
     // MARK: - Playback
     
-    func playAudioFromData(task: UITaskModel) async {
+    public func playAudioFromData(task: UITaskModel) async {
         self.task = task
         
         do {
@@ -43,7 +47,7 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
                 return
             }
             
-            let audioURL = getOrCreateTempAudioFile(audioHash: audio)
+            let audioURL = await getOrCreateTempAudioFile(audioHash: audio)
             
             await MainActor.run {
                 do {
@@ -65,13 +69,13 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
-    func pauseAudio() {
+    public func pauseAudio() {
         player?.pause()
         isPlaying = false
         pause = true
     }
     
-    func stopToPlay() {
+    public  func stopToPlay() {
         player?.stop()
         player = nil
         stopPlaybackTimer()
@@ -79,7 +83,7 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         isPlaying = false
     }
     
-    func seekAudio(_ time: TimeInterval) {
+    public func seekAudio(_ time: TimeInterval) {
         guard let player else { return }
         
         seekTimer?.invalidate()
@@ -103,11 +107,11 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
-    func returnTotalTime(task: UITaskModel) -> Double {
+    public func returnTotalTime(task: UITaskModel) async -> Double {
         
         guard let audio = task.audio else { return 0 }
         
-        let audioURL = getOrCreateTempAudioFile(audioHash: audio)
+        let audioURL = await getOrCreateTempAudioFile(audioHash: audio)
         
         do {
             let tempPlayer = try AVAudioPlayer(contentsOf: audioURL)
@@ -117,8 +121,8 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
-    func setUpTotalTime(task: UITaskModel) {
-        totalTime = returnTotalTime(task: task)
+    public func setUpTotalTime(task: UITaskModel) async {
+        totalTime = await returnTotalTime(task: task)
     }
     
     // MARK: - Helpers
@@ -131,8 +135,8 @@ final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         try audioSession.setActive(true)
     }
     
-    private func getOrCreateTempAudioFile(audioHash: String) -> URL {
-        storageManager.createFileInSoundsDirectory(hash: audioHash)!
+    private func getOrCreateTempAudioFile(audioHash: String) async -> URL {
+        await storageManager.createFileInSoundsDirectory(hash: audioHash)!
     }
     
     private func startPlaybackTimer() {

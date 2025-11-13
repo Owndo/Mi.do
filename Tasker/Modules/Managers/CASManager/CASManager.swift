@@ -8,7 +8,6 @@
 import Foundation
 import BlockSet
 import Models
-import Combine
 
 final class CASManager: CASManagerProtocol {
     let cas: FileCas
@@ -21,7 +20,7 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: - Static methods for init
     
-    static func createCASManager() async -> CASManagerProtocol {
+    static func createCASManager() async -> CASManager {
         let localDirectory = createLocalDirectory()!
         
         let cas = FileCas(localDirectory)

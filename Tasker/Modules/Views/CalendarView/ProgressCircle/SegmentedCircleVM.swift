@@ -14,12 +14,11 @@ final class SegmentedCircleVM {
     @Injected(\.taskManager) var taskManager
     @ObservationIgnored
     @Injected(\.dateManager) var dateManager
-    @ObservationIgnored
-    @Injected(\.casManager) var casManager
     
     var useTaskColors: Bool {
-        let minimal = casManager.profileModel.settings.minimalProgressMode
-        return !minimal
+//        let minimal = casManager.profileModel.settings.minimalProgressMode
+//        return !minimal
+        true
     }
     
     var completedFlags: [Bool] = []
@@ -41,9 +40,9 @@ final class SegmentedCircleVM {
         dateManager.indexForWeek
     }
     
-    var updateTask: Bool {
-        casManager.taskUpdateTrigger
-    }
+//    var updateTask: Bool {
+//        casManager.taskUpdateTrigger
+//    }
     
     func onAppear(date: Date) {
         currentDay = date

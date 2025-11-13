@@ -7,7 +7,7 @@
 
 import SwiftUI
 import Models
-import TaskView
+//import TaskView
 import UIComponents
 
 struct TaskRow: View {
@@ -32,9 +32,9 @@ struct TaskRow: View {
                 isSingleTask: vm.singleTask,
                 onDelete: vm.deleteButtonTapped
             )
-            .sheet(item: $vm.taskVM) { taskVM in
-                TaskView(taskVM: taskVM)
-            }
+//            .sheet(item: $vm.taskVM) { taskVM in
+//                TaskView(taskVM: taskVM)
+//            }
             .sensoryFeedback(.selection, trigger: vm.selectedTask)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.decrease, trigger: vm.taskDeleteTrigger)
@@ -48,7 +48,9 @@ struct TaskRow: View {
         HStack(spacing: 0) {
             HStack(spacing: 12) {
                 TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task) {
-                    vm.checkMarkTapped()
+                    Task {
+                        await vm.checkMarkTapped()
+                    }
                 }
                 
                 HStack {

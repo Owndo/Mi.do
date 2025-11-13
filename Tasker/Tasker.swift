@@ -21,6 +21,12 @@ struct Tasker: App {
     @Injected(\.subscriptionManager) var subscriptionManager
     @Injected(\.telemetryManager) var telemetryManager
     
+    init() {
+        Task {
+            await DependencyContext.initialize()
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
             MainView(vm: mainVM)

@@ -29,7 +29,7 @@ public protocol TaskManagerProtocol {
     /// Updates the list of deletion records for the given task by appending today's deletion record.
     func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord]
     
-    func updateNotificationTimeForDueDate(task: UITaskModel) -> MainModel
+    func updateNotificationTimeForDueDate(task: UITaskModel) -> UITaskModel
     
     /// last day in deadline
     func dayUntillDeadLine(_ task: UITaskModel) -> Int?

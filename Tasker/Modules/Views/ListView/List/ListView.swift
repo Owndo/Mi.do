@@ -7,7 +7,6 @@
 
 import SwiftUI
 import UIComponents
-import TaskView
 import Models
 
 public struct ListView: View {
@@ -25,8 +24,6 @@ public struct ListView: View {
             .animation(.default, value: vm.completedTasksHidden)
             .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
     }
-    
-    
     
     //MARK: ListView
     @ViewBuilder
@@ -63,7 +60,9 @@ public struct ListView: View {
                     }
                     
                     Button {
-                        vm.checkMarkTapped(task)
+                        Task {
+                            await vm.checkMarkTapped(task)
+                        }
                     } label: {
                         Label("Complete task", systemImage: "checkmark.circle")
                     }
@@ -74,7 +73,7 @@ public struct ListView: View {
                         Label("Delete task", systemImage: "trash")
                     }
                 } preview: {
-                    TaskView(taskVM: TaskVM(mainModel: task), preview: true)
+//                    TaskView(taskVM: TaskVM(mainModel: task), preview: true)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button {
@@ -141,7 +140,9 @@ public struct ListView: View {
                         }
                         
                         Button {
-                            vm.checkMarkTapped(task)
+                            Task {
+                                await vm.checkMarkTapped(task)
+                            }
                         } label: {
                             Label("Uncomplete task", systemImage: "circle")
                         }
@@ -152,7 +153,7 @@ public struct ListView: View {
                             Label("Delete task", systemImage: "trash")
                         }
                     } preview: {
-                        TaskView(taskVM: TaskVM(mainModel: task), preview: true)
+//                        TaskView(taskVM: TaskVM(mainModel: task), preview: true)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button {

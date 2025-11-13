@@ -11,23 +11,43 @@ import Models
 import Combine
 
 final class MockCas: CASManagerProtocol {
-    let cas: FileCas
-    let allIdentifiers: [Mutable]
+    private let cas: FileCas
+    private let models: [UITaskModel]
+    private let allIdentifiers: [Mutable] = [Mutable.initial(), .initial()]
 
-    private init(cas: FileCas, allIdentifiers: [Mutable]) {
+    private init(cas: FileCas, models: [UITaskModel]) {
         self.cas = cas
-        self.allIdentifiers = allIdentifiers
+        self.models = models
     }
     
     //MARK: - Static methods for init
     
-    static func createCASManager() async -> CASManagerProtocol {
+    static func createCASManager() -> CASManagerProtocol {
         let localDirectory = createLocalDirectory()!
         
         let cas = FileCas(localDirectory)
-        let list = await fetchList(cas: cas)
         
-        let casManager = MockCas(cas: cas, allIdentifiers: list)
+        let models = [
+            UITaskModel(
+                .initial(
+                    TaskModel(
+                        title: "New task",
+                        notificationDate: Date.now.timeIntervalSince1970
+                    )
+                )
+            ),
+            UITaskModel(
+                .initial(
+                    TaskModel(
+                        title: "New Task1",
+                        notificationDate: Date.now.timeIntervalSince1970 + 150
+                    )
+                )
+            )
+        ]
+        
+        let casManager = MockCas(cas: cas, models: models)
+        
         return casManager
     }
     

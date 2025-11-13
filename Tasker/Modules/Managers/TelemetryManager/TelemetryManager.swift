@@ -9,23 +9,30 @@ import Models
 import Foundation
 import PostHog
 
-public final class MockTelemetryManager: TelemetryManagerProtocol {
-    public func logEvent(_ event: EventType) {
-        
-    }
-    
-    public func pageView() {
-        
-    }
-}
 public final class TelemetryManager: TelemetryManagerProtocol {
     private let POSTHOG_API_KEY = "phc_I5vdL0An1zwuCn3bzVxixWaLgaJX7W7LK1P8VBxcltR"
     private let POSTHOG_HOST = "https://us.i.posthog.com"
     
-    public init() {
+    //MARK: - Private init
+    
+    private init() {
         let config = PostHogConfig(apiKey: POSTHOG_API_KEY, host: POSTHOG_HOST)
         
         PostHogSDK.shared.setup(config)
+    }
+    
+    //MARK: - Manager creator
+    
+    public static func createTelemetryManager(mock: Bool = false) -> TelemetryManagerProtocol {
+        #if targetEnvironment(simulator) || DEBUG
+        return MockTelemetryManager()
+        #else
+        guard mock else {
+            return TelemetryManager()
+        }
+        
+        return MockTelemetryManager()
+        #endif
     }
     
     //MARK: - Open screen actions

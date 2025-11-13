@@ -17,31 +17,46 @@ import BlockSet
 @Observable
 public final class MainVM {
     //MARK: - Depencies
-    @ObservationIgnored
-    @Injected(\.casManager) private var casManager: CASManagerProtocol
-    @ObservationIgnored
-    @Injected(\.permissionManager) private var recordPermission: PermissionProtocol
-    @ObservationIgnored
-    @Injected(\.recorderManager) private var recordManager: RecorderManagerProtocol
-    @ObservationIgnored
-    @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
-    @ObservationIgnored
-    @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-    @ObservationIgnored
-    @Injected(\.notificationManager) var notificationManager: NotificationManagerProtocol
-    @ObservationIgnored
-    @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
-    @ObservationIgnored
-    @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
-    @ObservationIgnored
-    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
-    @ObservationIgnored
-    @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
-    @ObservationIgnored
-    @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
+    private let profileManager: ProfileManagerProtocol
     
-    var cas = FileCas(dir)
+    private let taskManager: TaskManagerProtocol
     
+    private let dateManager: DateManagerProtocol
+    
+    private let permissionManager: PermissionProtocol
+    
+    private let recorderManager: RecorderManagerProtocol
+    
+    private let subscriptionManager: SubscriptionManagerProtocol
+    
+    private let telemetryManager: TelemetryManagerProtocol
+    
+    private let playerManager: PlayerManagerProtocol
+    
+    var onboardingManager: OnboardingManagerProtocol
+    
+//    @ObservationIgnored
+//    @Injected(\.casManager) private var casManager: CASManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.permissionManager) private var permissionManager: PermissionProtocol
+//    @ObservationIgnored
+//    @Injected(\.recorderManager) private var recorderManager: RecorderManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.dateManager) private var dateManager: DateManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.notificationManager) var notificationManager: NotificationManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
     //MARK: - Model
     var mainModel: MainModel?
@@ -120,6 +135,11 @@ public final class MainVM {
         }
     }
     
+    func taskDetailsButtonTapped(model: UITaskModel) {
+        let taskVM = TaskVM(mainModel: model)
+        
+        self.sheetDestination = .details(taskVM)
+    }
     
     var recordingState: RecordingState = .idle
     
@@ -143,8 +163,9 @@ public final class MainVM {
     var calendar: Calendar {
         dateManager.calendar
     }
+    
     var currentlyTime: Double {
-        recordManager.currentlyTime
+        recorderManager.currentlyTime
     }
     
     var selectedDate: Date {
@@ -152,66 +173,90 @@ public final class MainVM {
     }
     
     var progress: Double {
-        recordManager.progress
+        recorderManager.progress
     }
     
     var decibelLvl: Float {
-        recordManager.decibelLevel
+        recorderManager.decibelLevel
     }
     
     var showTip: Bool {
         taskManager.activeTasks.isEmpty && taskManager.completedTasks.isEmpty
     }
     
-    public var profileUpdateTrigger: Bool {
-        casManager.profileUpdateTriger
-    }
+    //    public var profileUpdateTrigger: Bool {
+    //        casManager.profileUpdateTriger
+    //    }
     
     //MARK: - Init
-    public init() {
-        downloadProfileModelFromCas()
+    //    public init() {
+    //        downloadProfileModelFromCas()
+    //
+    //        Task {
+    //            await onboardingStart()
+    //            await updateNotifications()
+    //        }
+    //
+    //        NotificationCenter.default.addObserver(
+    //            self,
+    //            selector: #selector(handleFirstTimeOpenDone),
+    //            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
+    //            object: nil
+    //        )
+    //
+    //        listVM.onTaskSelected = { [weak self] task in
+    //            guard let self else { return }
+    //            sheetDestination = .details(TaskVM(mainModel: task))
+    //        }
+    //    }
+    
+    private init(dependenciesManager: DependenciesManagerProtocol) {
+        self.profileManager = dependenciesManager.profileManager
+        self.taskManager = dependenciesManager.taskManager
+        self.dateManager = dependenciesManager.dateManager
+        self.onboardingManager = dependenciesManager.onboardingManager
+        self.permissionManager = dependenciesManager.permissionManager
+        self.recorderManager = dependenciesManager.recorderManager
+        self.subscriptionManager = dependenciesManager.subscriptionManager
+        self.telemetryManager = dependenciesManager.telemetryManager
+        self.playerManager = dependenciesManager.playerManager
+        self.profileModel = dependenciesManager.profileManager.profileModel
         
-        Task {
-            await onboardingStart()
-            await updateNotifications()
-        }
+//        self.listVM = ListVM(taskManager: taskManager)
+    }
+    
+    public static func createMainVM() async -> Self {
+        let dependenciesManager = await DependenciesManager.createDependencies()
+        let mainVM = Self(dependenciesManager: dependenciesManager)
         
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleFirstTimeOpenDone),
-            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
-            object: nil
-        )
+        await mainVM.onboardingStart()
         
-        listVM.onTaskSelected = { [weak self] task in
-            guard let self else { return }
-            sheetDestination = .details(TaskVM(mainModel: task))
-        }
+        return mainVM
     }
     
     //MARK: - Update notification
-    public func updateNotifications() async {
-        guard onboardingManager.onboardingComplete == true else {
-            return
-        }
-        
-        try? await Task.sleep(for: .seconds(0.2))
-        
-        await notificationManager.createNotification()
-    }
+//    public func updateNotifications() async {
+//        guard onboardingManager.onboardingComplete == true else {
+//            return
+//        }
+//        
+//        try? await Task.sleep(for: .seconds(0.2))
+//        
+//        //        await notificationManager.createNotification()
+//    }
     
     /// Only once time for ask notification reqest
-    @objc private func handleFirstTimeOpenDone() {
-        Task {
-            await updateNotifications()
-        }
-        
-        NotificationCenter.default.removeObserver(
-            self,
-            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
-            object: nil
-        )
-    }
+//    @objc private func handleFirstTimeOpenDone() {
+//        Task {
+//            await updateNotifications()
+//        }
+//        
+//        NotificationCenter.default.removeObserver(
+//            self,
+//            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
+//            object: nil
+//        )
+//    }
     
     public func mainScreenOpened() {
         telemetryManager.logEvent(.openView(.home(.open)))
@@ -224,11 +269,11 @@ public final class MainVM {
     
     //MARK: - Profile actions
     func profileModelSave() {
-        casManager.saveProfileData(profileModel)
+        //        casManager.saveProfileData(profileModel)
     }
     
     private func downloadProfileModelFromCas() {
-        profileModel = casManager.profileModel
+        //        profileModel = casManager.profileModel
     }
     
     func profileViewButtonTapped() {
@@ -266,8 +311,8 @@ public final class MainVM {
         
         do {
             changeDisabledButton()
-            try recordPermission.peremissionSessionForRecording()
-            try await recordPermission.permissionForSpeechRecognition()
+            try permissionManager.peremissionSessionForRecording()
+            try await permissionManager.permissionForSpeechRecognition()
             
             await startRecord()
             
@@ -302,7 +347,7 @@ public final class MainVM {
     
     func startRecord() async {
         isRecording = true
-        await recordManager.startRecording()
+        await recorderManager.startRecording()
         // telemetry
         telemetryAction(.mainViewAction(.recordTaskButtonTapped(.startRecording)))
     }
@@ -317,12 +362,12 @@ public final class MainVM {
         
         var hashOfAudio: String?
         
-        if let audioURLString = recordManager.stopRecording() {
-            hashOfAudio = casManager.storeAudio(url: audioURLString)
+        if let audioURLString = recorderManager.stopRecording() {
+            //            hashOfAudio = casManager.storeAudio(url: audioURLString)
         }
         
         createTask(with: hashOfAudio)
-        recordManager.clearFileFromDirectory()
+        recorderManager.clearFileFromDirectory()
         
         // telemetry
         telemetryAction(.mainViewAction(.recordTaskButtonTapped(.stopRecording)))
@@ -346,23 +391,23 @@ public final class MainVM {
             )
         )
         
-        sheetDestination = .details(TaskVM(mainModel: model, titleFocused: true))
+        taskDetailsButtonTapped(model: model)
     }
     
     //MARK: - Recognize data
     func defaultTitle() -> String? {
-        guard recordManager.recognizedText == "" else {
-            return recordManager.recognizedText
+        guard recorderManager.recognizedText == "" else {
+            return recorderManager.recognizedText
         }
         return nil
     }
     
     func speechDescription() -> String? {
-        recordManager.wholeDescription
+        recorderManager.wholeDescription
     }
     
     func defaultNotificationTime() -> Double {
-        if let recognizedDate = recordManager.dateTimeFromtext {
+        if let recognizedDate = recorderManager.dateTimeFromtext {
             return recognizedDate.timeIntervalSince1970
         } else {
             return dateManager.getDefaultNotificationTime().timeIntervalSince1970
@@ -398,25 +443,25 @@ public final class MainVM {
     public func selectedTask(by notification: Notification? = nil, taskId: String? = nil) {
         guard taskId == nil else {
             let baseSearchId = extractBaseId(from: taskId!)
-            let task = casManager.models.values.first { task in
-                extractBaseId(from: task.id) == baseSearchId
-            }
+            //            let task = casManager.models.values.first { task in
+            //                extractBaseId(from: task.id) == baseSearchId
+            //            }
             
-            if let task {
-                mainModel = task
-            }
+            //            if let task {
+            //                mainModel = task
+            //            }
             
             return
         }
         
         if let taskId = notification?.userInfo?["taskId"] as? String {
             let baseSearchId = extractBaseId(from: taskId)
-            let task = casManager.models.values.first { task in
-                extractBaseId(from: task.id) == baseSearchId
-            }
-            if let task {
-                mainModel = task
-            }
+            //            let task = casManager.models.values.first { task in
+            //                extractBaseId(from: task.id) == baseSearchId
+            //            }
+            //            if let task {
+            //                mainModel = task
+            //            }
         }
     }
     
@@ -438,28 +483,28 @@ public final class MainVM {
         
         try? await Task.sleep(for: .seconds(0.8))
         
-        guard casManager.completedTaskCount() >= 23 && profileModel.onboarding.requestedReview == false else {
-            return
-        }
+        //        guard casManager.completedTaskCount() >= 23 && profileModel.onboarding.requestedReview == false else {
+        //            return
+        //        }
         
         askReview = true
-        profileModel.onboarding.requestedReview = true
+        //        profileModel.onboarding.requestedReview = true
         profileModelSave()
     }
     
     //MARK: Function before closeApp
     public func closeApp() async {
-        let backgroundManager = BackgroundManager()
-        casManager.updateCASAfterWork()
-        await updateNotifications()
-        await backgroundManager.scheduleAppRefreshTask()
+        //        let backgroundManager = BackgroundManager()
+        //        casManager.updateCASAfterWork()
+        //        await updateNotifications()
+        //        await backgroundManager.scheduleAppRefreshTask()
     }
     
     //MARK: - Background update
     public func backgroundUpdate() async {
-        let backgroundManager = BackgroundManager()
+        //        let backgroundManager = BackgroundManager()
         
-        await backgroundManager.backgroundUpdate()
+        //        await backgroundManager.backgroundUpdate()
     }
 }
 
@@ -476,19 +521,4 @@ enum PresentationMode: CGFloat, CaseIterable {
     static let detents = Set(PresentationMode.allCases.map { $0.detent })
 }
 
-extension Data {
-    func thumbnailImageData(maxPixelSize: Int = 64) -> Data? {
-        let options: [CFString: Any] = [
-            kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
-        ]
-        
-        guard let imageSource = CGImageSourceCreateWithData(self as CFData, nil),
-              let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
-            return nil
-        }
-        
-        return UIImage(cgImage: cgImage).jpegData(compressionQuality: 0.8)
-    }
-}
+

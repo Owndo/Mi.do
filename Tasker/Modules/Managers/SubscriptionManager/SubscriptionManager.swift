@@ -25,11 +25,21 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
     
     private var updatePurchase: Task<Void, Never>? = nil
     
-    public init() {
-        Task {
-            updatePurchase = backgroundTransactionUpdate()
-            await loadProducts()
-        }
+    
+    //MARK: Manager creator
+    
+    public static func createSubscriptionManager() async -> SubscriptionManagerProtocol {
+        let subscriptionManager = SubscriptionManager()
+        subscriptionManager.updatePurchase = subscriptionManager.backgroundTransactionUpdate()
+        await subscriptionManager.loadProducts()
+        
+        return subscriptionManager
+    }
+    
+    //MARK: - Create mock manager
+    
+    public static func createMockSubscriptionManager() -> SubscriptionManagerProtocol {
+        SubscriptionManager()
     }
     
     deinit {

@@ -11,13 +11,16 @@ import StoreKit
 import SwiftUI
 
 @Observable
-final class PaywallVM {
-    @ObservationIgnored
-    @Injected(\.subscriptionManager) var subscriptionManager
+public final class PaywallVM {
+    private let subscriptionManager: SubscriptionManagerProtocol
     
     //MARK: - UI States
+    
     var textForPaywall: LocalizedStringKey = "Plan with ease\nLive with joy\nLess tasks, more life!"
     var benefits = ["Voice tasks & voice notifications", "Create group, customize space", "History, sync, and stay on top"]
+    
+    var textForButton: LocalizedStringKey = "Continue"
+    
     var showingAlert = false
     
     //MARK: StoreKit
@@ -28,16 +31,34 @@ final class PaywallVM {
         subscriptionManager.pending
     }
     
-    var textForButton: LocalizedStringKey = "Continue"
+    //MARK: - Private init
     
-    init() {
+    private init(subscriptionManager: SubscriptionManagerProtocol) {
+        self.subscriptionManager = subscriptionManager
+    }
+    
+    
+    //MARK: - VM Creator
+    
+    public static func createPaywallVM(_ subscriptionManager: SubscriptionManagerProtocol) async -> PaywallVM {
+        let vm = PaywallVM(subscriptionManager: subscriptionManager)
+        await vm.updateProdicts()
+        
+        return vm
+    }
+    
+    //MARK: - Preview VM
+    
+    static func createPreviewVM() -> PaywallVM {
+        PaywallVM(subscriptionManager: SubscriptionManager.createMockSubscriptionManager())
+    }
+    
+    private func updateProdicts() async {
         products = subscriptionManager.products
         selecetedProduct = products.first
         
         if let product = selecetedProduct {
-            Task {
-                await selectProductButtonTapped(product)
-            }
+            await selectProductButtonTapped(product)
         }
     }
     

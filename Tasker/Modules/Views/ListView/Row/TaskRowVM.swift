@@ -9,7 +9,7 @@ import Foundation
 import Managers
 import Models
 import SwiftUI
-import TaskView
+//import TaskView
 
 @Observable
 final class TaskRowVM: HashableObject {
@@ -31,7 +31,7 @@ final class TaskRowVM: HashableObject {
     var playingTask: UITaskModel?
     var selectedTask: MainModel?
     
-    var taskVM: TaskVM?
+//    var taskVM: TaskVM?
     
     var task: MainModel
     
@@ -82,7 +82,7 @@ final class TaskRowVM: HashableObject {
     
     //MARK: Selected task
     func selectedTaskButtonTapped() {
-        taskVM = TaskVM(mainModel: task)
+//        taskVM = TaskVM(mainModel: task)
         stopToPlay()
         
         // telemetry
@@ -94,10 +94,14 @@ final class TaskRowVM: HashableObject {
         taskManager.checkCompletedTaskForToday(task: task)
     }
     
-    func checkMarkTapped() {
-        taskManager.checkMarkTapped(task: task)
+    func checkMarkTapped() async {
+        do {
+            try await taskManager.checkMarkTapped(task: task)
+        } catch {
+            
+        }
         
-        taskDoneTrigger.toggle()
+//        taskDoneTrigger.toggle()
         stopToPlay()
     }
     
@@ -115,25 +119,12 @@ final class TaskRowVM: HashableObject {
         confirmationDialogIsPresented.toggle()
     }
     
-    func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) {
-        Task {
-            taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+    func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) async {
+        do {
+            try await taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
             taskDeleteTrigger.toggle()
+        } catch {
             
-            
-            await notificationManager.createNotification()
-        }
-        
-        if task.repeatTask == .never {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))
-        }
-        
-        if task.repeatTask != .never && deleteCompletely == true {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskListView))))
-        }
-        
-        if task.repeatTask != .never && deleteCompletely == false {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskListView))))
         }
     }
     
@@ -192,7 +183,7 @@ final class TaskRowVM: HashableObject {
     //MARK: Change date for overdue task
     func updateNotificationTimeForDueDateSwipped(task: MainModel) {
         let newModel = taskManager.updateNotificationTimeForDueDate(task: task)
-        casManager.saveModel(newModel)
+//        casManager.saveModel(newModel)
     }
     
     //MARK: Play sound function

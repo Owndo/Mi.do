@@ -14,8 +14,6 @@ import Models
 final class AppearanceVM {
     @ObservationIgnored
     @Injected(\.appearanceManager) var appearanceManager
-    @ObservationIgnored
-    @Injected(\.casManager) var casManager
     
     var profileData: ProfileData = mockProfileData()
     var changeStateTrigger = false

@@ -9,7 +9,7 @@ import SwiftUI
 import Models
 import UIComponents
 import UIKit
-import Paywall
+import PaywallView
 
 public struct TaskView: View {
     @Environment(\.colorScheme) var colorScheme

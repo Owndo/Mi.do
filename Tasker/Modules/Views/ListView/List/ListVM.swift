@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Models
 import Managers
-import TaskView
+//import TaskView
 
 @Observable
 public final class ListVM {
@@ -30,7 +30,7 @@ public final class ListVM {
     
     public var onTaskSelected: ((MainModel) -> Void)?
     var taskForDeleted: MainModel = mockModel()
-    var taskVM: TaskVM?
+//    var taskVM: TaskVM?
     
     //MARK: UI State
     // TODO: - Until best days
@@ -74,7 +74,7 @@ public final class ListVM {
     }
     
     public init() {
-        completedTasksHidden = casManager.profileModel.settings.completedTasksHidden
+//        completedTasksHidden = casManager.profileModel.settings.completedTasksHidden
     }
     
     func taskTapped(_ task: MainModel) {
@@ -82,8 +82,12 @@ public final class ListVM {
     }
     
     //MARK: - Complete task
-    func checkMarkTapped(_ task: MainModel) {
-        taskManager.checkMarkTapped(task: task)
+    func checkMarkTapped(_ task: MainModel) async {
+        do {
+            try await taskManager.checkMarkTapped(task: task)
+        } catch {
+            //TODO: - Error
+        }
     }
     
     //MARK: - Delete functions
@@ -102,19 +106,11 @@ public final class ListVM {
         confirmationDialogIsPresented.toggle()
     }
     
-    func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) {
-        taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
-        
-        if task.repeatTask == .never {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))
-        }
-        
-        if task.repeatTask != .never && deleteCompletely == true {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskListView))))
-        }
-        
-        if task.repeatTask != .never && deleteCompletely == false {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskListView))))
+    func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) async {
+        do {
+            try await taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+        } catch {
+            //TODO: - Error
         }
     }
     
@@ -126,18 +122,18 @@ public final class ListVM {
     }
     
     func completedTaskViewChange() {
-        let model = casManager.profileModel
+//        let model = casManager.profileModel
         completedTasksHidden.toggle()
-        model.settings.completedTasksHidden = completedTasksHidden
+//        model.settings.completedTasksHidden = completedTasksHidden
         
-        casManager.saveProfileData(model)
+//        casManager.saveProfileData(model)
         
         // telemetry
-        if model.settings.completedTasksHidden {
-            telemetryAction(.taskAction(.showCompletedButtonTapped))
-        } else {
-            telemetryAction(.taskAction(.hideCompletedButtonTapped))
-        }
+//        if model.settings.completedTasksHidden {
+//            telemetryAction(.taskAction(.showCompletedButtonTapped))
+//        } else {
+//            telemetryAction(.taskAction(.hideCompletedButtonTapped))
+//        }
     }
     
     func heightOfList() -> CGFloat {
@@ -146,26 +142,27 @@ public final class ListVM {
     
     //MARK: - Date
     func backToTodayButtonTapped() {
-        dateManager.backToToday()
+//        dateManager.backToToday()
 //        indexForList = 54
     }
     
     private func indexResetWithDate() -> Bool {
-        dateManager.selectedDayIsToday()
+//        dateManager.selectedDayIsToday()
+        true
     }
     
     
     private func nextDaySwiped() {
-        dateManager.addOneDay()
+//        dateManager.addOneDay()
     }
     
     private func previousDaySwiped() {
-        dateManager.subtractOneDay()
+//        dateManager.subtractOneDay()
     }
     
     
     //MARK: - Telemetry action
     private func telemetryAction(_ action: EventType) {
-        telemetryManager.logEvent(action)
+//        telemetryManager.logEvent(action)
     }
 }

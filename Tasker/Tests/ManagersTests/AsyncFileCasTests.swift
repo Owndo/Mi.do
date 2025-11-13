@@ -18,6 +18,7 @@ struct AsyncFileCasTests {
     let wrongText = "Hello, world, this is wrong text!"
     
     //MARK: - Model
+    
     struct ModelForTest: Codable, Equatable {
         var name: String
         var age: Int
@@ -29,6 +30,7 @@ struct AsyncFileCasTests {
     let wrongModel: Model = Model.initial(ModelForTest(name: "Steve", age: 42, isStudent: true))
     
     //MARK: - Compare paths
+    
     @Test func comparePaths() async throws {
         guard let dir = createDirectory() else {
             return
@@ -52,6 +54,7 @@ struct AsyncFileCasTests {
     }
     
     //MARK: - CompareDatas
+    
     @Test func compareData() async throws {
         guard let dir = createDirectory() else {
             return
@@ -69,6 +72,7 @@ struct AsyncFileCasTests {
     }
     
     //MARK: - Check all mutables
+    
     @Test func checkAllMutables() async throws {
         guard let dir = createDirectory() else {
             return
@@ -124,6 +128,7 @@ struct AsyncFileCasTests {
     }
     
     //MARK: - Check all idetiniers
+    
     @Test func checkAllIdentifiers() async throws {
         guard let dir = createDirectory() else {
             return
@@ -151,6 +156,7 @@ struct AsyncFileCasTests {
     }
     
     //MARK: - Deleting
+    
     @Test func mutableDeleting() async throws {
         guard let dir = createDirectory() else {
             return
@@ -210,6 +216,7 @@ struct AsyncFileCasTests {
     }
     
     //MARK: - Check data after store
+    
     @Test func checkDataAfterStore() async throws {
         guard let dir = createDirectory() else {
             return
@@ -255,6 +262,7 @@ struct AsyncFileCasTests {
     }
     
     //MARK: - Check data after delete
+    
     @Test func checkDataAfterDeleted() async throws {
         guard let dir = createDirectory() else {
             return
@@ -301,7 +309,9 @@ struct AsyncFileCasTests {
 }
 
 //MARK: - Helpers
+
 //MARK:  Create Directory
+
 func createDirectory() -> URL? {
     guard let dir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
         return nil

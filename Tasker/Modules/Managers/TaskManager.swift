@@ -41,7 +41,7 @@ public final class TaskManager: TaskManagerProtocol {
     //MARK: Tasks properties
     private var tasks = [String: UITaskModel]()
     
-    public var activeTasks: [MainModel] { returnActivaTasks() }
+    public var activeTasks: [MainModel] { returnActiveTasks() }
     public var completedTasks: [MainModel] { returnCompletedTasks() }
     
     private var thisWeekCasheTasks: [MainModel] = []
@@ -52,7 +52,7 @@ public final class TaskManager: TaskManagerProtocol {
     
     //MARK: - Init
     
-    init(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, telemetryManager: TelemetryManagerProtocol) {
+    private init(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, telemetryManager: TelemetryManagerProtocol) {
         self.casManager = casManager
         self.dateManager = dateManager
         self.notificationManager = notificationManager
@@ -73,6 +73,8 @@ public final class TaskManager: TaskManagerProtocol {
     ) async -> TaskManagerProtocol {
         let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager, telemetryManager: telemetryManager)
         manager.tasks = await manager.updateTasks()
+        
+        Task { await manager.updateNotifications() }
         
         return manager
     }
@@ -100,7 +102,7 @@ public final class TaskManager: TaskManagerProtocol {
     
     //MARK: Return active tasks
     
-    private func returnActivaTasks() -> [MainModel] {
+    private func returnActiveTasks() -> [MainModel] {
         let filtered = tasks.values.filter { value in
             value.completeRecords.contains { $0.completedFor == selectedDate } != true
         }
@@ -203,6 +205,7 @@ public final class TaskManager: TaskManagerProtocol {
         guard calendar.isDate(Date(timeIntervalSince1970: task.notificationDate), inSameDayAs: dateManager.selectedDate) else {
             return
         }
+        
         tasks[task.id] = task
     }
     
@@ -222,6 +225,18 @@ public final class TaskManager: TaskManagerProtocol {
         }
         
         await updateNotifications()
+        
+        if task.repeatTask == .never {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))
+        }
+        
+        if task.repeatTask != .never && deleteCompletely == true {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskListView))))
+        }
+        
+        if task.repeatTask != .never && deleteCompletely == false {
+            telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskListView))))
+        }
     }
     
     public func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord] {

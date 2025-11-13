@@ -13,22 +13,39 @@ import Models
 @Observable
 public final class TaskVM: Identifiable {
     // MARK: - Managers
-    @ObservationIgnored @Injected(\.casManager) var casManager: CASManagerProtocol
-    @ObservationIgnored @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
-    @ObservationIgnored @Injected(\.recorderManager) private var recorderManager: RecorderManagerProtocol
-    @ObservationIgnored @Injected(\.permissionManager) private var recordPermission: PermissionProtocol
-    @ObservationIgnored @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-    @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
-    @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
-    @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
-    @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
-    @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
-    @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
+//    @ObservationIgnored @Injected(\.casManager) var casManager: CASManagerProtocol
+//    @ObservationIgnored @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
+//    @ObservationIgnored @Injected(\.recorderManager) private var recorderManager: RecorderManagerProtocol
+//    @ObservationIgnored @Injected(\.permissionManager) private var recordPermission: PermissionProtocol
+//    @ObservationIgnored @Injected(\.dateManager) private var dateManager: DateManagerProtocol
+//    @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
+//    @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
+//    @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
+//    @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
+//    @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+//    @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
-    // MARK: - Model
-    var mainModel: MainModel = mockModel()
-    var task: MainModel = mockModel()
-    var profileModel: ProfileData = mockProfileData()
+    let taskManager: TaskManagerProtocol
+    
+    let profileManager: ProfileManagerProtocol
+    
+    let dateManager: DateManagerProtocol
+    
+    let playerManager: PlayerManagerProtocol
+    
+    let recorderManager: RecorderManagerProtocol
+    
+    let permissionManager: PermissionProtocol
+    
+    let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    
+    let subscriptionManager: SubscriptionManagerProtocol = SubscriptionManager.createSubscriptionManager()
+    
+    // MARK: - Models
+    
+    var task: UITaskModel
+    var profileModel: UIProfileModel
+    
     var backgroundColor: Color = .white
     
     var repeatTask = RepeatTask.never {
@@ -168,22 +185,22 @@ public final class TaskVM: Identifiable {
     private var lastNotificationDate = Date()
     
     // MARK: - Init
-    public init(mainModel: MainModel, titleFocused: Bool = false) {
-        initing = true
-        self.titleFocused = titleFocused
-        setUPViewModel(mainModel)
-        initing = false
-    }
+//    public init(mainModel: MainModel, titleFocused: Bool = false) {
+//        initing = true
+//        self.titleFocused = titleFocused
+//        setUPViewModel(mainModel)
+//        initing = false
+//    }
     
-    private func setUPViewModel(_ mainModel: MainModel) {
+    private func setUPViewModel(_ mainModel: MainModel) async {
         preSetTask(mainModel)
         setUpTime()
         setUpColor()
-        playerManager.setUpTotalTime(task: task)
+        await playerManager.setUpTotalTime(task: task)
     }
     
     private func preSetTask(_ mainModel: MainModel) {
-        profileModel = casManager.profileModel
+//        profileModel = casManager.profileModel
         self.task = mainModel
         setUpRepeat()
         
@@ -199,7 +216,7 @@ public final class TaskVM: Identifiable {
     
     func disappear() {
         stopPlaying()
-        subscriptionManager.showPaywall = false
+//        subscriptionManager.showPaywall = false
     }
     
     private func setUpTime() {
@@ -311,8 +328,12 @@ public final class TaskVM: Identifiable {
         
         task.notificationDate = changeNotificationTime()
         
-        taskManager.saveTask(task)
-        createTempAudioFile(audioHash: task.audio ?? "")
+        do {
+           try  await taskManager.saveTask(task)
+            createTempAudioFile(audioHash: task.audio ?? "")
+        } catch {
+            //TODO: - Error
+        }
     }
     
     func closeButtonTapped() async {
@@ -499,11 +520,15 @@ public final class TaskVM: Identifiable {
     
     //MARK: - Complete tasks
     func checkMarkTapped() async {
-        taskManager.checkMarkTapped(task: task)
-        taskDoneTrigger.toggle()
-        
-        // telemetry
-        telemetryAction(.taskAction(.checkMarkButtonTapped(.taskView)))
+        do {
+            try await taskManager.checkMarkTapped(task: task)
+            taskDoneTrigger.toggle()
+            
+            // telemetry
+            telemetryAction(.taskAction(.checkMarkButtonTapped(.taskView)))
+        } catch {
+            
+        }
     }
     
     
@@ -520,24 +545,10 @@ public final class TaskVM: Identifiable {
     }
     
     func deleteButtonTapped(model: MainModel, deleteCompletely: Bool = false) async {
-        Task {
-            taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely)
-            await notificationManager.createNotification()
-        }
-        
-        // telemetry
-        if model.repeatTask == .never {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskView))))
-        }
-        
-        // telemetry
-        if model.repeatTask != .never && deleteCompletely == true {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteAllTasks(.taskView))))
-        }
-        
-        // telemetry
-        if model.repeatTask != .never && deleteCompletely == false {
-            telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskView))))
+        do {
+            try await taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely)
+        } catch {
+            //TODO: - Error
         }
     }
     
@@ -588,8 +599,10 @@ public final class TaskVM: Identifiable {
     
     func loadTotalTimeIfNeeded() async {
         guard totalProgressTime == 0 else { return }
-        let duration = playerManager.returnTotalTime(task: task)
-        playerManager.totalTime = duration
+        let duration = await playerManager.returnTotalTime(task: task)
+        
+        //FIXME: What's it?
+//        playerManager.totalTime = duration
     }
     
     private func getDataFromAudio() -> Data? {
@@ -633,8 +646,8 @@ public final class TaskVM: Identifiable {
     
     private func startRecord() async throws {
         do {
-            try recordPermission.peremissionSessionForRecording()
-            try await recordPermission.permissionForSpeechRecognition()
+            try permissionManager.peremissionSessionForRecording()
+            try await permissionManager.permissionForSpeechRecognition()
             await recorderManager.startRecording()
         } catch let error as MicrophonePermission {
             switch error {
@@ -658,7 +671,7 @@ public final class TaskVM: Identifiable {
         var hashOfAudio: String?
         
         if let audioURLString = recorderManager.stopRecording() {
-            hashOfAudio = casManager.saveAudio(url: audioURLString)
+//            hashOfAudio = casManager.saveAudio(url: audioURLString)
         }
         
         if let hashOfAudio {

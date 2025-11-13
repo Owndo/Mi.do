@@ -71,7 +71,7 @@ public final class DependenciesManager: DependenciesManagerProtocol {
     
     //MARK: - Telemetry manager
     
-    public lazy var telemetryManager: TelemetryManagerProtocol = TelemetryManager()
+    public lazy var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
     //MARK: - Init
     
@@ -91,7 +91,7 @@ public final class DependenciesManager: DependenciesManagerProtocol {
         let cas = await CASManager.createCASManager()
         
         let storageManager = StorageManager(casManager: cas)
-        let telemetryManager = TelemetryManager()
+        let telemetryManager = TelemetryManager.createTelemetryManager()
         let subscriptionManager = SubscriptionManager()
         
         let profileManager = await ProfileManager.createProfileManager(casManager: cas)
@@ -112,7 +112,7 @@ public final class DependenciesManager: DependenciesManagerProtocol {
     }
     
     public static func createDependenciesForTesting() async -> DependenciesManagerProtocol {
-        let cas = await MockCas.createCASManager()
+        let cas = MockCas.createCASManager()
         
         let telemetryManager = MockTelemetryManager()
         

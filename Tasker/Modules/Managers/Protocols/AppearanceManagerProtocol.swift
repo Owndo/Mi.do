@@ -10,7 +10,7 @@ import SwiftUI
 import Models
 
 public protocol AppearanceManagerProtocol {
-    var profileModel: ProfileData { get }
+    var profileModel: UIProfileModel { get }
     var selectedColorScheme: ColorScheme? { get }
     
     func currentColorScheme() -> ColorScheme?

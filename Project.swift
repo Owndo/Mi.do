@@ -103,21 +103,21 @@ let project = Project(
             ]
         ),
         .moduleView(
-            name: "Profile",
+            name: "ProfileView",
             dependencies: [
                 .target(name: "Models"),
                 .target(name: "Managers"),
                 .target(name: "UIComponents"),
-                .target(name: "Paywall")
+                .target(name: "PaywallView")
             ]
         ),
         .moduleView(
-            name: "Calendar",
+            name: "CalendarView",
             dependencies: [
                 .target(name: "Models"),
                 .target(name: "Managers"),
                 .target(name: "UIComponents"),
-                .target(name: "Paywall")
+                .target(name: "PaywallView")
             ]
         ),
         .moduleView(
@@ -126,7 +126,7 @@ let project = Project(
                 .target(name: "Models"),
                 .target(name: "Managers"),
                 .target(name: "UIComponents"),
-                .target(name: "Paywall")
+                .target(name: "PaywallView")
             ]
         ),
         .moduleView(
@@ -144,15 +144,15 @@ let project = Project(
                 .target(name: "Models"),
                 .target(name: "Managers"),
                 .target(name: "UIComponents"),
-                .target(name: "Calendar"),
+                .target(name: "CalendarView"),
                 .target(name: "ListView"),
                 .target(name: "TaskView"),
-                .target(name: "Profile"),
-                .target(name: "Paywall")
+                .target(name: "ProfileView"),
+                .target(name: "PaywallView")
             ]
         ),
         .moduleView(
-            name: "Paywall",
+            name: "PaywallView",
             dependencies: [
                 .target(name: "Managers"),
                 .target(name: "UIComponents"),

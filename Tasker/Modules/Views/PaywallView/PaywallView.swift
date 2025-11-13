@@ -15,9 +15,11 @@ public struct PaywallView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.openURL) var openUrl
     
-    @State private var vm = PaywallVM()
+    @Bindable var vm: PaywallVM
     
-    public init() {}
+    public init(vm: PaywallVM) {
+        self.vm = vm
+    }
     
     public var body: some View {
         ZStack {
@@ -32,11 +34,6 @@ public struct PaywallView: View {
             if vm.pending {
                 ProgressView()
                     .controlSize(.large)
-            }
-        }
-        .onAppear {
-            Task {
-                await vm.subscriptionManager.loadProducts()
             }
         }
         .alert("Nothing to restore 🤷‍♂️", isPresented: $vm.showingAlert) {
@@ -225,7 +222,7 @@ public struct PaywallView: View {
                             colorScheme.accentColor()
                         )
                 )
-                .padding(.bottom, 20)
+                .liquidIfAvailable(glass: .clear, isInteractive: true)
         }
     }
     
@@ -266,10 +263,11 @@ public struct PaywallView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .padding(.bottom, 20)
+        .padding(.vertical, 20)
     }
 }
 
 #Preview {
-    PaywallView()
+    let vm = PaywallVM.createPreviewVM()
+    PaywallView(vm: vm)
 }

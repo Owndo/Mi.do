@@ -9,10 +9,10 @@ import Foundation
 import StoreKit
 
 public protocol SubscriptionManagerProtocol {
-    var products: [Product] { get set }
-    var showPaywall: Bool { get set }
-    var pending: Bool { get set }
-    var subscribed: Bool { get set }
+    var products: [Product] { get }
+    var showPaywall: Bool { get }
+    var pending: Bool { get }
+    var subscribed: Bool { get }
     
     func hasSubscription() -> Bool
     func makePurchase(_ product: Product) async throws

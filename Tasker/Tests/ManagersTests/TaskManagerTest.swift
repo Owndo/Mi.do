@@ -11,7 +11,7 @@ import Models
 import BlockSet
 import Testing
 
-class TaskManagerTest {
+struct TaskManagerTest {
     var dependenciesManager: DependenciesManagerProtocol
     var taskManager: TaskManagerProtocol
     

@@ -13,8 +13,8 @@ import Models
 final class WeekVM {
     @ObservationIgnored
     @Injected(\.dateManager) var dateManager: DateManagerProtocol
-    @ObservationIgnored
-    @Injected(\.telemetryManager) var telemetryManager: TelemetryManagerProtocol
+//    @ObservationIgnored
+//    @Injected(\.telemetryManager) var telemetryManager: TelemetryManagerProtocol
     
     var selectedDayOfWeek = Date()
     

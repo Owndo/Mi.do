@@ -17,7 +17,7 @@ import Models
 import Managers
 
 public struct TaskDeleteDialog: ViewModifier {
-    @Injected(\.storageManager) private var storageManager
+    @Environment(StorageManager.self) var storageManager
     
     @Binding var isPresented: Bool
     

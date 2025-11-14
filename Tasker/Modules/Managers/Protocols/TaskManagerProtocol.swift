@@ -8,7 +8,7 @@
 import Foundation
 import Models
 
-public protocol TaskManagerProtocol {
+public protocol TaskManagerProtocol: Actor {
 //    var tasks: [String: UITaskModel] { get set }
     var activeTasks: [UITaskModel] { get }
     var completedTasks: [UITaskModel] { get }

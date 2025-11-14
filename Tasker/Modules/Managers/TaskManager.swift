@@ -1,8 +1,7 @@
 import Foundation
 import Models
 
-@Observable
-public final class TaskManager: TaskManagerProtocol {
+public final actor TaskManager: TaskManagerProtocol {
     
     private var casManager: CASManagerProtocol
     private var dateManager: DateManagerProtocol
@@ -72,7 +71,7 @@ public final class TaskManager: TaskManagerProtocol {
         telemetryManager: TelemetryManagerProtocol
     ) async -> TaskManagerProtocol {
         let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager, telemetryManager: telemetryManager)
-        manager.tasks = await manager.updateTasks()
+        await manager.setTasks(await manager.updateTasks())
         
         Task { await manager.updateNotifications() }
         
@@ -85,10 +84,10 @@ public final class TaskManager: TaskManagerProtocol {
         dateObserverTask = Task { [weak self] in
             guard let self = self else { return }
             
-            for await _ in self.dateManager.dateChanges {
+            for await _ in await self.dateManager.dateChanges {
                 guard !Task.isCancelled else { break }
                 
-                self.tasks = await self.updateTasks()
+                await self.setTasks(await self.updateTasks())
             }
         }
         
@@ -98,6 +97,10 @@ public final class TaskManager: TaskManagerProtocol {
                 guard uiModel.isScheduledForDate(selectedDate, calendar: calendar) else { return }
                 dict[uiModel.id] = uiModel
             }
+    }
+    
+    private func setTasks(_ tasks: [String: UITaskModel]) {
+        self.tasks = tasks
     }
     
     //MARK: Return active tasks

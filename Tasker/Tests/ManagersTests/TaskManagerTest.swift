@@ -34,13 +34,14 @@ struct TaskManagerTest {
 
 //MARK: - Task model
 
-@Test func createTaskModel() async throws {
+@Test
+func createTaskModel() async throws {
     let manager = await TaskManagerTest.createTestsManager()
     let task = UITaskModel(.initial(TaskModel(title: "New task", notificationDate: Date.now.timeIntervalSince1970)))
     
     try await manager.taskManager.saveTask(task)
     
-    var activeTasks = manager.taskManager.activeTasks
+    var activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 1)
     
@@ -50,17 +51,18 @@ struct TaskManagerTest {
     
     try await manager.taskManager.saveTask(task1)
     
-    activeTasks = manager.taskManager.activeTasks
+    activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 2)
 }
 
 //MARK: - Fetch empty, add task, change date and fetch again, add task, fetch again
 
-@Test func fetchEmptyTasks() async throws {
+@Test
+func fetchEmptyTasks() async throws {
     let manager = await TaskManagerTest.createTestsManager()
     
-    var activeTasks = manager.taskManager.activeTasks
+    var activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.isEmpty, "Before store task, active tasks should be empty")
     
@@ -68,7 +70,7 @@ struct TaskManagerTest {
     
     try await manager.taskManager.saveTask(task)
     
-    activeTasks = manager.taskManager.activeTasks
+    activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 1)
     
@@ -78,7 +80,7 @@ struct TaskManagerTest {
     
     try await Task.sleep(for: .seconds(0.1))
     
-    activeTasks = manager.taskManager.activeTasks
+    activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.isEmpty, "After changing date, active tasks should be empty")
     
@@ -86,21 +88,22 @@ struct TaskManagerTest {
     
     try await manager.taskManager.saveTask(newTask1)
     
-    activeTasks = manager.taskManager.activeTasks
+    activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 1)
 }
 
 //MARK: - Create and update task
 
-@Test func createAndUpdateTask() async throws {
+@Test
+func createAndUpdateTask() async throws {
     let manager = await TaskManagerTest.createTestsManager()
     
     let task = UITaskModel(.initial(TaskModel(title: "New task", notificationDate: Date.now.timeIntervalSince1970)))
     
     try await manager.taskManager.saveTask(task)
     
-    var activeTasks = manager.taskManager.activeTasks
+    var activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 1)
     
@@ -108,60 +111,140 @@ struct TaskManagerTest {
     
     try await manager.taskManager.saveTask(task)
     
-    activeTasks = manager.taskManager.activeTasks
+    activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 1)
 }
 
 //MARK: - Create and delete task
 
-@Test func createAndDeleteTaskModel() async throws {
+@Test
+func createAndDeleteTaskModel() async throws {
     let manager = await TaskManagerTest.createTestsManager()
     
     let task = UITaskModel(.initial(TaskModel(title: "New task", notificationDate: Date.now.timeIntervalSince1970)))
     
     try await manager.taskManager.saveTask(task)
     
-    var activeTasks = manager.taskManager.activeTasks
+    var activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 1)
     
     try await manager.taskManager.deleteTask(task: task, deleteCompletely: true)
     
-    activeTasks = manager.taskManager.activeTasks
+    activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 0)
 }
 
+//MARK: - Check multicreate
+
+//MARK: - 100
+
+@Test
+func create100models() async throws {
+    let manager = await TaskManagerTest.createTestsManager()
+    
+    
+    let clock = ContinuousClock()
+    let duration = try await clock.measure {
+        try await generateModels(count: 100, taskManager: manager.taskManager)
+    }
+    
+    let models = await manager.taskManager.activeTasks
+    
+    print("⏱ Duration: \(duration)")
+    #expect(models.count == 100)
+}
+
+//MARK: - 1000
+
+@Test
+func create1000models() async throws {
+    let manager = await TaskManagerTest.createTestsManager()
+    
+    let clock = ContinuousClock()
+    let duration = try await clock.measure {
+        try await generateModels(count: 1000, taskManager: manager.taskManager)
+    }
+    
+    let models = await manager.taskManager.activeTasks
+    
+    print("⏱ Duration: \(duration)")
+    #expect(models.count == 1000)
+}
+
+//MARK: - 10000
+
+@Test
+func create10000models() async throws {
+    let manager = await TaskManagerTest.createTestsManager()
+    
+    
+    let clock = ContinuousClock()
+    let duration = try await clock.measure {
+        try await generateModels(count: 10000, taskManager: manager.taskManager)
+    }
+    
+    let models = await manager.taskManager.activeTasks
+    
+    print("⏱ Duration: \(duration)")
+    #expect(models.count == 10000)
+}
+
+private func generateModels(count: Int, taskManager: TaskManagerProtocol) async throws {
+    
+    try await withThrowingTaskGroup(of: Void.self) { group in
+        for i in 0..<count {
+            group.addTask {
+                let model = UITaskModel(
+                    .initial(
+                        TaskModel(
+                            title: "Title - \(i)",
+                            notificationDate: Date.now.timeIntervalSince1970
+                        )
+                    )
+                )
+                
+                try await taskManager.saveTask(model)
+            }
+        }
+        
+        try await group.waitForAll()
+    }
+}
+
 //MARK: - Add test for checkmark
-@Test func checkMarkTapped() async throws {
+
+@Test
+func checkMarkTapped() async throws {
     let manager = await TaskManagerTest.createTestsManager()
     
     let task = UITaskModel(.initial(TaskModel(title: "New task", notificationDate: Date.now.timeIntervalSince1970)))
     
     try await manager.taskManager.saveTask(task)
     
-    var activeTasks = manager.taskManager.activeTasks
+    var activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 1)
     
     try await manager.taskManager.checkMarkTapped(task: task)
     
-    activeTasks = manager.taskManager.activeTasks
+    activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 0)
     
-    var completeTasks = manager.taskManager.completedTasks
+    var completeTasks = await manager.taskManager.completedTasks
     
     #expect(completeTasks.count == 1)
     
     try await manager.taskManager.checkMarkTapped(task: task)
     
-    completeTasks = manager.taskManager.completedTasks
+    completeTasks = await manager.taskManager.completedTasks
     
     #expect(completeTasks.isEmpty)
     
-    activeTasks = manager.taskManager.activeTasks
+    activeTasks = await manager.taskManager.activeTasks
     
     #expect(activeTasks.count == 1)
 }

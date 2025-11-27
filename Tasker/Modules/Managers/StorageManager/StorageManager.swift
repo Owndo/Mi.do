@@ -8,7 +8,6 @@
 import Foundation
 import Models
 
-@Observable
 public final class StorageManager: StorageManagerProtocol {
     public var casManager: CASManagerProtocol
     
@@ -16,10 +15,17 @@ public final class StorageManager: StorageManagerProtocol {
         FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!.appending(path: "Sounds")
     }
     
-    public init(casManager: CASManagerProtocol) {
+    private init(casManager: CASManagerProtocol) {
         self.casManager = casManager
     }
     
+    //MARK: - Manager creator
+    
+    public static func createStorageManager(casManager: CASManagerProtocol) -> StorageManagerProtocol {
+        StorageManager(casManager: casManager)
+    }
+    
+    @discardableResult
     public func createFileInSoundsDirectory(hash: String) async -> URL? {
         let soundsDirectory = createSoundsDirectory()
         

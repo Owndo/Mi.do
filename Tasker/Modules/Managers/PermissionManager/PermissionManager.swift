@@ -26,11 +26,18 @@ public final class PermissionManager: PermissionProtocol {
     
     public var alert: Alert?
     
-    public init(telemetryManager: TelemetryManagerProtocol) {
-        self.telemetryManager = telemetryManager
+    private init() {
+        self.telemetryManager = TelemetryManager.createTelemetryManager()
     }
     
-    //MARK: Function for install session setup
+    //MARK: - Manager creator
+    
+    public static func createPermissionManager() -> PermissionManager {
+        PermissionManager()
+    }
+    
+    //MARK: - Function for install session setup
+    
     public func peremissionSessionForRecording() throws {
         
         let permissionSession = AVAudioApplication.shared

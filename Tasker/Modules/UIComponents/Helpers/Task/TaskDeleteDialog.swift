@@ -17,15 +17,13 @@ import Models
 import Managers
 
 public struct TaskDeleteDialog: ViewModifier {
-    @Environment(StorageManager.self) var storageManager
-    
     @Binding var isPresented: Bool
     
-    let task: MainModel
+    let task: UITaskModel
     let message: LocalizedStringKey
     let isSingleTask: Bool
-    let onDelete: (MainModel, Bool) async -> Void
     let dismissAction: DismissAction?
+    let onDelete: (Bool) async -> Void
     
     public func body(content: Content) -> some View {
         content
@@ -42,8 +40,8 @@ public struct TaskDeleteDialog: ViewModifier {
                     Button(role: .destructive) {
                         Task {
                             dismissAction?()
-                            try await Task.sleep(nanoseconds: 50_000_000)
-                            await onDelete(task, false)
+                            try await Task.sleep(nanoseconds: 30_000_000)
+                            await onDelete(false)
                         }
                     } label: {
                         Text("Delete only this task", bundle: .module)
@@ -64,23 +62,22 @@ public struct TaskDeleteDialog: ViewModifier {
     
     private func deleteTask() async {
         dismissAction?()
-        storageManager.deleteAudiFromDirectory(hash: task.audio)
-        try? await Task.sleep(nanoseconds: 50_000_000)
-        await onDelete(task, true)
+        try? await Task.sleep(nanoseconds: 30_000_000)
+        await onDelete(true)
     }
 }
 
 public extension View {
     /// Confirmation dialog
-    func taskDeleteDialog(isPresented: Binding<Bool>, task: MainModel, message: LocalizedStringKey, isSingleTask: Bool, onDelete: @escaping (MainModel, Bool) async -> Void, dismissButton: DismissAction? = nil) -> some View {
+    func taskDeleteDialog(isPresented: Binding<Bool>, task: UITaskModel, message: LocalizedStringKey, isSingleTask: Bool, onDelete: @escaping (Bool) async -> Void, dismissButton: DismissAction? = nil) -> some View {
         modifier(
             TaskDeleteDialog(
                 isPresented: isPresented,
                 task: task,
                 message: message,
                 isSingleTask: isSingleTask,
-                onDelete: onDelete,
-                dismissAction: dismissButton
+                dismissAction: dismissButton,
+                onDelete: onDelete
             )
         )
     }

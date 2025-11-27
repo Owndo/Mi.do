@@ -10,8 +10,6 @@ import SwiftData
 import SwiftUI
 import BlockSet
 
-public typealias MainModel = UITaskModel
-
 ///Model for CAS
 public struct TaskModel: Codable {
     public var title: String?
@@ -197,9 +195,9 @@ func nilIfNeed<T: Equatable>(_ value: T?, is defaultValue: T?) -> T? {
 }
 
 
-public func mockModel() -> MainModel {
+public func mockModel() -> UITaskModel {
 #if targetEnvironment(simulator)
-    MainModel(
+    UITaskModel(
         .initial(
             TaskModel(
                 title: "New task",
@@ -213,7 +211,7 @@ public func mockModel() -> MainModel {
         )
     )
 #else
-    MainModel(
+    UITaskModel(
         .initial(
             TaskModel(
                 title: "New task",

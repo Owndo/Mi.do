@@ -75,13 +75,19 @@ public final class DateManager: DateManagerProtocol {
         _dateChangeContinuation.finish()
     }
     
-    static func createDateManager(profileManager: ProfileManagerProtocol, telemetryManager: TelemetryManagerProtocol) async -> DateManagerProtocol {
+    public static func createDateManager(profileManager: ProfileManagerProtocol, telemetryManager: TelemetryManagerProtocol) async -> DateManagerProtocol {
         let manager = DateManager(profileManager: profileManager, telemetryManager: telemetryManager)
         manager.calendar.firstWeekday = profileManager.profileModel.settings.firstDayOfWeek
         manager.initializeWeek()
         await manager.initializeMonth()
         
         return manager
+    }
+    
+    public static func createMockDateManager() -> DateManagerProtocol {
+        let profileManager = ProfileManager.createMockProfileManager()
+        
+        return DateManager(profileManager: profileManager, telemetryManager: TelemetryManager.createTelemetryManager(mock: true))
     }
     
     //MARK: - Selected date change

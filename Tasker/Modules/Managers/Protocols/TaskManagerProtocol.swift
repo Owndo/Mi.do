@@ -15,8 +15,12 @@ public protocol TaskManagerProtocol: Actor {
     
     func thisWeekTasks(date: Double) async -> [UITaskModel]
     
+    /// Save Audio to cas
+    func storeAudio(_ audio: Data) async throws -> String?
+    
     /// Save model
     func saveTask(_ task: UITaskModel) async throws
+    
     /// Delete task
     func deleteTask(task: UITaskModel, deleteCompletely: Bool) async throws
     
@@ -33,5 +37,7 @@ public protocol TaskManagerProtocol: Actor {
     
     /// last day in deadline
     func dayUntillDeadLine(_ task: UITaskModel) -> Int?
+    
+    /// Update notifications for all tasks
     func updateNotifications() async
 }

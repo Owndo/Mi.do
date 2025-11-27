@@ -12,7 +12,9 @@ import Models
 
 @Observable
 public final class SubscriptionManager: SubscriptionManagerProtocol {
-    //MARK: States for UI
+    
+    //MARK: - States for UI
+    
     public var showPaywall = false
     public var pending = false
     public var subscribed = false

@@ -195,7 +195,7 @@ final class ModelsFactory {
     
     // MARK: - Create Tasks
     
-    func create(_ model: Models, repeatTask: RepeatTask? = .never) -> MainModel {
+    func create(_ model: Models, repeatTask: RepeatTask? = .never) -> UITaskModel {
         switch model {
         case .bestApp:
             UITaskModel(

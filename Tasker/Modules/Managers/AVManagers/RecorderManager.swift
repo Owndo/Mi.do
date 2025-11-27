@@ -6,7 +6,6 @@ import NaturalLanguage
 @Observable
 public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable {
     private var telemetryManager: TelemetryManagerProtocol
-    private var dateManager: DateManagerProtocol
     
     private var titleExtractor: MagicManager
     private var avAudioRecorder: AVAudioRecorder?
@@ -44,11 +43,16 @@ public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable
     
     public var fileName: URL?
     
-    init(telemetryManager: TelemetryManagerProtocol, dateManager: DateManagerProtocol) {
-        self.telemetryManager = telemetryManager
-        self.dateManager = dateManager
+    private init(dateManager: DateManagerProtocol) {
+        self.telemetryManager = TelemetryManager.createTelemetryManager()
         titleExtractor = MagicManager(dateManager: dateManager)
         speechRecognizer = SFSpeechRecognizer(locale: Locale.current)
+    }
+    
+    //MARK: - Manager creator
+    
+    public static func createRecorderManager(dateManager: DateManagerProtocol) -> RecorderManagerProtocol {
+        return RecorderManager(dateManager: dateManager)
     }
     
     // MARK: - Start recording with speech recognition

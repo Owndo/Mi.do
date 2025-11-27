@@ -17,7 +17,7 @@ public protocol CASManagerProtocol {
     
     func fetchModels<T: Codable>(_ model: T.Type) async -> [T] 
     func saveModel<T: Codable>(_ model: Model<T>) async throws
-    func storeAudio(url: URL) async throws -> String? 
+    func storeAudio(_ audio: Data) async throws -> String? 
     func storeImage(_ photo: Data) async throws -> String?
     func pathToFile(_ hash: String) async throws -> URL
     func retrieve(_ hash: String) async throws -> Data? 

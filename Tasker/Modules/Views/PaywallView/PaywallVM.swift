@@ -49,8 +49,8 @@ public final class PaywallVM {
     
     //MARK: - Preview VM
     
-    static func createPreviewVM() -> PaywallVM {
-        PaywallVM(subscriptionManager: SubscriptionManager.createMockSubscriptionManager())
+    public static func createPreviewVM(subscriptionManager: SubscriptionManagerProtocol) -> PaywallVM {
+        PaywallVM(subscriptionManager: subscriptionManager)
     }
     
     private func updateProdicts() async {

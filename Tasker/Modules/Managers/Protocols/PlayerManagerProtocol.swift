@@ -20,4 +20,5 @@ public protocol PlayerManagerProtocol: Sendable {
     func seekAudio(_ time: TimeInterval)
     func returnTotalTime(task: UITaskModel) async -> Double
     func setUpTotalTime(task: UITaskModel) async
+    func resetAudioProgress()
 }

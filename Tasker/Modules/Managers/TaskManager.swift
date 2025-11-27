@@ -8,7 +8,7 @@ public final actor TaskManager: TaskManagerProtocol {
     private var notificationManager: NotificationManagerProtocol
     private var telemetryManager: TelemetryManagerProtocol
     
-    private var weekTasksCache: [Double: [MainModel]] = [:] // key: startOfWeek timestamp
+    private var weekTasksCache: [Double: [UITaskModel]] = [:] // key: startOfWeek timestamp
     
     //MARK: Computer properties
     private var calendar: Calendar {
@@ -40,10 +40,10 @@ public final actor TaskManager: TaskManagerProtocol {
     //MARK: Tasks properties
     private var tasks = [String: UITaskModel]()
     
-    public var activeTasks: [MainModel] { returnActiveTasks() }
-    public var completedTasks: [MainModel] { returnCompletedTasks() }
+    public var activeTasks: [UITaskModel] { returnActiveTasks() }
+    public var completedTasks: [UITaskModel] { returnCompletedTasks() }
     
-    private var thisWeekCasheTasks: [MainModel] = []
+    private var thisWeekCasheTasks: [UITaskModel] = []
     private var cacheWeekStart: Double = 0
     private var cacheWeekEnd: Double = 0
     
@@ -64,7 +64,7 @@ public final actor TaskManager: TaskManagerProtocol {
         dateObserverTask?.cancel()
     }
     
-    static func createTaskManager(
+    public static func createTaskManager(
         casManager: CASManagerProtocol,
         dateManager: DateManagerProtocol,
         notificationManager: NotificationManagerProtocol,
@@ -76,6 +76,10 @@ public final actor TaskManager: TaskManagerProtocol {
         Task { await manager.updateNotifications() }
         
         return manager
+    }
+    
+    public static func createMockTaskManager() -> TaskManagerProtocol {
+        TaskManager(casManager: MockCas.createCASManager(), dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
     }
     
     //MARK: - Update tasks
@@ -105,7 +109,7 @@ public final actor TaskManager: TaskManagerProtocol {
     
     //MARK: Return active tasks
     
-    private func returnActiveTasks() -> [MainModel] {
+    private func returnActiveTasks() -> [UITaskModel] {
         let filtered = tasks.values.filter { value in
             value.completeRecords.contains { $0.completedFor == selectedDate } != true
         }
@@ -115,7 +119,7 @@ public final actor TaskManager: TaskManagerProtocol {
     
     //MARK: Return completed tasks
     
-    private func returnCompletedTasks() -> [MainModel] {
+    private func returnCompletedTasks() -> [UITaskModel] {
         let filtered = tasks.values.filter { value in
             value.completeRecords.contains { $0.completedFor == selectedDate }
         }
@@ -124,7 +128,7 @@ public final actor TaskManager: TaskManagerProtocol {
     }
     
     //MARK: - Sorted tasks
-    private func sortedTasks(tasks: [MainModel]) -> [MainModel] {
+    private func sortedTasks(tasks: [UITaskModel]) -> [UITaskModel] {
         tasks.sorted {
             let hour1 = calendar.component(.hour, from: Date(timeIntervalSince1970: $0.notificationDate))
             let hour2 = calendar.component(.hour, from: Date(timeIntervalSince1970: $1.notificationDate))
@@ -200,6 +204,12 @@ public final actor TaskManager: TaskManagerProtocol {
         CompleteRecord(completedFor: selectedDate, timeMark: currentTime)
     }
     
+    //MARK: - Store audio
+    
+    public func storeAudio(_ audio: Data) async throws -> String? {
+        try await casManager.storeAudio(audio)
+    }
+    
     //MARK: - Save Task
     
     public func saveTask(_ task: UITaskModel) async throws {
@@ -213,6 +223,7 @@ public final actor TaskManager: TaskManagerProtocol {
     }
     
     // MARK: - Delete task
+    
     public func deleteTask(task: UITaskModel, deleteCompletely: Bool = false) async throws {
         guard task.markAsDeleted == false else {
             return
@@ -253,7 +264,7 @@ public final actor TaskManager: TaskManagerProtocol {
     }
     
     //MARK: - Move to next Day
-    public func updateNotificationTimeForDueDate(task: MainModel) -> MainModel {
+    public func updateNotificationTimeForDueDate(task: UITaskModel) -> UITaskModel {
         let model = task
         
         model.notificationDate = dateManager.updateNotificationDate(model.notificationDate)
@@ -262,7 +273,7 @@ public final actor TaskManager: TaskManagerProtocol {
     }
     
     //MARK: Deadline logic
-    public func dayUntillDeadLine(_ task: MainModel) -> Int? {
+    public func dayUntillDeadLine(_ task: UITaskModel) -> Int? {
         guard task.deadline != nil else {
             return nil
         }

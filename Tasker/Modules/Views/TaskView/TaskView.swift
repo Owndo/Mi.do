@@ -39,56 +39,53 @@ public struct TaskView: View {
                     .opacity(0.7)
                     .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
-                    
-                    ScrollView {
-                        VStack(spacing: 28) {
+                ScrollView {
+                    VStack(spacing: 28) {
+                        
+                        AudioSection()
+                            .ifHidden(preview)
+                        
+                        MainSection()
+                        
+                        VStack(spacing: 0) {
+                            DateSelection()
                             
-                            AudioSection()
-                                .ifHidden(preview)
+                            TimeSelection()
                             
-                            MainSection()
+                            RepeatSelection()
                             
-                            VStack(spacing: 0) {
-                                DateSelection()
-                                
-                                TimeSelection()
-                                
-                                RepeatSelection()
-                                
-                                Deadline()
-                                
-                            }
+                            Deadline()
+                            
+                        }
+                        .background(
+                            RoundedRectangle(cornerRadius: 26)
+                                .fill(
+                                    vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
+                                )
+                        )
+                        
+                        
+                        CustomColorPicker()
                             .background(
                                 RoundedRectangle(cornerRadius: 26)
                                     .fill(
                                         vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
                                     )
                             )
-                            
-                            
-                            CustomColorPicker()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 26)
-                                        .fill(
-                                            vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
-                                        )
-                                )
-                                .ifHidden(preview)
-                            
-                            CreatedDate()
-                            
-                            Spacer()
-                        }
+                            .ifHidden(preview)
+                        
+                        CreatedDate()
                     }
-                    .ignoresSafeArea(edges: .bottom)
-                    .scrollIndicators(.hidden)
-                    .scrollDismissesKeyboard(.immediately)
                 }
+                .ignoresSafeArea(edges: .bottom)
+                .scrollIndicators(.hidden)
+                .scrollDismissesKeyboard(.immediately)
+                .disabled(vm.showPaywall)
                 .padding(.top, preview ? 30 : 0)
                 .padding(.horizontal, 16)
                 .safeAreaInset(edge: .bottom) {
                     SaveButton()
+                        .disabled(vm.showPaywall)
                         .ifHidden(preview)
                         .padding(.leading, 16)
                         .padding(.trailing, 10)
@@ -101,7 +98,9 @@ public struct TaskView: View {
                     }
                 }
                 .onChange(of: vm.currentlyRecordTime) { newValue, _ in
-                    vm.stopAfterCheck(newValue)
+                    Task {
+                        await vm.stopAfterCheck(newValue)
+                    }
                 }
                 .onDisappear {
                     vm.disappear()
@@ -125,10 +124,11 @@ public struct TaskView: View {
                 }
                 
                 if vm.showPaywall {
-                    PaywallView()
+                    PaywallView(vm: vm.paywallVM)
                 }
             }
             // MARK: - Tool Bar
+            
             .toolbar {
                 if !preview {
                     if #available(iOS 26.0, *) {
@@ -182,7 +182,8 @@ public struct TaskView: View {
         .animation(.default, value: vm.task.taskColor)
     }
     
-    //MARK: TabBar
+    //MARK: - TabBar
+    
     @ViewBuilder
     private func CustomTabBar() -> some View {
         HStack(alignment: .center) {
@@ -209,6 +210,7 @@ public struct TaskView: View {
     }
     
     //MARK: - Audio Section
+    
     @ViewBuilder
     private func AudioSection() -> some View {
         VStack(spacing: 28) {
@@ -223,7 +225,8 @@ public struct TaskView: View {
         .padding(.top, 12)
     }
     
-    //MARK: Voice Playing
+    //MARK: - Voice Playing
+    
     @ViewBuilder
     private func VoicePlaying() -> some View {
         HStack(spacing: 12) {
@@ -231,7 +234,7 @@ public struct TaskView: View {
                 .frame(width: 21, height: 21)
                 .onTapGesture {
                     Task {
-                        await vm.playButtonTapped(task: vm.task)
+                        await vm.playButtonTapped()
                     }
                 }
             
@@ -274,6 +277,7 @@ public struct TaskView: View {
     }
     
     //MARK: - Voice Toogle
+    
     @ViewBuilder
     private func VoiceModeToogle() -> some View {
         HStack(spacing: 12) {
@@ -297,6 +301,7 @@ public struct TaskView: View {
     }
     
     //MARK: - Add Voice
+    
     @ViewBuilder
     private func AddVoice() -> some View {
         HStack(spacing: 12) {
@@ -347,6 +352,7 @@ public struct TaskView: View {
     
     
     //MARK: - Title, Info
+    
     @ViewBuilder
     private func MainSection() -> some View {
         VStack(spacing: 0) {
@@ -387,7 +393,8 @@ public struct TaskView: View {
         )
     }
     
-    //MARK: Date Selector
+    //MARK: - Date Selector
+    
     @ViewBuilder
     private func DateSelection() -> some View {
         VStack(spacing: 0) {
@@ -427,7 +434,8 @@ public struct TaskView: View {
         .clipped()
     }
     
-    //MARK: Time Selector
+    //MARK: - Time Selector
+    
     @ViewBuilder
     private func TimeSelection() -> some View {
         VStack(spacing: 0) {
@@ -466,7 +474,8 @@ public struct TaskView: View {
         .clipped()
     }
     
-    //MARK: Repeat Selector
+    //MARK: - Repeat Selector
+    
     @ViewBuilder
     private func RepeatSelection() -> some View {
         VStack(spacing: 0) {
@@ -481,6 +490,7 @@ public struct TaskView: View {
                 
                 Spacer()
                 
+                //TODO: - Add repeat task from TASK
                 Picker(selection: $vm.repeatTask) {
                     ForEach(RepeatTask.allCases, id: \.self) { type in
                         Text(type.description, bundle: .module)
@@ -508,6 +518,8 @@ public struct TaskView: View {
         }
         .sensoryFeedback(.selection, trigger: vm.task.repeatTask)
     }
+    
+    //TODO: - Add day of week from TASK
     
     @ViewBuilder
     private func DayOfWeekSelection() -> some View {
@@ -541,7 +553,8 @@ public struct TaskView: View {
         .sensoryFeedback(.selection, trigger: vm.dayOfWeek)
     }
     
-    //MARK: ColorPicker
+    //MARK: - Color Picker
+    
     @ViewBuilder
     private func CustomColorPicker() -> some View {
         VStack(spacing: 0) {
@@ -615,6 +628,7 @@ public struct TaskView: View {
     }
     
     //MARK: - Deadline
+    
     @ViewBuilder
     private func Deadline() -> some View {
         VStack {
@@ -657,23 +671,34 @@ public struct TaskView: View {
         .onChange(of: vm.hasDeadline) { oldValue, newValue in
             Task {
                 if newValue {
-                    await vm.deadlineButtonTapped()
+                    await vm.checkSubscriptionForDeadline()
                 }
             }
         }
         .clipped()
     }
     
-    //MARK: Save button
+    //MARK: - Save button
+    
     @ViewBuilder
     private func SaveButton() -> some View {
+        
+        //TODO: - Add complete to preset mode
+        
+        var complete = false
+        
         HStack {
-            TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task) {
+            TaskCheckMark(complete: complete, task: vm.task) {
                 Task {
                     dismissButton()
                     
                     try await Task.sleep(nanoseconds: 50_000_000)
                     await vm.checkMarkTapped()
+                }
+            }
+            .onAppear {
+                Task {
+                    complete = await vm.checkCompletedTaskForToday()
                 }
             }
             .padding(12)
@@ -736,6 +761,7 @@ public struct TaskView: View {
     }
     
     //MARK: - Created Date
+    
     @ViewBuilder
     private func CreatedDate() -> some View {
         HStack(alignment: .center, spacing: 4) {
@@ -754,6 +780,7 @@ public struct TaskView: View {
     }
     
     //MARK: - Divider
+    
     @ViewBuilder
     private func CustomDivider() -> some View {
         RoundedRectangle(cornerRadius: 1)
@@ -766,6 +793,6 @@ public struct TaskView: View {
 #Preview {
     Color.clear
         .sheet(isPresented: .constant(true)) {
-            TaskView(taskVM: TaskVM(mainModel: mockModel()))
+            TaskView(taskVM: TaskVM.createPreviewTaskVM())
         }
 }

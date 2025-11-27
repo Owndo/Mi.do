@@ -76,9 +76,8 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: - Save audio
     
-    func storeAudio(url: URL) async throws -> String? {
-        let data = try Data(contentsOf: url)
-        return try await cas.store(data)
+    public func storeAudio(_ audio: Data) async throws -> String? {
+        return try await cas.store(audio)
     }
     
     //MARK: Save image
@@ -220,7 +219,7 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
-    private func saveProfileDataToICloud(_ profileData: ProfileData) {
+    private func saveProfileDataToICloud(_ profileData: UIProfileModel) {
         guard profileData.settings.iCloudSyncEnabled else { return }
         
         let store = NSUbiquitousKeyValueStore.default
@@ -230,12 +229,12 @@ final class CASManager: CASManagerProtocol {
         }
     }
     
-    private func loadProfileFromIcloud() -> ProfileData? {
+    private func loadProfileFromIcloud() -> UIProfileModel? {
         let store = NSUbiquitousKeyValueStore.default
         
         if let data = store.data(forKey: "profileData") {
             let profileData = try! JSONDecoder().decode(ProfileModel.self, from: data)
-            return ProfileData(.initial(profileData))
+            return UIProfileModel(.initial(profileData))
         }
         
         return nil

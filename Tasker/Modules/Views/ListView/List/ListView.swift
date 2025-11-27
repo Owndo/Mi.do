@@ -19,7 +19,7 @@ public struct ListView: View {
     }
     
     public var body: some View {
-            CustomList()
+        CustomList()
             .ignoresSafeArea(edges: [.top, .horizontal])
             .animation(.default, value: vm.completedTasksHidden)
             .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
@@ -52,14 +52,18 @@ public struct ListView: View {
                         .contentShape(Rectangle())
                         .padding(.vertical, 2)
                 }
+                //MARK: - Context menu
+                
                 .contextMenu {
                     Button {
+                        //MARK: Open task
                         vm.taskTapped(task)
                     } label: {
                         Label("Open task", systemImage: "arrowshape.turn.up.right")
                     }
                     
                     Button {
+                        //MARK: Complete task
                         Task {
                             await vm.checkMarkTapped(task)
                         }
@@ -68,12 +72,13 @@ public struct ListView: View {
                     }
                     
                     Button(role: .destructive) {
+                        //MARK: Delete task
                         vm.deleteTaskButtonSwiped(task: task)
                     } label: {
                         Label("Delete task", systemImage: "trash")
                     }
                 } preview: {
-//                    TaskView(taskVM: TaskVM(mainModel: task), preview: true)
+                    //                    TaskView(taskVM: TaskVM(mainModel: task), preview: true)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button {
@@ -153,7 +158,7 @@ public struct ListView: View {
                             Label("Delete task", systemImage: "trash")
                         }
                     } preview: {
-//                        TaskView(taskVM: TaskVM(mainModel: task), preview: true)
+                        //                        TaskView(taskVM: TaskVM(mainModel: task), preview: true)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button {

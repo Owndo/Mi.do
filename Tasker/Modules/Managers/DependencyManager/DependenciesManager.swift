@@ -34,23 +34,20 @@ public final class DependenciesManager: DependenciesManagerProtocol {
     
     //MARK: - Storage manager
     
-    public lazy var storageManager: StorageManagerProtocol = StorageManager(casManager: casManager)
+    public lazy var storageManager: StorageManagerProtocol = StorageManager.createStorageManager(casManager: casManager)
     
     //MARK: - Player manager
     
-    public lazy var playerManager: PlayerManagerProtocol = PlayerManager(storageManager: storageManager)
+    public lazy var playerManager: PlayerManagerProtocol = PlayerManager.createPlayerManager(storageManager: storageManager)
     
   
     //MARK: - Permission manager
     
-    public lazy var permissionManager: PermissionProtocol = PermissionManager(telemetryManager: telemetryManager)
+    public lazy var permissionManager: PermissionProtocol = PermissionManager.createPermissionManager()
     
     //MARK: - Recorder manager
     
-    public lazy var recorderManager: RecorderManagerProtocol = RecorderManager(
-        telemetryManager: telemetryManager,
-        dateManager: dateManager
-    )
+    public lazy var recorderManager: RecorderManagerProtocol = RecorderManager.createRecorderManager(dateManager: dateManager)
    
     
     //MARK: - Notification manager
@@ -88,21 +85,21 @@ public final class DependenciesManager: DependenciesManagerProtocol {
     }
     
     public static func createDependencies() async -> DependenciesManagerProtocol {
-        let cas = await CASManager.createCASManager()
+        let casManager = await CASManager.createCASManager()
         
-        let storageManager = StorageManager(casManager: cas)
+        let storageManager = StorageManager.createStorageManager(casManager: casManager)
         let telemetryManager = TelemetryManager.createTelemetryManager()
         let subscriptionManager = SubscriptionManager()
         
-        let profileManager = await ProfileManager.createProfileManager(casManager: cas)
+        let profileManager = await ProfileManager.createProfileManager(casManager: casManager)
         let dateManager = await DateManager.createDateManager(profileManager: profileManager, telemetryManager: telemetryManager)
         
         let notificationManager = NotificationManager(subscriptionManager: subscriptionManager, storageManager: storageManager, dateManager: dateManager)
 
-        let taskManager = await TaskManager.createTaskManager(casManager: cas, dateManager: dateManager, notificationManager: notificationManager, telemetryManager: telemetryManager)
+        let taskManager = await TaskManager.createTaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager, telemetryManager: telemetryManager)
         
         let dependencies = DependenciesManager(
-            casManager: cas,
+            casManager: casManager,
             profileManager: profileManager,
             dateManager: dateManager,
             taskManager: taskManager

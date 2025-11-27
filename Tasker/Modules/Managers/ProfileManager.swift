@@ -23,10 +23,17 @@ public final class ProfileManager: ProfileManagerProtocol {
     
     //MARK: - Create manager
     
-    static func createProfileManager(casManager: CASManagerProtocol) async -> ProfileManager {
+    public static func createProfileManager(casManager: CASManagerProtocol) async -> ProfileManagerProtocol {
         let model = await casManager.fetchModels(ProfileModel.self).map { UIProfileModel(.initial($0)) }.first ?? mockProfileData()
         
         let manager = ProfileManager(casManager: casManager, profileModel: model)
+        
+        return manager
+    }
+    
+    public static func createMockProfileManager() -> ProfileManagerProtocol {
+        let model = mockProfileData().model.value
+        let manager = ProfileManager(casManager: MockCas.createCASManager(), profileModel: UIProfileModel(.initial(model)))
         
         return manager
     }

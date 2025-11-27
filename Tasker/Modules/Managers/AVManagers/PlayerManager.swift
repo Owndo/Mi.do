@@ -31,8 +31,23 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     // Cash: [audioHash: URL]
     private var tempAudioCache: [String: URL] = [:]
     
-    public init(storageManager: StorageManagerProtocol) {
+    private init(storageManager: StorageManagerProtocol) {
         self.storageManager = storageManager
+    }
+    
+    //MARK: - Manager creator
+    
+    public static func createPlayerManager(storageManager: StorageManagerProtocol) -> PlayerManagerProtocol {
+        return PlayerManager(storageManager: storageManager)
+    }
+    
+    //MARK: - Mock manager
+    
+    public static func createMockPlayerManager() -> PlayerManagerProtocol {
+        let mockCasManager = MockCas.createCASManager()
+        let storageManager = StorageManager.createStorageManager(casManager: mockCasManager)
+        
+        return PlayerManager(storageManager: storageManager)
     }
     
     // MARK: - Playback
@@ -107,6 +122,8 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
+    //MARK: - Return Total Time
+    
     public func returnTotalTime(task: UITaskModel) async -> Double {
         
         guard let audio = task.audio else { return 0 }
@@ -121,8 +138,17 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         }
     }
     
+    //MARK: - Set Up Total Time
+    
     public func setUpTotalTime(task: UITaskModel) async {
         totalTime = await returnTotalTime(task: task)
+    }
+    
+    //MARK: - Reset Audio Progress
+    
+    public func resetAudioProgress() {
+        currentTime = 0.0
+        totalTime = 0.0
     }
     
     // MARK: - Helpers

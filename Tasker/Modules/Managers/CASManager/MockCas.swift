@@ -10,7 +10,7 @@ import BlockSet
 import Models
 import Combine
 
-final class MockCas: CASManagerProtocol {
+public final class MockCas: CASManagerProtocol {
     private let cas: FileCas
     private let models: [UITaskModel]
     private let allIdentifiers: [Mutable] = [Mutable.initial(), .initial()]
@@ -22,7 +22,7 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: - Static methods for init
     
-    static func createCASManager() -> CASManagerProtocol {
+    public static func createCASManager() -> CASManagerProtocol {
         let localDirectory = createLocalDirectory()!
         
         let cas = FileCas(localDirectory)
@@ -85,26 +85,25 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: - Retriev data from cas
     
-    func retrieve(_ hash: String) async throws -> Data? {
+    public func retrieve(_ hash: String) async throws -> Data? {
         try await cas.retrieve(hash)
     }
     
     //MARK: - Save model
     
-    func saveModel<T: Codable>(_ model: Model<T>) async throws {
+    public func saveModel<T: Codable>(_ model: Model<T>) async throws {
         try await cas.saveJSONModel(model)
     }
     
     //MARK: - Save audio
     
-    func storeAudio(url: URL) async throws -> String? {
-        let data = try Data(contentsOf: url)
-        return try await cas.store(data)
+    public func storeAudio(_ audio: Data) async throws -> String? {
+        return try await cas.store(audio)
     }
     
     //MARK: Save image
     
-    func storeImage(_ photo: Data) async throws -> String? {
+    public func storeImage(_ photo: Data) async throws -> String? {
         return try await cas.store(photo)
     }
     
@@ -149,13 +148,13 @@ final class MockCas: CASManagerProtocol {
     
     //MARK: - Path to file
     
-    func pathToFile(_ hash: String) async throws -> URL {
+    public func pathToFile(_ hash: String) async throws -> URL {
         try await cas.fileURL(forHash: hash)
     }
     
     //MARK: Delete model
     
-    func deleteModel<T: Codable>(_ model: Model<T>) async throws {
+    public func deleteModel<T: Codable>(_ model: Model<T>) async throws {
         try await cas.deleteModel(model)
     }
     
@@ -186,7 +185,7 @@ final class MockCas: CASManagerProtocol {
         }
     }
     
-    func syncCases() async throws {
+    public func syncCases() async throws {
         //        try cas.syncRemote()
     }
     
@@ -253,7 +252,7 @@ final class MockCas: CASManagerProtocol {
         }
     }
     
-    private func saveProfileDataToICloud(_ profileData: ProfileData) {
+    private func saveProfileDataToICloud(_ profileData: UIProfileModel) {
         guard profileData.settings.iCloudSyncEnabled else { return }
         
         let store = NSUbiquitousKeyValueStore.default
@@ -263,12 +262,12 @@ final class MockCas: CASManagerProtocol {
         }
     }
     
-    private func loadProfileFromIcloud() -> ProfileData? {
+    private func loadProfileFromIcloud() -> UIProfileModel? {
         let store = NSUbiquitousKeyValueStore.default
         
         if let data = store.data(forKey: "profileData") {
             let profileData = try! JSONDecoder().decode(ProfileModel.self, from: data)
-            return ProfileData(.initial(profileData))
+            return UIProfileModel(.initial(profileData))
         }
         
         return nil

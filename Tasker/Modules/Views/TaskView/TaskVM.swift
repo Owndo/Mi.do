@@ -9,21 +9,11 @@ import Foundation
 import SwiftUI
 import Managers
 import Models
+import PaywallView
 
 @Observable
-public final class TaskVM: Identifiable {
+public final class TaskVM {
     // MARK: - Managers
-//    @ObservationIgnored @Injected(\.casManager) var casManager: CASManagerProtocol
-//    @ObservationIgnored @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
-//    @ObservationIgnored @Injected(\.recorderManager) private var recorderManager: RecorderManagerProtocol
-//    @ObservationIgnored @Injected(\.permissionManager) private var recordPermission: PermissionProtocol
-//    @ObservationIgnored @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-//    @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
-//    @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
-//    @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
-//    @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
-//    @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
-//    @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
     let taskManager: TaskManagerProtocol
     
@@ -37,9 +27,15 @@ public final class TaskVM: Identifiable {
     
     let permissionManager: PermissionProtocol
     
+    let subscriptionManager: SubscriptionManagerProtocol
+    
+    let storageManager: StorageManagerProtocol
+    
     let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
-    let subscriptionManager: SubscriptionManagerProtocol = SubscriptionManager.createSubscriptionManager()
+    //MARK: - PaywallVM
+    
+    var paywallVM: PaywallVM
     
     // MARK: - Models
     
@@ -57,6 +53,7 @@ public final class TaskVM: Identifiable {
             }
         }
     }
+    
     var dayOfWeek = [DayOfWeek]()
     
     // MARK: - UI States
@@ -185,23 +182,112 @@ public final class TaskVM: Identifiable {
     private var lastNotificationDate = Date()
     
     // MARK: - Init
-//    public init(mainModel: MainModel, titleFocused: Bool = false) {
-//        initing = true
-//        self.titleFocused = titleFocused
-//        setUPViewModel(mainModel)
-//        initing = false
-//    }
     
-    private func setUPViewModel(_ mainModel: MainModel) async {
-        preSetTask(mainModel)
-        setUpTime()
-        setUpColor()
-        await playerManager.setUpTotalTime(task: task)
+    private init(
+        taskManager: TaskManagerProtocol,
+        profileManager: ProfileManagerProtocol,
+        dateManager: DateManagerProtocol,
+        playerManager: PlayerManagerProtocol,
+        recorderManager: RecorderManagerProtocol,
+        permissionManager: PermissionProtocol,
+        storageManager: StorageManagerProtocol,
+        subscriptionManager: SubscriptionManagerProtocol,
+        paywallVM: PaywallVM,
+        task: UITaskModel,
+        profileModel: UIProfileModel
+    ) {
+        self.taskManager = taskManager
+        self.profileManager = profileManager
+        self.dateManager = dateManager
+        self.playerManager = playerManager
+        self.recorderManager = recorderManager
+        self.permissionManager = permissionManager
+        self.storageManager = storageManager
+        self.subscriptionManager = subscriptionManager
+        self.paywallVM = paywallVM
+        self.task = task
+        self.profileModel = profileModel
     }
     
-    private func preSetTask(_ mainModel: MainModel) {
-//        profileModel = casManager.profileModel
-        self.task = mainModel
+    //MARK: - VM Creator
+    
+    public static func createTaskVM(
+        taskManager: TaskManagerProtocol,
+        profileManager: ProfileManagerProtocol,
+        dateManager: DateManagerProtocol,
+        playerManager: PlayerManagerProtocol,
+        recorderManager: RecorderManagerProtocol,
+        permissionManager: PermissionProtocol,
+        subscriptionManager: SubscriptionManagerProtocol,
+        storageManager: StorageManagerProtocol,
+        task: UITaskModel,
+        profileModel: UIProfileModel
+    ) async -> TaskVM {
+        let paywallVM = await PaywallVM.createPaywallVM(subscriptionManager)
+        let vm = TaskVM(
+            taskManager: taskManager,
+            profileManager: profileManager,
+            dateManager: dateManager,
+            playerManager: playerManager,
+            recorderManager: recorderManager,
+            permissionManager: permissionManager,
+            storageManager: storageManager,
+            subscriptionManager: subscriptionManager,
+            paywallVM: paywallVM,
+            task: task,
+            profileModel: profileModel
+        )
+        await vm.setUPViewModel()
+        
+        return vm
+    }
+    
+    //MARK: - Mock VM Creator
+    
+    static func createPreviewTaskVM() -> TaskVM {
+        let taskManager = TaskManager.createMockTaskManager()
+        let profileManager = ProfileManager.createMockProfileManager()
+        let dateManager = DateManager.createMockDateManager()
+        let playerManager = PlayerManager.createMockPlayerManager()
+        let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
+        let permissionManager = PermissionManager.createPermissionManager()
+        let storageManager = StorageManager.createStorageManager(casManager: MockCas.createCASManager())
+        let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
+        
+        let paywallVM = PaywallVM.createPreviewVM(subscriptionManager: subscriptionManager)
+        
+        let task = UITaskModel(.initial(mockModel().model.value))
+        let profileModel = UIProfileModel(.initial(mockProfileData().model.value))
+        
+        let vm = TaskVM(
+            taskManager: taskManager,
+            profileManager: profileManager,
+            dateManager: dateManager,
+            playerManager: playerManager,
+            recorderManager: recorderManager,
+            permissionManager: permissionManager,
+            storageManager: storageManager,
+            subscriptionManager: subscriptionManager,
+            paywallVM: paywallVM,
+            task: task,
+            profileModel: profileModel
+        )
+        
+        return vm
+    }
+    
+    //TODO: What's it?
+    private func setUPViewModel() async {
+        
+        preSetTask()
+        
+        await setUpTime()
+        await playerManager.setUpTotalTime(task: task)
+        
+        setUpColor()
+    }
+    
+    private func preSetTask() {
         setUpRepeat()
         
         if let endDate = task.deadline {
@@ -215,14 +301,14 @@ public final class TaskVM: Identifiable {
     }
     
     func disappear() {
+        subscriptionManager.closePaywall()
         stopPlaying()
-//        subscriptionManager.showPaywall = false
     }
     
-    private func setUpTime() {
+    private func setUpTime() async {
         sourseDateOfNotification = Date(timeIntervalSince1970: task.notificationDate)
         
-        guard let data = firstTimeCreateTask(task) else {
+        guard let data = await firstTimeCreateTask(task) else {
             notificationDate = createNotificationDateFromExistTask()
             dateHasBeenChanged = false
             return
@@ -329,8 +415,8 @@ public final class TaskVM: Identifiable {
         task.notificationDate = changeNotificationTime()
         
         do {
-           try  await taskManager.saveTask(task)
-            createTempAudioFile(audioHash: task.audio ?? "")
+            try  await taskManager.saveTask(task)
+            //            createTempAudioFile(audioHash: task.audio)
         } catch {
             //TODO: - Error
         }
@@ -406,9 +492,6 @@ public final class TaskVM: Identifiable {
         task.repeatTask = .daily
         task.dayOfWeek = dayOfWeek
     }
-    //    private func preparedTask() -> UITaskModel {
-    //        taskManager.preparedTask(task: task, date: notificationDate)
-    //    }
     
     //MARK: - Date and time
     private func notificationDateToText() -> LocalizedStringKey {
@@ -420,8 +503,9 @@ public final class TaskVM: Identifiable {
     }
     
     //MARK: - First time check
-    private func firstTimeCreateTask(_ task: UITaskModel) -> Date? {
-        guard taskManager.activeTasks.contains(where: { $0.id == task.id }) else {
+    
+    private func firstTimeCreateTask(_ task: UITaskModel) async -> Date? {
+        guard await taskManager.activeTasks.contains(where: { $0.id == task.id }) else {
             defaultTimeHasBeenSet = true
             return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: originalNotificationTimeComponents)
         }
@@ -514,11 +598,14 @@ public final class TaskVM: Identifiable {
         }
     }
     
-    func checkCompletedTaskForToday() -> Bool {
-        taskManager.checkCompletedTaskForToday(task: task)
+    //MARK: - Check Complete Task
+    
+    func checkCompletedTaskForToday() async -> Bool {
+        await taskManager.checkCompletedTaskForToday(task: task)
     }
     
     //MARK: - Complete tasks
+    
     func checkMarkTapped() async {
         do {
             try await taskManager.checkMarkTapped(task: task)
@@ -544,16 +631,19 @@ public final class TaskVM: Identifiable {
         confirmationDialogIsPresented.toggle()
     }
     
-    func deleteButtonTapped(model: MainModel, deleteCompletely: Bool = false) async {
+    func deleteButtonTapped(deleteCompletely: Bool = false) async {
         do {
-            try await taskManager.deleteTask(task: model, deleteCompletely: deleteCompletely)
+            try await taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+            if deleteCompletely {
+                storageManager.deleteAudiFromDirectory(hash: task.audio)
+            }
         } catch {
             //TODO: - Error
         }
     }
     
     // MARK: - Playback
-    func playButtonTapped(task: UITaskModel) async {
+    func playButtonTapped() async {
         playButtonTrigger.toggle()
         pause = false
         
@@ -597,19 +687,12 @@ public final class TaskVM: Identifiable {
         return String(format: "%02d:%02d", minutes, seconds)
     }
     
-    func loadTotalTimeIfNeeded() async {
-        guard totalProgressTime == 0 else { return }
-        let duration = await playerManager.returnTotalTime(task: task)
-        
-        //FIXME: What's it?
-//        playerManager.totalTime = duration
-    }
+    //MARK: - Load Total Time
     
-    private func getDataFromAudio() -> Data? {
-        if let audio = task.audio {
-            return casManager.getData(audio)
-        }
-        return nil
+    private func loadTotalTimeIfNeeded() async {
+        guard totalProgressTime == 0 else { return }
+        
+        await playerManager.setUpTotalTime(task: task)
     }
     
     private func pauseAudio() {
@@ -618,8 +701,7 @@ public final class TaskVM: Identifiable {
     }
     
     private func resetAudioProgress() {
-        playerManager.totalTime = 0.0
-        playerManager.currentTime = 0.0
+        playerManager.resetAudioProgress()
     }
     
     // MARK: - Recording
@@ -629,7 +711,7 @@ public final class TaskVM: Identifiable {
         }
         
         if isRecording {
-            stopRecord()
+            await stopRecord()
         } else {
             try? await startRecord()
         }
@@ -638,10 +720,9 @@ public final class TaskVM: Identifiable {
         telemetryAction(.taskAction(.addVoiceButtonTapped))
     }
     
-    @MainActor
-    func stopAfterCheck(_ newValue: Double?) {
+    func stopAfterCheck(_ newValue: Double?) async {
         guard let value = newValue, value >= 15.0 else { return }
-        stopRecord()
+        await stopRecord()
     }
     
     private func startRecord() async throws {
@@ -667,15 +748,21 @@ public final class TaskVM: Identifiable {
         }
     }
     
-    private func stopRecord() {
+    //MARK: - Stop Record
+    
+    private func stopRecord() async {
         var hashOfAudio: String?
         
         if let audioURLString = recorderManager.stopRecording() {
-//            hashOfAudio = casManager.saveAudio(url: audioURLString)
-        }
-        
-        if let hashOfAudio {
-            task.audio = hashOfAudio
+            if let data = try? Data(contentsOf: audioURLString) {
+                do {
+                    hashOfAudio = try await taskManager.storeAudio(data)
+                    task.audio = hashOfAudio
+                } catch {
+                    hashOfAudio = try? await taskManager.storeAudio(data)
+                    //TODO: Add cache for case like this
+                }
+            }
         }
         
         task.voiceMode = true
@@ -693,16 +780,21 @@ public final class TaskVM: Identifiable {
         playButtonTrigger.toggle()
     }
     
-    private func createTempAudioFile(audioHash: String) {
-        _ = storageManager.createFileInSoundsDirectory(hash: audioHash)
-    }
+    //    private func createTempAudioFile(audioHash: String?) async {
+    //        guard let audioHash else {
+    //            return
+    //        }
+    //        //TODO: - Todo
+    //        await storageManager.createFileInSoundsDirectory(hash: audioHash)
+    //    }
     
     private func changeDisabledButton() {
         disabledButton.toggle()
     }
     
-    //MARK: Subscription
-    func deadlineButtonTapped() async {
+    //MARK: Subscription for deadline
+    
+    func checkSubscriptionForDeadline() async {
         guard !subscriptionManager.hasSubscription() else {
             return
         }
@@ -713,6 +805,8 @@ public final class TaskVM: Identifiable {
         
         hasDeadline = subscriptionManager.subscribed
     }
+    
+    
     
     
     //MARK: - Telemetry action

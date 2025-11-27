@@ -71,29 +71,30 @@ let project = Project(
                         "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "NO",
                         "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "NO"
                     ]
-                ),
+                ).otherSwiftFlags(.longTypeCheckingFlags),
                 defaultSettings: .recommended
             ),
         ),
         .module(name: "BlockSet", dependencies: []),
+        .moduleTests(name: "BlockSet", dependencies: [.target(name: "BlockSet")]),
         .module(name: "Models", dependencies: [.target(name: "BlockSet")]),
         .module(name: "UIComponents", dependencies: [.target(name: "Models"), .target(name: "Managers")]),
         .module(name: "Managers", dependencies: [.target(name: "Models"), .external(name: "PostHog")]),
-        .target(
-            name: "Tests",
-            destinations: App.destinations,
-            product: .unitTests,
-            bundleId: App.bundleId + ".Tests",
-            deploymentTargets: App.deploymentTargets,
-            infoPlist: .default,
-            sources: ["Tasker/Tests**"],
-            dependencies: [
-                .target(name: "BlockSet"),
-                .target(name: "Models"),
-                .target(name: "Managers")
-//                .target(name: "Tasker")
-            ]
-        ),
+        .moduleTests(name: "Managers", dependencies: [.target(name: "Managers"), .target(name: "BlockSet"), .target(name: "Models")]),
+//        .target(
+//            name: "Tests",
+//            destinations: App.destinations,
+//            product: .unitTests,
+//            bundleId: App.bundleId + ".Tests",
+//            deploymentTargets: App.deploymentTargets,
+//            infoPlist: .default,
+//            sources: ["Tasker/Tests**"],
+//            dependencies: [
+//                .target(name: "BlockSet"),
+//                .target(name: "Models"),
+//                .target(name: "Managers")
+//            ]
+//        ),
         .module(
             name: "Views",
             dependencies: [
@@ -177,7 +178,7 @@ let project = Project(
             name: "Debug",
             shared: true,
             buildAction: .buildAction(targets: ["Tasker"]),
-            testAction: TestAction.targets(["Tests"], arguments: nil, configuration: .debug),
+//            testAction: TestAction.targets(["Tests"], arguments: nil, configuration: .debug),
             runAction:
                     .runAction(
                         configuration: .debug,
@@ -202,7 +203,7 @@ let project = Project(
 
 
 extension Target {
-    static func module(name: String, dependencies: [TargetDependency]) -> ProjectDescription.Target {
+    static func module(name: String, dependencies: [TargetDependency]) -> Target {
         var resources: [ResourceFileElement] = []
         
         if name != "BlockSet" {
@@ -219,6 +220,19 @@ extension Target {
             resources: .resources(resources),
             dependencies: dependencies,
             settings: .settings(defaultSettings: .recommended)
+        )
+    }
+    
+    static func moduleTests(name: String, dependencies: [TargetDependency] = []) -> Target {
+        .target(
+            name: "\(name)Tests",
+            destinations: App.destinations,
+            product: .unitTests,
+            bundleId: App.bundleId + "." + name + ".Tests",
+            deploymentTargets: App.deploymentTargets,
+            infoPlist: .default,
+            sources: ["Tasker/Tests/\(name)/**"],
+            dependencies: dependencies
         )
     }
     
@@ -264,3 +278,11 @@ extension SettingsDictionary {
     }
 }
 
+extension Array where Element == String {
+    static let longTypeCheckingFlags = [
+        "-Xfrontend",
+        "-warn-long-function-bodies=100",
+        "-Xfrontend",
+        "-warn-long-expression-type-checking=100"
+    ]
+}

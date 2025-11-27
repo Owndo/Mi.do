@@ -268,6 +268,7 @@ public struct PaywallView: View {
 }
 
 #Preview {
-    let vm = PaywallVM.createPreviewVM()
+    let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
+    let vm = PaywallVM.createPreviewVM(subscriptionManager: subscriptionManager)
     PaywallView(vm: vm)
 }

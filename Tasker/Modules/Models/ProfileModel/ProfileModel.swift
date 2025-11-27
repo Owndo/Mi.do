@@ -10,8 +10,6 @@ import BlockSet
 import SwiftUI
 import UIKit
 
-public typealias ProfileData = UIProfileModel
-
 public struct ProfileModel: Codable {
     public var customTitle: String?
     public var notes: String?
@@ -95,8 +93,8 @@ public final class UIProfileModel: ProfileModelWrapper<ProfileModel> {
     }
 }
 
-public func mockProfileData() -> ProfileData {
-    ProfileData(
+public func mockProfileData() -> UIProfileModel {
+    UIProfileModel(
         .initial(
             ProfileModel()
         )

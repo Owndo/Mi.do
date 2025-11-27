@@ -51,7 +51,7 @@ extension AsyncableCasProtocol {
     }
     
     /// Saves raw binary data into CAS.
-    public func saveData(_ mutable: Mutable, _ data: Data?) async throws -> String? {
+    private func saveData(_ mutable: Mutable, _ data: Data?) async throws -> String? {
         var blobId: String?
         
         if let data {
@@ -59,7 +59,7 @@ extension AsyncableCasProtocol {
         }
         
         let parent = mutable.parent
-        // nothing new
+        
         guard blobId != parent?.blobId else {
             return nil
         }
@@ -82,6 +82,18 @@ extension AsyncableCasProtocol {
         }
         
         return try await retrieve(blobId)
+    }
+    
+    func loadDeletedData(_ mutable: Mutable) async throws -> Data? {
+        guard mutable.parent?.blobId == nil else {
+            return nil
+        }
+        
+        guard let parent = mutable.parent else {
+            return nil
+        }
+        
+        return try await retrieve(parent.commitId)
     }
     
     //MARK: - Delete
@@ -117,6 +129,13 @@ extension AsyncableCasProtocol {
         return Model(ModelStruct(mutable: mutable, value: value))
     }
     
+    public func loadDeletedJSONModel<T: Decodable>(_ mutable: Mutable) async throws -> Model<T>? {
+        guard let value: T = try await loadDeletedJSON(mutable) else {
+            return nil
+        }
+        return Model(ModelStruct(mutable: mutable, value: value))
+    }
+    
     public func loadDeletedJSON<T: Decodable>(_ mutable: Mutable) async throws -> T? {
         guard mutable.parent?.blobId == nil else {
             return nil
@@ -138,53 +157,110 @@ extension AsyncableCasProtocol {
         
         return nil
     }
+    
     // MARK: - Commits
     
     /// Loads a commit by its identifier.
     func loadCommit(_ commitId: String) async throws -> Commit? {
-        guard
-            let commitData = try await self.retrieve(commitId)
-        else {
+        guard let commitData = try await self.retrieve(commitId) else {
             return nil
         }
-        return try? JSONDecoder().decode(Commit.self, from: commitData)
+        
+        return try? decoder.decode(Commit.self, from: commitData)
     }
     
-    // MARK: - Listing
+    // MARK: - Lists for mutables
     
     /// Returns a list of all mutable references.
-    public func listMutables(onlyDeleted: Bool = false) async throws -> [Mutable] {
+    public func listOfAllMutables() async throws -> [Mutable] {
         let ids = try await self.allIdentifiers()
         
-        let commits = try await withThrowingTaskGroup(of: (String, Commit?).self) { group in
+        var parents: Set<String> = []
+        var result: [String: Commit] = [:]
+        
+        return try await withThrowingTaskGroup(of: (String, Commit?).self) { group in
             for id in ids {
                 group.addTask {
                     (id, try await self.loadCommit(id))
                 }
             }
             
-            var result: [String: Commit] = [:]
             for try await (id, commit) in group {
-                if let commit = commit {
+                guard let commit else { continue }
+                
+                for p in commit.parent {
+                    result[p] = nil
+                    parents.insert(p)
+                }
+                
+                if !parents.contains(id) {
                     result[id] = commit
                 }
             }
-            return result
+            
+            return result.map { Mutable(Parent(commitId: $0.key, blobId: $0.value.blob)) }
         }
-        
-        var parents: Set<String> = []
-        for commit in commits.values {
-            commit.parent.forEach { parents.insert($0) }
-        }
-        
-        return commits
-            .filter { id, commit in
-                !parents.contains(id) && (onlyDeleted ? commit.blob == nil : true)
-            }
-            .map { Mutable(Parent(commitId: $0.key, blobId: $0.value.blob)) }
     }
     
+    /// Returns only active mutables.
+    public func listActiveMutable() async throws -> [Mutable] {
+        let ids = try await self.allIdentifiers()
+        
+        var parents: Set<String> = []
+        var result: [String: Commit] = [:]
+        
+        return try await withThrowingTaskGroup(of: (String, Commit?).self) { group in
+            for id in ids {
+                group.addTask {
+                    (id, try await self.loadCommit(id))
+                }
+            }
+            
+            for try await (id, commit) in group {
+                guard let commit, commit.blob != nil else { continue }
+                
+                for p in commit.parent {
+                    result[p] = nil
+                    parents.insert(p)
+                }
+                
+                if !parents.contains(id) {
+                    result[id] = commit
+                }
+            }
+            
+            return result.map { Mutable(Parent(commitId: $0.key, blobId: $0.value.blob)) }
+        }
+    }
+    
+    /// Returns only deleted mutables.
     public func listOfDeletedMutables() async throws -> [Mutable] {
-        try await listMutables(onlyDeleted: true)
+        let ids = try await self.allIdentifiers()
+        
+        var parents: Set<String> = []
+        var result: [String: Commit] = [:]
+        
+        return try await withThrowingTaskGroup(of: (String, Commit?).self) { group in
+            for id in ids {
+                group.addTask {
+                    (id, try await self.loadCommit(id))
+                }
+            }
+            
+            for try await (id, commit) in group {
+                guard let commit, commit.blob == nil else { continue }
+                
+                for p in commit.parent {
+                    result[p] = nil
+                    parents.insert(p)
+                }
+                
+                if !parents.contains(id) {
+                    result[id] = commit
+                }
+            }
+            
+            return result.map { Mutable(Parent(commitId: $0.key, blobId: $0.value.blob)) }
+        }
     }
 }

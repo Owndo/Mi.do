@@ -7,10 +7,7 @@
 
 import Foundation
 
-public protocol AsyncableCasProtocol {
-    var decoder: JSONDecoder { get set }
-    var encoder: JSONEncoder { get set }
-    
+public protocol AsyncableCasProtocol: Sendable {
     /// Return hash for any data
     func hash(for data: Data) async -> String
     
@@ -25,7 +22,7 @@ public protocol AsyncableCasProtocol {
     func allIdentifiers() async throws -> [String]
     
     /// Returns the file URL corresponding to a stored block.
-    func fileURL(forHash hash: String) async throws -> URL
+//    func fileURL(forHash hash: String) async throws -> URL
 }
 
 extension AsyncableCasProtocol {
@@ -36,6 +33,8 @@ extension AsyncableCasProtocol {
     public func saveJSON<T: Encodable>(_ mutable: Mutable, _ value: T?) async throws -> String? {
         var data: Data?
         
+        let encoder = JSONEncoder()
+        
         if let value = value {
             encoder.outputFormatting = .sortedKeys
             data = try encoder.encode(value)
@@ -44,11 +43,15 @@ extension AsyncableCasProtocol {
         return try await saveData(mutable, data)
     }
     
+    //MARK: - Save JSON Model
+    
     /// Saves a model and its associated value as JSON into CAS.
     @discardableResult
     public func saveJSONModel<T: Encodable>(_ model: Model<T>) async throws -> String? {
         try await saveJSON(model.s.mutable, model.s.value)
     }
+    
+    //MARK: - Save Data
     
     /// Saves raw binary data into CAS.
     private func saveData(_ mutable: Mutable, _ data: Data?) async throws -> String? {
@@ -69,11 +72,15 @@ extension AsyncableCasProtocol {
             blob: blobId
         )
         
+        let encoder = JSONEncoder()
+        
         let commitId = try await self.store(encoder.encode(commit))
         mutable.parent = Parent(commitId: commitId, blobId: blobId)
         
         return commitId
     }
+    
+    //MARK: - Load data
     
     /// Loads raw data for the given mutable reference.
     public func loadData(_ mutable: Mutable) async throws -> Data? {
@@ -84,32 +91,6 @@ extension AsyncableCasProtocol {
         return try await retrieve(blobId)
     }
     
-    func loadDeletedData(_ mutable: Mutable) async throws -> Data? {
-        guard mutable.parent?.blobId == nil else {
-            return nil
-        }
-        
-        guard let parent = mutable.parent else {
-            return nil
-        }
-        
-        return try await retrieve(parent.commitId)
-    }
-    
-    //MARK: - Delete
-    //TODO: - Add deleting for any data just with HASH
-    /// Creates a record in CAS indicating that the given mutable reference was deleted.
-    @discardableResult
-    public func deleteMutable(_ mutable: Mutable) async throws -> String? {
-        try await saveData(mutable, nil)
-    }
-    
-    /// Deletes the given model by creating a deletion record in CAS.
-    @discardableResult
-    public func deleteModel<T>(_ model: Model<T>) async throws -> String? {
-        try await saveData(model.s.mutable, nil)
-    }
-    
     // MARK: - Load JSON
     
     /// Loads and decodes a JSON value for the given mutable reference.
@@ -118,8 +99,12 @@ extension AsyncableCasProtocol {
             return nil
         }
         
+        let decoder = JSONDecoder()
+        
         return try decoder.decode(T.self, from: data)
     }
+    
+    //MARK: - Laod JSON Model
     
     /// Loads and decodes a JSON-encoded model for the given mutable reference.
     public func loadJSONModel<T: Decodable>(_ mutable: Mutable) async throws -> Model<T>? {
@@ -129,6 +114,25 @@ extension AsyncableCasProtocol {
         return Model(ModelStruct(mutable: mutable, value: value))
     }
     
+    //TODO: - Add deleting for any data just with HASH
+    //MARK: - Delete mutable
+    
+    /// Creates a record in CAS indicating that the given mutable reference was deleted.
+    @discardableResult
+    public func deleteMutable(_ mutable: Mutable) async throws -> String? {
+        try await saveData(mutable, nil)
+    }
+    
+    //MARK: - Delete model
+    
+    /// Deletes the given model by creating a deletion record in CAS.
+    @discardableResult
+    public func deleteModel<T>(_ model: Model<T>) async throws -> String? {
+        try await saveData(model.s.mutable, nil)
+    }
+    
+    //MARK: - Load deleted JSONModel
+    
     public func loadDeletedJSONModel<T: Decodable>(_ mutable: Mutable) async throws -> Model<T>? {
         guard let value: T = try await loadDeletedJSON(mutable) else {
             return nil
@@ -136,26 +140,26 @@ extension AsyncableCasProtocol {
         return Model(ModelStruct(mutable: mutable, value: value))
     }
     
+    //MARK: - Load deleted JSON
+    
     public func loadDeletedJSON<T: Decodable>(_ mutable: Mutable) async throws -> T? {
-        guard mutable.parent?.blobId == nil else {
+        guard let mutableParent = mutable.parent, mutableParent.blobId == nil else {
             return nil
         }
         
-        var commitId = mutable.parent?.commitId
+        let commitId = mutableParent.commitId
         
-        while let id = commitId,
-            let commitData = try await self.retrieve(id) {
-            let commit = try decoder.decode(Commit.self, from: commitData)
-            
-            if let blobId = commit.blob,
-               let data = try await self.retrieve(blobId) {
+        let decoder = JSONDecoder()
+        
+        if let commit = try await loadCommit(commitId), let parentCommit = commit.parent.first {
+            if let commit = try await loadCommit(parentCommit), let blob = commit.blob, let data = try await self.retrieve(blob) {
                 return try decoder.decode(T.self, from: data)
+            } else {
+                return nil
             }
-            
-            commitId = commit.parent.first
+        } else {
+            return nil
         }
-        
-        return nil
     }
     
     // MARK: - Commits
@@ -166,6 +170,7 @@ extension AsyncableCasProtocol {
             return nil
         }
         
+        let decoder = JSONDecoder()
         return try? decoder.decode(Commit.self, from: commitData)
     }
     
@@ -189,7 +194,7 @@ extension AsyncableCasProtocol {
                 guard let commit else { continue }
                 
                 for p in commit.parent {
-                    result[p] = nil
+                    result.removeValue(forKey: p)
                     parents.insert(p)
                 }
                 
@@ -203,10 +208,10 @@ extension AsyncableCasProtocol {
     }
     
     /// Returns only active mutables.
-    public func listActiveMutable() async throws -> [Mutable] {
+    public func listOfActiveMutables() async throws -> [Mutable] {
         let ids = try await self.allIdentifiers()
         
-        var parents: Set<String> = []
+        var parents = Set<String>()
         var result: [String: Commit] = [:]
         
         return try await withThrowingTaskGroup(of: (String, Commit?).self) { group in
@@ -217,11 +222,15 @@ extension AsyncableCasProtocol {
             }
             
             for try await (id, commit) in group {
-                guard let commit, commit.blob != nil else { continue }
+                guard let commit else { continue }
                 
                 for p in commit.parent {
-                    result[p] = nil
                     parents.insert(p)
+                    result.removeValue(forKey: p)
+                }
+                
+                guard commit.blob != nil else {
+                    continue
                 }
                 
                 if !parents.contains(id) {
@@ -232,6 +241,7 @@ extension AsyncableCasProtocol {
             return result.map { Mutable(Parent(commitId: $0.key, blobId: $0.value.blob)) }
         }
     }
+    
     
     /// Returns only deleted mutables.
     public func listOfDeletedMutables() async throws -> [Mutable] {

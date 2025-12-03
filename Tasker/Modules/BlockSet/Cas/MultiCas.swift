@@ -7,9 +7,7 @@
 
 import Foundation
 
-public class MultiCas: AsyncableCasProtocol {
-    public var decoder = JSONDecoder()
-    public var encoder = JSONEncoder()
+public actor MultiCas: AsyncableCasProtocol {
     
     private var local: AsyncableCasProtocol
     private var remote: AsyncableCasProtocol
@@ -53,10 +51,6 @@ public class MultiCas: AsyncableCasProtocol {
     
     public func allIdentifiers() async throws -> [String] {
         try await local.allIdentifiers()
-    }
-    
-    public func fileURL(forHash hash: String) async throws -> URL {
-        try await local.fileURL(forHash: hash)
     }
     
     //MARK: - Remote CAS

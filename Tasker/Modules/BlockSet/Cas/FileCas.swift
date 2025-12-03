@@ -6,10 +6,7 @@
 //
 import Foundation
 
-public class FileCas: AsyncableCasProtocol, Cas {
-    public var decoder = JSONDecoder()
-    public var encoder = JSONEncoder()
-    
+public actor FileCas: AsyncableCasProtocol, Cas {
     // private:
     private let dir: URL
     
@@ -19,11 +16,11 @@ public class FileCas: AsyncableCasProtocol, Cas {
     }
     
     //MARK: - Non Asyncable
-    public func id(_ data: Data) -> String {
+    nonisolated public func id(_ data: Data) -> String {
         data.sha256Id()
     }
     
-    public func add(_ data: Data) throws -> String {
+    nonisolated public func add(_ data: Data) throws -> String {
         let id = id(data)
         let path = path(id)
         
@@ -33,25 +30,26 @@ public class FileCas: AsyncableCasProtocol, Cas {
         return id
     }
     
-    public func get(_ id: String) -> Data? {
+    nonisolated public func get(_ id: String) -> Data? {
         // TODO: check errors. if the file doesn't exist, return nil
         // otherwise, throw the error
         try? Data(contentsOf: path(id))
     }
     
-    public func list() throws -> [String] {
+    nonisolated public func list() throws -> [String] {
         try dir.list()
     }
     
-    public func path(_ hash: String) -> URL {
+    nonisolated public func path(_ hash: String) -> URL {
         let (a, bc) = hash[...].split2()
         let (b, c) = bc.split2()
         return dir.appending(a, true).appending(b, true).appending(c, false)
     }
     
     //MARK: - Asyncable CAS
+    
     public func hash(for data: Data) async -> String {
-        await data.sha256Id()
+        data.sha256Id()
     }
     
     public func store(_ data: Data) async throws -> String {
@@ -59,14 +57,12 @@ public class FileCas: AsyncableCasProtocol, Cas {
         let path = try await fileURL(forHash: id)
         
         try FileManager.default.createDirectory(at: path.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try data.write(to: path)
+        try data.write(to: path, options: .atomic)
         
         return id
     }
     
     public func retrieve(_ hash: String) async throws -> Data? {
-        // TODO: check errors. if the file doesn't exist, return nil
-        // otherwise, throw the error
         try? Data(contentsOf: try await fileURL(forHash: hash))
     }
     

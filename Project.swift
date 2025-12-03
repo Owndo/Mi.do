@@ -3,7 +3,13 @@ import ProjectDescription
 let project = Project(
     name: "Tasker",
     settings: .settings(
-        base: .init().automaticCodeSigning(devTeam: App.teamId),
+        base: .init().automaticCodeSigning(devTeam: App.teamId).merging(
+            [
+                "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "NO",
+                "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "NO",
+                "SWIFT_VERSION": "6.0"
+            ]
+        ),
         debug: SettingsDictionary().setProjectVersions(),
         release: SettingsDictionary().setProjectVersions(),
         defaultSettings: .recommended
@@ -65,15 +71,7 @@ let project = Project(
             dependencies: [
                 .target(name: "MainView"),
             ],
-            settings: .settings(
-                base: .init().merging(
-                    [
-                        "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "NO",
-                        "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "NO"
-                    ]
-                ).otherSwiftFlags(.longTypeCheckingFlags),
-                defaultSettings: .recommended
-            ),
+            settings: .settings(defaultSettings: .recommended),
         ),
         .module(name: "BlockSet", dependencies: []),
         .moduleTests(name: "BlockSet", dependencies: [.target(name: "BlockSet")]),
@@ -81,20 +79,6 @@ let project = Project(
         .module(name: "UIComponents", dependencies: [.target(name: "Models"), .target(name: "Managers")]),
         .module(name: "Managers", dependencies: [.target(name: "Models"), .external(name: "PostHog")]),
         .moduleTests(name: "Managers", dependencies: [.target(name: "Managers"), .target(name: "BlockSet"), .target(name: "Models")]),
-//        .target(
-//            name: "Tests",
-//            destinations: App.destinations,
-//            product: .unitTests,
-//            bundleId: App.bundleId + ".Tests",
-//            deploymentTargets: App.deploymentTargets,
-//            infoPlist: .default,
-//            sources: ["Tasker/Tests**"],
-//            dependencies: [
-//                .target(name: "BlockSet"),
-//                .target(name: "Models"),
-//                .target(name: "Managers")
-//            ]
-//        ),
         .module(
             name: "Views",
             dependencies: [
@@ -172,26 +156,24 @@ let project = Project(
                         options: .options(storeKitConfigurationPath: "Tasker/Modules/Managers/SubscriptionManager/Mi.storekit"),
                         expandVariableFromTarget: .target("Tasker"),
                         launchStyle: .automatically
-                    ),
+                    )
         ),
         Scheme.scheme(
             name: "Debug",
             shared: true,
             buildAction: .buildAction(targets: ["Tasker"]),
-//            testAction: TestAction.targets(["Tests"], arguments: nil, configuration: .debug),
             runAction:
                     .runAction(
                         configuration: .debug,
                         attachDebugger: true,
                         expandVariableFromTarget: .target("Tasker"),
                         launchStyle: .automatically
-                    ),
+                    )
         )
     ],
     additionalFiles: [
         "Tasker/Tasker.entitlements"
     ],
-    
     resourceSynthesizers: [
         .custom(
             name: "UI",
@@ -236,7 +218,7 @@ extension Target {
         )
     }
     
-    static func moduleView(name: String, dependencies: [TargetDependency]) -> ProjectDescription.Target {
+    static func moduleView(name: String, dependencies: [TargetDependency]) -> Target {
         
         var resources: [ResourceFileElement] = []
         
@@ -251,7 +233,13 @@ extension Target {
             sources: ["Tasker/Modules/Views/\(name)/**"],
             resources: .resources(resources),
             dependencies: dependencies,
-            settings: .settings(defaultSettings: .recommended)
+            settings: .settings(base: .init().merging(
+                [
+                    "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "NO",
+                    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "NO"
+                ]
+            ).otherSwiftFlags(.longTypeCheckingFlags)
+            )
         )
     }
 }
@@ -273,7 +261,7 @@ extension SettingsDictionary {
         
         return appleGenericVersioningSystem().merging([
             "CURRENT_PROJECT_VERSION": SettingValue(stringLiteral: currentProjectVersion),
-            "MARKETING_VERSION": SettingValue(stringLiteral: markettingVersion)
+            "MARKETING_VERSION": SettingValue(stringLiteral: markettingVersion),
         ])
     }
 }

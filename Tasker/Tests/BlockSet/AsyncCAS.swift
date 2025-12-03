@@ -28,14 +28,58 @@ struct AsyncFileCasTests {
     let model: Model = Model.initial(ModelForTest(name: "Steve", age: 42, isStudent: false))
     let wrongModel: Model = Model.initial(ModelForTest(name: "Steve", age: 42, isStudent: true))
     
-    //MARK: - Compare paths
+    //MARK: - Currency test
     
-    @Test func comparePaths() async throws {
+    @Test
+    func parallelStores() async throws {
         guard let dir = createDirectory() else {
             return
         }
         
-        let cas = FileCas(dir)
+        let cas: AsyncableCasProtocol = FileCas(dir)
+        
+        async let h1 = cas.store(Data("A".utf8))
+        async let h2 = cas.store(Data("B".utf8))
+        async let h3 = cas.store(Data("C".utf8))
+        
+        let hashes = try await [h1, h2, h3]
+        #expect(Set(hashes).count == 3)
+    }
+    
+    
+    //MARK: Idempotent stores
+    
+    @Test
+    func idempotentStores() async throws {
+        guard let dir = createDirectory() else {
+            return
+        }
+        
+        let asyncableCas: AsyncableCasProtocol = FileCas(dir)
+        let cas: Cas = FileCas(dir)
+        
+        /// Asyncable cas
+        let asyncableHashForRighText = try await asyncableCas.store(rightText)
+        let asyncableHashForRighText1 = try await asyncableCas.store(rightText)
+        #expect(asyncableHashForRighText == asyncableHashForRighText1)
+        
+        /// Non asyncable cas
+        let hashForRighText = try cas.add(rightText)
+        let hashForRighText1 = try cas.add(rightText)
+        #expect(hashForRighText == hashForRighText1)
+        
+        #expect(asyncableHashForRighText == hashForRighText)
+    }
+    
+    //MARK: - Compare paths
+    
+    @Test
+    func comparePaths() async throws {
+        guard let dir = createDirectory() else {
+            return
+        }
+        
+        let cas: AsyncableCasProtocol = FileCas(dir)
         
         let hashForText = try await cas.store(rightText)
         let returnedHashForText = await cas.hash(for: rightText)
@@ -54,7 +98,8 @@ struct AsyncFileCasTests {
     
     //MARK: - CompareDatas
     
-    @Test func compareData() async throws {
+    @Test
+    func compareData() async throws {
         guard let dir = createDirectory() else {
             return
         }
@@ -72,12 +117,13 @@ struct AsyncFileCasTests {
     
     //MARK: - Check all mutables
     
-    @Test func checkAllMutables() async throws {
+    @Test
+    func checkAllMutables() async throws {
         guard let dir = createDirectory() else {
             return
         }
         
-        let cas = FileCas(dir)
+        let cas: AsyncableCasProtocol = FileCas(dir)
         
         let mutable = Mutable.initial()
         var modelForTest: ModelForTest? = ModelForTest(name: "Steve", age: 42, isStudent: false)
@@ -126,9 +172,33 @@ struct AsyncFileCasTests {
         #expect(filtered.count == 2)
     }
     
+    //MARK: - Active Mutables
+    
+    @Test
+    func checkActiveMutables() async throws {
+        guard let dir = createDirectory() else {
+            return
+        }
+        
+        let cas: AsyncableCasProtocol = FileCas(dir)
+        
+        try await cas.saveJSONModel(model)
+        var list: [Mutable] = try await cas.listOfActiveMutables()
+        #expect(list.count == 1)
+        
+        try await cas.saveJSONModel(wrongModel)
+        list = try await cas.listOfActiveMutables()
+        #expect(list.count == 2)
+        
+        try await cas.deleteModel(model)
+        list = try await cas.listOfActiveMutables()
+        #expect(list.count == 1)
+    }
+    
     //MARK: - Check all idetiniers
     
-    @Test func checkAllIdentifiers() async throws {
+    @Test
+    func checkAllIdentifiers() async throws {
         guard let dir = createDirectory() else {
             return
         }
@@ -156,7 +226,8 @@ struct AsyncFileCasTests {
     
     //MARK: - Deleting
     
-    @Test func mutableDeleting() async throws {
+    @Test
+    func mutableDeleting() async throws {
         guard let dir = createDirectory() else {
             return
         }
@@ -285,7 +356,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas = FileCas(dir)
+        let cas: AsyncableCasProtocol = FileCas(dir)
         let descriptionForModel = "Jobs he has been like a student just for one year"
         var hashForDescription: String?
         
@@ -331,7 +402,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas = FileCas(dir)
+        let cas: AsyncableCasProtocol = FileCas(dir)
         
         try await cas.saveJSONModel(model)
         var list = try await cas.allIdentifiers()
@@ -383,7 +454,6 @@ func createDirectory() -> URL? {
     let path = dir.appending(path: "Storage", directoryHint: .isDirectory)
     
     do {
-        
         if FileManager.default.fileExists(atPath: path.path) {
             try FileManager.default.removeItem(at: path)
         }

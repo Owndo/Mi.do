@@ -8,7 +8,7 @@
 import Foundation
 import CryptoKit
 
-public protocol Cas: AnyObject {
+public protocol Cas: Sendable {
     /// Returns identifier (hash) for the given data block.
     func id(_ data: Data) -> String
     
@@ -27,10 +27,6 @@ public protocol Cas: AnyObject {
 
 public extension Data {
     func sha256Id() -> String {
-        SHA256.hash(data: self).base32()
-    }
-    
-    func sha256Id() async -> String {
         SHA256.hash(data: self).base32()
     }
 }
@@ -61,7 +57,7 @@ extension Cas {
     public func sync(_ cas: Cas) throws {
         let a = try self.withSet()
         let b = try cas.withSet()
-
+        
         
         try a.fetchFrom(b)
         try b.fetchFrom(a)
@@ -98,7 +94,7 @@ extension Cas {
         
         return try get(blobId)
     }
-
+    
     @discardableResult
     public func delete(_ mutable: Mutable) throws -> String? {
         try saveData(mutable, nil)
@@ -148,10 +144,12 @@ extension Cas {
                 result[p] = nil
                 parents.insert(p)
             }
+            
             if !parents.contains(id) {
                 result[id] = commit
             }
         }
+        
         return result.map { Mutable(Parent(commitId: $0.key, blobId: $0.value.blob)) }
     }
 }

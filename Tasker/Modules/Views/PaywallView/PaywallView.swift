@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
-import Managers
 import UIComponents
 import StoreKit
+import ConfigurationFile
 import Models
 
 public struct PaywallView: View {
@@ -36,14 +36,17 @@ public struct PaywallView: View {
                     .controlSize(.large)
             }
         }
-        .alert("Nothing to restore 🤷‍♂️", isPresented: $vm.showingAlert) {
-            Button {
-                
-            } label: {
-                Text("No luck")
+        .alert(isPresented: $vm.showAlert) {
+            switch vm.alert {
+            case .restoreAlert:
+                return PaywallAlerts.makeAlert(.restoreAlert)
+            case .cannotLoadProductsAlert:
+                return PaywallAlerts.makeAlert(.restoreAlert)
+            case .purchaseFailed:
+                return PaywallAlerts.makeAlert(.purchaseFailed)
+            case .none:
+                return Alert(title: Text("Something went wrong"), message: Text("Official complaine to developer will be sent"), dismissButton: .cancel(Text("Forgiven")))
             }
-        } message: {
-            Text("I’d love to bring something back… but there’s nothing yet.")
         }
         .animation(.default, value: vm.textForButton)
     }
@@ -268,7 +271,6 @@ public struct PaywallView: View {
 }
 
 #Preview {
-    let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
-    let vm = PaywallVM.createPreviewVM(subscriptionManager: subscriptionManager)
+    let vm = PaywallVM.createPreviewVM()
     PaywallView(vm: vm)
 }

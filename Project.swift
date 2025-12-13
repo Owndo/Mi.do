@@ -1,4 +1,5 @@
 import ProjectDescription
+import ProjectDescriptionHelpers
 
 let project = Project(
     name: "Tasker",
@@ -7,7 +8,7 @@ let project = Project(
             [
                 "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "NO",
                 "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "NO",
-                "SWIFT_VERSION": "6.0"
+                "SWIFT_VERSION": "5.0"
             ]
         ),
         debug: SettingsDictionary().setProjectVersions(),
@@ -21,44 +22,7 @@ let project = Project(
             product: .app,
             bundleId: App.bundleId,
             deploymentTargets: .iOS("17.0"),
-            infoPlist: .extendingDefault(
-                with: [
-                    "UILaunchStoryboardName": "LaunchScreen",
-                    "CFBundleDisplayName": "Mi.dō",
-                    "CFBundleShortVersionString": "\(App.version)",
-                    "NSUserNotificationsUsageDescription": "Notifications may include alerts, sounds, or badges. Can be adjusted anytime in Settings.",
-                    "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",
-                    "NSSpeechRecognitionUsageDescription": "Speech recognize access is needed to fill your tasks.",
-                    "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery.",
-                    // Background mode
-                    "UIBackgroundModes": ["fetch", "processing", "remote-notification"],
-                    "BGTaskSchedulerPermittedIdentifiers": [
-                        "mido.robocode.updateNotificationsAndSync"
-                    ],
-                    // iCloud
-                    "NSUbiquitousContainers": [
-                        "iCloud.com.mido.robocode": [
-                            "NSUbiquitousContainerIsDocumentScopePublic": true,
-                            "NSUbiquitousContainerSupportedFolderLevels": ["ANY"],
-                            "NSUbiquitousContainerName": "Mi.dō",
-                            "NSUbiquitousContainerIdentifier": "$(TeamIdentifierPrefix)$(CFBundleIdentifier)"
-                        ]
-                    ],
-                    "CFBundleLocalizations": [
-                        "en",
-                        "ru",
-                        "fr",
-                        "fr-CA",
-                        "es",
-                        "es-MX",
-                        "es-419",
-                        "it",
-                        "de",
-                        "pt",
-                        "pt-PT"
-                    ]
-                ]
-            ),
+            infoPlist: .infoPlist(),
             sources: [.glob(
                 "Tasker/**",
                 excluding: [
@@ -69,80 +33,192 @@ let project = Project(
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
             entitlements: .file(path: "Tasker/Tasker.entitlements"),
             dependencies: [
-                .target(name: "MainView"),
+                .target(name: Modules.paywallView.name),
+                .target(name: Modules.subscriptionManager.name),
             ],
             settings: .settings(defaultSettings: .recommended),
         ),
-        .module(name: "BlockSet", dependencies: []),
-        .moduleTests(name: "BlockSet", dependencies: [.target(name: "BlockSet")]),
-        .module(name: "Models", dependencies: [.target(name: "BlockSet")]),
-        .module(name: "UIComponents", dependencies: [.target(name: "Models"), .target(name: "Managers")]),
-        .module(name: "Managers", dependencies: [.target(name: "Models"), .external(name: "PostHog")]),
-        .moduleTests(name: "Managers", dependencies: [.target(name: "Managers"), .target(name: "BlockSet"), .target(name: "Models")]),
+        .module(.blockSet),
+        .moduleTests(.blockSet, dependencies: [.target(name: Modules.blockSet.name)]),
+        .module(.models, dependencies: [.target(name: Modules.blockSet.name)]),
+        //MARK: - Config file
+        .module(.config),
+        //MARK: - Managers
+        //MARK: - Delegate
+            .module(.appDelegate),
+        //MARK: - Telemetry
+        .module(.telemetry, dependencies: [.target(name: Modules.models.name), .external(name: "PostHog")]),
+        //MARK: - Errors
+        .module(.errors),
+        //MARK: - Permission
         .module(
-            name: "Views",
+            .permissionManager,
             dependencies: [
-                .target(name: "Models"),
-                .target(name: "Managers"),
-                .target(name: "UIComponents")
+                .target(name: Modules.errors.name),
+                .target(name: Modules.telemetry.name)
             ]
         ),
-        .moduleView(
-            name: "ProfileView",
+        //MARK: - Subscription
+        .module(.subscriptionManager),
+        //MARK: - Cas manager
+        .module(
+            .cas,
             dependencies: [
-                .target(name: "Models"),
-                .target(name: "Managers"),
-                .target(name: "UIComponents"),
-                .target(name: "PaywallView")
+                .target(name: Modules.blockSet.name),
+                .target(name: Modules.models.name)
             ]
         ),
-        .moduleView(
-            name: "CalendarView",
+        //MARK: - Profile manager
+        .module(.profileManager, dependencies: [.target(name: Modules.models.name), .target(name: Modules.cas.name)]),
+        //MARK: - Storage manager
+        .module(.storageManager, dependencies: [.target(name: Modules.cas.name)]),
+        //MARK: - Task manager
+        .module(
+            .taskManager,
             dependencies: [
-                .target(name: "Models"),
-                .target(name: "Managers"),
-                .target(name: "UIComponents"),
-                .target(name: "PaywallView")
+                .target(name: Modules.cas.name),
+                .target(name: Modules.dateManager.name),
+                .target(name: Modules.notificationManager.name)
             ]
         ),
-        .moduleView(
-            name: "TaskView",
+        //MARK: - Date manager
+        .module(
+            .dateManager,
             dependencies: [
-                .target(name: "Models"),
-                .target(name: "Managers"),
-                .target(name: "UIComponents"),
-                .target(name: "PaywallView")
+                .target(
+                    name: Modules.profileManager.name
+                ),
+                .target(name: Modules.telemetry.name)
             ]
         ),
-        .moduleView(
-            name: "ListView",
+        //MARK: - Notification Manager
+        .module(
+            .notificationManager,
             dependencies: [
-                .target(name: "Models"),
-                .target(name: "Managers"),
-                .target(name: "UIComponents"),
-                .target(name: "TaskView")
+                .target(name: Modules.cas.name),
+                .target(name: Modules.dateManager.name),
+                .target(name: Modules.storageManager.name),
+                .target(name: Modules.subscriptionManager.name),
+                .target(name: Modules.permissionManager.name)
             ]
         ),
-        .moduleView(
-            name: "MainView",
+        //MARK: - Recorder
+        .module(
+            .recorderManager,
             dependencies: [
-                .target(name: "Models"),
-                .target(name: "Managers"),
-                .target(name: "UIComponents"),
-                .target(name: "CalendarView"),
-                .target(name: "ListView"),
-                .target(name: "TaskView"),
-                .target(name: "ProfileView"),
-                .target(name: "PaywallView")
+                .target(name: Modules.telemetry.name),
+                .target(name: Modules.magic.name),
+                .target(name: Modules.dateManager.name)
             ]
         ),
-        .moduleView(
-            name: "PaywallView",
+        //MARK: - Magic
+        .module(.magic, dependencies: [.target(name: Modules.dateManager.name)]),
+        //MARK: - Player
+        .module(
+            .playerManager,
+            dependencies: [.target(name: Modules.models.name), .target(name: Modules.storageManager.name)]
+        ),
+        //MARK: - Appearance
+        .module(.appearanceManager, dependencies: [.target(name: Modules.profileManager.name)]),
+        //MARK: - Onboarding
+        .module(
+            .onboardingManager,
             dependencies: [
-                .target(name: "Managers"),
-                .target(name: "UIComponents"),
+                .target(name: Modules.profileManager.name),
+                .target(name: Modules.taskManager.name),
+                .target(name: Modules.dateManager.name)
+            ]
+        ),
+        .moduleView(.uiComponents, dependencies: [.target(name: Modules.models.name)]),
+        .moduleView(.paywallView,
+                    dependencies: [
+                        .target(name: Modules.subscriptionManager.name),
+                        .target(name: Modules.uiComponents.name),
+                        .target(name: Modules.config.name)
+                    ]
+                   ),
+        .moduleView(
+            .taskView,
+            dependencies: [
+                .target(name: Modules.models.name),
+                .target(name: Modules.taskManager.name),
+                .target(name: Modules.profileManager.name),
+                .target(name: Modules.dateManager.name),
+                .target(name: Modules.playerManager.name),
+                .target(name: Modules.recorderManager.name),
+                .target(name: Modules.permissionManager.name),
+                .target(name: Modules.storageManager.name),
+                .target(name: Modules.telemetry.name),
+                .target(name: Modules.paywallView.name),
+                
             ]
         )
+        //        .moduleTests(name: "BlockSet", dependencies: [.target(name: "BlockSet")]),
+        //        .module(name: "Models", dependencies: [.target(name: "BlockSet")]),
+        //        .manager(name: manager(.telemetry)),
+        //        .manager(name: manager(.cas), dependencies: [.target(name: "Models"), .target(name: "BlockSet")]),
+        //        .manager(name: "TaskManager", dependencies: [.target(name: "Models"), .target(name: "CASManager"), .target(name: "TelemetryManager")]),
+        
+        //        .manager(name: "DateManager", dependencies: [.target(name: "Models)"), .target(name: "")),
+        //        .manager(name: "TelemetryManager", dependencies: [.target(name: "Models")]),
+        //        .manager(name: "TaskManager", dependencies: [.target(name: "Models"), .target(name: "CASManager")]),
+        //        .manager(name: "CASManager", dependencies: [.target(name: "Models"), .target(name: "BlockSet")]),
+        //        .manager(name: "CASManager", dependencies: [.target(name: "Models"), .target(name: "BlockSet")]),
+        //        .manager(name: "CASManager", dependencies: [.target(name: "Models"), .target(name: "BlockSet")]),
+        
+        //        .moduleTests(name: "Managers", dependencies: [.target(name: "Managers"), .target(name: "BlockSet"), .target(name: "Models")]),
+        //            .module(name: "UIComponents", dependencies: [.target(name: "Models")]), /*.target(name: "Managers")]),*/
+        //        .module(name: "Views", dependencies: [.target(name: "Models"), .target(name: "Managers"), .target(name: "UIComponents")]),
+        //            .moduleView(
+        //                name: "ProfileView",
+        //                dependencies: [
+        //                    .target(name: "Models"),
+        //                    //                .target(name: "Managers"),
+        //                    .target(name: "UIComponents"),
+        //                    .target(name: "PaywallView")
+        //                ]
+        //            ),
+        //        .moduleView(
+        //            name: "CalendarView",
+        //            dependencies: [
+        //                .target(name: "Models"),
+        //                //                .target(name: "Managers"),
+        //                .target(name: "UIComponents"),
+        //                .target(name: "PaywallView")
+        //            ]
+        //        ),
+        //        .moduleView(
+        //            name: "TaskView",
+        //            dependencies: [
+        //                .target(name: "Models"),
+        //                //                .target(name: "Managers"),
+        //                .target(name: "UIComponents"),
+        //                .target(name: "PaywallView")
+        //            ]
+        //        ),
+        //        .moduleView(
+        //            name: "ListView",
+        //            dependencies: [
+        //                .target(name: "Models"),
+        //                //                .target(name: "Managers"),
+        //                .target(name: "UIComponents"),
+        //                .target(name: "TaskView")
+        //            ]
+        //        ),
+        //        .moduleView(
+        //            name: "MainView",
+        //            dependencies: [
+        //                .target(name: "Models"),
+        //                //                .target(name: "Managers"),
+        //                .target(name: "UIComponents"),
+        //                .target(name: "CalendarView"),
+        //                .target(name: "ListView"),
+        //                .target(name: "TaskView"),
+        //                .target(name: "ProfileView"),
+        //                .target(name: "PaywallView")
+        //            ]
+        //        ),
+        
     ],
     schemes: [
         Scheme.scheme(
@@ -185,52 +261,72 @@ let project = Project(
 
 
 extension Target {
-    static func module(name: String, dependencies: [TargetDependency]) -> Target {
+    //    static func module(name: String, dependencies: [TargetDependency] = []) -> Target {
+    //        var resources: [ResourceFileElement] = []
+    //
+    //        if name != "BlockSet" {
+    //            resources.append("Tasker/Modules/\(name)/Resources/**")
+    //        }
+    //
+    //        return .target(
+    //            name: name,
+    //            destinations: App.destinations,
+    //            product: .framework,
+    //            bundleId: App.bundleId + "." + name,
+    //            deploymentTargets: App.deploymentTargets,
+    //            sources: ["Tasker/Modules/\(name)/**"],
+    //            resources: .resources(resources),
+    //            dependencies: dependencies,
+    //            settings: .settings(defaultSettings: .recommended)
+    //        )
+    //    }
+    //
+    static func module(_ module: Modules, dependencies: [TargetDependency] = []) -> Target {
         var resources: [ResourceFileElement] = []
         
-        if name != "BlockSet" {
-            resources.append("Tasker/Modules/\(name)/Resources/**")
+        if module != .blockSet {
+            resources.append("\(module.resourcesPath)")
         }
         
         return .target(
-            name: name,
+            name: module.name,
             destinations: App.destinations,
             product: .framework,
-            bundleId: App.bundleId + "." + name,
+            bundleId: App.bundleId + "." + module.name,
             deploymentTargets: App.deploymentTargets,
-            sources: ["Tasker/Modules/\(name)/**"],
+            sources: ["\(module.sourcesPath)"],
             resources: .resources(resources),
             dependencies: dependencies,
             settings: .settings(defaultSettings: .recommended)
         )
     }
     
-    static func moduleTests(name: String, dependencies: [TargetDependency] = []) -> Target {
+    static func moduleTests(_ module: Modules, dependencies: [TargetDependency] = []) -> Target {
         .target(
-            name: "\(name)Tests",
+            name: "\(module.name)Tests",
             destinations: App.destinations,
             product: .unitTests,
-            bundleId: App.bundleId + "." + name + ".Tests",
+            bundleId: App.bundleId + "." + module.name + ".Tests",
             deploymentTargets: App.deploymentTargets,
             infoPlist: .default,
-            sources: ["Tasker/Tests/\(name)/**"],
+            sources: ["\(module.sourcesPath)"],
             dependencies: dependencies
         )
     }
     
-    static func moduleView(name: String, dependencies: [TargetDependency]) -> Target {
+    static func moduleView(_ module: Modules, dependencies: [TargetDependency] = []) -> Target {
         
         var resources: [ResourceFileElement] = []
         
-        resources.append("Tasker/Modules/Views/\(name)/Resources/**")
+        resources.append("\(module.resourcesPath)")
         
         return .target(
-            name: name,
+            name: module.name,
             destinations: App.destinations,
             product: .framework,
-            bundleId: App.bundleId + "." + name,
+            bundleId: App.bundleId + "." + module.name,
             deploymentTargets: App.deploymentTargets,
-            sources: ["Tasker/Modules/Views/\(name)/**"],
+            sources: ["\(module.sourcesPath)"],
             resources: .resources(resources),
             dependencies: dependencies,
             settings: .settings(base: .init().merging(
@@ -243,16 +339,6 @@ extension Target {
         )
     }
 }
-
-struct App {
-    public static let name = "Tasker"
-    public static let destinations: ProjectDescription.Destinations = .iOS
-    public static let bundleId = "mido.robocode"
-    public static let teamId = "5M63H38ZMF"
-    public static let deploymentTargets = DeploymentTargets.iOS("17.0")
-    public static let version = "1.1.3"
-}
-
 
 extension SettingsDictionary {
     func setProjectVersions() -> SettingsDictionary {

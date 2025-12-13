@@ -16,9 +16,6 @@ public final class MockNotificationManager: NotificationManagerProtocol {
     private(set) var checkPermissionCalled = false
     private(set) var permissionGranted: Bool = true
     
-    // MARK: - Conformance
-    
-    
     public init() {}
     
     public var alert: AlertModel? = nil

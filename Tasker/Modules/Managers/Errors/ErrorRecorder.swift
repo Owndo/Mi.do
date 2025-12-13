@@ -17,7 +17,7 @@ public enum ErrorRecorder: Error {
     case insufficientPriority
     case none
     
-    var description: String {
+    public var description: String {
         switch self {
         case .timeIsLimited:
             return "Recording has finished"

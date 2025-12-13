@@ -12,6 +12,8 @@ import UIKit
 import SwiftUI
 import Photos
 import Speech
+import TelemetryManager
+import Errors
 
 @Observable
 public final class PermissionManager: PermissionProtocol {

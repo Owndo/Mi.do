@@ -17,7 +17,7 @@ struct Parent {
     var blobId: String?
 }
 
-public class Mutable: Hashable {
+public class Mutable: Hashable, @unchecked Sendable {
     var parent: Parent?
     
     // internal:
@@ -39,7 +39,7 @@ public class Mutable: Hashable {
         return lhs === rhs
     }
     
-    public func hash(into hasher: inout Hasher) {
+    nonisolated public func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
     }
 }

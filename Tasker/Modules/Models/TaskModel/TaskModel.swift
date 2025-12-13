@@ -89,7 +89,7 @@ public class TaskModelWrapper<T: Encodable>: Identifiable, Equatable {
 }
 
 @Observable
-public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable {
+public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable, @unchecked Sendable {
     
     public static func == (lhs: UITaskModel, rhs: UITaskModel) -> Bool {
         lhs.model.id == rhs.model.id
@@ -269,7 +269,7 @@ public enum RepeatTask: CaseIterable, Codable, Identifiable, Equatable, Hashable
     }
 }
 
-public struct DayOfWeek: Codable, Identifiable {
+public struct DayOfWeek: Codable, Identifiable, Sendable {
     public var id: String = UUID().uuidString
     
     public var name: String

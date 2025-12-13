@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-
 public enum NotificationsAlert {
     case `deinit`
     case notDetermine
@@ -25,6 +24,17 @@ public enum NotificationsAlert {
             
         default:
             return nil
+        }
+    }
+}
+
+
+func openSettings() {
+    Task { @MainActor in
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
         }
     }
 }

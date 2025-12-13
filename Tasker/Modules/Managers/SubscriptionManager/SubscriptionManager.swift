@@ -8,32 +8,24 @@
 import Foundation
 import StoreKit
 import SwiftUI
-import Models
 
-@Observable
-public final class SubscriptionManager: SubscriptionManagerProtocol {
+public final actor SubscriptionManager: SubscriptionManagerProtocol {
     
     //MARK: - States for UI
     
-    public var showPaywall = false
-    public var pending = false
-    public var subscribed = false
+    private let productIDs = ["yearly_basegroup", "monthly_basegroup"]
     
-    let productIDs = ["yearly_basegroup", "monthly_basegroup"]
-    
-    public var products: [Product] = []
+    private var products: [Product] = []
     
     private(set) var purchaseProductId = Set<String>()
     
-    private var updatePurchase: Task<Void, Never>? = nil
-    
+    nonisolated(unsafe) private var updatePurchase: Task<Void, Never>? = nil
     
     //MARK: Manager creator
     
     public static func createSubscriptionManager() async -> SubscriptionManagerProtocol {
         let subscriptionManager = SubscriptionManager()
-        subscriptionManager.updatePurchase = subscriptionManager.backgroundTransactionUpdate()
-        await subscriptionManager.loadProducts()
+        subscriptionManager.updatePurchase = await subscriptionManager.backgroundTransactionUpdate()
         
         return subscriptionManager
     }
@@ -48,31 +40,28 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
         updatePurchase?.cancel()
     }
     
-    public func closePaywall() {
-        showPaywall = false
+    public func hasSubscription() -> Bool {
+        !purchaseProductId.isEmpty
     }
     
-    public func hasSubscription() -> Bool {
-        guard purchaseProductId.isEmpty else {
-            return true
+    public func loadProducts() async throws -> [Product] {
+        guard products.isEmpty else {
+            return products
         }
         
-        showPaywall = true
-        return false
-    }
-    
-    public func loadProducts() async {
         do {
             products = try await Product.products(for: productIDs)
                 .sorted(by: { $0.price < $1.price })
+            return products
         } catch {
             print("Couldn't find products: \(error.localizedDescription)")
+            throw SubscriptionManagerError.cannotLoadPurchases
         }
     }
     
     //MARK: - Make a purchase
+    
     public func makePurchase(_ product: Product) async throws {
-        pending = true
         
         let result = try await product.purchase()
         
@@ -80,26 +69,15 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
         case let .success(.verified(transaction)):
             await transaction.finish()
             await updatePurchase()
-            showPaywall = false
-            pending = false
         case .success(.unverified(_, _)):
             await updatePurchase()
-            showPaywall = false
-            pending = false
-            break
-        case .userCancelled:
-            pending = false
-            break
-        case .pending:
-            pending = true
         default:
-            pending = false
+            break
         }
-        
-        pending = false
     }
     
     //MARK: - Update a purchase
+    
     public func updatePurchase() async {
         var activeProducts = Set<String>()
         
@@ -115,25 +93,17 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
         }
         
         purchaseProductId = activeProducts
-        
-        if !purchaseProductId.isEmpty {
-            subscribed = true
-        }
     }
     
     //MARK: - Restore
+    
     public func restorePurchases() async -> Bool {
-        pending = true
-        
         do {
             try await AppStore.sync()
-            pending = false
+            return true
         } catch {
-            pending = false
             return false
         }
-        
-        return true
     }
     
     private func backgroundTransactionUpdate() -> Task<Void, Never> {
@@ -145,120 +115,6 @@ public final class SubscriptionManager: SubscriptionManagerProtocol {
     }
 }
 
-//MARK: - Extension
-public extension Product {
-    var dividedByWeek: String {
-        guard let unit = subscription?.subscriptionPeriod.unit else { return "" }
-        
-        let divisor: Decimal = unit == .month ? 4 : unit == .year ? 48 : 0
-        guard divisor > 0 else { return "" }
-        
-        let weeklyPrice = price / divisor
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = priceFormatStyle.currencyCode
-        formatter.minimumFractionDigits = 2
-        formatter.maximumFractionDigits = 2
-        
-        guard let formattedPrice = formatter.string(from: weeklyPrice as NSDecimalNumber) else { return "" }
-        return "\(formattedPrice)"
-    }
-    
-    var dividedByMonth: String {
-        guard subscription?.subscriptionPeriod.unit == .year else { return "" }
-        
-        let monthlyPrice = price / 12
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = priceFormatStyle.currencyCode
-        formatter.minimumFractionDigits = 2
-        formatter.maximumFractionDigits = 2
-        
-        guard let formattedPrice = formatter.string(from: monthlyPrice as NSDecimalNumber) else { return "" }
-        return "\(formattedPrice)"
-    }
-    
-    var dividedYearByWeek: String {
-        guard subscription?.subscriptionPeriod.unit == .year else { return "" }
-        
-        let monthlyPrice = price / 52
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = priceFormatStyle.currencyCode
-        formatter.minimumFractionDigits = 2
-        formatter.maximumFractionDigits = 2
-        
-        guard let formattedPrice = formatter.string(from: monthlyPrice as NSDecimalNumber) else { return "" }
-        return "\(formattedPrice)"
-    }
-}
-
-public extension Product {
-    func isEligibleForFreeTrial() async -> Bool {
-        guard let subscription = self.subscription else {
-            return false
-        }
-        
-        return await subscription.isEligibleForIntroOffer
-    }
-    
-    func intoductoryOffer() -> LocalizedStringKey? {
-        guard let offer = self.subscription?.introductoryOffer else {
-            return nil
-        }
-        
-        // TODO: - ask apple about this shit
-        // In case debug mode
-        guard offer.period.unit == .day else {
-            if offer.period == .weekly {
-                switch offer.period {
-                case .weekly:
-                    return "Free week"
-                default:
-                    return nil
-                }
-            } else {
-                return nil
-            }
-        }
-        
-        // In case release mode
-        if offer.period.value == 7 {
-            return "Free week"
-        } else {
-            return nil
-        }
-    }
-}
-
-public extension Product.SubscriptionPeriod.Unit {
-    var periodDescription: LocalizedStringKey {
-        switch self {
-        case .day:
-            return "/ day"
-        case .week:
-            return "/ week"
-        case .month:
-            return "/ month"
-        case .year:
-            return "/ year"
-        default:
-            return ""
-        }
-    }
-    
-    var devidedPeriodByWeek: LocalizedStringKey {
-        switch self {
-        case .day:
-            return " / week"
-        case .week:
-            return " / week"
-        case .month:
-            return " / week"
-        case .year:
-            return " / week"
-        default:
-            return ""
-        }
-    }
+enum SubscriptionManagerError: Error {
+    case cannotLoadPurchases
 }

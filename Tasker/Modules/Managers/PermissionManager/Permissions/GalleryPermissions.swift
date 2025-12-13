@@ -18,8 +18,7 @@ public enum GalleryPermissions {
             return Alert(
                 title: Text("No photos for you 🫣"),
                 message: Text("I’d love to see your masterpieces… but I can’t. Photo access is off. Flip the switch in Settings?"),
-                primaryButton: .default(Text("Not now")),
-                secondaryButton: .default(Text("Go to Settings"), action: openSettings)
+                dismissButton: .default(Text("Not now"))
             )
             
         case .silentError:

@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Models
+import ProfileManager
 
 @Observable
 final public class AppearanceManager: AppearanceManagerProtocol {

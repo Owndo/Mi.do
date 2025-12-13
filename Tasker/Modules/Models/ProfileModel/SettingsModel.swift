@@ -130,7 +130,7 @@ func defaultSettingsModel() -> SettingsModel {
 }
 
 
-public struct AccentBackgroundColor: Codable, Equatable {
+public struct AccentBackgroundColor: Codable, Equatable, Sendable {
     public var light: String
     public var dark: String
     public var custom: Bool?

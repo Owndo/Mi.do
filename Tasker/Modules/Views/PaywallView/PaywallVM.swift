@@ -6,30 +6,32 @@
 //
 
 import Foundation
-import Managers
 import StoreKit
 import SwiftUI
+import SubscriptionManager
 
 @Observable
 public final class PaywallVM {
     private let subscriptionManager: SubscriptionManagerProtocol
     
-    //MARK: - UI States
-    
+    //MARK: - Texts
     var textForPaywall: LocalizedStringKey = "Plan with ease\nLive with joy\nLess tasks, more life!"
     var benefits = ["Voice tasks & voice notifications", "Create group, customize space", "History, sync, and stay on top"]
     
     var textForButton: LocalizedStringKey = "Continue"
     
-    var showingAlert = false
+    //MARK: - UI States
+    
+    var pending = false
+    var showAlert = false
+    var alert: PaywallAlerts?
+    
+    public var closePaywall: (() -> Void)?
     
     //MARK: StoreKit
+    
     var products: [Product] = []
     var selecetedProduct: Product?
-    
-    var pending: Bool {
-        subscriptionManager.pending
-    }
     
     //MARK: - Private init
     
@@ -37,31 +39,37 @@ public final class PaywallVM {
         self.subscriptionManager = subscriptionManager
     }
     
-    
     //MARK: - VM Creator
     
-    public static func createPaywallVM(_ subscriptionManager: SubscriptionManagerProtocol) async -> PaywallVM {
+    public static func createPaywallVM(subscriptionManager: SubscriptionManagerProtocol) async -> PaywallVM {
         let vm = PaywallVM(subscriptionManager: subscriptionManager)
-        await vm.updateProdicts()
+        await vm.updateProducts()
         
         return vm
     }
     
-    //MARK: - Preview VM
+    //MARK: - VM Preview Creator
     
-    public static func createPreviewVM(subscriptionManager: SubscriptionManagerProtocol) -> PaywallVM {
-        PaywallVM(subscriptionManager: subscriptionManager)
+    public static func createPreviewVM() -> PaywallVM {
+        let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
+        return PaywallVM(subscriptionManager: subscriptionManager)
     }
     
-    private func updateProdicts() async {
-        products = subscriptionManager.products
-        selecetedProduct = products.first
-        
-        if let product = selecetedProduct {
-            await selectProductButtonTapped(product)
+    //MARK: - Update products
+    
+    private func updateProducts() async {
+        do {
+            products = try await subscriptionManager.loadProducts()
+            selecetedProduct = products.first
+            await isEligibleForFreeTrial(selecetedProduct)
+        } catch {
+            alert = .cannotLoadProductsAlert
+            showAlert = true
         }
     }
+    //MARK: - Select Product Button Tapped
     
+    @MainActor
     func selectProductButtonTapped(_ product: Product) async {
         selecetedProduct = product
         
@@ -80,7 +88,29 @@ public final class PaywallVM {
         }
     }
     
+    //MARK: - Check trial eligible
+    
+    private func isEligibleForFreeTrial(_ product: Product?) async {
+        guard let product else {
+            return
+        }
+        
+        guard await product.isEligibleForFreeTrial() else {
+            return
+        }
+        
+        if product.intoductoryOffer() != nil {
+            textForButton = "Try for free"
+        } else {
+            textForButton = "Continue"
+        }
+    }
+    
+    //MARK: - Make purchase
+    
+    @MainActor
     func makePurchase() async {
+        pending = true
         
         guard let selecetedProduct else {
             return
@@ -88,16 +118,34 @@ public final class PaywallVM {
         
         do {
             try await subscriptionManager.makePurchase(selecetedProduct)
+            pending = false
         } catch {
-            print("error")
+            alert = .purchaseFailed
+            showAlert = true
         }
+        
+        pending = false
     }
     
+    //MARK: - Restore Button
+    
+    @MainActor
     func restoreButtonTapped() async {
-        showingAlert = await !subscriptionManager.restorePurchases()
+        pending = true
+        
+        guard await subscriptionManager.restorePurchases() else {
+            alert = PaywallAlerts.restoreAlert
+            showAlert = true
+            pending = false
+            return
+        }
+        
+        pending = false
     }
     
-    func closePaywallButtonTapped() {
-        subscriptionManager.closePaywall()
+    //MARK: - Close Paywall Button
+    
+    public func closePaywallButtonTapped() {
+        closePaywall?()
     }
 }

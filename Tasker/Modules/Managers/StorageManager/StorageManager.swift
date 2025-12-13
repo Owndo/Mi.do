@@ -7,6 +7,7 @@
 
 import Foundation
 import Models
+import CASManager
 
 public final class StorageManager: StorageManagerProtocol {
     public var casManager: CASManagerProtocol
@@ -23,6 +24,12 @@ public final class StorageManager: StorageManagerProtocol {
     
     public static func createStorageManager(casManager: CASManagerProtocol) -> StorageManagerProtocol {
         StorageManager(casManager: casManager)
+    }
+    
+    public static func createMockStorageManager() -> StorageManagerProtocol {
+        let mockCasManager = MockCas.createCASManager()
+        
+        return StorageManager(casManager: mockCasManager)
     }
     
     @discardableResult

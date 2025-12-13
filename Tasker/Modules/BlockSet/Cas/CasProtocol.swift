@@ -8,7 +8,7 @@
 import Foundation
 import CryptoKit
 
-public protocol Cas: Sendable {
+public protocol Cas {
     /// Returns identifier (hash) for the given data block.
     func id(_ data: Data) -> String
     

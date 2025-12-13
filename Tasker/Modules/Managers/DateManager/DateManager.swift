@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import Models
+import ProfileManager
+import TelemetryManager
 
 @Observable
 public final class DateManager: DateManagerProtocol {

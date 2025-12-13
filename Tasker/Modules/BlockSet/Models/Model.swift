@@ -12,7 +12,7 @@ struct ModelStruct<T> {
     var value: T
 }
 
-public class Model<T>: Hashable, Identifiable {
+public class Model<T>: Hashable, Identifiable, @unchecked Sendable {
     // internal:
     var s: ModelStruct<T>
     
@@ -31,10 +31,11 @@ public class Model<T>: Hashable, Identifiable {
     }
     
     // Hashable:
-    public static func == (lhs: Model, rhs: Model) -> Bool {
+    nonisolated public static func == (lhs: Model, rhs: Model) -> Bool {
         return lhs === rhs
     }
-    public func hash(into hasher: inout Hasher) {
+    
+    nonisolated public func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
     }
 }

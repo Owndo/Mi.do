@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MockTelemetryManager: TelemetryManagerProtocol {
+public final class MockTelemetryManager: TelemetryManagerProtocol {
     public func logEvent(_ event: EventType) {
         
     }
@@ -15,4 +15,6 @@ final class MockTelemetryManager: TelemetryManagerProtocol {
     public func pageView() {
         
     }
+    
+    public init() {}
 }

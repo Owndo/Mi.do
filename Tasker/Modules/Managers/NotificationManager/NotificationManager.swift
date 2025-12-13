@@ -8,6 +8,10 @@
 import Foundation
 import UserNotifications
 import Models
+import StorageManager
+import DateManager
+import SubscriptionManager
+import PermissionManager
 import SwiftUI
 
 @Observable
@@ -61,7 +65,6 @@ public final class NotificationManager: NotificationManagerProtocol {
             countOfDay += 1
         }
     }
-    
     
     //MARK: - Main function for scheduling notification
     private func scheduleNotification(_ task: UITaskModel) async {
@@ -142,7 +145,7 @@ public final class NotificationManager: NotificationManagerProtocol {
             notificationContent.sound = .default
         } else {
             if let audio = task.audio {
-                if hasSubscription() {
+                if await hasSubscription() {
                     _ = await storageManager.createFileInSoundsDirectory(hash: audio)
                     notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
                 } else {
@@ -209,7 +212,7 @@ public final class NotificationManager: NotificationManagerProtocol {
                 notificationContent.sound = .default
             } else {
                 if let audio = task.audio {
-                    if hasSubscription() {
+                    if await hasSubscription() {
                         _ = await storageManager.createFileInSoundsDirectory(hash: audio)
                         notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
                     } else {
@@ -258,7 +261,7 @@ public final class NotificationManager: NotificationManagerProtocol {
                 notificationContent.sound = .default
             } else {
                 if let audio = task.audio {
-                    if hasSubscription() {
+                    if await hasSubscription() {
                         _ = await storageManager.createFileInSoundsDirectory(hash: audio)
                         notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
                     } else {
@@ -305,7 +308,7 @@ public final class NotificationManager: NotificationManagerProtocol {
             notificationContent.sound = .default
         } else {
             if let audio = task.audio {
-                if hasSubscription() {
+                if await hasSubscription() {
                     _ = await storageManager.createFileInSoundsDirectory(hash: audio)
                     notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
                 } else {
@@ -403,9 +406,9 @@ public final class NotificationManager: NotificationManagerProtocol {
     /// Avalible tasks for day
     private func tasksForSpecificDay(tasks: [UITaskModel], day: Date) -> [UITaskModel] {
         tasks.filter {
-                $0.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) &&
-                isTaskTimeAfterCurrent($0, for: day) }
-            .sorted { sortedTasksForCurrentTime(task1: $0, task2: $1) }
+            $0.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) &&
+            isTaskTimeAfterCurrent($0, for: day) }
+        .sorted { sortedTasksForCurrentTime(task1: $0, task2: $1) }
     }
     
     private func sortedTasksForCurrentTime(task1: UITaskModel, task2: UITaskModel) -> Bool {
@@ -553,8 +556,7 @@ public final class NotificationManager: NotificationManagerProtocol {
         }
     }
     
-    private func hasSubscription() -> Bool {
-        subscriptionManager.hasSubscription()
+    private func hasSubscription() async -> Bool {
+        await subscriptionManager.hasSubscription()
     }
 }
-

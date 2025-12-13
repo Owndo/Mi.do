@@ -47,32 +47,9 @@ public struct TaskView: View {
                         
                         MainSection()
                         
-                        VStack(spacing: 0) {
-                            DateSelection()
-                            
-                            TimeSelection()
-                            
-                            RepeatSelection()
-                            
-                            Deadline()
-                            
-                        }
-                        .background(
-                            RoundedRectangle(cornerRadius: 26)
-                                .fill(
-                                    vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
-                                )
-                        )
-                        
+                        SetupSection()
                         
                         CustomColorPicker()
-                            .background(
-                                RoundedRectangle(cornerRadius: 26)
-                                    .fill(
-                                        vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
-                                    )
-                            )
-                            .ifHidden(preview)
                         
                         CreatedDate()
                     }
@@ -85,7 +62,7 @@ public struct TaskView: View {
                 .padding(.horizontal, 16)
                 .safeAreaInset(edge: .bottom) {
                     SaveButton()
-                        .disabled(vm.showPaywall)
+                        .disabled(vm.paywallVM != nil)
                         .ifHidden(preview)
                         .padding(.leading, 16)
                         .padding(.trailing, 10)
@@ -123,8 +100,8 @@ public struct TaskView: View {
                         .presentationDetents([.medium])
                 }
                 
-                if vm.showPaywall {
-                    PaywallView(vm: vm.paywallVM)
+                if let model = vm.paywallVM {
+                    PaywallView(vm: model)
                 }
             }
             // MARK: - Tool Bar
@@ -148,10 +125,10 @@ public struct TaskView: View {
                                         dismissButton: dismissButton
                                     )
                             }
-                            .opacity(vm.showPaywall ? 0 : 1)
-                            .disabled(vm.showPaywall)
+                            .opacity(vm.paywallVM != nil ? 0 : 1)
+                            .disabled(vm.paywallVM != nil)
                         }
-                        .sharedBackgroundVisibility(vm.showPaywall ? .hidden : .visible)
+                        .sharedBackgroundVisibility(vm.paywallVM != nil ? .hidden : .visible)
                     } else {
                         ToolbarItem(placement: .cancellationAction) {
                             Button {
@@ -169,8 +146,8 @@ public struct TaskView: View {
                                         dismissButton: dismissButton
                                     )
                             }
-                            .opacity(vm.showPaywall ? 0 : 1)
-                            .disabled(vm.showPaywall)
+                            .opacity(vm.paywallVM != nil ? 0 : 1)
+                            .disabled(vm.paywallVM != nil)
                         }
                     }
                 }
@@ -391,6 +368,27 @@ public struct TaskView: View {
                     .backgroundTertiary
                 )
         )
+    }
+    
+    //MARK: - Setup section
+    @ViewBuilder
+    private func SetupSection() -> some View {
+        VStack(spacing: 0) {
+            DateSelection()
+            
+            TimeSelection()
+            
+            RepeatSelection()
+            
+            Deadline()
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 26)
+                .fill(
+                    vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
+                )
+        )
+        
     }
     
     //MARK: - Date Selector
@@ -625,6 +623,13 @@ public struct TaskView: View {
             )
             .sensoryFeedback(.selection, trigger: vm.selectedColorTapped)
         }
+        .background(
+            RoundedRectangle(cornerRadius: 26)
+                .fill(
+                    vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
+                )
+        )
+        .ifHidden(preview)
     }
     
     //MARK: - Deadline
@@ -668,13 +673,13 @@ public struct TaskView: View {
                     .tint(colorScheme.accentColor())
             }
         }
-        .onChange(of: vm.hasDeadline) { oldValue, newValue in
-            Task {
-                if newValue {
-                    await vm.checkSubscriptionForDeadline()
-                }
-            }
-        }
+//        .onChange(of: vm.hasDeadline) { oldValue, newValue in
+//            Task {
+//                if newValue {
+//                    await vm.checkSubscriptionForDeadline()
+//                }
+//            }
+//        }
         .clipped()
     }
     

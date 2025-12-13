@@ -7,9 +7,18 @@
 
 import Foundation
 import SwiftUI
-import Managers
 import Models
+import StorageManager
+import DateManager
+import PlayerManager
+import TaskManager
+import ProfileManager
+import RecorderManager
+import PermissionManager
+import SubscriptionManager
+import TelemetryManager
 import PaywallView
+import Errors
 
 @Observable
 public final class TaskVM {
@@ -35,7 +44,7 @@ public final class TaskVM {
     
     //MARK: - PaywallVM
     
-    var paywallVM: PaywallVM
+    var paywallVM: PaywallVM?
     
     // MARK: - Models
     
@@ -75,11 +84,12 @@ public final class TaskVM {
     
     var initing = false
     
-    var showPaywall: Bool {
-        subscriptionManager.showPaywall
-    }
+    //MARK: - Show paywall
+    
+    var showPaywall = false
     
     // MARK: - Confirmation dialog
+    
     var confirmationDialogIsPresented = false
     var messageForDelete: LocalizedStringKey = ""
     var singleTask = true
@@ -96,16 +106,22 @@ public final class TaskVM {
     
     var hasDeadline = false {
         didSet {
-            if hasDeadline == true {
-                guard !initing else {
-                    return
+            if hasDeadline {
+                Task {
+                    await checkSubscriptionForDeadline()
                 }
-                showDeadline = true
-            } else {
-                removeDeadlineFromTask()
             }
+            //            if hasDeadline == true {
+            //                guard !initing else {
+            //                    return
+            //                }
+            //                showDeadline = true
+            //            } else {
+            //                removeDeadlineFromTask()
+            //            }
         }
     }
+    
     
     var deadLineDate = Date() {
         didSet {
@@ -116,10 +132,12 @@ public final class TaskVM {
     
     var showDeadline = false {
         didSet {
-            if showDeadline == true {
-                guard subscriptionManager.hasSubscription() else {
-                    showDeadline = false
-                    return
+            Task {
+                if showDeadline == true {
+                    guard await subscriptionManager.hasSubscription() else {
+                        showDeadline = false
+                        return
+                    }
                 }
             }
         }
@@ -192,7 +210,7 @@ public final class TaskVM {
         permissionManager: PermissionProtocol,
         storageManager: StorageManagerProtocol,
         subscriptionManager: SubscriptionManagerProtocol,
-        paywallVM: PaywallVM,
+//        paywallVM: PaywallVM,
         task: UITaskModel,
         profileModel: UIProfileModel
     ) {
@@ -204,7 +222,7 @@ public final class TaskVM {
         self.permissionManager = permissionManager
         self.storageManager = storageManager
         self.subscriptionManager = subscriptionManager
-        self.paywallVM = paywallVM
+//        self.paywallVM = paywallVM
         self.task = task
         self.profileModel = profileModel
     }
@@ -223,7 +241,6 @@ public final class TaskVM {
         task: UITaskModel,
         profileModel: UIProfileModel
     ) async -> TaskVM {
-        let paywallVM = await PaywallVM.createPaywallVM(subscriptionManager)
         let vm = TaskVM(
             taskManager: taskManager,
             profileManager: profileManager,
@@ -233,10 +250,10 @@ public final class TaskVM {
             permissionManager: permissionManager,
             storageManager: storageManager,
             subscriptionManager: subscriptionManager,
-            paywallVM: paywallVM,
             task: task,
             profileModel: profileModel
         )
+        
         await vm.setUPViewModel()
         
         return vm
@@ -251,10 +268,8 @@ public final class TaskVM {
         let playerManager = PlayerManager.createMockPlayerManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
         let permissionManager = PermissionManager.createPermissionManager()
-        let storageManager = StorageManager.createStorageManager(casManager: MockCas.createCASManager())
+        let storageManager = StorageManager.createMockStorageManager()
         let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
-        
-        let paywallVM = PaywallVM.createPreviewVM(subscriptionManager: subscriptionManager)
         
         let task = UITaskModel(.initial(mockModel().model.value))
         let profileModel = UIProfileModel(.initial(mockProfileData().model.value))
@@ -268,12 +283,19 @@ public final class TaskVM {
             permissionManager: permissionManager,
             storageManager: storageManager,
             subscriptionManager: subscriptionManager,
-            paywallVM: paywallVM,
             task: task,
             profileModel: profileModel
         )
         
         return vm
+    }
+    
+    private func createPaywallVM() async {
+        paywallVM = await PaywallVM.createPaywallVM(subscriptionManager: subscriptionManager)
+        
+        paywallVM?.closePaywall = {
+            self.paywallVM = nil
+        }
     }
     
     //TODO: What's it?
@@ -301,8 +323,8 @@ public final class TaskVM {
     }
     
     func disappear() {
-        subscriptionManager.closePaywall()
         stopPlaying()
+        showPaywall = false
     }
     
     private func setUpTime() async {
@@ -706,7 +728,8 @@ public final class TaskVM {
     
     // MARK: - Recording
     func recordButtonTapped() async {
-        guard subscriptionManager.hasSubscription() else {
+        guard await subscriptionManager.hasSubscription() else {
+            await createPaywallVM()
             return
         }
         
@@ -795,15 +818,22 @@ public final class TaskVM {
     //MARK: Subscription for deadline
     
     func checkSubscriptionForDeadline() async {
-        guard !subscriptionManager.hasSubscription() else {
-            return
-        }
-        
-        while subscriptionManager.showPaywall {
+        if await !subscriptionManager.hasSubscription() {
             try? await Task.sleep(for: .seconds(0.3))
+            
+          await createPaywallVM()
+            
+            //TODO: After user pay it has to be opened
+            while paywallVM != nil  {
+                try? await Task.sleep(for: .seconds(0.3))
+            }
+            
+            if await subscriptionManager.hasSubscription() {
+                hasDeadline = true
+            } else {
+                hasDeadline = false
+            }
         }
-        
-        hasDeadline = subscriptionManager.subscribed
     }
     
     

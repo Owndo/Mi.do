@@ -9,7 +9,7 @@ import Foundation
 import BlockSet
 import Models
 
-final class CASManager: CASManagerProtocol {
+final actor CASManager: CASManagerProtocol {
     let cas: FileCas
     let allIdentifiers: [Mutable]
 
@@ -34,7 +34,7 @@ final class CASManager: CASManagerProtocol {
     
     static private func fetchList(cas: AsyncableCasProtocol) async -> [Mutable] {
         do {
-            return try await cas.listMutables()
+            return try await cas.listOfAllMutables()
         } catch {
             return []
         }
@@ -42,7 +42,7 @@ final class CASManager: CASManagerProtocol {
     
     //MARK: - Fetch models
     
-    public func fetchModels<T: Codable>(_ model: T.Type) async -> [T] {
+    nonisolated public func fetchModels<T: Codable>(_ model: T.Type) async -> [T] {
         var models = [T]()
         
         await withTaskGroup(of: Model<T>?.self) { group in

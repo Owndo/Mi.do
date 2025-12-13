@@ -795,9 +795,16 @@ public struct TaskView: View {
     }
 }
 
-#Preview {
+#Preview("Ubsubscribed") {
     Color.clear
         .sheet(isPresented: .constant(true)) {
             TaskView(taskVM: TaskVM.createPreviewTaskVM())
+        }
+}
+
+#Preview("Subscribed") {
+    Color.clear
+        .sheet(isPresented: .constant(true)) {
+            TaskView(taskVM: TaskVM.createSubscribedPreviewTaskVM())
         }
 }

@@ -109,7 +109,10 @@ public final class TaskVM {
             if hasDeadline {
                 Task {
                     await checkSubscriptionForDeadline()
+                    showDeadline = true
                 }
+            } else {
+                removeDeadlineFromTask()
             }
             //            if hasDeadline == true {
             //                guard !initing else {
@@ -210,7 +213,7 @@ public final class TaskVM {
         permissionManager: PermissionProtocol,
         storageManager: StorageManagerProtocol,
         subscriptionManager: SubscriptionManagerProtocol,
-//        paywallVM: PaywallVM,
+        //        paywallVM: PaywallVM,
         task: UITaskModel,
         profileModel: UIProfileModel
     ) {
@@ -222,7 +225,7 @@ public final class TaskVM {
         self.permissionManager = permissionManager
         self.storageManager = storageManager
         self.subscriptionManager = subscriptionManager
-//        self.paywallVM = paywallVM
+        //        self.paywallVM = paywallVM
         self.task = task
         self.profileModel = profileModel
     }
@@ -269,10 +272,40 @@ public final class TaskVM {
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
         let permissionManager = PermissionManager.createPermissionManager()
         let storageManager = StorageManager.createMockStorageManager()
-        let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
+        let subscriptionManager = MockSubscriptionManager.createNotSubscribedManager()
         
         let task = UITaskModel(.initial(mockModel().model.value))
         let profileModel = UIProfileModel(.initial(mockProfileData().model.value))
+        
+        let vm = TaskVM(
+            taskManager: taskManager,
+            profileManager: profileManager,
+            dateManager: dateManager,
+            playerManager: playerManager,
+            recorderManager: recorderManager,
+            permissionManager: permissionManager,
+            storageManager: storageManager,
+            subscriptionManager: subscriptionManager,
+            task: task,
+            profileModel: profileModel
+        )
+        
+        return vm
+    }
+    
+    static func createSubscribedPreviewTaskVM() -> TaskVM {
+        let taskManager = TaskManager.createMockTaskManager()
+        let profileManager = ProfileManager.createMockProfileManager()
+        let dateManager = DateManager.createMockDateManager()
+        let playerManager = PlayerManager.createMockPlayerManager()
+        let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
+        let permissionManager = PermissionManager.createPermissionManager()
+        let storageManager = StorageManager.createMockStorageManager()
+        
+        let task = UITaskModel(.initial(mockModel().model.value))
+        let profileModel = UIProfileModel(.initial(mockProfileData().model.value))
+        
+        let subscriptionManager = MockSubscriptionManager.createSubscribedManager()
         
         let vm = TaskVM(
             taskManager: taskManager,
@@ -583,7 +616,7 @@ public final class TaskVM {
     
     func removeDeadlineFromTask() {
         showDeadline = false
-        task.deadline = nil
+        //        task.deadline = nil
     }
     
     func isDeadlineInCorrectDate() {
@@ -821,7 +854,7 @@ public final class TaskVM {
         if await !subscriptionManager.hasSubscription() {
             try? await Task.sleep(for: .seconds(0.3))
             
-          await createPaywallVM()
+            await createPaywallVM()
             
             //TODO: After user pay it has to be opened
             while paywallVM != nil  {

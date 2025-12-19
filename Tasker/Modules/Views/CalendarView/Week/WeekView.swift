@@ -77,7 +77,7 @@ public struct WeekView: View {
                         Button {
                             vm.selectedDateButtonTapped(day)
                         } label: {
-                            DayView(day: day, dateManager: vm.dateManager, taskManager: vm.taskManager)
+                            DayView(day: day, dateManager: vm.dateManager, taskManager: vm.taskManager, appearanceManager: vm.appearanceManager)
                         }
                     }
                 }

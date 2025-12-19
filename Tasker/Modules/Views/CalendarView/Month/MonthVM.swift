@@ -47,11 +47,19 @@ public final class MonthVM {
         dateManager.allMonths
     }
     
-    init(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) {
+    private init(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) {
         self.dateManager = dateManager
         self.appearanceManager = appearanceManager
         self.taskManager = taskManager
     }
+    
+    //MARK: - CreateMonthVM
+    
+    static func createMonthVM(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) -> MonthVM {
+        MonthVM(dateManager: dateManager, appearanceManager: appearanceManager, taskManager: taskManager)
+    }
+    
+    //MARK: - Create previewVm
     
     static func createPreviewVM() -> MonthVM {
         MonthVM(dateManager: DateManager.createMockDateManager(), appearanceManager: AppearanceManager.createMockAppearanceManager(), taskManager: TaskManager.createMockTaskManager())

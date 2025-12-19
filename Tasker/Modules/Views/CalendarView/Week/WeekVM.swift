@@ -8,6 +8,7 @@
 import SwiftUI
 import DateManager
 import TaskManager
+import AppearanceManager
 import TelemetryManager
 import Models
 
@@ -15,15 +16,21 @@ import Models
 public final class WeekVM {
     var dateManager: DateManagerProtocol
     var taskManager: TaskManagerProtocol
+    var appearanceManager: AppearanceManagerProtocol
     var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
-    public init(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
+    public init(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, appearanceManager: AppearanceManagerProtocol) {
         self.dateManager = dateManager
         self.taskManager = taskManager
+        self.appearanceManager = appearanceManager
     }
     
     static func createPreviewVM() -> WeekVM {
-        WeekVM(dateManager: DateManager.createMockDateManager(), taskManager: TaskManager.createMockTaskManager())
+        WeekVM(
+            dateManager: DateManager.createMockDateManager(),
+            taskManager: TaskManager.createMockTaskManager(),
+            appearanceManager: AppearanceManager.createMockAppearanceManager()
+        )
     }
     
     var selectedDayOfWeek = Date()

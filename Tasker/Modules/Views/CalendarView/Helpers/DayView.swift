@@ -8,6 +8,7 @@
 import SwiftUI
 import DateManager
 import TaskManager
+import AppearanceManager
 
 struct DayView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -18,11 +19,13 @@ struct DayView: View {
     
     private let dateManager: DateManagerProtocol
     private let taskManager: TaskManagerProtocol
+    private let appearanceManager: AppearanceManagerProtocol
     
-    init(day: Date, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
+    init(day: Date, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, appearanceManager: AppearanceManagerProtocol) {
         self.day = day
         self.dateManager = dateManager
         self.taskManager = taskManager
+        self.appearanceManager = appearanceManager
     }
     
     var body: some View {
@@ -69,11 +72,16 @@ struct DayView: View {
             }
         }
         .task {
-            self.vm = await DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager)
+            self.vm = await DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager)
         }
     }
 }
 
 #Preview {
-    DayView(day: Date(), dateManager: DateManager.createMockDateManager(), taskManager: TaskManager.createMockTaskManager())
+    DayView(
+        day: Date(),
+        dateManager: DateManager.createMockDateManager(),
+        taskManager: TaskManager.createMockTaskManager(),
+        appearanceManager: AppearanceManager.createMockAppearanceManager()
+    )
 }

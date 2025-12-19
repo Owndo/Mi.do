@@ -8,29 +8,31 @@ import Foundation
 import Models
 import TaskManager
 import DateManager
+import AppearanceManager
 
 @Observable
 final class SegmentedCircleVM {
     var taskManager: TaskManagerProtocol
     var dateManager: DateManagerProtocol
+    var appearanceManager: AppearanceManagerProtocol
     
-    private init(taskManager: TaskManagerProtocol, dateManager: DateManagerProtocol) {
+    private init(taskManager: TaskManagerProtocol, dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol) {
         self.taskManager = taskManager
         self.dateManager = dateManager
+        self.appearanceManager = appearanceManager
     }
     
-    static func createSegmentedCircleVM(taskManager: TaskManagerProtocol, dateManager: DateManagerProtocol) -> SegmentedCircleVM {
-        SegmentedCircleVM(taskManager: taskManager, dateManager: dateManager)
+    static func createSegmentedCircleVM(taskManager: TaskManagerProtocol, dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol)  -> SegmentedCircleVM {
+        SegmentedCircleVM(taskManager: taskManager, dateManager: dateManager, appearanceManager: appearanceManager)
     }
     
     static func createPreview() -> SegmentedCircleVM {
-        SegmentedCircleVM(taskManager: TaskManager.createMockTaskManager(), dateManager: DateManager.createMockDateManager())
+        SegmentedCircleVM(taskManager: TaskManager.createMockTaskManager(), dateManager: DateManager.createMockDateManager(), appearanceManager: AppearanceManager.createMockAppearanceManager())
     }
     
     var useTaskColors: Bool {
-        //        let minimal = casManager.profileModel.settings.minimalProgressMode
-        //        return !minimal
-        true
+        let minimal = appearanceManager.profileModel.settings.minimalProgressMode
+                return !minimal
     }
     
     var completedFlags: [Bool] = []

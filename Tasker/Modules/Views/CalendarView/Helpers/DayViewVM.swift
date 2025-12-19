@@ -9,6 +9,7 @@ import Foundation
 import Models
 import DateManager
 import TaskManager
+import AppearanceManager
 
 @Observable
 final class DayViewVM {
@@ -35,13 +36,25 @@ final class DayViewVM {
     static func createPreviewVM() -> DayViewVM {
         let dateManager = DateManager.createMockDateManager()
         let taskManager = TaskManager.createMockTaskManager()
-        let vm = DayViewVM(dateManager: dateManager, taskManager: taskManager, segmentedCircleVM: SegmentedCircleVM.createSegmentedCircleVM(taskManager: taskManager, dateManager: dateManager))
+        let vm = DayViewVM(
+            dateManager: dateManager,
+            taskManager: taskManager,
+            segmentedCircleVM: SegmentedCircleVM.createSegmentedCircleVM(taskManager: taskManager, dateManager: dateManager, appearanceManager: AppearanceManager.createMockAppearanceManager())
+        )
         
         return vm
     }
     
-    static func createVM(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) async -> DayViewVM {
-        let vm = DayViewVM(dateManager: dateManager, taskManager: taskManager, segmentedCircleVM: SegmentedCircleVM.createSegmentedCircleVM(taskManager: taskManager, dateManager: dateManager))
+    static func createVM(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, appearanceManager: AppearanceManagerProtocol) async -> DayViewVM {
+        let vm = DayViewVM(
+            dateManager: dateManager,
+            taskManager: taskManager,
+            segmentedCircleVM: SegmentedCircleVM.createSegmentedCircleVM(
+                taskManager: taskManager,
+                dateManager: dateManager,
+                appearanceManager: appearanceManager
+            )
+        )
         vm.tasks = await taskManager.tasks.map { $0.value }
         
         return vm

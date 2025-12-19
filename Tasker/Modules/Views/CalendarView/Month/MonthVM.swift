@@ -7,21 +7,23 @@
 
 import Foundation
 import Models
-import Managers
 import SwiftUI
+import DateManager
+import AppearanceManager
+import TelemetryManager
+import TaskManager
 
 @Observable
-final class MonthVM {
-    @ObservationIgnored
-    @Injected(\.dateManager) var dateManager
-    @ObservationIgnored
-    @Injected(\.appearanceManager) var appearanceManager
-    @ObservationIgnored
-    @Injected(\.subscriptionManager) var subscriptionManager
+public final class MonthVM {
+    var dateManager: DateManagerProtocol
+    var appearanceManager: AppearanceManagerProtocol
+    var taskManager: TaskManagerProtocol
+    private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    //    @Injected(\.subscriptionManager) var subscriptionManager
     
-    var showPaywall: Bool {
-        subscriptionManager.showPaywall
-    }
+    //    var showPaywall: Bool {
+    //        subscriptionManager.showPaywall
+    //    }
     
     var scrollID: Int?
     
@@ -45,6 +47,16 @@ final class MonthVM {
         dateManager.allMonths
     }
     
+    init(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) {
+        self.dateManager = dateManager
+        self.appearanceManager = appearanceManager
+        self.taskManager = taskManager
+    }
+    
+    static func createPreviewVM() -> MonthVM {
+        MonthVM(dateManager: DateManager.createMockDateManager(), appearanceManager: AppearanceManager.createMockAppearanceManager(), taskManager: TaskManager.createMockTaskManager())
+    }
+    
     func selectedDateChange(_ day: Date) {
         dateManager.selectedDateChange(day)
         dateManager.initializeWeek()
@@ -58,19 +70,20 @@ final class MonthVM {
         
         try? await Task.sleep(for: .seconds(0.5))
         
-//        guard checkSubscription() else {
-//            return
-//        }
+        //        guard checkSubscription() else {
+        //            return
+        //        }
         
         telemetryAction(.openView(.calendar(.open)))
     }
     
     func checkSubscription() -> Bool {
-        return subscriptionManager.hasSubscription()
+        true
+        //        return subscriptionManager.hasSubscription()
     }
     
     func onDissapear() {
-        subscriptionManager.showPaywall = false
+        //        subscriptionManager.showPaywall = false
         telemetryAction(.openView(.calendar(.close)))
     }
     
@@ -100,10 +113,11 @@ final class MonthVM {
         !dateManager.selectedDayIsToday()
     }
     
-    func backToTodayButtonTapped() {
+    func backToTodayButtonTapped() async {
         dateManager.backToToday()
         scrollID = 1
-        dateManager.initializeMonth()
+        
+        await dateManager.initializeMonth()
         
         // telemetry
         telemetryAction(.calendarAction(.backToTodayButtonTapped(.calendarView)))
@@ -111,6 +125,7 @@ final class MonthVM {
     
     func currentYear(_ month: PeriodModel) -> String? {
         let day = month.date.first!
+        
         let year = calendar.component(.year, from: day)
         
         if year == calendar.component(.year, from: today) {
@@ -129,15 +144,15 @@ final class MonthVM {
     }
     
     func automaticlyClossScreen(path: inout NavigationPath, mainViewIsOpen: inout Bool) {
-        if showPaywall == false && !checkSubscription() {
-            subscriptionManager.closePaywall()
-            
-            path.removeLast()
-            mainViewIsOpen = true
-            
-            // telemetry
-            telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))
-        }
+        //        if showPaywall == false && !checkSubscription() {
+        //            subscriptionManager.closePaywall()
+        //
+        //            path.removeLast()
+        //            mainViewIsOpen = true
+        //
+        //            // telemetry
+        //            telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))
+        //        }
     }
     
     func handleMonthAppeared(_ month: PeriodModel) {

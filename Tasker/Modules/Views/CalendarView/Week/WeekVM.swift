@@ -6,15 +6,25 @@
 //
 
 import SwiftUI
-import Managers
+import DateManager
+import TaskManager
+import TelemetryManager
 import Models
 
 @Observable
-final class WeekVM {
-    @ObservationIgnored
-    @Injected(\.dateManager) var dateManager: DateManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.telemetryManager) var telemetryManager: TelemetryManagerProtocol
+public final class WeekVM {
+    var dateManager: DateManagerProtocol
+    var taskManager: TaskManagerProtocol
+    var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    
+    public init(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
+        self.dateManager = dateManager
+        self.taskManager = taskManager
+    }
+    
+    static func createPreviewVM() -> WeekVM {
+        WeekVM(dateManager: DateManager.createMockDateManager(), taskManager: TaskManager.createMockTaskManager())
+    }
     
     var selectedDayOfWeek = Date()
     

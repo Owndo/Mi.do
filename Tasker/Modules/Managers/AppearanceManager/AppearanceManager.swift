@@ -24,9 +24,18 @@ final public class AppearanceManager: AppearanceManagerProtocol {
         currentColorScheme()
     }
     
-    init(profileManager: ProfileManagerProtocol) {
+    private init(profileManager: ProfileManagerProtocol) {
         self.profileManager = profileManager
     }
+    
+    static public func createAppearanceManager(profileManager: ProfileManagerProtocol) -> AppearanceManager {
+        AppearanceManager(profileManager: profileManager)
+    }
+    
+    static public func createMockAppearanceManager() -> AppearanceManager {
+        AppearanceManager(profileManager: ProfileManager.createMockProfileManager())
+    }
+    
     
     public func backgroundColor() -> Color {
         profileModel.settings.backgroundColor().hexColor()

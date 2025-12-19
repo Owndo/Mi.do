@@ -47,14 +47,22 @@ let project = Project(
         //MARK: - Delegate
             .module(.appDelegate),
         //MARK: - Telemetry
-        .module(.telemetry, dependencies: [.target(name: Modules.models.name), .external(name: "PostHog")]),
+        .module(.telemetry,
+            dependencies: [
+                .target(name: Modules.models.name),
+                .target(
+                    name: Modules.customErrors.name
+                ),
+                .external(name: "PostHog")
+            ]
+        ),
         //MARK: - Errors
-        .module(.errors),
+        .module(.customErrors),
         //MARK: - Permission
         .module(
             .permissionManager,
             dependencies: [
-                .target(name: Modules.errors.name),
+                .target(name: Modules.customErrors.name),
                 .target(name: Modules.telemetry.name)
             ]
         ),
@@ -129,6 +137,7 @@ let project = Project(
                 .target(name: Modules.dateManager.name)
             ]
         ),
+        //MARK: - Views
         .moduleView(.uiComponents, dependencies: [.target(name: Modules.models.name)]),
         .moduleView(.paywallView,
                     dependencies: [
@@ -137,6 +146,18 @@ let project = Project(
                         .target(name: Modules.config.name)
                     ]
                    ),
+        //MARK: - Calendar
+        .moduleView(
+            .calendarView,
+            dependencies: [
+                .target(name: Modules.models.name),
+                .target(name: Modules.dateManager.name),
+                .target(name: Modules.taskManager.name),
+                .target(name: Modules.appearanceManager.name),
+                .target(name: Modules.telemetry.name),
+                .target(name: Modules.uiComponents.name)
+            ]
+        ),
         .moduleView(
             .taskView,
             dependencies: [

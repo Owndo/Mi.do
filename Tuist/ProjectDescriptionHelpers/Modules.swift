@@ -46,7 +46,7 @@ public enum Modules: String {
     case appDelegate = "AppDelegate"
     case onboardingManager = "OnboardingManager"
     
-    case errors = "Errors"
+    case customErrors = "CustomErrors"
     
     case subscriptionManager = "SubscriptionManager"
     case telemetry = "TelemetryManager"
@@ -55,12 +55,13 @@ public enum Modules: String {
     case uiComponents = "UIComponents"
     case paywallView = "PaywallView"
     case taskView = "TaskView"
+    case calendarView = "CalendarView"
     
     private var kind: ModuleKind {
         switch self {
         case .blockSet, .models, .config:
             return .feature
-        case .uiComponents, .paywallView, .taskView:
+        case .uiComponents, .paywallView, .taskView, .calendarView:
             return .view
         default:
             return .manager

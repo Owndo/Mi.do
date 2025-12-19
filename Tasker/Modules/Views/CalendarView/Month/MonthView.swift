@@ -8,18 +8,18 @@
 import SwiftUI
 import Models
 import UIComponents
-import Paywall
 
 public struct MonthView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
     
-    @State private var vm = MonthVM()
+    @Bindable var vm: MonthVM
     
     @Binding var mainViewIsOpen: Bool
     @Binding var path: NavigationPath
     
-    public init(mainViewIsOpen: Binding<Bool>, path: Binding<NavigationPath>) {
+    public init(vm: Bindable<MonthVM>, mainViewIsOpen: Binding<Bool>, path: Binding<NavigationPath>) {
+        self._vm = vm
         self._mainViewIsOpen = mainViewIsOpen
         self._path = path
     }
@@ -45,7 +45,6 @@ public struct MonthView: View {
                                 EmptyDays(month)
                                 
                                 MonthRowView(month.date)
-                                
                             }
                         }
                     }
@@ -54,11 +53,11 @@ public struct MonthView: View {
                 .scrollIndicators(.hidden)
                 .navigationBarBackButtonHidden()
                 .scrollPosition(id: $vm.scrollID, anchor: .top)
-                .scrollDisabled(vm.showPaywall)
+                //                .scrollDisabled(vm.showPaywall)
             }
-            .onChange(of: vm.showPaywall) { oldValue, _ in
-                vm.automaticlyClossScreen(path: &path, mainViewIsOpen: &mainViewIsOpen)
-            }
+            //            .onChange(of: vm.showPaywall) { oldValue, _ in
+            //                vm.automaticlyClossScreen(path: &path, mainViewIsOpen: &mainViewIsOpen)
+            //            }
             .onAppear {
                 Task {
                     await vm.onAppear()
@@ -69,9 +68,9 @@ public struct MonthView: View {
                 vm.onDissapear()
             }
             
-            if vm.showPaywall {
-                PaywallView()
-            }
+            //            if vm.showPaywall {
+            //                PaywallView()
+            //            }
         }
         .toolbar {
             if osVersion.majorVersion >= 26 {
@@ -90,13 +89,14 @@ public struct MonthView: View {
                         }
                         .padding(.vertical, 7)
                     }
-                    .disabled(vm.showPaywall)
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
                     if vm.selectedDayIsToday() {
                         Button {
-                            vm.backToTodayButtonTapped()
+                            Task {
+                                await vm.backToTodayButtonTapped()
+                            }
                         } label: {
                             HStack {
                                 Image(systemName: "arrow.uturn.backward")
@@ -109,12 +109,12 @@ public struct MonthView: View {
                             .padding(.vertical, 7)
                             .padding(.horizontal, 14)
                         }
-                        .disabled(vm.showPaywall)
+                        //                        .disabled(vm.showPaywall)
                     }
                 }
             }
         }
-        .animation(.bouncy, value: vm.showPaywall)
+        //        .animation(.bouncy, value: vm.showPaywall)
     }
     
     //MARK: - ToolBar
@@ -137,7 +137,9 @@ public struct MonthView: View {
                 
                 if vm.selectedDayIsToday() {
                     Button {
-                        vm.backToTodayButtonTapped()
+                        Task {
+                            await vm.backToTodayButtonTapped()
+                        }
                     } label: {
                         HStack {
                             Image(systemName: "arrow.uturn.backward")
@@ -156,7 +158,7 @@ public struct MonthView: View {
                     }
                 }
             }
-            .disabled(vm.showPaywall)
+            //            .disabled(vm.showPaywall)
         }
         .padding(.leading, 8)
         .padding(.trailing, 16)
@@ -223,16 +225,7 @@ public struct MonthView: View {
                                 .fill(.backgroundTertiary)
                         }
                         
-                        DayView(day: day)
-                        
-//                        SegmentedCircleView(date: day)
-//                            .frame(width: 40, height: 40)
-//                        
-//                        Text("\(day, format: .dateTime.day())")
-//                            .font(.system(.body, design: .rounded, weight: .medium))
-//                            .foregroundStyle(vm.isSameDay(day) ? .labelPrimary : .labelQuaternary)
-//                            .frame(maxWidth: .infinity)
-//                            .multilineTextAlignment(.center)
+                        DayView(day: day, dateManager: vm.dateManager, taskManager: vm.taskManager)
                     }
                 }
             }
@@ -243,7 +236,11 @@ public struct MonthView: View {
 }
 
 #Preview {
-    MonthView(mainViewIsOpen: .constant(true), path: .constant(NavigationPath()))
+    MonthView(
+        vm: .init(wrappedValue: MonthVM.createPreviewVM()),
+        mainViewIsOpen: .constant(true),
+        path: .constant(NavigationPath())
+    )
 }
 
 extension UINavigationController: @retroactive UIGestureRecognizerDelegate {

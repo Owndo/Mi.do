@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Errors
+import CustomErrors
 
 // MARK: - Main View Action Enum
 public enum MainViewAction {

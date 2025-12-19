@@ -6,25 +6,52 @@
 //
 
 import Foundation
-import Managers
+import Models
+import DateManager
+import TaskManager
 
 @Observable
 final class DayViewVM {
-    @ObservationIgnored
-    @Injected(\.casManager) var casManager
-    @ObservationIgnored
-    @Injected(\.dateManager) var dateManager
+    private let taskManager: TaskManagerProtocol
+    private let dateManager: DateManagerProtocol
+    
+    var segmentedCircleVM: SegmentedCircleVM
+    
+    var showSmallFire = false
+    var flameAnimation = false
     
     var calendar: Calendar {
         dateManager.calendar
     }
     
-    var showSmallFire = false
-    var flameAnimation = false
+    private var tasks: [UITaskModel]?
+    
+    init(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, segmentedCircleVM: SegmentedCircleVM) {
+        self.dateManager = dateManager
+        self.taskManager = taskManager
+        self.segmentedCircleVM = segmentedCircleVM
+    }
+    
+    static func createPreviewVM() -> DayViewVM {
+        let dateManager = DateManager.createMockDateManager()
+        let taskManager = TaskManager.createMockTaskManager()
+        let vm = DayViewVM(dateManager: dateManager, taskManager: taskManager, segmentedCircleVM: SegmentedCircleVM.createSegmentedCircleVM(taskManager: taskManager, dateManager: dateManager))
+        
+        return vm
+    }
+    
+    static func createVM(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) async -> DayViewVM {
+        let vm = DayViewVM(dateManager: dateManager, taskManager: taskManager, segmentedCircleVM: SegmentedCircleVM.createSegmentedCircleVM(taskManager: taskManager, dateManager: dateManager))
+        vm.tasks = await taskManager.tasks.map { $0.value }
+        
+        return vm
+    }
     
     //MARK: - Deadline
     func lastDayForDeadline(_ day: Date) -> Bool {
-        let tasks = casManager.models.values
+        guard let tasks else {
+            return false
+        }
         
         for i in tasks {
             guard let endDate = i.deadline else {
@@ -48,7 +75,11 @@ final class DayViewVM {
     }
     
     func isOverdue(day: Date) -> Bool {
-        let tasks = casManager.models.values
+        
+        guard let tasks else {
+            return false
+        }
+        
         let today = Date()
         
         for task in tasks {

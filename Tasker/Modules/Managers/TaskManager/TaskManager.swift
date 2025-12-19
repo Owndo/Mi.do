@@ -42,7 +42,7 @@ public final actor TaskManager: TaskManagerProtocol {
     }
     
     //MARK: Tasks properties
-    private var tasks = [String: UITaskModel]()
+    public var tasks = [String: UITaskModel]()
     
     public var activeTasks: [UITaskModel] { returnActiveTasks() }
     public var completedTasks: [UITaskModel] { returnCompletedTasks() }

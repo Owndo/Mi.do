@@ -88,8 +88,14 @@ public final class DateManager: DateManagerProtocol {
     
     public static func createMockDateManager() -> DateManagerProtocol {
         let profileManager = ProfileManager.createMockProfileManager()
+        let dateManager = DateManager(profileManager: profileManager, telemetryManager: TelemetryManager.createTelemetryManager(mock: true))
+        dateManager.initializeWeek()
         
-        return DateManager(profileManager: profileManager, telemetryManager: TelemetryManager.createTelemetryManager(mock: true))
+        Task {
+            await dateManager.initializeMonth()
+        }
+        
+        return dateManager
     }
     
     //MARK: - Selected date change

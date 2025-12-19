@@ -11,7 +11,7 @@ import UIComponents
 public struct WeekView: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var vm = WeekVM()
+    @Bindable var vm: WeekVM
     
     let shape = UnevenRoundedRectangle(
         topLeadingRadius: 22,
@@ -21,7 +21,9 @@ public struct WeekView: View {
         style: .circular
     )
     
-    public init() {}
+    public init(vm: Bindable<WeekVM>) {
+        self._vm = vm
+    }
     
     public var body: some View {
         VStack {
@@ -75,7 +77,7 @@ public struct WeekView: View {
                         Button {
                             vm.selectedDateButtonTapped(day)
                         } label: {
-                            DayView(day: day)
+                            DayView(day: day, dateManager: vm.dateManager, taskManager: vm.taskManager)
                         }
                     }
                 }
@@ -116,5 +118,5 @@ public struct WeekView: View {
 }
 
 #Preview {
-    WeekView()
+    WeekView(vm: .init(wrappedValue: WeekVM.createPreviewVM()))
 }

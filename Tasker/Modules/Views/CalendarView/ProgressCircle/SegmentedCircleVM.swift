@@ -6,18 +6,30 @@
 //
 import Foundation
 import Models
-import Managers
+import TaskManager
+import DateManager
 
 @Observable
 final class SegmentedCircleVM {
-    @ObservationIgnored
-    @Injected(\.taskManager) var taskManager
-    @ObservationIgnored
-    @Injected(\.dateManager) var dateManager
+    var taskManager: TaskManagerProtocol
+    var dateManager: DateManagerProtocol
+    
+    private init(taskManager: TaskManagerProtocol, dateManager: DateManagerProtocol) {
+        self.taskManager = taskManager
+        self.dateManager = dateManager
+    }
+    
+    static func createSegmentedCircleVM(taskManager: TaskManagerProtocol, dateManager: DateManagerProtocol) -> SegmentedCircleVM {
+        SegmentedCircleVM(taskManager: taskManager, dateManager: dateManager)
+    }
+    
+    static func createPreview() -> SegmentedCircleVM {
+        SegmentedCircleVM(taskManager: TaskManager.createMockTaskManager(), dateManager: DateManager.createMockDateManager())
+    }
     
     var useTaskColors: Bool {
-//        let minimal = casManager.profileModel.settings.minimalProgressMode
-//        return !minimal
+        //        let minimal = casManager.profileModel.settings.minimalProgressMode
+        //        return !minimal
         true
     }
     
@@ -25,13 +37,13 @@ final class SegmentedCircleVM {
     var allCompleted: Bool = false
     
     var currentDay: Date = Date()
-    var tasksForToday: [MainModel] = []
+    var tasksForToday: [UITaskModel] = []
     var isLoading = false
     
     var completedFlagsForToday: [Bool] {
         completedFlags
     }
-
+    
     var allTaskCompletedForToday: Bool {
         allCompleted
     }
@@ -40,9 +52,10 @@ final class SegmentedCircleVM {
         dateManager.indexForWeek
     }
     
-//    var updateTask: Bool {
-//        casManager.taskUpdateTrigger
-//    }
+    var updateTask: Bool {
+        //        casManager.taskUpdateTrigger
+        true
+    }
     
     func onAppear(date: Date) {
         currentDay = date
@@ -55,24 +68,24 @@ final class SegmentedCircleVM {
     @MainActor
     func updateTasks() async {
         isLoading = true
-
+        
         let weekTasks = await taskManager.thisWeekTasks(date: currentDay.timeIntervalSince1970)
-
+        
         let filtered = weekTasks.filter {
             $0.isScheduledForDate(currentDay.timeIntervalSince1970, calendar: dateManager.calendar)
         }
-
+        
         let sorted = filtered.sorted { $0.notificationDate < $1.notificationDate }
         tasksForToday = sorted
-
+        
         let timeKey = currentDay.timeIntervalSince1970
         
         completedFlags = sorted.map {
             $0.completeRecords.contains { $0.completedFor == timeKey }
         }
-
+        
         allCompleted = !sorted.isEmpty && completedFlags.allSatisfy { $0 }
-
+        
         isLoading = false
     }
 }

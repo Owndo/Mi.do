@@ -196,6 +196,7 @@
       }
     },
     "Background color" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -260,6 +261,7 @@
       }
     },
     "but for now - look at the wonderful world within and around you..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -324,6 +326,7 @@
       }
     },
     "Close" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -453,6 +456,7 @@
       }
     },
     "Coming soon..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -588,6 +592,7 @@
       }
     },
     "Created:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -717,6 +722,7 @@
       }
     },
     "Default task color" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -781,6 +787,7 @@
       }
     },
     "Delete photo" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -845,6 +852,7 @@
       }
     },
     "Edit avatar" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -974,6 +982,7 @@
       }
     },
     "Interface color" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1232,6 +1241,7 @@
       }
     },
     "one day, your steps will be here… but for now your story is just beginning." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1425,6 +1435,7 @@
       }
     },
     "Progress task design" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1680,9 +1691,6 @@
           }
         }
       }
-    },
-    "Sync with iCloud" : {
-
     },
     "System" : {
       "extractionState" : "manual",

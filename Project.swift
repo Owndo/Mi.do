@@ -48,14 +48,14 @@ let project = Project(
             .module(.appDelegate),
         //MARK: - Telemetry
         .module(.telemetry,
-            dependencies: [
-                .target(name: Modules.models.name),
-                .target(
-                    name: Modules.customErrors.name
-                ),
-                .external(name: "PostHog")
-            ]
-        ),
+                dependencies: [
+                    .target(name: Modules.models.name),
+                    .target(
+                        name: Modules.customErrors.name
+                    ),
+                    .external(name: "PostHog")
+                ]
+               ),
         //MARK: - Errors
         .module(.customErrors),
         //MARK: - Permission
@@ -158,6 +158,7 @@ let project = Project(
                 .target(name: Modules.uiComponents.name)
             ]
         ),
+        //MARK: - TaskView
         .moduleView(
             .taskView,
             dependencies: [
@@ -172,6 +173,33 @@ let project = Project(
                 .target(name: Modules.telemetry.name),
                 .target(name: Modules.paywallView.name),
                 
+            ]
+        ),
+        //MARK: - HistoryView
+        .moduleView(.historyView),
+        //MARK: - ArticlesView
+        .moduleView(.articlesView),
+        //MARK: - AppearanceView
+        .moduleView(Modules.appearanceView, dependencies: [.target(name: Modules.appearanceManager.name), .target(name: Modules.uiComponents.name)]),
+        //MARK: - SettingsView
+        .moduleView(
+            Modules.settingsView,
+            dependencies: [
+                .target(name: Modules.dateManager.name),
+                .target(name: Modules.telemetry.name),
+                .target(name: Modules.appearanceManager.name),
+                .target(name: Modules.uiComponents.name),
+                .target(name: Modules.config.name)
+            ]
+        ),
+        //MARK: - ProfileView
+        .moduleView(
+            .profileView,
+            dependencies: [
+                .target(name: Modules.appearanceManager.name),
+                .target(name: Modules.profileManager.name),
+                .target(name: Modules.subscriptionManager.name),
+                .target(name: Modules.paywallView.name)
             ]
         )
         //        .moduleTests(name: "BlockSet", dependencies: [.target(name: "BlockSet")]),

@@ -6,17 +6,22 @@
 //
 
 import SwiftUI
-import UIComponents
 
-struct ButtonRow: View {
+public struct SettingsButtonRow: View {
     @Environment(\.colorScheme) var colorScheme
     
-    var icon: String
-    var title: LocalizedStringKey
-    var actionIcon: String = "chevron.right"
-    var action: () -> Void
+    public var icon: String
+    public var title: LocalizedStringKey
+    public var actionIcon: String = "chevron.right"
+    public var action: () -> Void
     
-    var body: some View {
+    public init(icon: String, title: LocalizedStringKey, action: @escaping () -> Void) {
+        self.icon = icon
+        self.title = title
+        self.action = action
+    }
+    
+    public var body: some View {
         Button {
             action()
         } label: {
@@ -41,5 +46,5 @@ struct ButtonRow: View {
 }
 
 #Preview {
-    ButtonRow(icon: "", title: "", action: {})
+    SettingsButtonRow(icon: "", title: "", action: {})
 }

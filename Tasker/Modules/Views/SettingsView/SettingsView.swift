@@ -8,14 +8,14 @@
 import SwiftUI
 import UIComponents
 import Models
-import Paywall
+import ConfigurationFile
 
 struct SettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
     @Environment(\.openURL) var openURL
     
-    @State private var vm = SettingsVM()
+    var vm: SettingsVM
     
     @Binding var path: NavigationPath
     
@@ -25,8 +25,8 @@ struct SettingsView: View {
                 .ignoresSafeArea()
             ScrollView {
                 VStack {
-                    ButtonRow(icon: "swirl.circle.righthalf.filled", title: "Appearance") {
-                        vm.goTo(path: &path, destination: .appearance)
+                    SettingsButtonRow(icon: "swirl.circle.righthalf.filled", title: "Appearance") {
+                        //                        vm.goTo(path: &path, destination: .appearance)
                     }
                     
                     CustomDivider()
@@ -45,60 +45,30 @@ struct SettingsView: View {
                         
                         Spacer()
                         
-                        
-                        Menu {
-                            Button {
-                                vm.changeFirstDayOfWeek(.sunday)
-                            } label: {
-                                if vm.firstDayOfWeek.description == "Sunday" {
-                                    Image(systemName: "checkmark")
-                                }
-                                
-                                Text("Sunday", bundle: .module)
-                            }
-                            
-                            Button {
-                                vm.changeFirstDayOfWeek(.monday)
-                            } label: {
-                                if vm.firstDayOfWeek.description == "Monday" {
-                                    Image(systemName: "checkmark")
-                                }
-                                
-                                Text("Monday", bundle: .module)
-                            }
-                        } label: {
-                            HStack {
-                                Text(vm.firstDayOfWeek.description, bundle: .module)
-                                    .font(.system(.callout, design: .rounded, weight: .regular))
-                                
-                                Image(systemName: "chevron.up.chevron.down")
-                                    .padding(.vertical, 12)
-                            }
-                        }
-                        .tint(.labelQuaternary)
+                        FirstDayOfWeekMenu()
                     }
                     
                     CustomDivider()
                         .frame(height: 1)
                         .padding(.leading, 38)
                     
-                    Toggle(isOn: $vm.syncWithIcloud) {
-                        HStack {
-                            Image(systemName: "arrow.clockwise.icloud")
-                                .foregroundStyle(colorScheme.accentColor())
-                                .frame(width: 32, height: 32)
-                            
-                            Text("Sync with iCloud", bundle: .module)
-                                .font(.system(.callout, design: .rounded, weight: .regular))
-                                .foregroundStyle(.labelPrimary)
-                        }
-                    }
+                    //                    Toggle(isOn: $vm.syncWithIcloud) {
+                    //                        HStack {
+                    //                            Image(systemName: "arrow.clockwise.icloud")
+                    //                                .foregroundStyle(colorScheme.accentColor())
+                    //                                .frame(width: 32, height: 32)
+                    //
+                    //                            Text("Sync with iCloud", bundle: .module)
+                    //                                .font(.system(.callout, design: .rounded, weight: .regular))
+                    //                                .foregroundStyle(.labelPrimary)
+                    //                        }
+                    //                    }
                     
-                    CustomDivider()
-                        .frame(height: 1)
-                        .padding(.leading, 38)
+                    //                    CustomDivider()
+                    //                        .frame(height: 1)
+                    //                        .padding(.leading, 38)
                     
-                    ButtonRow(icon: "lock.shield", title: "Privacy Policy") {
+                    SettingsButtonRow(icon: "lock.shield", title: "Privacy Policy") {
                         openURL(ConfigurationFile.privacy)
                     }
                     
@@ -106,7 +76,7 @@ struct SettingsView: View {
                         .frame(height: 1)
                         .padding(.leading, 38)
                     
-                    ButtonRow(icon: "doc", title: "Terms of Use") {
+                    SettingsButtonRow(icon: "doc", title: "Terms of Use") {
                         openURL(ConfigurationFile.terms)
                     }
                     .padding(.bottom, 28)
@@ -147,6 +117,45 @@ struct SettingsView: View {
         }
     }
     
+    //MARK: - First Day of week menu
+    
+    @ViewBuilder
+    private func FirstDayOfWeekMenu() -> some View {
+        Menu {
+            Button {
+                Task {
+                    await vm.changeFirstDayOfWeek(.sunday)
+                }
+            } label: {
+                if vm.firstDayOfWeek.description == "Sunday" {
+                    Image(systemName: "checkmark")
+                }
+                
+                Text("Sunday", bundle: .module)
+            }
+            
+            Button {
+                Task {
+                    await vm.changeFirstDayOfWeek(.monday)
+                }
+            } label: {
+                if vm.firstDayOfWeek.description == "Monday" {
+                    Image(systemName: "checkmark")
+                }
+                
+                Text("Monday", bundle: .module)
+            }
+        } label: {
+            HStack {
+                Text(vm.firstDayOfWeek.description, bundle: .module)
+                    .font(.system(.callout, design: .rounded, weight: .regular))
+                
+                Image(systemName: "chevron.up.chevron.down")
+                    .padding(.vertical, 12)
+            }
+        }
+        .tint(.labelQuaternary)
+    }
     
     //MARK: - Custom divider
     @ViewBuilder
@@ -157,5 +166,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(path: .constant(NavigationPath()))
+    SettingsView(vm: SettingsVM.createMOCKSettingsVM(), path: .constant(NavigationPath()))
 }

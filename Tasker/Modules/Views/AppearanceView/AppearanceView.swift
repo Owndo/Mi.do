@@ -6,16 +6,16 @@
 //
 
 import SwiftUI
-import Managers
 import Models
 import UIComponents
+import AppearanceManager
 
 struct AppearanceView: View {
     @Environment(\.colorScheme) var colorScheme
     
     @Binding var path: NavigationPath
     
-    @State private var vm = AppearanceVM()
+    @Bindable var vm: AppearanceVM
     
     @State private var animateSymbol = false
     
@@ -86,8 +86,10 @@ struct AppearanceView: View {
     @ViewBuilder
     private func SchemeSelector(_ scheme: ColorSchemeMode) -> some View {
         Button {
-            withAnimation {
-                vm.changeScheme(scheme)
+            Task {
+                //            withAnimation {
+                await vm.changeScheme(scheme)
+                //                }
             }
         } label: {
             VStack(spacing: 12) {
@@ -133,11 +135,11 @@ struct AppearanceView: View {
             
             HStack(spacing: 16) {
                 ProgressRowButton(colorScheme == .dark ? Image(uiImage: .minimalDark) : Image(uiImage: .minimal), text: "Minimal", value: true) {
-                    vm.changeProgressMode(true)
+                    await vm.changeProgressMode(true)
                 }
                 
                 ProgressRowButton(colorScheme == .dark ? Image(uiImage: .colorfulDark) : Image(uiImage: .colorful), text: "Colorful", value: false) {
-                    vm.changeProgressMode(false)
+                    await vm.changeProgressMode(false)
                 }
             }
         }
@@ -147,11 +149,13 @@ struct AppearanceView: View {
     
     //MARK: - Progress row Button
     @ViewBuilder
-    private func ProgressRowButton(_ image: Image, text: LocalizedStringKey, value: Bool, action: @escaping () -> Void) -> some View {
+    private func ProgressRowButton(_ image: Image, text: LocalizedStringKey, value: Bool, action: @escaping () async -> Void) -> some View {
         @State var isSelected: Bool = value == vm.profileData.settings.minimalProgressMode
         
         Button {
-            action()
+            Task {
+                await action()
+            }
         } label: {
             VStack {
                 image
@@ -165,16 +169,16 @@ struct AppearanceView: View {
                     .padding(.bottom, 4)
                     .minimumScaleFactor(0.5)
                 
-//                if value == vm.profileData.settings.minimalProgressMode {
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .font(.system(.body, design: .rounded, weight: .semibold))
-                        .symbolEffect(.bounce, value: isSelected)
-                        .foregroundStyle(isSelected ? .labelPrimary : .labelQuaternary)
-//                } else {
-//                    Image(systemName: "circle")
-//                        .font(.system(.body, design: .rounded, weight: .semibold))
-//                        .foregroundStyle(.labelQuaternary)
-//                }
+                //                if value == vm.profileData.settings.minimalProgressMode {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .symbolEffect(.bounce, value: isSelected)
+                    .foregroundStyle(isSelected ? .labelPrimary : .labelQuaternary)
+                //                } else {
+                //                    Image(systemName: "circle")
+                //                        .font(.system(.body, design: .rounded, weight: .semibold))
+                //                        .foregroundStyle(.labelQuaternary)
+                //                }
             }
         }
     }
@@ -194,7 +198,9 @@ struct AppearanceView: View {
                         Spacer()
                         
                         Button {
-                            vm.selectedDefaultTaskColorButtonTapped(color)
+                            Task {
+                                await vm.selectedDefaultTaskColorButtonTapped(color)
+                            }
                         } label: {
                             ZStack {
                                 Circle()
@@ -249,7 +255,9 @@ struct AppearanceView: View {
                 GridItem(.flexible(minimum: 42), spacing: 27)], spacing: 27) {
                     ForEach(AccentColorEnum.allCases) { color in
                         Button {
-                            vm.changeAccentColor(color)
+                            Task {
+                                await vm.changeAccentColor(color)
+                            }
                         } label: {
                             ZStack {
                                 Circle()
@@ -306,7 +314,9 @@ struct AppearanceView: View {
             HStack(spacing: 27) {
                 ForEach(BackgroundColorEnum.allCases, id: \.self) { color in
                     Button {
-                        vm.changeBackgroundColor(color)
+                        Task {
+                            await vm.changeBackgroundColor(color)
+                        }
                     } label: {
                         ZStack {
                             Circle()
@@ -354,5 +364,5 @@ struct AppearanceView: View {
 }
 
 #Preview {
-    AppearanceView(path: .constant(NavigationPath()))
+    AppearanceView(path: .constant(NavigationPath()), vm: .createAppearancePreviewVM())
 }

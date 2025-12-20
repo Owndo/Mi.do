@@ -16,7 +16,8 @@ public protocol AppearanceManagerProtocol {
     func currentColorScheme() -> ColorScheme?
     
     func setColorScheme(_ mode: ColorSchemeMode) async throws
+    func changeProgressMode(_ value: Bool) async throws
+    func changeDefaultTaskColor(_ color: TaskColor) async throws
     func changeAccentColor(_ color: AccentColorEnum) async throws
     func changeBackgroundColor(_ color: BackgroundColorEnum) async throws
-    func changeProgressMode(_ value: Bool) async throws
 }

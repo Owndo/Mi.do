@@ -8,7 +8,7 @@
 import SwiftUI
 import Models
 import UIComponents
-import Paywall
+import PaywallView
 import PhotosUI
 
 //TODO: - Keyboard ignore safe area
@@ -329,7 +329,7 @@ public struct ProfileView: View {
     @ViewBuilder
     private func ButtonsList() -> some View {
         VStack {
-            ButtonRow(icon: "text.rectangle.page", title: "Articles") {
+            SettingsButtonRow(icon: "text.rectangle.page", title: "Articles") {
                 vm.goTo(.articles)
             }
             
@@ -337,7 +337,7 @@ public struct ProfileView: View {
                 .frame(height: 1)
                 .padding(.leading, 38)
             
-            ButtonRow(icon: "clock.arrow.circlepath", title: "Task history") {
+            SettingsButtonRow(icon: "clock.arrow.circlepath", title: "Task history") {
                 vm.goTo(.history)
             }
             
@@ -346,7 +346,7 @@ public struct ProfileView: View {
                     .frame(height: 1)
                     .padding(.leading, 38)
                 
-                ButtonRow(icon: "crown", title: "Purchase a subscription") {
+                SettingsButtonRow(icon: "crown", title: "Purchase a subscription") {
                     vm.subscriptionButtonTapped()
                 }
             }

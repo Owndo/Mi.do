@@ -56,12 +56,17 @@ public enum Modules: String {
     case paywallView = "PaywallView"
     case taskView = "TaskView"
     case calendarView = "CalendarView"
+    case historyView = "HistoryView"
+    case articlesView = "ArticlesView"
+    case appearanceView = "AppearanceView"
+    case settingsView = "SettingsView"
+    case profileView = "ProfileView"
     
     private var kind: ModuleKind {
         switch self {
         case .blockSet, .models, .config:
             return .feature
-        case .uiComponents, .paywallView, .taskView, .calendarView:
+        case .uiComponents, .paywallView, .taskView, .calendarView, .historyView, .articlesView, .appearanceView, .settingsView, .profileView:
             return .view
         default:
             return .manager

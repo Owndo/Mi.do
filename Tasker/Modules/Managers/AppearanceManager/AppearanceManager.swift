@@ -59,6 +59,13 @@ final public class AppearanceManager: AppearanceManagerProtocol {
         try await profileManager.updateProfileModel()
     }
     
+    //MARK: - Default Task Color
+    
+    public func changeDefaultTaskColor(_ color: TaskColor) async throws {
+        profileManager.profileModel.settings.defaultTaskColor = color
+        try await profileManager.updateProfileModel()
+    }
+    
     public func changeAccentColor(_ color: AccentColorEnum) async throws {
         profileManager.profileModel.settings.accentColor = color.setUpColor()
         try await profileManager.updateProfileModel()

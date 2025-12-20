@@ -7,24 +7,22 @@
 
 import Foundation
 import SwiftUI
-import Managers
 import Models
 import PhotosUI
+import AppearanceManager
+import SubscriptionManager
+import TelemetryManager
+import DateManager
 
 @Observable
 final class ProfileVM {
     // MARK: - Managers
-    @ObservationIgnored @Injected(\.casManager) var casManager: CASManagerProtocol
-    @ObservationIgnored @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
-    @ObservationIgnored @Injected(\.recorderManager) private var recorderManager: RecorderManagerProtocol
     @ObservationIgnored @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-    @ObservationIgnored @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
-    @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
-    @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
+//    @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
+//    @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
     @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
-    @ObservationIgnored @Injected(\.permissionManager) private var permissionManager: PermissionProtocol
     @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
-    @ObservationIgnored @Injected(\.onboardingManager) private var onboardingManager: OnboardingManagerProtocol
+//    @ObservationIgnored @Injected(\.onboardingManager) private var onboardingManager: OnboardingManagerProtocol
     @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
     
     var profileModel: ProfileData = mockProfileData()

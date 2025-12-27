@@ -35,7 +35,7 @@ public final class NotificationManager: NotificationManagerProtocol {
     private var calendar: Calendar
     private var now: Date = Date()
     
-    init(subscriptionManager: SubscriptionManagerProtocol, storageManager: StorageManagerProtocol, dateManager: DateManagerProtocol) {
+    private init(subscriptionManager: SubscriptionManagerProtocol, storageManager: StorageManagerProtocol, dateManager: DateManagerProtocol) {
         self.subscriptionManager = subscriptionManager
         self.storageManager = storageManager
         self.dateManager = dateManager

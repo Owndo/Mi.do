@@ -172,13 +172,13 @@ let project = Project(
                 .target(name: Modules.storageManager.name),
                 .target(name: Modules.telemetry.name),
                 .target(name: Modules.paywallView.name),
-                
+                .target(name: Modules.uiComponents.name)
             ]
         ),
         //MARK: - HistoryView
-        .moduleView(.historyView),
+        .moduleView(.historyView, dependencies: [.target(name: Modules.uiComponents.name)]),
         //MARK: - ArticlesView
-        .moduleView(.articlesView),
+        .moduleView(.articlesView, dependencies: [.target(name: Modules.uiComponents.name)]),
         //MARK: - AppearanceView
         .moduleView(Modules.appearanceView, dependencies: [.target(name: Modules.appearanceManager.name), .target(name: Modules.uiComponents.name)]),
         //MARK: - SettingsView
@@ -196,10 +196,17 @@ let project = Project(
         .moduleView(
             .profileView,
             dependencies: [
-                .target(name: Modules.appearanceManager.name),
                 .target(name: Modules.profileManager.name),
+                .target(name: Modules.taskManager.name),
+                .target(name: Modules.dateManager.name),
+                .target(name: Modules.appearanceManager.name),
                 .target(name: Modules.subscriptionManager.name),
-                .target(name: Modules.paywallView.name)
+                .target(name: Modules.paywallView.name),
+                .target(name: Modules.settingsView.name),
+                .target(name: Modules.appearanceView.name),
+                .target(name: Modules.articlesView.name),
+                .target(name: Modules.historyView.name),
+                .target(name: Modules.uiComponents.name)
             ]
         )
         //        .moduleTests(name: "BlockSet", dependencies: [.target(name: "BlockSet")]),

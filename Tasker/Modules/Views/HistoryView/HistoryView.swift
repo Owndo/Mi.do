@@ -8,12 +8,13 @@
 import SwiftUI
 import UIComponents
 
-struct HistoryView: View {
+public struct HistoryView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) var dismissButton
     
-    @Binding var path: NavigationPath
+    public init() {}
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             colorScheme.backgroundColor()
                 .ignoresSafeArea()
@@ -32,7 +33,7 @@ struct HistoryView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        path.removeLast()
+                        dismissButton()
                     } label: {
                         HStack {
                             Image(systemName: "chevron.left")
@@ -55,5 +56,5 @@ struct HistoryView: View {
 }
 
 #Preview {
-    HistoryView(path: .constant(NavigationPath()))
+    HistoryView()
 }

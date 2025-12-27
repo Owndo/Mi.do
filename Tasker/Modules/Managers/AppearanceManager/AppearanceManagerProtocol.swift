@@ -20,4 +20,6 @@ public protocol AppearanceManagerProtocol {
     func changeDefaultTaskColor(_ color: TaskColor) async throws
     func changeAccentColor(_ color: AccentColorEnum) async throws
     func changeBackgroundColor(_ color: BackgroundColorEnum) async throws
+    func mainAccentColor() -> Color
+    func mainBackgroundColor() -> Color
 }

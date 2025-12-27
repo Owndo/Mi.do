@@ -10,23 +10,25 @@ import UIComponents
 import Models
 import ConfigurationFile
 
-struct SettingsView: View {
+public struct SettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
     @Environment(\.openURL) var openURL
     
     var vm: SettingsVM
     
-    @Binding var path: NavigationPath
+    public init(vm: SettingsVM) {
+        self.vm = vm
+    }
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             colorScheme.backgroundColor()
                 .ignoresSafeArea()
             ScrollView {
                 VStack {
                     SettingsButtonRow(icon: "swirl.circle.righthalf.filled", title: "Appearance") {
-                        //                        vm.goTo(path: &path, destination: .appearance)
+                        vm.appearanceButtonTapped()
                     }
                     
                     CustomDivider()
@@ -95,7 +97,7 @@ struct SettingsView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        vm.closeButtonTapped(&path)
+                        vm.backButtonTapped()
                     } label: {
                         HStack {
                             Image(systemName: "chevron.left")
@@ -166,5 +168,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView(vm: SettingsVM.createMOCKSettingsVM(), path: .constant(NavigationPath()))
+    SettingsView(vm: SettingsVM.createMOCKSettingsVM())
 }

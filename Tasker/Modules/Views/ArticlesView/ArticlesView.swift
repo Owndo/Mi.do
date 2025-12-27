@@ -8,12 +8,13 @@
 import SwiftUI
 import UIComponents
 
-struct ArticlesView: View {
+public struct ArticlesView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) var dismissButton
     
-    @Binding var path: NavigationPath
+    public init() {}
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             colorScheme.backgroundColor().ignoresSafeArea()
             
@@ -32,7 +33,7 @@ struct ArticlesView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        path.removeLast()
+                        dismissButton()
                     } label: {
                         HStack {
                             Image(systemName: "chevron.left")
@@ -54,5 +55,5 @@ struct ArticlesView: View {
 }
 
 #Preview {
-    ArticlesView(path: .constant(NavigationPath()))
+    ArticlesView()
 }

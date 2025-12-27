@@ -12,5 +12,7 @@ public protocol ProfileManagerProtocol {
     var profileModel: UIProfileModel { get set }
     
     func updatePhoto(_ data: Data) async throws
+    func deletePhoto() async throws
+    func getPhoto() async throws -> Data?
     func updateProfileModel() async throws
 }

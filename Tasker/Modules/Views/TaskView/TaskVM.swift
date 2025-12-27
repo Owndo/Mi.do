@@ -18,7 +18,7 @@ import PermissionManager
 import SubscriptionManager
 import TelemetryManager
 import PaywallView
-import Errors
+import CustomErrors
 
 @Observable
 public final class TaskVM {
@@ -213,7 +213,6 @@ public final class TaskVM {
         permissionManager: PermissionProtocol,
         storageManager: StorageManagerProtocol,
         subscriptionManager: SubscriptionManagerProtocol,
-        //        paywallVM: PaywallVM,
         task: UITaskModel,
         profileModel: UIProfileModel
     ) {
@@ -225,7 +224,6 @@ public final class TaskVM {
         self.permissionManager = permissionManager
         self.storageManager = storageManager
         self.subscriptionManager = subscriptionManager
-        //        self.paywallVM = paywallVM
         self.task = task
         self.profileModel = profileModel
     }
@@ -292,6 +290,8 @@ public final class TaskVM {
         
         return vm
     }
+    
+    //MARK: - CreateSubscriptionPreviewTaskVM
     
     static func createSubscribedPreviewTaskVM() -> TaskVM {
         let taskManager = TaskManager.createMockTaskManager()

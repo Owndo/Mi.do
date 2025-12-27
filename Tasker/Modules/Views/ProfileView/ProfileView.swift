@@ -10,11 +10,16 @@ import Models
 import UIComponents
 import PaywallView
 import PhotosUI
+import ArticlesView
+import AppearanceView
+import HistoryView
+import SettingsView
+import AppearanceManager
 
 //TODO: - Keyboard ignore safe area
 public struct ProfileView: View {
     
-    @State private var vm = ProfileVM()
+    @Bindable var vm: ProfileVM
     
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
@@ -22,7 +27,9 @@ public struct ProfileView: View {
     @State private var avatarItem: PhotosPickerItem?
     @State private var avatarImage: Image?
     
-    public init() {}
+    public init(vm: Bindable<ProfileVM>) {
+        self._vm = vm
+    }
     
     public var body: some View {
         NavigationStack(path: $vm.path) {
@@ -38,44 +45,49 @@ public struct ProfileView: View {
                         matching: .images
                     )
                 
-                if vm.showPaywall {
-                    PaywallView()
+                if let vm = vm.paywallVM {
+                    PaywallView(vm: vm)
                 }
             }
             .navigationDestination(for: ProfileDestination.self) { desctination in
-                switch desctination {
-                case .articles:
-                    ArticlesView(path: $vm.path)
-                case .history:
-                    HistoryView(path: $vm.path)
-                case .settings:
-                    SettingsView(path: $vm.path)
-                case .appearance:
-                    AppearanceView(path: $vm.path)
-                }
+                desctination.destination()
             }
             .alert(item: $vm.alert) { alert in
                 alert.alert
             }
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismissButton()
-                        
-                        // telemetry
-                        vm.closeButtonTapped()
-                    } label: {
-                        Text("Close", bundle: .module)
-                            .font(.system(.body, design: .rounded, weight: .medium))
-                            .foregroundStyle(colorScheme.accentColor())
-                        
-                            .opacity(vm.showPaywall ? 0 : 1)
+                if #available(iOS 26, *) {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            dismissButton()
+                            
+                            // telemetry
+                            vm.closeButtonTapped()
+                        } label: {
+                            Text("Close", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
+                                .opacity(vm.showPaywall ? 0.0 : 1)
+                            
+                        }
+                    }
+                    .sharedBackgroundVisibility(vm.showPaywall ? .hidden : .visible)
+                } else {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            dismissButton()
+                            
+                            // telemetry
+                            vm.closeButtonTapped()
+                        } label: {
+                            Text("Close", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .medium))
+                                .foregroundStyle(colorScheme.accentColor())
+                            
+                        }
                     }
                 }
             }
-        }
-        .onAppear {
-            vm.onAppear()
         }
         .onDisappear {
             vm.onDisappear()
@@ -98,7 +110,7 @@ public struct ProfileView: View {
         ScrollView {
             VStack(spacing: 0) {
                 ZStack {
-                    SettingsButton()
+                    GearSettingsButton()
                     
                     ProfilePhoto()
                         .padding(.bottom, 14)
@@ -113,7 +125,9 @@ public struct ProfileView: View {
                     .multilineTextAlignment(.center)
                     .tint(colorScheme.accentColor())
                     .onSubmit {
-                        vm.profileModelSave()
+                        Task {
+                            await vm.profileModelSave()
+                        }
                     }
                 
                 TaskStatic()
@@ -133,11 +147,11 @@ public struct ProfileView: View {
         .scrollIndicators(.hidden)
     }
     
-    //MARK: - Settings Button
+    //MARK: - Gear/Settings Button
     @ViewBuilder
-    private func SettingsButton() -> some View {
+    private func GearSettingsButton() -> some View {
         Button {
-            vm.goTo(.settings)
+            vm.goToSettingsButtonTapped()
         } label: {
             if #available(iOS 26.0, *) {
                 Image(systemName: "gearshape")
@@ -147,6 +161,7 @@ public struct ProfileView: View {
                     .symbolEffect(.bounce,options: .speed(0.6), value: vm.gearAnimation)
                     .padding(5)
                     .glassEffect(.regular.interactive())
+                    .disabled(vm.showPaywall ? true : false)
             } else {
                 Image(systemName: "gearshape")
                     .foregroundStyle(colorScheme.accentColor())
@@ -242,7 +257,9 @@ public struct ProfileView: View {
             }
             
             Button(role: .destructive) {
-                vm.deletePhotoFromProfile()
+                Task {
+                    await vm.deletePhotoFromProfile()
+                }
             } label: {
                 HStack {
                     Text("Delete photo", bundle: .module)
@@ -330,7 +347,7 @@ public struct ProfileView: View {
     private func ButtonsList() -> some View {
         VStack {
             SettingsButtonRow(icon: "text.rectangle.page", title: "Articles") {
-                vm.goTo(.articles)
+                vm.articlesButtonTapped()
             }
             
             CustomDivider()
@@ -338,7 +355,7 @@ public struct ProfileView: View {
                 .padding(.leading, 38)
             
             SettingsButtonRow(icon: "clock.arrow.circlepath", title: "Task history") {
-                vm.goTo(.history)
+                vm.taskHistoryButtonTapped()
             }
             
             if vm.isnotActiveSubscription() {
@@ -347,7 +364,9 @@ public struct ProfileView: View {
                     .padding(.leading, 38)
                 
                 SettingsButtonRow(icon: "crown", title: "Purchase a subscription") {
-                    vm.subscriptionButtonTapped()
+                    Task {
+                        await vm.subscriptionButtonTapped()
+                    }
                 }
             }
             
@@ -386,5 +405,5 @@ public struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(vm: .init(ProfileVM.createProfilePreviewVM()))
 }

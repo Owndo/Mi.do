@@ -11,11 +11,13 @@ import AppearanceManager
 import Models
 
 @Observable
-final class AppearanceVM {
+public final class AppearanceVM: HashableNavigation {
     var appearanceManager: AppearanceManagerProtocol
     
     var profileData: UIProfileModel
     var defaultTaskColor: TaskColor
+    
+    public var backButton: (() -> Void)?
     
     var changeStateTrigger = false
     var backgroundSymbolAnimate = false
@@ -139,5 +141,22 @@ final class AppearanceVM {
         }
         
         return state
+    }
+    
+    //MARK: - Back Button Tapped
+    func backButtonTapped() {
+        backButton?()
+    }
+}
+
+protocol HashableNavigation: AnyObject, Hashable {}
+
+extension HashableNavigation {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs === rhs
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
     }
 }

@@ -10,16 +10,18 @@ import Models
 import UIComponents
 import AppearanceManager
 
-struct AppearanceView: View {
+public struct AppearanceView: View {
     @Environment(\.colorScheme) var colorScheme
-    
-    @Binding var path: NavigationPath
     
     @Bindable var vm: AppearanceVM
     
     @State private var animateSymbol = false
     
-    var body: some View {
+    public init(vm: AppearanceVM) {
+        self.vm = vm
+    }
+    
+    public var body: some View {
         ZStack {
             colorScheme.backgroundColor()
                 .ignoresSafeArea()
@@ -57,7 +59,7 @@ struct AppearanceView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    path.removeLast()
+                    vm.backButtonTapped()
                 } label: {
                     HStack {
                         Image(systemName: "chevron.left")
@@ -364,5 +366,5 @@ struct AppearanceView: View {
 }
 
 #Preview {
-    AppearanceView(path: .constant(NavigationPath()), vm: .createAppearancePreviewVM())
+    AppearanceView(vm: AppearanceVM.createAppearancePreviewVM())
 }

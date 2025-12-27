@@ -673,13 +673,13 @@ public struct TaskView: View {
                     .tint(colorScheme.accentColor())
             }
         }
-//        .onChange(of: vm.hasDeadline) { oldValue, newValue in
-//            Task {
-//                if newValue {
-//                    await vm.checkSubscriptionForDeadline()
-//                }
-//            }
-//        }
+        //        .onChange(of: vm.hasDeadline) { oldValue, newValue in
+        //            Task {
+        //                if newValue {
+        //                    await vm.checkSubscriptionForDeadline()
+        //                }
+        //            }
+        //        }
         .clipped()
     }
     

@@ -17,7 +17,7 @@ public final class ProfileManager: ProfileManagerProtocol {
     
     //MARK: - Init
     
-    init(casManager: CASManagerProtocol, profileModel: UIProfileModel) {
+    private init(casManager: CASManagerProtocol, profileModel: UIProfileModel) {
         self.casManager = casManager
         self.profileModel = profileModel
     }
@@ -51,6 +51,15 @@ public final class ProfileManager: ProfileManagerProtocol {
         
         profileModel.photo = hash
         try await saveProfile()
+    }
+    
+    public func deletePhoto() async throws {
+        profileModel.photo = ""
+        try await saveProfile()
+    }
+    
+    public func getPhoto() async throws -> Data? {
+        try await casManager.retrieve(profileModel.photo)
     }
     
     //MARK: - Save Profile

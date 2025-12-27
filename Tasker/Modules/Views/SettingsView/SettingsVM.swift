@@ -13,14 +13,15 @@ import TelemetryManager
 import SwiftUI
 
 @Observable
-final class SettingsVM {
+public final class SettingsVM: HashableNavigation {
     private var dateManager: DateManagerProtocol
     private var profileManager: ProfileManagerProtocol
     private var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
     var profileModel: UIProfileModel
     
-    var profileButton: (() -> Void)?
+    public var backButton: (() -> Void)?
+    public var appearanceButton: (() -> Void)?
     
     var firstDayOfWeek: FirstWeekDay = .sunday
     
@@ -64,9 +65,9 @@ final class SettingsVM {
     //TODO: - Check first day of week
     //MARK: - Create SettingsVM
     
-    static func createSettingsVM(dateManager: DateManagerProtocol, profilemanager: ProfileManagerProtocol) -> SettingsVM {
-        let settingsVM = SettingsVM(dateManager: dateManager, profilemanager: profilemanager, profileModel: profilemanager.profileModel)
-        settingsVM.firstDayOfWeek = profilemanager.profileModel.settings.firstDayOfWeek == 1 ? .sunday : .monday
+    public static func createSettingsVM(dateManager: DateManagerProtocol, profileManager: ProfileManagerProtocol) -> SettingsVM {
+        let settingsVM = SettingsVM(dateManager: dateManager, profilemanager: profileManager, profileModel: profileManager.profileModel)
+        settingsVM.firstDayOfWeek = profileManager.profileModel.settings.firstDayOfWeek == 1 ? .sunday : .monday
         
         return settingsVM
     }
@@ -114,13 +115,29 @@ final class SettingsVM {
         try await profileManager.updateProfileModel()
     }
     
-    func closeButtonTapped(_ path: inout NavigationPath) {
-        path.removeLast()
+    func backButtonTapped() {
+        backButton?()
         telemetryAction(action: .profileAction(.closeButtonTapped))
+    }
+    
+    func appearanceButtonTapped() {
+        appearanceButton?()
     }
     
     //MARK: - Telemetry action
     private func telemetryAction(action: EventType) {
         telemetryManager.logEvent(action)
+    }
+}
+
+protocol HashableNavigation: AnyObject, Hashable {}
+
+extension HashableNavigation {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs === rhs
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
     }
 }

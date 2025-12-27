@@ -5,35 +5,48 @@
 //  Created by Rodion Akhmedov on 4/14/25.
 //
 
+import AppearanceManager
+import DateManager
 import Foundation
 import SwiftUI
 import Models
 import PhotosUI
-import AppearanceManager
+import ProfileManager
 import SubscriptionManager
+import TaskManager
 import TelemetryManager
-import DateManager
+import SettingsView
+import AppearanceView
+import HistoryView
+import ArticlesView
+import PaywallView
 
 @Observable
-final class ProfileVM {
+public final class ProfileVM {
     // MARK: - Managers
-    @ObservationIgnored @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-//    @ObservationIgnored @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
-//    @ObservationIgnored @Injected(\.storageManager) private var storageManager: StorageManagerProtocol
-    @ObservationIgnored @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
-    @ObservationIgnored @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
-//    @ObservationIgnored @Injected(\.onboardingManager) private var onboardingManager: OnboardingManagerProtocol
-    @ObservationIgnored @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
+    private var profileManager: ProfileManagerProtocol
+    private var taskManager: TaskManagerProtocol
+    private var appearanceManager: AppearanceManagerProtocol
+    private var dateManager: DateManagerProtocol
+    private var subscriptionManager: SubscriptionManagerProtocol
     
-    var profileModel: ProfileData = mockProfileData()
+    private var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    
+    var profileModel: UIProfileModel
+    
+    var settingsVM: SettingsVM
+    var appearanceVM: AppearanceVM
+    var paywallVM: PaywallVM?
     
     //MARK: UI state
     // Path for navigation
-    var path = NavigationPath()
+    var path: [ProfileDestination] = []
     // Profile created date
     var createdDate = Date()
-    // Library showing
+    /// Library showing
     var showLibrary = false
+    /// Paywall is presenting
+    var showPaywall = true
     var alert: AlertModel?
     var navigationTriger = false
     
@@ -70,39 +83,120 @@ final class ProfileVM {
         calendar.startOfDay(for: Date(timeIntervalSince1970: dateManager.currentTime.timeIntervalSince1970)).timeIntervalSince1970
     }
     
-    var showPaywall: Bool {
-        subscriptionManager.showPaywall
+    var tasks: [UITaskModel]?
+    
+    //    var showPaywall: Bool {
+    //        subscriptionManager.showPaywall
+    //    }
+    
+    private init(
+        profileManager: ProfileManagerProtocol,
+        taskManager: TaskManagerProtocol,
+        appearanceManager: AppearanceManagerProtocol,
+        dateManager: DateManagerProtocol,
+        subscriptionManager: SubscriptionManagerProtocol,
+        profileModel: UIProfileModel,
+        settingsVM: SettingsVM,
+        appearanceVM: AppearanceVM
+    ) {
+        self.profileManager = profileManager
+        self.taskManager = taskManager
+        self.appearanceManager = appearanceManager
+        self.dateManager = dateManager
+        self.subscriptionManager = subscriptionManager
+        self.profileModel = profileModel
+        self.settingsVM = settingsVM
+        self.appearanceVM = appearanceVM
     }
     
-    init() {
-        setUpProfile()
+    
+    //MARK: - Create profileVM
+    
+    public static func createProfileVM(profileManager: ProfileManagerProtocol, taskManager: TaskManagerProtocol, appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol) async -> ProfileVM {
+        let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
+        let settingsVM = SettingsVM.createSettingsVM(dateManager: dateManager, profileManager: profileManager)
+        let appearanceVM = AppearanceVM.createAppearanceVM(appearanceManager: appearanceManager)
+        let vm = ProfileVM(profileManager: profileManager, taskManager: taskManager, appearanceManager: appearanceManager, dateManager: dateManager, subscriptionManager: subscriptionManager, profileModel: profileManager.profileModel, settingsVM: settingsVM, appearanceVM: appearanceVM)
+        vm.tasks = await taskManager.tasks.map { $0.value }
+        await vm.setUpProfile()
+        vm.onAppear()
+        vm.syncNavigation()
+        
+        return vm
     }
     
-    func setUpProfile() {
-        profileModel = casManager.profileModel
-        print("settings - \(profileModel.photo)")
-        if let data = getPhotoFromCAS() {
-            if let uiImage = UIImage(data: data) {
-                print("aga")
-                selectedImage = Image(uiImage: uiImage)
-            }
+    //MARK: - Create PreviewProfileVM
+    
+    public static func createProfilePreviewVM() -> ProfileVM {
+        let dateManager = DateManager.createMockDateManager()
+        let profileManager = ProfileManager.createMockProfileManager()
+        let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
+        let appearanceManager = AppearanceManager.createMockAppearanceManager()
+        let taskManager = TaskManager.createMockTaskManager()
+        
+        let settingsVM = SettingsVM.createSettingsVM(dateManager: dateManager, profileManager: profileManager)
+        let appearanceVM = AppearanceVM.createAppearanceVM(appearanceManager: appearanceManager)
+        let vm = ProfileVM(profileManager: profileManager, taskManager: taskManager, appearanceManager: appearanceManager, dateManager: dateManager, subscriptionManager: subscriptionManager, profileModel: profileManager.profileModel, settingsVM: settingsVM, appearanceVM: appearanceVM)
+        vm.onAppear()
+        vm.tasks = []
+        vm.syncNavigation()
+//        vm.setUpProfile()
+        
+        return vm
+    }
+    
+    func syncNavigation() {
+        settingsVM.appearanceButton = { [weak self] in
+            guard let self else { return }
+            
+            self.path.append(.appearance(appearanceVM))
         }
+        
+        settingsVM.backButton = { [weak self] in
+            guard let self else { return }
+            
+            self.path.removeLast()
+        }
+        
+        appearanceVM.backButton = { [weak self] in
+            guard let self else { return }
+            
+            self.path.removeLast()
+        }
+    }
+    
+    func setUpProfile() async {
+                if let data = try? await getPhotoFromCAS() {
+                    if let uiImage = UIImage(data: data) {
+                        selectedImage = Image(uiImage: uiImage)
+                    }
+                }
         photoPosition = profileModel.photoPosition
         createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
     }
     
     func isnotActiveSubscription() -> Bool {
-        !subscriptionManager.subscribed
+        true
+        //        !subscriptionManager.subscribed
     }
     
-    func subscriptionButtonTapped() {
-        guard subscriptionManager.hasSubscription() else {
-            return
+    //MARK: - Subscription Button tapped
+    func subscriptionButtonTapped() async {
+       await createPaywallVM()
+    }
+    
+    //MARK: - Create PaywallVM
+    
+    private func createPaywallVM() async {
+        paywallVM = await PaywallVM.createPaywallVM(subscriptionManager: subscriptionManager)
+        showPaywall = true
+        
+        paywallVM?.closePaywall = { [weak self] in
+            guard let self else { return }
+            
+            paywallVM = nil
+            showPaywall = false
         }
-    }
-    
-    func closePaywallButtonTapped() {
-        subscriptionManager.closePaywall()
     }
     
     func onAppear() {
@@ -115,34 +209,32 @@ final class ProfileVM {
     
     func onDisappear() {
         //        endAnimationButton()
-        subscriptionManager.showPaywall = false
+        //        subscriptionManager.showPaywall = false
         
         //telemetry
         telemetryAction(action: .openView(.profile(.close)))
     }
     
-    //MARK: - Navigation to
-    func goTo(_ destination: ProfileDestination) {
-        switch destination {
-        case .articles:
-            path.append(destination)
-            
-            // telemtry
-            telemetryAction(action: .profileAction(.productivityArticleView(.openArticle)))
-        case .history:
-            path.append(destination)
-            // telemtry
-            telemetryAction(action: .profileAction(.taskHistoryButtonTapped))
-            
-        case .settings:
-            path.append(destination)
-        case .appearance:
-            path.append(destination)
-        }
+    //MARK: - Navigation to settings
+    
+    func goToSettingsButtonTapped() {
+        path.append(.settings(settingsVM))
     }
     
     func settingsButtonTapped() {
         settingsScreenIsPresented = true
+    }
+    
+    //MARK: - Navigation to articles
+    
+    func articlesButtonTapped() {
+        path.append(.articles)
+    }
+    
+    //MARK: - Task History Button Tapped
+    
+    func taskHistoryButtonTapped() {
+        path.append(.history)
     }
     
     //MARK: Task's statistics
@@ -153,7 +245,7 @@ final class ProfileVM {
         
         switch type {
         case .today:
-            tasks = casManager.models.values
+            tasks = tasks
                 .filter {
                     $0.deleteRecords.contains { $0.deletedFor == todayForFilter } != true &&
                     $0.isScheduledForDate(todayForFilter, calendar: calendar)
@@ -164,14 +256,14 @@ final class ProfileVM {
             var daysFromStartOfWeek = dateManager.startOfWeek(for: today)
             
             (0..<7).forEach { _ in
-                tasks = casManager.models.values
+                tasks = tasks
                     .filter { $0.isScheduledForDate(daysFromStartOfWeek.timeIntervalSince1970, calendar: calendar) }
                 
                 count += tasks.count
                 daysFromStartOfWeek = calendar.date(byAdding: .day, value: 1, to: daysFromStartOfWeek)!
             }
         case .completed:
-            count = casManager.completedTaskCount()
+            count = tasks.count
         }
         
         if count >= 1000 {
@@ -198,40 +290,44 @@ final class ProfileVM {
         if let image = try? await selectedItems.first?.loadTransferable(type: Data.self) {
             if let uiImage = UIImage(data: image) {
                 selectedImage = Image(uiImage: uiImage)
-                addPhotoToProfile(image: image)
+                await addPhotoToProfile(image: image)
             }
         }
     }
     
-    func getPhotoFromCAS() -> Data? {
-        let hash = profileModel.photo
+    func getPhotoFromCAS() async throws -> Data? {
+        guard await profileHasPhoto() else {
+            return nil
+        }
         
-        return casManager.getData(hash)
+        return try? await profileManager.getPhoto()
     }
     
-    func profileHasPhoto() -> Bool {
-        casManager.getData(profileModel.photo) != nil
+    func profileHasPhoto() async -> Bool {
+        guard profileModel.photo != "" else {
+            return false
+        }
+        return true
+        //        casManager.getData(profileModel.photo) != nil
     }
     
-    private func addPhotoToProfile(image: Data) {
-        profileModel.photo = casManager.saveImage(image) ?? ""
+    private func addPhotoToProfile(image: Data) async {
+        try? await profileManager.updatePhoto(image)
         photoPosition = .zero
         profileModel.photoPosition = photoPosition
-        casManager.saveProfileData(profileModel)
+        //        casManager.saveProfileData(profileModel)
         selectedItems.removeAll()
     }
     
-    func deletePhotoFromProfile() {
+    func deletePhotoFromProfile() async {
+        try? await profileManager.deletePhoto()
         selectedImage = nil
-        profileModel.photo = ""
         photoPosition = .zero
-        profileModel.photoPosition = photoPosition
-        casManager.saveProfileData(profileModel)
     }
     
     /// Save profile to cas
-    func profileModelSave() {
-        casManager.saveProfileData(profileModel)
+    func profileModelSave() async {
+        try? await profileManager.updateProfileModel()
     }
     
     func savePhotoPosition() {
@@ -251,12 +347,27 @@ final class ProfileVM {
 enum ProfileDestination: Hashable {
     case articles
     case history
-    case settings
-    case appearance
+    case settings(SettingsVM)
+    case appearance(AppearanceVM)
 }
-
 
 enum SettingsDestination: Hashable {
     case settings
     case appearance
+}
+
+extension ProfileDestination {
+    @ViewBuilder
+    func destination() -> some View {
+        switch self {
+        case .articles:
+            ArticlesView()
+        case .history:
+            HistoryView()
+        case .settings(let settingsVM):
+            SettingsView(vm: settingsVM)
+        case .appearance(let appearanceVM):
+            AppearanceView(vm: appearanceVM)
+        }
+    }
 }

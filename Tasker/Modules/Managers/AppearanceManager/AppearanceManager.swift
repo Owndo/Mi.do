@@ -75,6 +75,26 @@ final public class AppearanceManager: AppearanceManagerProtocol {
         profileManager.profileModel.settings.background = color.setUpColor()
         try await profileManager.updateProfileModel()
     }
+    
+    //MARK: - Accent Color
+    
+    public func mainAccentColor() -> Color {
+        if profileModel.settings.colorScheme == .dark {
+            return profileModel.settings.accentColor.dark.hexColor()
+        } else {
+            return profileModel.settings.accentColor.light.hexColor()
+        }
+    }
+    
+    //MARK: - Background Color
+    
+    public func mainBackgroundColor() -> Color {
+        if profileModel.settings.colorScheme == .dark {
+            return profileModel.settings.background.dark.hexColor()
+        } else {
+            return profileModel.settings.background.light.hexColor()
+        }
+    }
 }
 
 //MARK: - Accent color

@@ -21,7 +21,7 @@ import PaywallView
 import CustomErrors
 
 @Observable
-public final class TaskVM {
+public final class TaskVM: HashableNavigation {
     // MARK: - Managers
     
     let taskManager: TaskManagerProtocol

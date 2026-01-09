@@ -13,23 +13,32 @@ import TelemetryManager
 import Models
 
 @Observable
-public final class WeekVM {
+public final class WeekVM: HashableNavigation {
+    var appearanceManager: AppearanceManagerProtocol
     var dateManager: DateManagerProtocol
     var taskManager: TaskManagerProtocol
-    var appearanceManager: AppearanceManagerProtocol
     var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
-    public init(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, appearanceManager: AppearanceManagerProtocol) {
+    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
+        self.appearanceManager = appearanceManager
         self.dateManager = dateManager
         self.taskManager = taskManager
-        self.appearanceManager = appearanceManager
     }
     
-    static func createPreviewVM() -> WeekVM {
+    //MARK: - Create VM
+    
+    public static func createVM(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) -> WeekVM {
+        WeekVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+    }
+    
+    
+    //MARK: - Create PreviewVM
+    
+    public static func createPreviewVM() -> WeekVM {
         WeekVM(
+            appearanceManager: AppearanceManager.createMockAppearanceManager(),
             dateManager: DateManager.createMockDateManager(),
-            taskManager: TaskManager.createMockTaskManager(),
-            appearanceManager: AppearanceManager.createMockAppearanceManager()
+            taskManager: TaskManager.createMockTaskManager()
         )
     }
     

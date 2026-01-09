@@ -23,9 +23,21 @@ public final class CalendarVM: HashableNavigation {
     
     public var backToMainView: (() -> Void)?
     
-    public var scrollID: Int?
+    public var scrollID: Int? {
+        didSet {
+            findNameForMonth()
+        }
+    }
+    
+    //MARK: - UI State
     
     var viewStarted = false
+    var navigationTitle = ""
+    var navigationSubtitle = ""
+    
+    var imageForTodayButton = "chevron.up"
+    
+    var isScrolling = false
     
     var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
@@ -72,20 +84,16 @@ public final class CalendarVM: HashableNavigation {
     
     //MARK: - On appear
     
-    func onAppear() {
-        if scrollID == nil {
-            scrollID = 10
-        }
+    func onAppear() async {
+        await dateManager.initializeMonth()
+        navigationTitle = allMonths[10].name ?? ""
+        scrollID = 10
         
+        try? await Task.sleep(for: .seconds(0.5))
         viewStarted = true
     }
     
     func onDissapear() {
-        guard calendar.isDateInToday(selectedDate) else {
-            viewStarted = false
-            return
-        }
-        
         scrollID = nil
         viewStarted = false
     }
@@ -128,25 +136,23 @@ public final class CalendarVM: HashableNavigation {
     }
     
     func backToTodayButtonTapped() async {
-        await MainActor.run {
-            dateManager.selectedDateChange(today)
-            scrollID = 10
-        }
+        dateManager.selectedDateChange(today)
+        await dateManager.initializeMonth()
+        scrollID = 10
         
         // telemetry
         telemetryAction(.calendarAction(.backToTodayButtonTapped(.calendarView)))
     }
     
     func currentYear(_ month: PeriodModel) -> String? {
-        let day = month.date.first!
+        guard let day = month.date.first else { return nil }
+        return day.formatted(.dateTime.year())
+    }
+    
+    func monthName(_ month: PeriodModel) -> String {
+        guard let date = month.date.first else { return "" }
         
-        let year = calendar.component(.year, from: day)
-        
-        if year == calendar.component(.year, from: today) {
-            return nil
-        } else {
-            return String(year)
-        }
+        return date.formatted(.dateTime.month(.abbreviated))
     }
     
     //MARK: - Back to MainView Button
@@ -158,22 +164,34 @@ public final class CalendarVM: HashableNavigation {
         telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))
     }
     
-    func handleMonthAppeared(_ month: PeriodModel) {
+    //MARK: - Handle Month
+    
+    func handleMonthAppeared(_ month: PeriodModel) async {
+        
         guard viewStarted else { return }
-
-        guard let first = allMonths.first else { return }
-
-        if month.id <= first.id + 2 {
-            let anchorID = first.id
-            scrollID = anchorID
-            dateManager.generatePreviousMonth()
-        }
-
-        if let last = allMonths.last, month.id >= last.id - 1 {
-            dateManager.appendMonthsForward()
+        
+        if let first = allMonths.first, first == month {
+            await dateManager.generatePreviousMonth()
+        } else if let last = allMonths.last, last == month {
+            await dateManager.generateFeatureMonth()
         }
     }
-
+    
+    func findNameForMonth() {
+        guard let id = scrollID else { return }
+        let month = allMonths.first(where: { $0.id == id })!
+        
+        if let date = month.date.first {
+            if date > today {
+                imageForTodayButton = "chevron.up"
+            } else {
+                imageForTodayButton = "chevron.down"
+            }
+        }
+        
+        navigationTitle = month.name ?? ""
+        navigationSubtitle = currentYear(month) ?? ""
+    }
     
     //MARK: Telemtry action
     private func telemetryAction(_ action: EventType) {

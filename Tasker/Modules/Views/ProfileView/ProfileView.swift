@@ -22,13 +22,12 @@ public struct ProfileView: View {
     @Bindable var vm: ProfileVM
     
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.dismiss) var dismissButton
     
     @State private var avatarItem: PhotosPickerItem?
     @State private var avatarImage: Image?
     
-    public init(vm: Bindable<ProfileVM>) {
-        self._vm = vm
+    public init(vm: ProfileVM) {
+        self.vm = vm
     }
     
     public var body: some View {
@@ -57,27 +56,20 @@ public struct ProfileView: View {
             }
             .toolbar {
                 if #available(iOS 26, *) {
-                    ToolbarItem(placement: .cancellationAction) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button {
-                            dismissButton()
-                            
-                            // telemetry
                             vm.closeButtonTapped()
                         } label: {
                             Text("Close", bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .medium))
                                 .foregroundStyle(colorScheme.accentColor())
                                 .opacity(vm.showPaywall ? 0.0 : 1)
-                            
                         }
                     }
                     .sharedBackgroundVisibility(vm.showPaywall ? .hidden : .visible)
                 } else {
-                    ToolbarItem(placement: .cancellationAction) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button {
-                            dismissButton()
-                            
-                            // telemetry
                             vm.closeButtonTapped()
                         } label: {
                             Text("Close", bundle: .module)
@@ -88,6 +80,9 @@ public struct ProfileView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            vm.onAppear()
         }
         .onDisappear {
             vm.onDisappear()
@@ -157,8 +152,8 @@ public struct ProfileView: View {
                 Image(systemName: "gearshape")
                     .foregroundStyle(colorScheme.accentColor())
                     .font(.system(size: 30))
-                    .rotationEffect(Angle(degrees: vm.gearAnimation ? 360 : 0))
-                    .symbolEffect(.bounce,options: .speed(0.6), value: vm.gearAnimation)
+                    .rotationEffect(Angle(degrees: vm.gearAnimation ? -360 : 0))
+                    .symbolEffect(.bounce, options: .speed(0.6), value: vm.gearAnimation)
                     .padding(5)
                     .glassEffect(.regular.interactive())
                     .disabled(vm.showPaywall ? true : false)
@@ -378,6 +373,7 @@ public struct ProfileView: View {
     }
     
     //MARK: - Custom divider
+    
     @ViewBuilder
     private func CustomDivider() -> some View {
         RoundedRectangle(cornerRadius: 1)
@@ -405,5 +401,5 @@ public struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(vm: .init(ProfileVM.createProfilePreviewVM()))
+    ProfileView(vm: ProfileVM.createProfilePreviewVM())
 }

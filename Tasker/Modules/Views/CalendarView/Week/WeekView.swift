@@ -21,8 +21,8 @@ public struct WeekView: View {
         style: .circular
     )
     
-    public init(vm: Bindable<WeekVM>) {
-        self._vm = vm
+    public init(vm: WeekVM) {
+        self.vm = vm
     }
     
     public var body: some View {
@@ -118,5 +118,5 @@ public struct WeekView: View {
 }
 
 #Preview {
-    WeekView(vm: .init(wrappedValue: WeekVM.createPreviewVM()))
+    WeekView(vm: WeekVM.createPreviewVM())
 }

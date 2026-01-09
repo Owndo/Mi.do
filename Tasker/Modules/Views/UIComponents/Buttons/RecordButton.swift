@@ -98,7 +98,7 @@ public struct RecordButton: View {
                         )
                 )
         }
-        .onAppear {
+        .task {
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                 withAnimation(.easeInOut(duration: 0.7)) {
                     shadowXOffset = CGFloat.random(in: -4...4)
@@ -107,10 +107,10 @@ public struct RecordButton: View {
                 }
             }
         }
-        .onDisappear {
-            shadowYOffset = 0
-            shadowXOffset = 0
-        }
+//        .onDisappear {
+//            shadowYOffset = 0
+//            shadowXOffset = 0
+//        }
     }
     
     @ViewBuilder

@@ -199,17 +199,18 @@ public final class DateManager: DateManagerProtocol {
     
     //MARK: - Months
     
-    public func generatePreviousMonth() {
+    public func generatePreviousMonth() async {
         guard let firstDay = allMonths.first!.date.first else { return }
         let monthStart = calendar.date(byAdding: .month, value: -1, to: firstDay)!
         let newMonth = generateMonth(for: monthStart)
         let nameOfMonth = getMonthName(from: monthStart)
         let newId = allMonths.first!.id - 1
         
+        allMonths.removeLast()
         allMonths.insert(PeriodModel(id: newId, date: newMonth, name: nameOfMonth), at: 0)
     }
     
-    public func appendMonthsBackward() {
+    public func appendMonthsBackward() async {
         guard let firstMonthStart = allMonths.first?.date.first,
               let firstID = allMonths.first?.id else { return }
         
@@ -227,15 +228,13 @@ public final class DateManager: DateManagerProtocol {
         allMonths.insert(contentsOf: newMonths, at: 0)
     }
     
-    public func appendMonthsForward() {
+    public func generateFeatureMonth() async {
         guard let lastMonthStart = allMonths.last?.date.first else { return }
-        for i in 1...24 {
-            let monthStart = calendar.date(byAdding: .month, value: i, to: lastMonthStart)!
-            let newMonth = generateMonth(for: monthStart)
-            let nameOfMonth = getMonthName(from: monthStart)
-            let nextID = (allMonths.last?.id ?? 0) + 1
-            allMonths.append(PeriodModel(id: nextID, date: newMonth, name: nameOfMonth))
-        }
+        let monthStart = calendar.date(byAdding: .month, value: 1, to: lastMonthStart)!
+        let newMonth = generateMonth(for: monthStart)
+        let nameOfMonth = getMonthName(from: monthStart)
+        let nextID = (allMonths.last?.id ?? 0) + 1
+        allMonths.append(PeriodModel(id: nextID, date: newMonth, name: nameOfMonth))
     }
     
     private func generateMonth(for date: Date) -> [Date] {
@@ -284,7 +283,6 @@ public final class DateManager: DateManagerProtocol {
     public func dateForDeadline(for date: Date) -> LocalizedStringKey {
         return formatterDate(date: date, useForDeadline: true)
     }
-    
     
     private func formatterDate(date: Date, useForWeek: Bool = false, useForDeadline: Bool = false) -> LocalizedStringKey {
         guard !useForWeek else {
@@ -430,6 +428,7 @@ public final class DateManager: DateManagerProtocol {
     }
     
     //MARK: - Days of week
+    
     public func thursday() -> Date {
         let weekdayToday = calendar.component(.weekday, from: currentTime)
         

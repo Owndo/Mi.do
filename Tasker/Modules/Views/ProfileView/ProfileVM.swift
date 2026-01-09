@@ -22,7 +22,7 @@ import ArticlesView
 import PaywallView
 
 @Observable
-public final class ProfileVM {
+public final class ProfileVM: HashableNavigation {
     // MARK: - Managers
     private var profileManager: ProfileManagerProtocol
     private var taskManager: TaskManagerProtocol
@@ -38,6 +38,8 @@ public final class ProfileVM {
     var appearanceVM: AppearanceVM
     var paywallVM: PaywallVM?
     
+    public var closeButton: (() -> Void)?
+    
     //MARK: UI state
     // Path for navigation
     var path: [ProfileDestination] = []
@@ -46,7 +48,7 @@ public final class ProfileVM {
     /// Library showing
     var showLibrary = false
     /// Paywall is presenting
-    var showPaywall = true
+    var showPaywall = false
     var alert: AlertModel?
     var navigationTriger = false
     
@@ -334,7 +336,11 @@ public final class ProfileVM {
         profileModel.photoPosition = photoPosition
     }
     
+    //MARK: - Close button tapped
+    
     func closeButtonTapped() {
+        closeButton?()
+        
         telemetryAction(action: .profileAction(.closeButtonTapped))
     }
     

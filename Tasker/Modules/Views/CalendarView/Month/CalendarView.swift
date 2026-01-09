@@ -23,52 +23,66 @@ public struct CalendarView: View {
             colorScheme.backgroundColor()
                 .ignoresSafeArea()
             
-            ScrollView {
-                LazyVStack {
-                    ForEach(vm.allMonths) { month in
-                        
-                        MonthInfoView(month)
-                            .onAppear {
-                                vm.handleMonthAppeared(month)
-                            }
-                        
-                        LazyVGrid(columns: vm.columns) {
-                            EmptyDays(month)
+            if #available(iOS 26, *) {
+                ScrollView {
+                    LazyVStack {
+                        ForEach(vm.allMonths) { month in
                             
-                            MonthRowView(month.date)
+                            MonthInfoView(month)
+                                .task {
+                                    await vm.handleMonthAppeared(month)
+                                }
+                            
+                            LazyVGrid(columns: vm.columns) {
+                                EmptyDays(month)
+                                
+                                MonthRowView(month.date)
+                            }
                         }
                     }
+                    .scrollTargetLayout()
                 }
-                .scrollTargetLayout()
-            }
-            .task {
-                vm.onAppear()
-            }
-            .onDisappear {
-                vm.onDissapear()
-            }
-            .scrollIndicators(.hidden)
-            .navigationBarBackButtonHidden()
-            .scrollPosition(id: $vm.scrollID, anchor: .top)
-        }
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button {
-                    vm.backToMainViewButtonTapped()
-                } label: {
-                    HStack {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 17))
-                            .foregroundStyle(colorScheme.accentColor())
-                        
-                        Text("\(vm.selectedDate, format: .dateTime.month().day().year())")
-                            .font(.system(.body, design: .rounded, weight: .medium))
-                            .foregroundStyle(colorScheme.accentColor())
+                .task {
+                    await vm.onAppear()
+                }
+                .onDisappear {
+                    vm.onDissapear()
+                }
+                .scrollIndicators(.hidden)
+                .scrollPosition(id: $vm.scrollID, anchor: .top)
+                .navigationSubtitle(vm.navigationSubtitle)
+            } else {
+                ScrollView {
+                    LazyVStack {
+                        ForEach(vm.allMonths) { month in
+                            
+                            MonthInfoView(month)
+                                .task {
+                                    await vm.handleMonthAppeared(month)
+                                }
+                            
+                            LazyVGrid(columns: vm.columns) {
+                                EmptyDays(month)
+                                
+                                MonthRowView(month.date)
+                            }
+                        }
                     }
-                    .padding(.vertical, 7)
+                    .scrollTargetLayout()
                 }
+                .task {
+                    await vm.onAppear()
+                }
+                .onDisappear {
+                    vm.onDissapear()
+                }
+                .scrollIndicators(.hidden)
+                .scrollPosition(id: $vm.scrollID, anchor: .top)
             }
-            
+        }
+        .navigationTitle(vm.navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
             ToolbarItem(placement: .confirmationAction) {
                 if vm.selectedDayIsToday() {
                     Button {
@@ -76,7 +90,7 @@ public struct CalendarView: View {
                             await vm.backToTodayButtonTapped()
                         }
                     } label: {
-                        HStack {
+                        HStack(spacing: 5) {
                             Image(systemName: "arrow.uturn.backward")
                                 .font(.system(size: 17))
                             
@@ -85,11 +99,12 @@ public struct CalendarView: View {
                         }
                         .tint(.labelSecondary)
                         .padding(.vertical, 7)
-                        .padding(.horizontal, 14)
+                        .padding(.horizontal, 10)
                     }
                 }
             }
         }
+        .animation(.default, value: vm.isScrolling)
     }
     
     @ViewBuilder
@@ -97,11 +112,7 @@ public struct CalendarView: View {
         VStack(spacing: 10) {
             
             HStack {
-                Text(month.name ?? "")
-                    .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelSecondary)
-                
-                Text(vm.currentYear(month) ?? "")
+                Text(vm.monthName(month))
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelSecondary)
                 
@@ -161,7 +172,9 @@ public struct CalendarView: View {
 }
 
 #Preview {
-    CalendarView(vm: CalendarVM.createPreviewVM())
+    NavigationStack {
+        CalendarView(vm: CalendarVM.createPreviewVM())
+    }
 }
 
 extension UINavigationController: @retroactive UIGestureRecognizerDelegate {

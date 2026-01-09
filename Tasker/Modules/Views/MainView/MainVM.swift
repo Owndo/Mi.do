@@ -22,29 +22,32 @@ import SwiftUI
 import TaskManager
 import TaskView
 import TelemetryManager
+import ListView
+import ProfileView
 
 @Observable
-public final class MainVM {
+public final class MainVM: HashableNavigation {
     //MARK: - Depencies
+    private let appearanceManager: AppearanceManagerProtocol
+    private let dateManager: DateManagerProtocol
     private let profileManager: ProfileManagerProtocol
-    
+    private let subscriptionManager: SubscriptionManagerProtocol
+    private let recorderManager: RecorderManagerProtocol
     private let taskManager: TaskManagerProtocol
     
-    private let dateManager: DateManagerProtocol
-    
     private let permissionManager: PermissionProtocol = PermissionManager.createPermissionManager()
-    
-    private let recorderManager: RecorderManagerProtocol
-    
-    private let subscriptionManager: SubscriptionManagerProtocol
-    
-    private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    private let telemetryManager: TelemetryManagerProtocol
     
     //MARK: - ViewModels
     
     private var calendarVM: CalendarVM
+    private var profileVM: ProfileVM?
+    
+    var weekVM: WeekVM
+    var listVM: ListVM
     
     var notesVM: NotesVM
+    
     
     //    private let playerManager: PlayerManagerProtocol
     
@@ -57,15 +60,15 @@ public final class MainVM {
     //    let listVM = ListVM()
     //    var taskVM: TaskVM?
     
-    var sheetDestination: SheetDestination? {
-        didSet {
-            if sheetDestination == nil {
-                presentationPosition = .fraction(0.93)
-            } else {
-                presentationPosition = .fraction(1.0)
-            }
-        }
-    }
+    //    var sheetDestination: SheetDestination? {
+    //        didSet {
+    //            if sheetDestination == nil {
+    //                presentationPosition = .fraction(0.93)
+    //            } else {
+    //                presentationPosition = .fraction(1.0)
+    //            }
+    //        }
+    //    }
     
     //MARK: - UI States
     
@@ -81,50 +84,6 @@ public final class MainVM {
     
     var mainViewPaywall = false
     
-    //    var showPaywall: Bool {
-    //        mainViewPaywall && subscriptionManager.showPaywall
-    //    }
-    
-    var presentationPosition: PresentationDetent = PresentationMode.base.detent {
-        didSet {
-            backgroundAnimation.toggle()
-            if presentationPosition == .fraction(0.93) {
-                if path.count > 0 {
-                    path.removeLast()
-                }
-            }
-            
-            if presentationPosition == .fraction(0.20) {
-                // telemetry
-                telemetryAction(.mainViewAction(.showNotesButtonTapped))
-            }
-        }
-    }
-    
-    enum SheetDestination: Hashable, Identifiable {
-        case profile
-        case details(TaskVM)
-        
-        var id: Self { self }
-        
-        static func == (lhs: SheetDestination, rhs: SheetDestination) -> Bool {
-            switch (lhs, rhs) {
-            case (.details, .details): return true
-            case (.profile, .profile): return true
-            default: return false
-            }
-        }
-        
-        func hash(into hasher: inout Hasher) {
-            switch self {
-            case .details:
-                hasher.combine(0)
-            case .profile:
-                hasher.combine(1)
-            }
-        }
-    }
-    
     var recordingState: RecordingState = .idle
     
     enum RecordingState {
@@ -133,14 +92,42 @@ public final class MainVM {
         case stopping
     }
     
-    var path: [MainViewNavigation] = []
+    //MARK: - Navigation
     
-    enum Destination: CaseIterable, Hashable {
-        case main
-        case calendar
+    var path: [MainViewNavigation] = [] {
+        didSet {
+            if path.isEmpty {
+                mainViewSheetIsPresented = true
+            } else {
+                mainViewSheetIsPresented = false
+            }
+        }
     }
     
-    //    private var isProcessingStop = false
+    //MARK: - Sheet navigation
+    
+    var mainViewSheetIsPresented = true
+    
+    var sheetNavigation: SheetNavigation? {
+        didSet {
+            if sheetNavigation != nil {
+                presentationPosition = PresentationMode.full.detent
+            } else {
+                Task {
+                    try await Task.sleep(for: .seconds(0.05))
+                    presentationPosition = PresentationMode.base.detent
+                }
+            }
+        }
+    }
+    
+    //MARK: - Sheet postition
+    
+    var presentationPosition: PresentationDetent = PresentationMode.base.detent {
+        didSet {
+            backgroundAnimation.toggle()
+        }
+    }
     
     //MARK: Copmputed properties
     
@@ -171,22 +158,32 @@ public final class MainVM {
     //MARK: - Init
     
     private init(
+        appearanceManager: AppearanceManagerProtocol,
         profileManager: ProfileManagerProtocol,
         taskManager: TaskManagerProtocol,
         dateManager: DateManagerProtocol,
         recorderManager: RecorderManagerProtocol,
         subscriptionManager: SubscriptionManagerProtocol,
+        telemetryManager: TelemetryManagerProtocol,
         profileModel: UIProfileModel,
         calendarVM: CalendarVM,
+//        profileVM: ProfileVM,
+        weekVM: WeekVM,
+        listVM: ListVM,
         notesVM: NotesVM
     ) {
+        self.appearanceManager = appearanceManager
         self.profileManager = profileManager
         self.taskManager = taskManager
         self.dateManager = dateManager
         self.recorderManager = recorderManager
         self.subscriptionManager = subscriptionManager
+        self.telemetryManager = telemetryManager
         self.profileModel = profileModel
         self.calendarVM = calendarVM
+//        self.profileVM = profileVM
+        self.weekVM = weekVM
+        self.listVM = listVM
         self.notesVM = notesVM
     }
     
@@ -194,49 +191,58 @@ public final class MainVM {
     
     public static func createPreviewVM() -> MainVM {
         let profileManager = ProfileManager.createMockProfileManager()
-//        let appearanceManager = AppearanceManager.createMockAppearanceManager()
+        let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let taskManager = TaskManager.createMockTaskManager()
         let dateManager = DateManager.createMockDateManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
         let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
+        let telemetryManager = TelemetryManager.createTelemetryManager(mock: true)
         let profileModel = profileManager.profileModel
         
         let calendarVM = CalendarVM.createPreviewVM()
+//        let profileVM = ProfileVM.createProfilePreviewVM()
+        let weekVM = WeekVM.createPreviewVM()
+        let listVM = ListVM.creteMockListVM()
         let notesVM = NotesVM.createPreviewVM()
         
         let vm = MainVM(
+            appearanceManager: appearanceManager,
             profileManager: profileManager,
             taskManager: taskManager,
             dateManager: dateManager,
             recorderManager: recorderManager,
             subscriptionManager: subscriptionManager,
+            telemetryManager: telemetryManager,
             profileModel: profileModel,
             calendarVM: calendarVM,
+//            profileVM: profileVM,
+            weekVM: weekVM,
+            listVM: listVM,
+            
             notesVM: notesVM
         )
         
         vm.syncNavigation()
+        vm.syncSheetNavigation()
         
         return vm
     }
     
     //MARK: - Sync navigation
     
-    func syncNavigation() {
+    private func syncNavigation() {
         calendarVM.backToMainView = { [weak self] in
             guard let self else { return }
             path.removeLast()
         }
     }
     
-    //    public static func createMainVM() async -> Self {
-    //        let dependenciesManager = await DependenciesManager.createDependencies()
-    //        let mainVM = Self(dependenciesManager: dependenciesManager)
-    //
-    //        await mainVM.onboardingStart()
-    //
-    //        return mainVM
-    //    }
+    private func syncSheetNavigation() {
+        profileVM?.closeButton = { [weak self] in
+            guard let self else { return }
+            self.sheetNavigation = nil
+        }
+    }
     
     //MARK: - Update notification
     //    public func updateNotifications() async {
@@ -280,10 +286,24 @@ public final class MainVM {
         //        profileModel = casManager.profileModel
     }
     
-    func profileViewButtonTapped() {
+    //MARK: - Profile Button
+    
+    func profileViewButtonTapped() async {
+#if targetEnvironment(simulator)
+        profileVM = ProfileVM.createProfilePreviewVM()
+    
+#else
+        profileVM = await ProfileVM.createProfileVM(profileManager: profileManager, taskManager: taskManager, appearanceManager: appearanceManager, dateManager: dateManager)
+    
+#endif
         
-        sheetDestination = .profile
-        //        profileViewIsOpen = true
+        guard let profileVM else { return }
+        
+        syncSheetNavigation()
+        
+        sheetNavigation = .profile(profileVM)
+        backgroundAnimation.toggle()
+        
         telemetryAction(.mainViewAction(.profileButtonTapped))
     }
     
@@ -403,7 +423,7 @@ public final class MainVM {
             )
         )
         
-//        taskDetailsButtonTapped(model: model)
+        //        taskDetailsButtonTapped(model: model)
     }
     
     //MARK: - Recognize data
@@ -522,7 +542,7 @@ public final class MainVM {
 //MARK: - Helpers not a VM
 enum PresentationMode: CGFloat, CaseIterable {
     case full = 1.00
-    case base = 0.93
+    case base = 0.95
     case bottom = 0.20
     
     var detent: PresentationDetent {
@@ -531,6 +551,8 @@ enum PresentationMode: CGFloat, CaseIterable {
     
     static let detents = Set(PresentationMode.allCases.map { $0.detent })
 }
+
+//MARK: - Navigation
 
 enum MainViewNavigation: Hashable {
     case calendar(CalendarVM)
@@ -542,6 +564,27 @@ extension MainViewNavigation {
         switch self {
         case .calendar(let monthVM):
             CalendarView(vm: monthVM)
+        }
+    }
+}
+
+//MARK: - Sheet Navigation
+
+enum SheetNavigation: Identifiable, Hashable, Equatable {
+    case taskDetails(TaskVM)
+    case profile(ProfileVM)
+    
+    var id: Self { self }
+}
+
+extension SheetNavigation {
+    @ViewBuilder
+    func destination() -> some View {
+        switch self {
+        case .taskDetails(let taskVM):
+            TaskView(taskVM: taskVM)
+        case .profile(let profileVM):
+            ProfileView(vm: profileVM)
         }
     }
 }

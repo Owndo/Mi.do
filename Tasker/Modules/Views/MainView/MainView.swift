@@ -38,6 +38,17 @@ public struct MainView: View {
             .navigationDestination(for: MainViewNavigation.self) { destination in
                 destination.destination()
             }
+            .sheet(isPresented: $vm.mainViewSheetIsPresented) {
+                MainViewBase(weekVM: vm.weekVM, listVM: vm.listVM)
+                    .sheet(item: $vm.sheetNavigation) { navigation in
+                        switch navigation {
+                        case .taskDetails(let taskVM):
+                            TaskView(taskVM: taskVM)
+                        case .profile(let profileVM):
+                            ProfileView(vm: profileVM)
+                        }
+                    }
+            }
             //            .sheet(isPresented: $vm.mainViewIsOpen) {
             //                MainViewBase()
             //                    .sheet(item: $vm.sheetDestination) { destination in
@@ -55,14 +66,6 @@ public struct MainView: View {
             ////                            .preferredColorScheme(colorScheme)
             ////                            .presentationDragIndicator(.visible)
             ////                    }
-            //            }
-            //            .navigationDestination(for: MainVM.Destination.self) { destination in
-            //                switch destination {
-            //                case .main:
-            //                    MainView(vm: vm)
-            //                case .calendar:
-            //                    MonthView(mainViewIsOpen: $vm.mainViewIsOpen, path: $vm.path)
-            //                }
             //            }
             //MARK: - Toolbar
             .toolbar {
@@ -91,7 +94,9 @@ public struct MainView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        vm.profileViewButtonTapped()
+                        Task {
+                            await vm.profileViewButtonTapped()
+                        }
                     } label: {
                         ProfilePhoto()
                     }
@@ -99,10 +104,9 @@ public struct MainView: View {
                 }
             }
             .toolbarBackground(osVersion.majorVersion >= 26 ? .visible : .hidden, for: .navigationBar)
-            .navigationBarTitleDisplayMode(.inline)
             .animation(.default, value: vm.isRecording)
             .animation(.default, value: vm.backgroundAnimation)
-            .sensoryFeedback(.selection, trigger: vm.sheetDestination)
+            .sensoryFeedback(.selection, trigger: vm.sheetNavigation)
             .sensoryFeedback(.selection, trigger: vm.path)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
         }
@@ -110,17 +114,17 @@ public struct MainView: View {
     
     //MARK: - MainViewBase
     @ViewBuilder
-    private func MainViewBase() -> some View {
+    private func MainViewBase(weekVM: WeekVM, listVM: ListVM) -> some View {
         ZStack {
             colorScheme.backgroundColor().ignoresSafeArea()
             
             VStack(spacing: 0) {
-                //TODO: - WeekView
-                //                WeekView()
-                //                    .padding(.top, 17)
                 
-                //                ListView(vm: vm.listVM)
-                //                    .presentationContentInteraction(.scrolls)
+                WeekView(vm: weekVM)
+                    .padding(.top, 17)
+                
+                ListView(vm: listVM)
+                    .presentationContentInteraction(.scrolls)
                 
                 Spacer()
             }
@@ -129,18 +133,14 @@ public struct MainView: View {
                 
                 Spacer()
                 
-                if vm.presentationPosition != .fraction(0.20) {
-                    withAnimation {
+                if vm.presentationPosition != PresentationMode.bottom.detent {
+//                    withAnimation {
                         CreateButton()
                             .fixedSize()
-                    }
+//                    }
                 }
             }
             .ignoresSafeArea(.keyboard)
-            
-            //            if vm.showPaywall {
-            //                PaywallView()
-            //            }
         }
         .overlay(
             GlowEffect(decibelLevel: vm.decibelLvl)
@@ -218,11 +218,11 @@ public struct MainView: View {
     
     @ViewBuilder
     private func CustomBackground() -> some View {
-        if osVersion.majorVersion >= 26 && vm.presentationPosition == .fraction(0.93) {
+        if osVersion.majorVersion >= 26 && vm.presentationPosition == PresentationMode.base.detent {
             colorScheme.backgroundColor().ignoresSafeArea()
             
             Color.black.opacity(0.10).ignoresSafeArea()
-        } else if osVersion.majorVersion >= 26 && vm.presentationPosition != .fraction(0.93) {
+        } else if osVersion.majorVersion >= 26 && vm.presentationPosition != PresentationMode.base.detent {
             LinearGradient(colors: [.black.opacity(0.15), colorScheme.backgroundColor(), colorScheme.backgroundColor()], startPoint: .bottom, endPoint: .top)
                 .ignoresSafeArea()
         } else {

@@ -17,7 +17,7 @@ import NotificationManager
 import ProfileManager
 
 @Observable
-public final class ListVM {
+public final class ListVM: HashableNavigation {
     
     //MARK: - Dependencies
     
@@ -58,6 +58,20 @@ public final class ListVM {
         vm.observeTasks()
         
         return vm
+    }
+    
+    //MARK: - Create mock ListVM
+    
+    public static func creteMockListVM() -> ListVM {
+            let taskManager = TaskManager.createMockTaskManager()
+            let dateManager = DateManager.createMockDateManager()
+            let notificationManager = MockNotificationManager()
+            let profileManager = ProfileManager.createMockProfileManager()
+            
+            let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, profileManager: profileManager)
+            vm.observeTasks()
+            
+            return vm
     }
     
     //MARK: - Create PreviewListVM

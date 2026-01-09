@@ -1,5 +1,5 @@
 //
-//  MonthVM.swift
+//  CalendarVM.swift
 //  BlockSet
 //
 //  Created by Rodion Akhmedov on 7/9/25.
@@ -14,16 +14,14 @@ import TelemetryManager
 import TaskManager
 
 @Observable
-public final class MonthVM {
+public final class CalendarVM: HashableNavigation {
     var dateManager: DateManagerProtocol
     var appearanceManager: AppearanceManagerProtocol
     var taskManager: TaskManagerProtocol
-    private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
-    //    @Injected(\.subscriptionManager) var subscriptionManager
     
-    //    var showPaywall: Bool {
-    //        subscriptionManager.showPaywall
-    //    }
+    private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    
+    public var backToMainView: (() -> Void)?
     
     var scrollID: Int?
     
@@ -55,14 +53,14 @@ public final class MonthVM {
     
     //MARK: - CreateMonthVM
     
-    static func createMonthVM(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) -> MonthVM {
-        MonthVM(dateManager: dateManager, appearanceManager: appearanceManager, taskManager: taskManager)
+    public static func createMonthVM(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) -> CalendarVM {
+        CalendarVM(dateManager: dateManager, appearanceManager: appearanceManager, taskManager: taskManager)
     }
     
     //MARK: - Create previewVm
     
-    static func createPreviewVM() -> MonthVM {
-        MonthVM(dateManager: DateManager.createMockDateManager(), appearanceManager: AppearanceManager.createMockAppearanceManager(), taskManager: TaskManager.createMockTaskManager())
+    static func createPreviewVM() -> CalendarVM {
+        CalendarVM(dateManager: DateManager.createMockDateManager(), appearanceManager: AppearanceManager.createMockAppearanceManager(), taskManager: TaskManager.createMockTaskManager())
     }
     
     func selectedDateChange(_ day: Date) {
@@ -143,9 +141,8 @@ public final class MonthVM {
         }
     }
     
-    func closeScreenButtonTapped(path: inout NavigationPath, mainViewIsOpen: inout Bool) {
-        path.removeLast()
-        mainViewIsOpen = true
+    func closeScreenButtonTapped() {
+        backToMainView?()
         
         // telemetry
         telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))

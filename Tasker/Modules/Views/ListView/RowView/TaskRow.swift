@@ -13,25 +13,24 @@ import UIComponents
 struct TaskRow: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @State private var vm: TaskRowVM
+    @State var vm: TaskRowVM
     
-    var task: MainModel
     
-    init(task: MainModel) {
-        self._vm = State(wrappedValue: TaskRowVM(task: task))
-        self.task = task
+    init(vm: TaskRowVM) {
+        self.vm = vm
     }
     
     //MARK: - Body
+    
     var body: some View {
         TaskRow()
-            .taskDeleteDialog(
-                isPresented: $vm.confirmationDialogIsPresented,
-                task: vm.task,
-                message: vm.messageForDelete,
-                isSingleTask: vm.singleTask,
-                onDelete: vm.deleteButtonTapped
-            )
+//            .taskDeleteDialog(
+//                isPresented: $vm.confirmationDialogIsPresented,
+//                task: vm.task,
+//                message: vm.messageForDelete,
+//                isSingleTask: vm.singleTask,
+//                onDelete: vm.deleteButtonTapped
+//            )
 //            .sheet(item: $vm.taskVM) { taskVM in
 //                TaskView(taskVM: taskVM)
 //            }
@@ -43,11 +42,12 @@ struct TaskRow: View {
     }
     
     //MARK: Task row
+    
     @ViewBuilder
     private func TaskRow() -> some View {
         HStack(spacing: 0) {
             HStack(spacing: 12) {
-                TaskCheckMark(complete: vm.checkCompletedTaskForToday(), task: vm.task) {
+                TaskCheckMark(complete: vm.completedForToday, task: vm.task) {
                     Task {
                         await vm.checkMarkTapped()
                     }
@@ -96,12 +96,12 @@ struct TaskRow: View {
         if vm.showDeadlinePicker {
             Text(vm.timeRemainingString(), bundle: .module)
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
-                .foregroundStyle(vm.isTaskOverdue() ? .accentRed : vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                .foregroundStyle(vm.isTaskOverdue() ? .accentRed : vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: vm.task, colorScheme))
                 .underline(true, pattern: .dot, color: vm.isTaskOverdue() ? .accentRed : .labelQuaternary)
         } else {
             Text(Date(timeIntervalSince1970: vm.task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
-                .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                .foregroundStyle(vm.task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: vm.task, colorScheme))
                 .underline(vm.isTaskHasDeadline() ? true : false, pattern: .dot, color: vm.isTaskOverdue() ? .accentRed : .labelQuaternary)
                 .padding(.leading, 6)
                 .lineLimit(1)
@@ -113,7 +113,7 @@ struct TaskRow: View {
     private func PlayButton() -> some View {
         ZStack {
             Circle()
-                .fill(vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(task: task, colorScheme))
+                .fill(vm.task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(task: vm.task, colorScheme))
             
             if vm.task.audio != nil {
                 Image(systemName: vm.playing ? "pause.fill" : "play.fill")
@@ -136,7 +136,7 @@ struct TaskRow: View {
 }
 
 #Preview {
-    TaskRow(task: mockModel())
+    TaskRow(vm: TaskRowVM.createPreviewTaskRowVM())
 }
 
 struct ContentSizePreferenceKey: PreferenceKey {

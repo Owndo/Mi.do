@@ -6,34 +6,30 @@
 //
 
 import Foundation
-import Managers
 import Models
 import SwiftUI
-//import TaskView
+import DateManager
+import NotificationManager
+import PlayerManager
+import TaskManager
+import TelemetryManager
 
 @Observable
 final class TaskRowVM: HashableObject {
     //MARK: Dependecies
-    @ObservationIgnored
-    @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
-    @ObservationIgnored
-    @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-    @ObservationIgnored
-    @Injected(\.casManager) private var casManager: CASManagerProtocol
-    @ObservationIgnored
-    @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
-    @ObservationIgnored
-    @Injected(\.notificationManager) private var notificationManager: NotificationManagerProtocol
-    @ObservationIgnored
-    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
+    private var dateManager: DateManagerProtocol
+    private var notificationManager: NotificationManagerProtocol
+    private var playerManager: PlayerManagerProtocol
+    private var taskManager: TaskManagerProtocol
+    
+    private var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
     //MARK: - Properties
+    
     var playingTask: UITaskModel?
-    var selectedTask: MainModel?
+    var selectedTask: UITaskModel?
     
-//    var taskVM: TaskVM?
-    
-    var task: MainModel
+    var task: UITaskModel
     
     var taskTitle: String {
         if task.title != "" {
@@ -44,6 +40,7 @@ final class TaskRowVM: HashableObject {
     }
     
     //MARK: - UI States
+    
     var taskDoneTrigger = false
     var taskDeleteTrigger = false
     var listRowHeight = CGFloat(52)
@@ -51,7 +48,12 @@ final class TaskRowVM: HashableObject {
     var disabledScroll = false
     var showDeadlinePicker = false
     
+    var completedForToday = false
+    
+    var timeRemainingString: LocalizedStringKey = ""
+    
     //MARK: Confirmation dialog
+    
     var confirmationDialogIsPresented = false
     var messageForDelete: LocalizedStringKey = ""
     var singleTask = true
@@ -62,19 +64,45 @@ final class TaskRowVM: HashableObject {
     }
     
     //MARK: Private Properties
+    
     private var currentTime: Date {
         dateManager.currentTime
     }
     
-    init(task: MainModel) {
+    //MARK: - Private init
+    
+    private init(task: UITaskModel, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol, playerManager: PlayerManagerProtocol) {
         self.task = task
-        
-        if task.title.count < 20 {
-            disabledScroll = true
-        }
+        self.dateManager = dateManager
+        self.notificationManager = notificationManager
+        self.taskManager = taskManager
+        self.playerManager = playerManager
     }
     
-    func onAppear(task: MainModel) {
+    //MARK: - Create TaskRowVm
+    
+    static func createTaskRowVM(task: UITaskModel, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol) async -> TaskRowVM {
+        let playerManager = await PlayerManager.createPlayerManager()
+        let vm = TaskRowVM(task: task, dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, playerManager: playerManager)
+        await vm.timeRemainingString()
+        await vm.checkCompletedTaskForToday()
+        
+        
+        return vm
+    }
+    
+    //MARK: - Create Preview TaskRowVM
+    
+    static func createPreviewTaskRowVM() -> TaskRowVM {
+        let task = mockModel()
+        let dateManager = DateManager.createMockDateManager()
+        let notificationManager = MockNotificationManager()
+        let taskManager = TaskManager.createMockTaskManager()
+        let playerManager = PlayerManager.createMockPlayerManager()
+        return TaskRowVM(task: task, dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, playerManager: playerManager)
+    }
+    
+    func onAppear(task: UITaskModel) {
         if task.title.count < 20 {
             disabledScroll = true
         }
@@ -82,7 +110,7 @@ final class TaskRowVM: HashableObject {
     
     //MARK: Selected task
     func selectedTaskButtonTapped() {
-//        taskVM = TaskVM(mainModel: task)
+        //        taskVM = TaskVM(mainModel: task)
         stopToPlay()
         
         // telemetry
@@ -90,8 +118,8 @@ final class TaskRowVM: HashableObject {
     }
     
     //MARK: - Check Mark Function
-    func checkCompletedTaskForToday() -> Bool {
-        taskManager.checkCompletedTaskForToday(task: task)
+    func checkCompletedTaskForToday() async {
+        completedForToday = await taskManager.checkCompletedTaskForToday(task: task)
     }
     
     func checkMarkTapped() async {
@@ -101,7 +129,7 @@ final class TaskRowVM: HashableObject {
             
         }
         
-//        taskDoneTrigger.toggle()
+        //        taskDoneTrigger.toggle()
         stopToPlay()
     }
     
@@ -119,7 +147,7 @@ final class TaskRowVM: HashableObject {
         confirmationDialogIsPresented.toggle()
     }
     
-    func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) async {
+    func deleteButtonTapped(deleteCompletely: Bool = false) async {
         do {
             try await taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
             taskDeleteTrigger.toggle()
@@ -155,10 +183,11 @@ final class TaskRowVM: HashableObject {
         return true
     }
     
-    func timeRemainingString() -> LocalizedStringKey {
-        
+    func timeRemainingString() async {
         guard !task.completeRecords.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) else {
-            return "Completed"
+            
+            timeRemainingString = "Completed"
+            return
         }
         
         guard let endTimestamp = task.deadline,
@@ -167,26 +196,29 @@ final class TaskRowVM: HashableObject {
             if task.completeRecords.contains(where: {
                 dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.deadline!)) &&
                 dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) {
-                return "Completed"
+                timeRemainingString = "Completed"
             }
             
-            return "Overdue"
+            timeRemainingString = "Overdue"
+            return
         }
         
-        guard let lastDay = taskManager.dayUntillDeadLine(task) else {
-            return ""
+        guard let lastDay = await taskManager.dayUntillDeadLine(task) else {
+            return
         }
         
-        return "\(lastDay) days left"
+        timeRemainingString = "\(lastDay) days left"
     }
     
     //MARK: Change date for overdue task
-    func updateNotificationTimeForDueDateSwipped(task: MainModel) {
-        let newModel = taskManager.updateNotificationTimeForDueDate(task: task)
-//        casManager.saveModel(newModel)
-    }
+    
+    //    func updateNotificationTimeForDueDateSwipped(task: UITaskModel) async {
+    //        let newModel = await taskManager.updateNotificationTimeForDueDate(task: task)
+    //        //        casManager.saveModel(newModel)
+    //    }
     
     //MARK: Play sound function
+    
     func playButtonTapped() async {
         if !playing {
             playingTask = task
@@ -199,6 +231,8 @@ final class TaskRowVM: HashableObject {
         telemetryAction(.taskAction(.playVoiceButtonTapped(.taskListView)))
     }
     
+    //MARK: - Stop play
+    
     private func stopToPlay() {
         if playerManager.isPlaying {
             playerManager.stopToPlay()
@@ -210,6 +244,7 @@ final class TaskRowVM: HashableObject {
     }
     
     //MARK: - Telemetry manager
+    
     private func telemetryAction(_ action: EventType) {
         telemetryManager.logEvent(action)
     }

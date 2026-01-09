@@ -1,5 +1,5 @@
 //
-//  MonthView.swift
+//  CalendarView.swift
 //  BlockSet
 //
 //  Created by Rodion Akhmedov on 7/9/25.
@@ -9,19 +9,17 @@ import SwiftUI
 import Models
 import UIComponents
 
-public struct MonthView: View {
+public struct CalendarView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
     
-    @Bindable var vm: MonthVM
+    @Bindable var vm: CalendarVM
     
-    @Binding var mainViewIsOpen: Bool
-    @Binding var path: NavigationPath
+//    @Binding var mainViewIsOpen: Bool
+//    @Binding var path: NavigationPath
     
-    public init(vm: Bindable<MonthVM>, mainViewIsOpen: Binding<Bool>, path: Binding<NavigationPath>) {
-        self._vm = vm
-        self._mainViewIsOpen = mainViewIsOpen
-        self._path = path
+    public init(vm: CalendarVM) {
+        self.vm = vm
     }
     
     public var body: some View {
@@ -64,7 +62,6 @@ public struct MonthView: View {
                 }
             }
             .onDisappear {
-                mainViewIsOpen = true
                 vm.onDissapear()
             }
             
@@ -76,7 +73,7 @@ public struct MonthView: View {
             if osVersion.majorVersion >= 26 {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        vm.closeScreenButtonTapped(path: &path, mainViewIsOpen: &mainViewIsOpen)
+                        vm.closeScreenButtonTapped()
                     } label: {
                         HStack {
                             Image(systemName: "chevron.left")
@@ -122,7 +119,7 @@ public struct MonthView: View {
     private func CustomToolBar() -> some View {
         HStack {
             Button {
-                vm.closeScreenButtonTapped(path: &path, mainViewIsOpen: &mainViewIsOpen)
+                vm.closeScreenButtonTapped()
             } label: {
                 HStack {
                     Image(systemName: "chevron.left")
@@ -217,7 +214,7 @@ public struct MonthView: View {
             VStack {
                 Button {
                     vm.selectedDateChange(day)
-                    vm.closeScreenButtonTapped(path: &path, mainViewIsOpen: &mainViewIsOpen)
+                    vm.closeScreenButtonTapped()
                 } label: {
                     ZStack {
                         if vm.isSelectedDay(day) {
@@ -236,11 +233,7 @@ public struct MonthView: View {
 }
 
 #Preview {
-    MonthView(
-        vm: .init(wrappedValue: MonthVM.createPreviewVM()),
-        mainViewIsOpen: .constant(true),
-        path: .constant(NavigationPath())
-    )
+    CalendarView(vm: CalendarVM.createPreviewVM())
 }
 
 extension UINavigationController: @retroactive UIGestureRecognizerDelegate {

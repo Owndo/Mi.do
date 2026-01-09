@@ -9,10 +9,10 @@ import Foundation
 import BlockSet
 import Models
 
-final actor CASManager: CASManagerProtocol {
+public final actor CASManager: CASManagerProtocol {
     let cas: FileCas
     let allIdentifiers: [Mutable]
-
+    
     private init(cas: FileCas, allIdentifiers: [Mutable]) {
         self.cas = cas
         self.allIdentifiers = allIdentifiers
@@ -20,7 +20,7 @@ final actor CASManager: CASManagerProtocol {
     
     //MARK: - Static methods for init
     
-    static func createCASManager() async -> CASManager {
+    public static func createCASManager() async -> CASManager {
         let localDirectory = createLocalDirectory()!
         
         let cas = FileCas(localDirectory)
@@ -64,13 +64,13 @@ final actor CASManager: CASManagerProtocol {
     
     //MARK: - Retriev data from cas
     
-    func retrieve(_ hash: String) async throws -> Data? {
+    public func retrieve(_ hash: String) async throws -> Data? {
         try await cas.retrieve(hash)
     }
     
     //MARK: - Save model
     
-    func saveModel<T: Codable>(_ model: Model<T>) async throws {
+    public func saveModel<T: Codable>(_ model: Model<T>) async throws {
         try await cas.saveJSONModel(model)
     }
     
@@ -82,14 +82,14 @@ final actor CASManager: CASManagerProtocol {
     
     //MARK: Save image
     
-    func storeImage(_ photo: Data) async throws -> String? {
+    public func storeImage(_ photo: Data) async throws -> String? {
         return try await cas.store(photo)
     }
     
     //MARK: - Update CAS after work
     
     // Save all models before app will close
-    func updateCASAfterWork() async throws {
+    public func updateCASAfterWork() async throws {
         //        for model in models {
         //            try await cas.saveJSONModel(model.value.model)
         //        }
@@ -127,13 +127,13 @@ final actor CASManager: CASManagerProtocol {
     
     //MARK: - Path to file
     
-    func pathToFile(_ hash: String) async throws -> URL {
+    public func pathToFile(_ hash: String) async throws -> URL {
         try await cas.fileURL(forHash: hash)
     }
     
     //MARK: Delete model
     
-    func deleteModel<T: Codable>(_ model: Model<T>) async throws {
+    public func deleteModel<T: Codable>(_ model: Model<T>) async throws {
         try await cas.deleteModel(model)
     }
     
@@ -164,7 +164,7 @@ final actor CASManager: CASManagerProtocol {
         }
     }
     
-    func syncCases() async throws {
+    public func syncCases() async throws {
         //        try cas.syncRemote()
     }
     

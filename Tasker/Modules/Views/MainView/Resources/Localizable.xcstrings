@@ -2,6 +2,7 @@
   "sourceLanguage" : "en",
   "strings" : {
     "Continue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -131,6 +132,7 @@
       }
     },
     "Created:" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -195,6 +197,7 @@
       }
     },
     "Done" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -389,6 +392,7 @@
       }
     },
     "Tap and add your notes here..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -453,6 +457,7 @@
       }
     },
     "Welcome to Mi.dō" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

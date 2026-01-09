@@ -148,15 +148,3 @@ public final class AppearanceVM: HashableNavigation {
         backButton?()
     }
 }
-
-protocol HashableNavigation: AnyObject, Hashable {}
-
-extension HashableNavigation {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs === rhs
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(ObjectIdentifier(self))
-    }
-}

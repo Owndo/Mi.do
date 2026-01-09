@@ -8,6 +8,8 @@
 import SwiftUI
 import UIComponents
 import Models
+import TaskRowView
+import TaskView
 
 public struct ListView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -30,34 +32,27 @@ public struct ListView: View {
     private func CustomList() -> some View {
         List {
             //MARK: Tasks section
-            if !vm.tasks.isEmpty {
+            if !vm.tasksRowVM.isEmpty {
                 Text("Tasks", bundle: .module)
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
                     .foregroundStyle(.labelTertiary)
                     .listRowBackground(Color.clear)
             }
             
-            ForEach(vm.tasks) { task in
+            ForEach(vm.tasksRowVM, id: \.self) { task in
                 Button {
-                    vm.taskTapped(task)
+                    vm.taskTapped(task.task)
                 } label: {
-                    TaskRow(task: task)
-                        .taskDeleteDialog(
-                            isPresented: vm.dialogBinding(for: task),
-                            task: task,
-                            message: vm.messageForDelete,
-                            isSingleTask: vm.singleTask,
-                            onDelete: vm.deleteButtonTapped
-                        )
-                        .contentShape(Rectangle())
+                    TaskRow(vm: task)
                         .padding(.vertical, 2)
+                        .padding(.horizontal, 22)
                 }
                 //MARK: - Context menu
                 
                 .contextMenu {
                     Button {
                         //MARK: Open task
-                        vm.taskTapped(task)
+                        
                     } label: {
                         Label("Open task", systemImage: "arrowshape.turn.up.right")
                     }
@@ -65,7 +60,7 @@ public struct ListView: View {
                     Button {
                         //MARK: Complete task
                         Task {
-                            await vm.checkMarkTapped(task)
+                            await task.checkMarkTapped()
                         }
                     } label: {
                         Label("Complete task", systemImage: "checkmark.circle")
@@ -73,7 +68,7 @@ public struct ListView: View {
                     
                     Button(role: .destructive) {
                         //MARK: Delete task
-                        vm.deleteTaskButtonSwiped(task: task)
+                        task.deleteTaskButtonSwiped()
                     } label: {
                         Label("Delete task", systemImage: "trash")
                     }
@@ -82,7 +77,7 @@ public struct ListView: View {
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button {
-                        vm.deleteTaskButtonSwiped(task: task)
+                        task.deleteTaskButtonSwiped()
                     } label: {
                         if #available(iOS 26, *) {
                             Image(systemName: "trash")
@@ -102,7 +97,7 @@ public struct ListView: View {
             .listRowInsets(EdgeInsets())
             
             //MARK: - Completed tasks section
-            if !vm.completedTasks.isEmpty {
+            if !vm.completedTasksRowVM.isEmpty {
                 HStack {
                     Text("Completed task", bundle: .module)
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
@@ -118,51 +113,47 @@ public struct ListView: View {
                 .listRowBackground(Color.clear)
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    vm.completedTaskViewChange()
+                    Task {
+                        await vm.completedTaskViewChange()
+                    }
                 }
             }
             
             if !vm.completedTasksHidden {
-                ForEach(vm.completedTasks) { task in
+                ForEach(vm.completedTasksRowVM, id: \.self) { task in
                     Button {
-                        vm.taskTapped(task)
+                        vm.taskTapped(task.task)
                     } label: {
-                        TaskRow(task: task)
-                            .taskDeleteDialog(
-                                isPresented: vm.dialogBinding(for: task),
-                                task: task,
-                                message: vm.messageForDelete,
-                                isSingleTask: vm.singleTask,
-                                onDelete: vm.deleteButtonTapped
-                            )
+                        TaskRow(vm: task)
                             .padding(.vertical, 2)
+                            .padding(.horizontal, 22)
                     }
                     .contextMenu {
                         Button {
-                            vm.taskTapped(task)
+                            vm.taskTapped(task.task)
                         } label: {
                             Label("Open task", systemImage: "arrowshape.turn.up.right")
                         }
                         
                         Button {
                             Task {
-                                await vm.checkMarkTapped(task)
+                                await task.checkMarkTapped()
                             }
                         } label: {
                             Label("Uncomplete task", systemImage: "circle")
                         }
                         
                         Button(role: .destructive) {
-                            vm.deleteTaskButtonSwiped(task: task)
+                            task.deleteTaskButtonSwiped()
                         } label: {
                             Label("Delete task", systemImage: "trash")
                         }
                     } preview: {
-                        //                        TaskView(taskVM: TaskVM(mainModel: task), preview: true)
+                        //                        TaskView(taskVM: TaskVM., preview: <#T##Bool#>)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button {
-                            vm.deleteTaskButtonSwiped(task: task)
+                            task.deleteTaskButtonSwiped()
                         } label: {
                             if #available(iOS 26, *) {
                                 Image(systemName: "trash")
@@ -194,20 +185,31 @@ public struct ListView: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets())
         }
-        .padding(.horizontal, 22)
         .customBlurForContainer(colorScheme: colorScheme, apply: true)
         .listSectionSpacing(.compact)
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
         .listStyle(.inset)
         .animation(.default, value: vm.completedTasksHidden)
-        .animation(.spring, value: vm.tasks)
-        .animation(.spring, value: vm.completedTasks)
+        .animation(.spring, value: vm.tasksRowVM)
+        .animation(.spring, value: vm.completedTasksRowVM)
     }
 }
 
 #Preview {
-    ListView(vm: ListVM())
+    @Previewable
+    @State var listVM: ListVM?
+    
+    VStack {
+        if let listVM {
+            ListView(vm: listVM)
+        } else {
+            ProgressView()
+        }
+    }
+    .task {
+        listVM = await ListVM.createPreviewListVM()
+    }
 }
 
 struct ContentHeightPreferenceKey: PreferenceKey {

@@ -33,8 +33,7 @@ let project = Project(
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
             entitlements: .file(path: "Tasker/Tasker.entitlements"),
             dependencies: [
-                .target(name: Modules.paywallView.name),
-                .target(name: Modules.subscriptionManager.name),
+                .target(name: Modules.mainView.name),
             ],
             settings: .settings(defaultSettings: .recommended),
         ),
@@ -59,84 +58,76 @@ let project = Project(
         //MARK: - Errors
         .module(.customErrors),
         //MARK: - Permission
-        .module(
-            .permissionManager,
-            dependencies: [
-                .target(name: Modules.customErrors.name),
-                .target(name: Modules.telemetry.name)
-            ]
-        ),
+        .module(.permissionManager,
+                dependencies: [
+                    .target(name: Modules.customErrors.name),
+                    .target(name: Modules.telemetry.name)
+                ]
+               ),
         //MARK: - Subscription
         .module(.subscriptionManager),
         //MARK: - Cas manager
-        .module(
-            .cas,
-            dependencies: [
-                .target(name: Modules.blockSet.name),
-                .target(name: Modules.models.name)
-            ]
-        ),
+        .module(.cas,
+                dependencies: [
+                    .target(name: Modules.blockSet.name),
+                    .target(name: Modules.models.name)
+                ]
+               ),
         //MARK: - Profile manager
         .module(.profileManager, dependencies: [.target(name: Modules.models.name), .target(name: Modules.cas.name)]),
         //MARK: - Storage manager
         .module(.storageManager, dependencies: [.target(name: Modules.cas.name)]),
         //MARK: - Task manager
-        .module(
-            .taskManager,
-            dependencies: [
-                .target(name: Modules.cas.name),
-                .target(name: Modules.dateManager.name),
-                .target(name: Modules.notificationManager.name)
-            ]
-        ),
+        .module(.taskManager,
+                dependencies: [
+                    .target(name: Modules.cas.name),
+                    .target(name: Modules.dateManager.name),
+                    .target(name: Modules.notificationManager.name)
+                ]
+               ),
         //MARK: - Date manager
-        .module(
-            .dateManager,
-            dependencies: [
-                .target(
-                    name: Modules.profileManager.name
-                ),
-                .target(name: Modules.telemetry.name)
-            ]
-        ),
+        .module(.dateManager,
+                dependencies: [
+                    .target(
+                        name: Modules.profileManager.name
+                    ),
+                    .target(name: Modules.telemetry.name)
+                ]
+               ),
         //MARK: - Notification Manager
-        .module(
-            .notificationManager,
-            dependencies: [
-                .target(name: Modules.cas.name),
-                .target(name: Modules.dateManager.name),
-                .target(name: Modules.storageManager.name),
-                .target(name: Modules.subscriptionManager.name),
-                .target(name: Modules.permissionManager.name)
-            ]
-        ),
+        .module(.notificationManager,
+                dependencies: [
+                    .target(name: Modules.cas.name),
+                    .target(name: Modules.dateManager.name),
+                    .target(name: Modules.storageManager.name),
+                    .target(name: Modules.subscriptionManager.name),
+                    .target(name: Modules.permissionManager.name)
+                ]
+               ),
         //MARK: - Recorder
-        .module(
-            .recorderManager,
-            dependencies: [
-                .target(name: Modules.telemetry.name),
-                .target(name: Modules.magic.name),
-                .target(name: Modules.dateManager.name)
-            ]
-        ),
+        .module(.recorderManager,
+                dependencies: [
+                    .target(name: Modules.telemetry.name),
+                    .target(name: Modules.magic.name),
+                    .target(name: Modules.dateManager.name)
+                ]
+               ),
         //MARK: - Magic
         .module(.magic, dependencies: [.target(name: Modules.dateManager.name)]),
         //MARK: - Player
-        .module(
-            .playerManager,
-            dependencies: [.target(name: Modules.models.name), .target(name: Modules.storageManager.name)]
-        ),
+        .module(.playerManager,
+                dependencies: [.target(name: Modules.models.name), .target(name: Modules.storageManager.name)]
+               ),
         //MARK: - Appearance
         .module(.appearanceManager, dependencies: [.target(name: Modules.profileManager.name)]),
         //MARK: - Onboarding
-        .module(
-            .onboardingManager,
-            dependencies: [
-                .target(name: Modules.profileManager.name),
-                .target(name: Modules.taskManager.name),
-                .target(name: Modules.dateManager.name)
-            ]
-        ),
+        .module(.onboardingManager,
+                dependencies: [
+                    .target(name: Modules.profileManager.name),
+                    .target(name: Modules.taskManager.name),
+                    .target(name: Modules.dateManager.name)
+                ]
+               ),
         //MARK: - Views
         .moduleView(.uiComponents, dependencies: [.target(name: Modules.models.name)]),
         .moduleView(.paywallView,
@@ -147,120 +138,124 @@ let project = Project(
                     ]
                    ),
         //MARK: - Calendar
-        .moduleView(
-            .calendarView,
-            dependencies: [
-                .target(name: Modules.models.name),
-                .target(name: Modules.dateManager.name),
-                .target(name: Modules.taskManager.name),
-                .target(name: Modules.appearanceManager.name),
-                .target(name: Modules.telemetry.name),
-                .target(name: Modules.uiComponents.name)
-            ]
-        ),
+        .moduleView(.calendarView,
+                    dependencies: [
+                        .target(name: Modules.models.name),
+                        .target(name: Modules.dateManager.name),
+                        .target(name: Modules.taskManager.name),
+                        .target(name: Modules.appearanceManager.name),
+                        .target(name: Modules.telemetry.name),
+                        .target(name: Modules.uiComponents.name)
+                    ]
+                   ),
         //MARK: - TaskView
-        .moduleView(
-            .taskView,
-            dependencies: [
-                .target(name: Modules.models.name),
-                .target(name: Modules.taskManager.name),
-                .target(name: Modules.profileManager.name),
-                .target(name: Modules.dateManager.name),
-                .target(name: Modules.playerManager.name),
-                .target(name: Modules.recorderManager.name),
-                .target(name: Modules.permissionManager.name),
-                .target(name: Modules.storageManager.name),
-                .target(name: Modules.telemetry.name),
-                .target(name: Modules.paywallView.name),
-                .target(name: Modules.uiComponents.name)
-            ]
-        ),
+        .moduleView(.taskView,
+                    dependencies: [
+                        .target(name: Modules.models.name),
+                        .target(name: Modules.taskManager.name),
+                        .target(name: Modules.profileManager.name),
+                        .target(name: Modules.dateManager.name),
+                        .target(name: Modules.playerManager.name),
+                        .target(name: Modules.recorderManager.name),
+                        .target(name: Modules.permissionManager.name),
+                        .target(name: Modules.storageManager.name),
+                        .target(name: Modules.telemetry.name),
+                        .target(name: Modules.paywallView.name),
+                        .target(name: Modules.uiComponents.name)
+                    ]
+                   ),
         //MARK: - HistoryView
         .moduleView(.historyView, dependencies: [.target(name: Modules.uiComponents.name)]),
         //MARK: - ArticlesView
         .moduleView(.articlesView, dependencies: [.target(name: Modules.uiComponents.name)]),
         //MARK: - AppearanceView
-        .moduleView(Modules.appearanceView, dependencies: [.target(name: Modules.appearanceManager.name), .target(name: Modules.uiComponents.name)]),
+        .moduleView(.appearanceView, dependencies: [.target(name: Modules.appearanceManager.name), .target(name: Modules.uiComponents.name)]),
         //MARK: - SettingsView
-        .moduleView(
-            Modules.settingsView,
-            dependencies: [
-                .target(name: Modules.dateManager.name),
-                .target(name: Modules.telemetry.name),
-                .target(name: Modules.appearanceManager.name),
-                .target(name: Modules.uiComponents.name),
-                .target(name: Modules.config.name)
-            ]
-        ),
+        .moduleView(.settingsView,
+                    dependencies: [
+                        .target(name: Modules.dateManager.name),
+                        .target(name: Modules.telemetry.name),
+                        .target(name: Modules.appearanceManager.name),
+                        .target(name: Modules.uiComponents.name),
+                        .target(name: Modules.config.name)
+                    ]
+                   ),
         //MARK: - ProfileView
-        .moduleView(
-            .profileView,
-            dependencies: [
-                .target(name: Modules.profileManager.name),
-                .target(name: Modules.taskManager.name),
-                .target(name: Modules.dateManager.name),
-                .target(name: Modules.appearanceManager.name),
-                .target(name: Modules.subscriptionManager.name),
-                .target(name: Modules.paywallView.name),
-                .target(name: Modules.settingsView.name),
-                .target(name: Modules.appearanceView.name),
-                .target(name: Modules.articlesView.name),
-                .target(name: Modules.historyView.name),
-                .target(name: Modules.uiComponents.name)
-            ]
-        )
-        //        .moduleTests(name: "BlockSet", dependencies: [.target(name: "BlockSet")]),
-        //        .module(name: "Models", dependencies: [.target(name: "BlockSet")]),
-        //        .manager(name: manager(.telemetry)),
-        //        .manager(name: manager(.cas), dependencies: [.target(name: "Models"), .target(name: "BlockSet")]),
-        //        .manager(name: "TaskManager", dependencies: [.target(name: "Models"), .target(name: "CASManager"), .target(name: "TelemetryManager")]),
-        
-        //        .manager(name: "DateManager", dependencies: [.target(name: "Models)"), .target(name: "")),
-        //        .manager(name: "TelemetryManager", dependencies: [.target(name: "Models")]),
-        //        .manager(name: "TaskManager", dependencies: [.target(name: "Models"), .target(name: "CASManager")]),
-        //        .manager(name: "CASManager", dependencies: [.target(name: "Models"), .target(name: "BlockSet")]),
-        //        .manager(name: "CASManager", dependencies: [.target(name: "Models"), .target(name: "BlockSet")]),
-        //        .manager(name: "CASManager", dependencies: [.target(name: "Models"), .target(name: "BlockSet")]),
-        
-        //        .moduleTests(name: "Managers", dependencies: [.target(name: "Managers"), .target(name: "BlockSet"), .target(name: "Models")]),
-        //            .module(name: "UIComponents", dependencies: [.target(name: "Models")]), /*.target(name: "Managers")]),*/
-        //        .module(name: "Views", dependencies: [.target(name: "Models"), .target(name: "Managers"), .target(name: "UIComponents")]),
-        //            .moduleView(
-        //                name: "ProfileView",
-        //                dependencies: [
-        //                    .target(name: "Models"),
-        //                    //                .target(name: "Managers"),
-        //                    .target(name: "UIComponents"),
-        //                    .target(name: "PaywallView")
-        //                ]
-        //            ),
-        //        .moduleView(
-        //            name: "CalendarView",
-        //            dependencies: [
-        //                .target(name: "Models"),
-        //                //                .target(name: "Managers"),
-        //                .target(name: "UIComponents"),
-        //                .target(name: "PaywallView")
-        //            ]
-        //        ),
-        //        .moduleView(
-        //            name: "TaskView",
-        //            dependencies: [
-        //                .target(name: "Models"),
-        //                //                .target(name: "Managers"),
-        //                .target(name: "UIComponents"),
-        //                .target(name: "PaywallView")
-        //            ]
-        //        ),
-        //        .moduleView(
-        //            name: "ListView",
-        //            dependencies: [
-        //                .target(name: "Models"),
-        //                //                .target(name: "Managers"),
-        //                .target(name: "UIComponents"),
-        //                .target(name: "TaskView")
-        //            ]
-        //        ),
+        .moduleView(.profileView,
+                    dependencies: [
+                        .target(name: Modules.profileManager.name),
+                        .target(name: Modules.taskManager.name),
+                        .target(name: Modules.dateManager.name),
+                        .target(name: Modules.appearanceManager.name),
+                        .target(name: Modules.subscriptionManager.name),
+                        .target(name: Modules.paywallView.name),
+                        .target(name: Modules.settingsView.name),
+                        .target(name: Modules.appearanceView.name),
+                        .target(name: Modules.articlesView.name),
+                        .target(name: Modules.historyView.name),
+                        .target(name: Modules.uiComponents.name)
+                    ]
+                   ),
+        //MARK: - TaskRowView
+        .moduleView(.taskRowView,
+                    dependencies: [
+                        .target(name: Modules.dateManager.name),
+                        .target(name: Modules.notificationManager.name),
+                        .target(name: Modules.playerManager.name),
+                        .target(name: Modules.taskManager.name),
+                        .target(name: Modules.uiComponents.name)
+                    ]
+                   ),
+        //MARK: - ListView
+        .moduleView(.listView,
+                    dependencies: [
+                        .target(name: Modules.appearanceManager.name),
+                        .target(name: Modules.telemetry.name),
+                        .target(name: Modules.taskManager.name),
+                        .target(name: Modules.profileManager.name),
+                        .target(name: Modules.dateManager.name),
+                        .target(name: Modules.notificationManager.name),
+                        .target(name: Modules.playerManager.name),
+                        .target(name: Modules.uiComponents.name),
+                        .target(name: Modules.taskRowView.name),
+                        .target(name: Modules.taskView.name)
+                    ]
+                   ),
+        //MARK: - OnboardingView
+        .moduleView(.onboaringView,
+                    dependencies: [
+                        .target(name: Modules.onboardingManager.name)
+                    ]
+                   ),
+        .moduleView(.notesView,
+                    dependencies: [
+                        .target(name: Modules.profileManager.name),
+                        .target(name: Modules.telemetry.name),
+                        .target(name: Modules.uiComponents.name)
+                    ]
+                   ),
+        //MARK: - MainView
+        .moduleView(.mainView,
+                    dependencies: [
+                        .target(name: Modules.appDelegate.name),
+                        .target(name: Modules.appearanceManager.name),
+                        .target(name: Modules.dateManager.name),
+                        .target(name: Modules.paywallView.name),
+                        .target(name: Modules.permissionManager.name),
+                        .target(name: Modules.profileManager.name),
+                        .target(name: Modules.recorderManager.name),
+                        .target(name: Modules.taskManager.name),
+                        .target(name: Modules.subscriptionManager.name),
+                        .target(name: Modules.customErrors.name),
+                        
+                        .target(name: Modules.calendarView.name),
+                        .target(name: Modules.listView.name),
+                        .target(name: Modules.notesView.name),
+                        .target(name: Modules.profileView.name),
+                        .target(name: Modules.taskView.name),
+                        .target(name: Modules.uiComponents.name),
+                    ]
+                   )
         //        .moduleView(
         //            name: "MainView",
         //            dependencies: [
@@ -317,26 +312,6 @@ let project = Project(
 
 
 extension Target {
-    //    static func module(name: String, dependencies: [TargetDependency] = []) -> Target {
-    //        var resources: [ResourceFileElement] = []
-    //
-    //        if name != "BlockSet" {
-    //            resources.append("Tasker/Modules/\(name)/Resources/**")
-    //        }
-    //
-    //        return .target(
-    //            name: name,
-    //            destinations: App.destinations,
-    //            product: .framework,
-    //            bundleId: App.bundleId + "." + name,
-    //            deploymentTargets: App.deploymentTargets,
-    //            sources: ["Tasker/Modules/\(name)/**"],
-    //            resources: .resources(resources),
-    //            dependencies: dependencies,
-    //            settings: .settings(defaultSettings: .recommended)
-    //        )
-    //    }
-    //
     static func module(_ module: Modules, dependencies: [TargetDependency] = []) -> Target {
         var resources: [ResourceFileElement] = []
         
@@ -389,6 +364,7 @@ extension Target {
                 [
                     "ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS": "NO",
                     "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "NO"
+                    
                 ]
             ).otherSwiftFlags(.longTypeCheckingFlags)
             )

@@ -13,6 +13,8 @@ public protocol TaskManagerProtocol: Actor {
     var activeTasks: [UITaskModel] { get }
     var completedTasks: [UITaskModel] { get }
     
+    var updates: AsyncStream<[UITaskModel]> { get }
+    
     func thisWeekTasks(date: Double) async -> [UITaskModel]
     
     /// Save Audio to cas

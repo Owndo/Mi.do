@@ -14,7 +14,6 @@ import TelemetryManager
 @Observable
 public final class DateManager: DateManagerProtocol {
     ///for the set up first day of week
-    private var profileManager: ProfileManagerProtocol
     private var telemetryManager: TelemetryManagerProtocol
     
     private let _dateChangeContinuation: AsyncStream<Date>.Continuation
@@ -52,7 +51,7 @@ public final class DateManager: DateManagerProtocol {
             if indexForWeek == allWeeks.last?.id {
                 appendWeeksForward()
             } else if indexForWeek == allWeeks.first?.id {
-                prependWeeksBackward()
+                appendWeeksBackward()
             }
         }
         willSet {
@@ -66,8 +65,8 @@ public final class DateManager: DateManagerProtocol {
     }
     
     //MARK: - Init
-    private init(profileManager: ProfileManagerProtocol, telemetryManager: TelemetryManagerProtocol) {
-        self.profileManager = profileManager
+    
+    private init(telemetryManager: TelemetryManagerProtocol) {
         self.telemetryManager = telemetryManager
         
         (self.dateChanges, self._dateChangeContinuation) = AsyncStream.makeStream()
@@ -77,8 +76,10 @@ public final class DateManager: DateManagerProtocol {
         _dateChangeContinuation.finish()
     }
     
-    public static func createDateManager(profileManager: ProfileManagerProtocol, telemetryManager: TelemetryManagerProtocol) async -> DateManagerProtocol {
-        let manager = DateManager(profileManager: profileManager, telemetryManager: telemetryManager)
+    public static func createDateManager(profileManager: ProfileManagerProtocol) async -> DateManagerProtocol {
+        let telemetryManager = TelemetryManager.createTelemetryManager()
+        let manager = DateManager(telemetryManager: telemetryManager)
+        
         manager.calendar.firstWeekday = profileManager.profileModel.settings.firstDayOfWeek
         manager.initializeWeek()
         await manager.initializeMonth()
@@ -87,10 +88,8 @@ public final class DateManager: DateManagerProtocol {
     }
     
     public static func createMockDateManager() -> DateManagerProtocol {
-        let profileManager = ProfileManager.createMockProfileManager()
-        let dateManager = DateManager(profileManager: profileManager, telemetryManager: TelemetryManager.createTelemetryManager(mock: true))
+        let dateManager = DateManager(telemetryManager: TelemetryManager.createTelemetryManager(mock: true))
         dateManager.initializeWeek()
-        
         Task {
             await dateManager.initializeMonth()
         }
@@ -126,19 +125,29 @@ public final class DateManager: DateManagerProtocol {
         }
         
         appendWeeksForward()
-        prependWeeksBackward()
+        appendWeeksBackward()
     }
     
+    //MARK: - Initialize months
+    
     public func initializeMonth() async {
-        allMonths.removeAll()
+        allMonths = []
         
         await withTaskGroup(of: PeriodModel.self) { group in
-            for i in (-600...600) {
+            for id in 0...19 {
                 group.addTask {
-                    let monthDate = self.calendar.date(byAdding: .month, value: i, to: self.selectedDate)!
+                    let offset = id - 10
+                    
+                    let monthDate = self.calendar.date(
+                        byAdding: .month,
+                        value: offset,
+                        to: self.selectedDate
+                    )!
+                    
                     let newMonth = self.generateMonth(for: monthDate)
                     let name = self.getMonthName(from: monthDate)
-                    return PeriodModel(id: i, date: newMonth, name: name)
+                    
+                    return PeriodModel(id: id, date: newMonth, name: name)
                 }
             }
             
@@ -149,16 +158,6 @@ public final class DateManager: DateManagerProtocol {
         
         allMonths.sort { $0.id < $1.id }
     }
-    
-    public func initPreviousMonths() {
-        for i in (1...60).reversed() {
-            let month = calendar.date(byAdding: .month, value: -i, to: selectedDate)!
-            let newMonth = generateMonth(for: month)
-            let name = getMonthName(from: month)
-            allMonths.append(PeriodModel(id: -i, date: newMonth, name: name))
-        }
-    }
-    
     
     public func startOfWeek(for date: Date) -> Date {
         calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)) ?? date
@@ -182,7 +181,7 @@ public final class DateManager: DateManagerProtocol {
         }
     }
     
-    public func prependWeeksBackward() {
+    public func appendWeeksBackward() {
         guard let firstWeekStart = allWeeks.first?.date.first else { return }
         for i in (1...24) {
             let weekStart = calendar.date(byAdding: .weekOfYear, value: -i, to: firstWeekStart)!
@@ -199,6 +198,17 @@ public final class DateManager: DateManagerProtocol {
     }
     
     //MARK: - Months
+    
+    public func generatePreviousMonth() {
+        guard let firstDay = allMonths.first!.date.first else { return }
+        let monthStart = calendar.date(byAdding: .month, value: -1, to: firstDay)!
+        let newMonth = generateMonth(for: monthStart)
+        let nameOfMonth = getMonthName(from: monthStart)
+        let newId = allMonths.first!.id - 1
+        
+        allMonths.insert(PeriodModel(id: newId, date: newMonth, name: nameOfMonth), at: 0)
+    }
+    
     public func appendMonthsBackward() {
         guard let firstMonthStart = allMonths.first?.date.first,
               let firstID = allMonths.first?.id else { return }
@@ -216,7 +226,6 @@ public final class DateManager: DateManagerProtocol {
         
         allMonths.insert(contentsOf: newMonths, at: 0)
     }
-    
     
     public func appendMonthsForward() {
         guard let lastMonthStart = allMonths.last?.date.first else { return }
@@ -401,7 +410,7 @@ public final class DateManager: DateManagerProtocol {
         let newDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate
         
         if let firstDate = allWeeks.first?.date.first, newDate < firstDate {
-            prependWeeksBackward()
+            appendWeeksBackward()
         }
         
         selectedDateChange(newDate)
@@ -415,7 +424,7 @@ public final class DateManager: DateManagerProtocol {
     }
     
     public func backToToday() {
-        selectedDate = currentTime
+        selectedDateChange(currentTime)
         initializeWeek()
         indexForWeek = 1
     }
@@ -447,7 +456,7 @@ public final class DateManager: DateManagerProtocol {
             indexForWeek = newWeek.id
         } else {
             appendWeeksForward()
-            prependWeeksBackward()
+            appendWeeksBackward()
             
             if let refreshedWeek = allWeeks.first(where: { startOfWeek(for: $0.date.first!) == newWeekStart }) {
                 indexForWeek = refreshedWeek.id

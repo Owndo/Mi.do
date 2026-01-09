@@ -42,10 +42,26 @@ public final actor TaskManager: TaskManagerProtocol {
     }
     
     //MARK: Tasks properties
+    
     public var tasks = [String: UITaskModel]()
     
     public var activeTasks: [UITaskModel] { returnActiveTasks() }
     public var completedTasks: [UITaskModel] { returnCompletedTasks() }
+    
+    private var continuations: [AsyncStream<[UITaskModel]>.Continuation] = []
+
+    public var updates: AsyncStream<[UITaskModel]> {
+        AsyncStream { continuation in
+            continuations.append(continuation)
+
+            continuation.yield(Array(tasks.values))
+        }
+    }
+
+    private func notify() {
+        let all = Array(tasks.values)
+        continuations.forEach { $0.yield(all) }
+    }
     
     private var thisWeekCasheTasks: [UITaskModel] = []
     private var cacheWeekStart: Double = 0
@@ -55,11 +71,11 @@ public final actor TaskManager: TaskManagerProtocol {
     
     //MARK: - Init
     
-    private init(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, telemetryManager: TelemetryManagerProtocol) {
+    private init(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, telemetryManager: TelemetryManagerProtocol? = nil) {
         self.casManager = casManager
         self.dateManager = dateManager
         self.notificationManager = notificationManager
-        self.telemetryManager = telemetryManager
+        self.telemetryManager = telemetryManager ?? TelemetryManager.createTelemetryManager()
     }
     
     //MARK: - Deinit
@@ -68,22 +84,50 @@ public final actor TaskManager: TaskManagerProtocol {
         dateObserverTask?.cancel()
     }
     
-    public static func createTaskManager(
-        casManager: CASManagerProtocol,
-        dateManager: DateManagerProtocol,
-        notificationManager: NotificationManagerProtocol,
-        telemetryManager: TelemetryManagerProtocol
-    ) async -> TaskManagerProtocol {
-        let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager, telemetryManager: telemetryManager)
+    public static func createTaskManager(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol) async -> TaskManagerProtocol {
+        let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         await manager.setTasks(await manager.updateTasks())
-        
-        Task { await manager.updateNotifications() }
+        await manager.updateNotifications()
         
         return manager
     }
     
+    //MARK: - Create MockTaskManager
+    
     public static func createMockTaskManager() -> TaskManagerProtocol {
-        TaskManager(casManager: MockCas.createCASManager(), dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
+        let casManager = MockCas.createCASManager()
+        let manager = TaskManager(casManager: casManager, dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
+        
+        return manager
+    }
+    
+    public static func createMockTaskManagerWithModels() async -> TaskManagerProtocol {
+        let casManager = MockCas.createCASManager()
+        let manager = TaskManager(casManager: casManager, dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
+        await manager.fakeModelForPreview()
+        return manager
+    }
+    
+    func fakeModelForPreview() async {
+        let task =  UITaskModel(
+            .initial(
+                TaskModel(
+                    title: "New task",
+                    notificationDate: Date.now.timeIntervalSince1970
+                )
+            )
+        )
+         
+        let task1 = UITaskModel(
+            .initial(
+                TaskModel(
+                    title: "New Task1",
+                    notificationDate: Date.now.timeIntervalSince1970 + 150
+                )
+            )
+         )
+        
+        tasks = [task.id: task, task1.id: task1]
     }
     
     //MARK: - Update tasks
@@ -175,10 +219,9 @@ public final actor TaskManager: TaskManagerProtocol {
     // MARK: - Check mark tapped
     
     public func checkMarkTapped(task: UITaskModel) async throws {
-        let model = task
-        model.completeRecords = updateExistingTaskCompletion(task: task)
+        task.completeRecords = updateExistingTaskCompletion(task: task)
         
-        try await saveTask(model)
+        try await saveTask(task)
         
         await updateNotifications()
     }
@@ -218,27 +261,23 @@ public final actor TaskManager: TaskManagerProtocol {
     
     public func saveTask(_ task: UITaskModel) async throws {
         try await casManager.saveModel(task.model)
+        notify()
         
         guard calendar.isDate(Date(timeIntervalSince1970: task.notificationDate), inSameDayAs: dateManager.selectedDate) else {
             return
         }
         
-        tasks[task.id] = task
+        //        tasks[task.id] = task
     }
     
     // MARK: - Delete task
     
     public func deleteTask(task: UITaskModel, deleteCompletely: Bool = false) async throws {
-        guard task.markAsDeleted == false else {
-            return
-        }
-        
-        let model = task
         if deleteCompletely {
             try await casManager.deleteModel(task.model)
             tasks.removeValue(forKey: task.id)
         } else {
-            model.deleteRecords = updateExistingTaskDeleted(task: model)
+            task.deleteRecords = updateExistingTaskDeleted(task: task)
             try await saveTask(task)
         }
         
@@ -255,6 +294,8 @@ public final actor TaskManager: TaskManagerProtocol {
         if task.repeatTask != .never && deleteCompletely == false {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteOneOfManyTasks(.taskListView))))
         }
+        
+        notify()
     }
     
     public func updateExistingTaskDeleted(task: UITaskModel) -> [DeleteRecord] {
@@ -264,7 +305,7 @@ public final actor TaskManager: TaskManagerProtocol {
     }
     
     public func updateNotifications() async {
-        await notificationManager.createNotification(tasks: tasks.map{ $0.value })
+        await notificationManager.createNotification(tasks: tasks.map { $0.value })
     }
     
     //MARK: - Move to next Day

@@ -8,161 +8,174 @@
 import Foundation
 import SwiftUI
 import Models
-import Managers
-//import TaskView
+import AppearanceManager
+import DateManager
+import TaskManager
+import TelemetryManager
+import TaskRowView
+import NotificationManager
+import ProfileManager
 
 @Observable
 public final class ListVM {
-    @ObservationIgnored
-    @Injected(\.casManager) private var casManager: CASManagerProtocol
-    @ObservationIgnored
-    @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-    @ObservationIgnored
-    @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
-    @ObservationIgnored
-    @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
-    @ObservationIgnored
-    @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
-    @ObservationIgnored
-    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
-    @ObservationIgnored
-    @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
     
-    public var onTaskSelected: ((MainModel) -> Void)?
-    var taskForDeleted: MainModel = mockModel()
-//    var taskVM: TaskVM?
+    //MARK: - Dependencies
+    
+    private var dateManager: DateManagerProtocol
+    private var notificationManager: NotificationManagerProtocol
+    private var taskManager: TaskManagerProtocol
+    private let profileManager: ProfileManagerProtocol
+    
+    private var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    
+    public var onTaskSelected: ((UITaskModel) -> Void)?
     
     //MARK: UI State
-    // TODO: - Until best days
-//    var indexForList: Int = 54 {
-//        didSet {
-//            if oldValue < indexForList {
-//                withAnimation {
-//                    nextDaySwiped()
-//                }
-//            } else {
-//                withAnimation {
-//                    previousDaySwiped()
-//                }
-//            }
-//            if oldValue >= indexes.last! - 10 {
-//                indexForList = 54
-//            } else if oldValue <= indexes.first! + 10 {
-//                indexForList = 54
-//            }
-//        }
-//    }
-//    var indexes = Array(0...99)
     
-    var showDeleteDialog = false
     var contentHeight: CGFloat = 0
     
     //MARK: Confirmation dialog
-    var taskForConfirmation: MainModel?
-    var confirmationDialogIsPresented = false
-    var messageForDelete: LocalizedStringKey = ""
-    var singleTask = true
-    
     var completedTasksHidden = false
     
-    var tasks: [MainModel] {
-        taskManager.activeTasks
+    var tasksRowVM: [TaskRowVM] = []
+    var completedTasksRowVM: [TaskRowVM] = []
+    
+    //MARK: - Private Init
+    
+    private init(dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol, profileManager: ProfileManagerProtocol) {
+        self.dateManager = dateManager
+        self.notificationManager = notificationManager
+        self.taskManager = taskManager
+        self.profileManager = profileManager
     }
     
-    var completedTasks: [MainModel] {
-        taskManager.completedTasks
+    //MARK: - Create ListVM
+    
+    public static func createListVM(dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol, profileManager: ProfileManagerProtocol) async -> ListVM {
+        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, profileManager: profileManager)
+        await vm.updateTasks()
+        vm.completedTasksHidden = profileManager.profileModel.settings.completedTasksHidden
+        vm.observeTasks()
+        
+        return vm
     }
     
-    public init() {
-//        completedTasksHidden = casManager.profileModel.settings.completedTasksHidden
+    //MARK: - Create PreviewListVM
+    
+    public static func createPreviewListVM() async -> ListVM {
+        let taskManager = await TaskManager.createMockTaskManagerWithModels()
+        let dateManager = DateManager.createMockDateManager()
+        let notificationManager = MockNotificationManager()
+        let profileManager = ProfileManager.createMockProfileManager()
+        
+        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, profileManager: profileManager)
+        await vm.updateTasks()
+        vm.observeTasks()
+        
+        return vm
     }
     
-    func taskTapped(_ task: MainModel) {
+    
+    //MARK: - Update tasks
+    
+    private func updateTasks() async {
+        let active = await taskManager.activeTasks
+        let completed = await taskManager.completedTasks
+        
+        tasksRowVM = await withTaskGroup(of: TaskRowVM.self) { group in
+            for task in active {
+                group.addTask {
+                    await TaskRowVM.createTaskRowVM(
+                        task: task,
+                        dateManager: self.dateManager,
+                        notificationManager: self.notificationManager,
+                        taskManager: self.taskManager
+                    )
+                }
+            }
+            
+            var result: [TaskRowVM] = []
+            for await vm in group { result.append(vm) }
+            return result
+        }
+        
+        completedTasksRowVM = await withTaskGroup(of: TaskRowVM.self) { group in
+            for task in completed {
+                group.addTask {
+                    await TaskRowVM.createTaskRowVM(
+                        task: task,
+                        dateManager: self.dateManager,
+                        notificationManager: self.notificationManager,
+                        taskManager: self.taskManager
+                    )
+                }
+            }
+            
+            var result: [TaskRowVM] = []
+            for await vm in group { result.append(vm) }
+            return result
+        }
+    }
+    
+    private func observeTasks() {
+        Task { [weak self] in
+            guard let self else { return }
+            
+            for await _ in await taskManager.updates {
+                await self.updateTasks()
+            }
+        }
+    }
+    
+    //MARK: - Task tapped
+    
+    func taskTapped(_ task: UITaskModel) {
         onTaskSelected?(task)
     }
     
-    //MARK: - Complete task
-    func checkMarkTapped(_ task: MainModel) async {
+    func completedTaskViewChange() async {
+        profileManager.profileModel.settings.completedTasksHidden.toggle()
+        
         do {
-            try await taskManager.checkMarkTapped(task: task)
+            try await profileManager.updateProfileModel()
+            // telemetry
+            if profileManager.profileModel.settings.completedTasksHidden {
+                telemetryAction(.taskAction(.showCompletedButtonTapped))
+            } else {
+                telemetryAction(.taskAction(.hideCompletedButtonTapped))
+            }
         } catch {
-            //TODO: - Error
+            print("Couldn't update profile")
         }
-    }
-    
-    //MARK: - Delete functions
-    func deleteTaskButtonSwiped(task: MainModel) {
-        taskForDeleted = task
-        
-        guard task.repeatTask == .never else {
-            messageForDelete = "This's a recurring task."
-            singleTask = false
-            confirmationDialogIsPresented.toggle()
-            return
-        }
-        
-        messageForDelete = "Delete task?"
-        singleTask = true
-        confirmationDialogIsPresented.toggle()
-    }
-    
-    func deleteButtonTapped(task: MainModel, deleteCompletely: Bool = false) async {
-        do {
-            try await taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
-        } catch {
-            //TODO: - Error
-        }
-    }
-    
-    func dialogBinding(for task: MainModel) -> Binding<Bool> {
-        Binding(
-            get: { self.confirmationDialogIsPresented && self.taskForDeleted.id == task.id },
-            set: { newValue in self.confirmationDialogIsPresented = newValue }
-        )
-    }
-    
-    func completedTaskViewChange() {
-//        let model = casManager.profileModel
-        completedTasksHidden.toggle()
-//        model.settings.completedTasksHidden = completedTasksHidden
-        
-//        casManager.saveProfileData(model)
-        
-        // telemetry
-//        if model.settings.completedTasksHidden {
-//            telemetryAction(.taskAction(.showCompletedButtonTapped))
-//        } else {
-//            telemetryAction(.taskAction(.hideCompletedButtonTapped))
-//        }
     }
     
     func heightOfList() -> CGFloat {
-        CGFloat((tasks.count + completedTasks.count) * 52 + 170)
+        CGFloat((tasksRowVM.count + completedTasksRowVM.count) * 52 + 170)
     }
     
     //MARK: - Date
     func backToTodayButtonTapped() {
-//        dateManager.backToToday()
-//        indexForList = 54
+        //        dateManager.backToToday()
+        //        indexForList = 54
     }
     
     private func indexResetWithDate() -> Bool {
-//        dateManager.selectedDayIsToday()
+        //        dateManager.selectedDayIsToday()
         true
     }
     
     
     private func nextDaySwiped() {
-//        dateManager.addOneDay()
+        //        dateManager.addOneDay()
     }
     
     private func previousDaySwiped() {
-//        dateManager.subtractOneDay()
+        //        dateManager.subtractOneDay()
     }
     
     
     //MARK: - Telemetry action
     private func telemetryAction(_ action: EventType) {
-//        telemetryManager.logEvent(action)
+        //        telemetryManager.logEvent(action)
     }
 }

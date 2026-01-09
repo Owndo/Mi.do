@@ -1,6 +1,6 @@
 //
 //  CalendarView.swift
-//  BlockSet
+//  Tasker
 //
 //  Created by Rodion Akhmedov on 7/9/25.
 //
@@ -11,12 +11,8 @@ import UIComponents
 
 public struct CalendarView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.dismiss) var dismissButton
     
     @Bindable var vm: CalendarVM
-    
-//    @Binding var mainViewIsOpen: Bool
-//    @Binding var path: NavigationPath
     
     public init(vm: CalendarVM) {
         self.vm = vm
@@ -27,111 +23,53 @@ public struct CalendarView: View {
             colorScheme.backgroundColor()
                 .ignoresSafeArea()
             
-            VStack(spacing: 0) {
-                
-                if osVersion.majorVersion < 26 {
-                    CustomToolBar()
-                }
-                
-                ScrollView {
-                    LazyVStack {
-                        ForEach(vm.allMonths) { month in
-                            
-                            MonthInfoView(month)
-                            
-                            LazyVGrid(columns: vm.columns) {
-                                EmptyDays(month)
-                                
-                                MonthRowView(month.date)
+            ScrollView {
+                LazyVStack {
+                    ForEach(vm.allMonths) { month in
+                        
+                        MonthInfoView(month)
+                            .onAppear {
+                                vm.handleMonthAppeared(month)
                             }
+                        
+                        LazyVGrid(columns: vm.columns) {
+                            EmptyDays(month)
+                            
+                            MonthRowView(month.date)
                         }
                     }
                 }
-                .customBlurForContainer(colorScheme: colorScheme)
-                .scrollIndicators(.hidden)
-                .navigationBarBackButtonHidden()
-                .scrollPosition(id: $vm.scrollID, anchor: .top)
-                //                .scrollDisabled(vm.showPaywall)
+                .scrollTargetLayout()
             }
-            //            .onChange(of: vm.showPaywall) { oldValue, _ in
-            //                vm.automaticlyClossScreen(path: &path, mainViewIsOpen: &mainViewIsOpen)
-            //            }
-            .onAppear {
-                Task {
-                    await vm.onAppear()
-                }
+            .task {
+                vm.onAppear()
             }
             .onDisappear {
                 vm.onDissapear()
             }
-            
-            //            if vm.showPaywall {
-            //                PaywallView()
-            //            }
+            .scrollIndicators(.hidden)
+            .navigationBarBackButtonHidden()
+            .scrollPosition(id: $vm.scrollID, anchor: .top)
         }
         .toolbar {
-            if osVersion.majorVersion >= 26 {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        vm.closeScreenButtonTapped()
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 17))
-                                .foregroundStyle(colorScheme.accentColor())
-                            
-                            Text("\(vm.selectedDate, format: .dateTime.month().day().year())")
-                                .font(.system(.body, design: .rounded, weight: .medium))
-                                .foregroundStyle(colorScheme.accentColor())
-                        }
-                        .padding(.vertical, 7)
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    vm.backToMainViewButtonTapped()
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 17))
+                            .foregroundStyle(colorScheme.accentColor())
+                        
+                        Text("\(vm.selectedDate, format: .dateTime.month().day().year())")
+                            .font(.system(.body, design: .rounded, weight: .medium))
+                            .foregroundStyle(colorScheme.accentColor())
                     }
-                }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    if vm.selectedDayIsToday() {
-                        Button {
-                            Task {
-                                await vm.backToTodayButtonTapped()
-                            }
-                        } label: {
-                            HStack {
-                                Image(systemName: "arrow.uturn.backward")
-                                    .font(.system(size: 17))
-                                
-                                Text("Today", bundle: .module)
-                                    .font(.system(.body, design: .rounded, weight: .medium))
-                            }
-                            .tint(.labelSecondary)
-                            .padding(.vertical, 7)
-                            .padding(.horizontal, 14)
-                        }
-                        //                        .disabled(vm.showPaywall)
-                    }
+                    .padding(.vertical, 7)
                 }
             }
-        }
-        //        .animation(.bouncy, value: vm.showPaywall)
-    }
-    
-    //MARK: - ToolBar
-    @ViewBuilder
-    private func CustomToolBar() -> some View {
-        HStack {
-            Button {
-                vm.closeScreenButtonTapped()
-            } label: {
-                HStack {
-                    Image(systemName: "chevron.left")
-                        .bold()
-                    
-                    Text("\(vm.selectedDate, format: .dateTime.month().day().year())")
-                }
-                .padding(.vertical, 7)
-                .tint(colorScheme.accentColor())
-                
-                Spacer()
-                
+            
+            ToolbarItem(placement: .confirmationAction) {
                 if vm.selectedDayIsToday() {
                     Button {
                         Task {
@@ -140,25 +78,18 @@ public struct CalendarView: View {
                     } label: {
                         HStack {
                             Image(systemName: "arrow.uturn.backward")
+                                .font(.system(size: 17))
                             
                             Text("Today", bundle: .module)
+                                .font(.system(.body, design: .rounded, weight: .medium))
                         }
                         .tint(.labelSecondary)
                         .padding(.vertical, 7)
                         .padding(.horizontal, 14)
-                        .background(
-                            Capsule()
-                                .fill(
-                                    .backgroundTertiary
-                                )
-                        )
                     }
                 }
             }
-            //            .disabled(vm.showPaywall)
         }
-        .padding(.leading, 8)
-        .padding(.trailing, 16)
     }
     
     @ViewBuilder
@@ -188,9 +119,6 @@ public struct CalendarView: View {
             }
             .padding(.top)
         }
-        .onAppear {
-            vm.handleMonthAppeared(month)
-        }
         .padding(.top, 32)
         .padding(.bottom, 12)
     }
@@ -208,13 +136,13 @@ public struct CalendarView: View {
     }
     
     //MARK: - Days at month
+    
     @ViewBuilder
     private func MonthRowView(_ dates: [Date]) -> some View {
         ForEach(dates, id: \.self) { day in
             VStack {
                 Button {
                     vm.selectedDateChange(day)
-                    vm.closeScreenButtonTapped()
                 } label: {
                     ZStack {
                         if vm.isSelectedDay(day) {

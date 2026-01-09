@@ -7,12 +7,13 @@
 
 import SwiftUI
 import UIComponents
-import Calendar
+import CalendarView
 import ListView
 import TaskView
-import Profile
-import Paywall
+import ProfileView
+import PaywallView
 import StoreKit
+import NotesView
 
 public struct MainView: View {
     @Environment(\.requestReview) var requestReview
@@ -23,7 +24,7 @@ public struct MainView: View {
     @FocusState var focusState: Bool
     
     public init(vm: MainVM) {
-        self._vm = Bindable(wrappedValue: vm)
+        self.vm = vm
     }
     
     public var body: some View {
@@ -31,47 +32,50 @@ public struct MainView: View {
             ZStack {
                 CustomBackground()
                 
-                NotesView(mainViewIsOpen: $vm.mainViewIsOpen)
-                    .disabled(vm.showPaywall)
-                    .disabled(vm.presentationPosition == .fraction(0.93))
+                NotesView(vm: vm.notesVM)
+                //                    .disabled(vm.presentationPosition == .fraction(0.93))
             }
-            .sheet(isPresented: $vm.mainViewIsOpen) {
-                MainViewBase()
-                    .sheet(item: $vm.sheetDestination) { destination in
-                        switch destination {
-                        case .details(let taskModel):
-                            TaskView(taskVM: taskModel)
-                                .preferredColorScheme(colorScheme)
-                        case .profile:
-                            ProfileView()
-                                .preferredColorScheme(colorScheme)
-                        }
-                    }
-                    .sheet(isPresented: $vm.onboardingManager.sayHello) {
-                        SayHelloView()
-                            .preferredColorScheme(colorScheme)
-                            .presentationDragIndicator(.visible)
-                    }
+            .navigationDestination(for: MainViewNavigation.self) { destination in
+                destination.destination()
             }
-            .navigationDestination(for: MainVM.Destination.self) { destination in
-                switch destination {
-                case .main:
-                    MainView(vm: vm)
-                case .calendar:
-                    MonthView(mainViewIsOpen: $vm.mainViewIsOpen, path: $vm.path)
-                }
-            }
+            //            .sheet(isPresented: $vm.mainViewIsOpen) {
+            //                MainViewBase()
+            //                    .sheet(item: $vm.sheetDestination) { destination in
+            //                        switch destination {
+            //                        case .details(let taskModel):
+            //                            TaskView(taskVM: taskModel)
+            //                                .preferredColorScheme(colorScheme)
+            //                        case .profile:
+            //                            ProfileView()
+            //                                .preferredColorScheme(colorScheme)
+            //                        }
+            //                    }
+            ////                    .sheet(isPresented: $vm.onboardingManager.sayHello) {
+            ////                        SayHelloView()
+            ////                            .preferredColorScheme(colorScheme)
+            ////                            .presentationDragIndicator(.visible)
+            ////                    }
+            //            }
+            //            .navigationDestination(for: MainVM.Destination.self) { destination in
+            //                switch destination {
+            //                case .main:
+            //                    MainView(vm: vm)
+            //                case .calendar:
+            //                    MonthView(mainViewIsOpen: $vm.mainViewIsOpen, path: $vm.path)
+            //                }
+            //            }
             //MARK: - Toolbar
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        vm.calendarButtonTapped()
+                        Task {
+                            await vm.calendarButtonTapped()
+                        }
                     } label: {
                         Image(systemName: "calendar")
                             .font(.system(size: 18))
                             .foregroundStyle(colorScheme.accentColor())
                     }
-                    .disabled(vm.showPaywall)
                     .disabled(vm.disabledButton)
                 }
                 
@@ -83,7 +87,6 @@ public struct MainView: View {
                         .onSubmit {
                             vm.profileModelSave()
                         }
-                        .disabled(vm.showPaywall)
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
@@ -92,7 +95,6 @@ public struct MainView: View {
                     } label: {
                         ProfilePhoto()
                     }
-                    .disabled(vm.showPaywall)
                     .disabled(vm.disabledButton)
                 }
             }
@@ -101,6 +103,7 @@ public struct MainView: View {
             .animation(.default, value: vm.isRecording)
             .animation(.default, value: vm.backgroundAnimation)
             .sensoryFeedback(.selection, trigger: vm.sheetDestination)
+            .sensoryFeedback(.selection, trigger: vm.path)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
         }
     }
@@ -112,11 +115,12 @@ public struct MainView: View {
             colorScheme.backgroundColor().ignoresSafeArea()
             
             VStack(spacing: 0) {
-                WeekView()
-                    .padding(.top, 17)
+                //TODO: - WeekView
+                //                WeekView()
+                //                    .padding(.top, 17)
                 
-                ListView(vm: vm.listVM)
-                    .presentationContentInteraction(.scrolls)
+                //                ListView(vm: vm.listVM)
+                //                    .presentationContentInteraction(.scrolls)
                 
                 Spacer()
             }
@@ -134,9 +138,9 @@ public struct MainView: View {
             }
             .ignoresSafeArea(.keyboard)
             
-            if vm.showPaywall {
-                PaywallView()
-            }
+            //            if vm.showPaywall {
+            //                PaywallView()
+            //            }
         }
         .overlay(
             GlowEffect(decibelLevel: vm.decibelLvl)
@@ -162,7 +166,7 @@ public struct MainView: View {
         VStack {
             Spacer()
             
-            RecordButton(isRecording: $vm.isRecording, showTips: vm.showTip, progress: vm.progress, countOfSec: vm.currentlyTime, decivelsLVL: vm.decibelLvl)
+            RecordButton(isRecording: $vm.isRecording, progress: vm.progress, countOfSec: vm.currentlyTime, decivelsLVL: vm.decibelLvl)
                 .padding(20)
                 .contentShape(.circle)
                 .disabled(vm.disabledButton)
@@ -228,5 +232,5 @@ public struct MainView: View {
 }
 
 #Preview {
-    MainView(vm: MainVM())
+    MainView(vm: MainVM.createPreviewVM())
 }

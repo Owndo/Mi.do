@@ -22,8 +22,9 @@ public final class StorageManager: StorageManagerProtocol {
     
     //MARK: - Manager creator
     
-    public static func createStorageManager(casManager: CASManagerProtocol) -> StorageManagerProtocol {
-        StorageManager(casManager: casManager)
+    public static func createStorageManager() async -> StorageManagerProtocol {
+        let casManager = await CASManager.createCASManager()
+        return StorageManager(casManager: casManager)
     }
     
     public static func createMockStorageManager() -> StorageManagerProtocol {

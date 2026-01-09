@@ -17,15 +17,13 @@ public struct RecordButton: View {
     @State private var shadowRadius: CGFloat = 5
     @State private var shadowAngle: Double = 0
     
-    var showTips: Bool
     
     var progress: Double
     var countOfSec: Double
     var decivelsLVL: Float
     
-    public init(isRecording: Binding<Bool>, showTips: Bool, progress: Double, countOfSec: Double, decivelsLVL: Float) {
+    public init(isRecording: Binding<Bool>, progress: Double, countOfSec: Double, decivelsLVL: Float) {
         self._isRecording = isRecording
-        self.showTips = showTips
         self.progress = progress
         self.countOfSec = countOfSec
         self.decivelsLVL = decivelsLVL
@@ -54,12 +52,11 @@ public struct RecordButton: View {
                 }
             }
         }
-        .animation(.default, value: showTips)
     }
     
     @ViewBuilder
     private func CustomPopOver() -> some View {
-        if showTips && isRecording == false {
+        if isRecording == false {
             VStack {
                 Text("Start here", bundle: .module)
                     .font(.system(size: 17, weight: .bold, design: .rounded))
@@ -168,7 +165,7 @@ public struct RecordButton: View {
 }
 
 #Preview {
-    RecordButton(isRecording: .constant(false), showTips: true, progress: 0.7, countOfSec: 23.1, decivelsLVL: 1.1)
+    RecordButton(isRecording: .constant(false), progress: 0.7, countOfSec: 23.1, decivelsLVL: 1.1)
 }
 
 struct PopoverBubbleShape: Shape {

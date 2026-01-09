@@ -11,6 +11,8 @@ import Models
 import SwiftUI
 
 public protocol DateManagerProtocol {
+    func generatePreviousMonth()
+    
     var dateChanges: AsyncStream<Date> { get }
     
     var calendar: Calendar { get set }
@@ -25,9 +27,9 @@ public protocol DateManagerProtocol {
     func startOfWeek(for date: Date) -> Date
     func selectedDateChange(_ day: Date)
     func appendWeeksForward()
-    func prependWeeksBackward()
+    func appendWeeksBackward()
     func appendMonthsForward()
-    func appendMonthsBackward()
+//    func appendMonthsBackward()
     /// Converte date to string
     func dateToString(for date: Date, useForWeekView: Bool) -> LocalizedStringKey
     func dateForDeadline(for date: Date) -> LocalizedStringKey

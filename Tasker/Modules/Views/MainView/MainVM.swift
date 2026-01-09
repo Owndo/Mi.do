@@ -5,15 +5,24 @@
 //  Created by Rodion Akhmedov on 4/11/25.
 //
 
-import Foundation
-import SwiftUI
-import Managers
-import Models
-import TaskView
-import ListView
-import BlockSet
 
-@MainActor
+import AppearanceManager
+import CalendarView
+import CustomErrors
+import DateManager
+import Foundation
+import Models
+import NotesView
+import PaywallView
+import PermissionManager
+import ProfileManager
+import RecorderManager
+import SubscriptionManager
+import SwiftUI
+import TaskManager
+import TaskView
+import TelemetryManager
+
 @Observable
 public final class MainVM {
     //MARK: - Depencies
@@ -23,47 +32,30 @@ public final class MainVM {
     
     private let dateManager: DateManagerProtocol
     
-    private let permissionManager: PermissionProtocol
+    private let permissionManager: PermissionProtocol = PermissionManager.createPermissionManager()
     
     private let recorderManager: RecorderManagerProtocol
     
     private let subscriptionManager: SubscriptionManagerProtocol
     
-    private let telemetryManager: TelemetryManagerProtocol
+    private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
-    private let playerManager: PlayerManagerProtocol
+    //MARK: - ViewModels
     
-    var onboardingManager: OnboardingManagerProtocol
+    private var calendarVM: CalendarVM
     
-//    @ObservationIgnored
-//    @Injected(\.casManager) private var casManager: CASManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.permissionManager) private var permissionManager: PermissionProtocol
-//    @ObservationIgnored
-//    @Injected(\.recorderManager) private var recorderManager: RecorderManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.playerManager) private var playerManager: PlayerManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.dateManager) private var dateManager: DateManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.notificationManager) var notificationManager: NotificationManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.taskManager) private var taskManager: TaskManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.appearanceManager) private var appearanceManager: AppearanceManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.telemetryManager) private var telemetryManager: TelemetryManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.subscriptionManager) private var subscriptionManager: SubscriptionManagerProtocol
-//    @ObservationIgnored
-//    @Injected(\.onboardingManager) var onboardingManager: OnboardingManagerProtocol
+    var notesVM: NotesVM
+    
+    //    private let playerManager: PlayerManagerProtocol
+    
+    //    var onboardingManager: OnboardingManagerProtocol
     
     //MARK: - Model
-    var mainModel: MainModel?
-    var profileModel: ProfileData = mockProfileData()
+    var mainModel: UIProfileModel?
+    var profileModel: UIProfileModel
     
-    let listVM = ListVM()
-    var taskVM: TaskVM?
+    //    let listVM = ListVM()
+    //    var taskVM: TaskVM?
     
     var sheetDestination: SheetDestination? {
         didSet {
@@ -76,6 +68,7 @@ public final class MainVM {
     }
     
     //MARK: - UI States
+    
     var mainViewIsOpen = true
     var profileViewIsOpen = false
     var isRecording = false
@@ -86,14 +79,11 @@ public final class MainVM {
     
     var backgroundAnimation = false
     
-    /// First time ever opened
-    var sayHello = false
-    
     var mainViewPaywall = false
     
-    var showPaywall: Bool {
-        mainViewPaywall && subscriptionManager.showPaywall
-    }
+    //    var showPaywall: Bool {
+    //        mainViewPaywall && subscriptionManager.showPaywall
+    //    }
     
     var presentationPosition: PresentationDetent = PresentationMode.base.detent {
         didSet {
@@ -135,12 +125,6 @@ public final class MainVM {
         }
     }
     
-    func taskDetailsButtonTapped(model: UITaskModel) {
-        let taskVM = TaskVM(mainModel: model)
-        
-        self.sheetDestination = .details(taskVM)
-    }
-    
     var recordingState: RecordingState = .idle
     
     enum RecordingState {
@@ -149,14 +133,14 @@ public final class MainVM {
         case stopping
     }
     
-    var path = NavigationPath()
+    var path: [MainViewNavigation] = []
     
     enum Destination: CaseIterable, Hashable {
         case main
         case calendar
     }
     
-    private var isProcessingStop = false
+    //    private var isProcessingStop = false
     
     //MARK: Copmputed properties
     
@@ -180,83 +164,103 @@ public final class MainVM {
         recorderManager.decibelLevel
     }
     
-    var showTip: Bool {
-        taskManager.activeTasks.isEmpty && taskManager.completedTasks.isEmpty
-    }
-    
     //    public var profileUpdateTrigger: Bool {
     //        casManager.profileUpdateTriger
     //    }
     
     //MARK: - Init
-    //    public init() {
-    //        downloadProfileModelFromCas()
+    
+    private init(
+        profileManager: ProfileManagerProtocol,
+        taskManager: TaskManagerProtocol,
+        dateManager: DateManagerProtocol,
+        recorderManager: RecorderManagerProtocol,
+        subscriptionManager: SubscriptionManagerProtocol,
+        profileModel: UIProfileModel,
+        calendarVM: CalendarVM,
+        notesVM: NotesVM
+    ) {
+        self.profileManager = profileManager
+        self.taskManager = taskManager
+        self.dateManager = dateManager
+        self.recorderManager = recorderManager
+        self.subscriptionManager = subscriptionManager
+        self.profileModel = profileModel
+        self.calendarVM = calendarVM
+        self.notesVM = notesVM
+    }
+    
+    //MARK: - Create PreviewVM
+    
+    public static func createPreviewVM() -> MainVM {
+        let profileManager = ProfileManager.createMockProfileManager()
+//        let appearanceManager = AppearanceManager.createMockAppearanceManager()
+        let taskManager = TaskManager.createMockTaskManager()
+        let dateManager = DateManager.createMockDateManager()
+        let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
+        let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
+        let profileModel = profileManager.profileModel
+        
+        let calendarVM = CalendarVM.createPreviewVM()
+        let notesVM = NotesVM.createPreviewVM()
+        
+        let vm = MainVM(
+            profileManager: profileManager,
+            taskManager: taskManager,
+            dateManager: dateManager,
+            recorderManager: recorderManager,
+            subscriptionManager: subscriptionManager,
+            profileModel: profileModel,
+            calendarVM: calendarVM,
+            notesVM: notesVM
+        )
+        
+        vm.syncNavigation()
+        
+        return vm
+    }
+    
+    //MARK: - Sync navigation
+    
+    func syncNavigation() {
+        calendarVM.backToMainView = { [weak self] in
+            guard let self else { return }
+            path.removeLast()
+        }
+    }
+    
+    //    public static func createMainVM() async -> Self {
+    //        let dependenciesManager = await DependenciesManager.createDependencies()
+    //        let mainVM = Self(dependenciesManager: dependenciesManager)
     //
+    //        await mainVM.onboardingStart()
+    //
+    //        return mainVM
+    //    }
+    
+    //MARK: - Update notification
+    //    public func updateNotifications() async {
+    //        guard onboardingManager.onboardingComplete == true else {
+    //            return
+    //        }
+    //
+    //        try? await Task.sleep(for: .seconds(0.2))
+    //
+    //        //        await notificationManager.createNotification()
+    //    }
+    
+    /// Only once time for ask notification reqest
+    //    @objc private func handleFirstTimeOpenDone() {
     //        Task {
-    //            await onboardingStart()
     //            await updateNotifications()
     //        }
     //
-    //        NotificationCenter.default.addObserver(
+    //        NotificationCenter.default.removeObserver(
     //            self,
-    //            selector: #selector(handleFirstTimeOpenDone),
     //            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
     //            object: nil
     //        )
-    //
-    //        listVM.onTaskSelected = { [weak self] task in
-    //            guard let self else { return }
-    //            sheetDestination = .details(TaskVM(mainModel: task))
-    //        }
     //    }
-    
-    private init(dependenciesManager: DependenciesManagerProtocol) {
-        self.profileManager = dependenciesManager.profileManager
-        self.taskManager = dependenciesManager.taskManager
-        self.dateManager = dependenciesManager.dateManager
-        self.onboardingManager = dependenciesManager.onboardingManager
-        self.permissionManager = dependenciesManager.permissionManager
-        self.recorderManager = dependenciesManager.recorderManager
-        self.subscriptionManager = dependenciesManager.subscriptionManager
-        self.telemetryManager = dependenciesManager.telemetryManager
-        self.playerManager = dependenciesManager.playerManager
-        self.profileModel = dependenciesManager.profileManager.profileModel
-        
-//        self.listVM = ListVM(taskManager: taskManager)
-    }
-    
-    public static func createMainVM() async -> Self {
-        let dependenciesManager = await DependenciesManager.createDependencies()
-        let mainVM = Self(dependenciesManager: dependenciesManager)
-        
-        await mainVM.onboardingStart()
-        
-        return mainVM
-    }
-    
-    //MARK: - Update notification
-//    public func updateNotifications() async {
-//        guard onboardingManager.onboardingComplete == true else {
-//            return
-//        }
-//        
-//        try? await Task.sleep(for: .seconds(0.2))
-//        
-//        //        await notificationManager.createNotification()
-//    }
-    
-    /// Only once time for ask notification reqest
-//    @objc private func handleFirstTimeOpenDone() {
-//        Task {
-//            await updateNotifications()
-//        }
-//        
-//        NotificationCenter.default.removeObserver(
-//            self,
-//            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
-//            object: nil
-//        )
-//    }
     
     public func mainScreenOpened() {
         telemetryManager.logEvent(.openView(.home(.open)))
@@ -294,17 +298,19 @@ public final class MainVM {
     
     func startAfterChek() async throws {
         mainViewPaywall = true
-        guard subscriptionManager.hasSubscription() else {
-            while showPaywall {
-                try await Task.sleep(for: .seconds(0.1))
-            }
-            
-            mainViewPaywall = false
-            return
-        }
+        
+        //        guard await subscriptionManager.hasSubscription() else {
+        //            while showPaywall {
+        //                try await Task.sleep(for: .seconds(0.1))
+        //            }
+        //
+        //            mainViewPaywall = false
+        //            return
+        //        }
         
         recordingState = .recording
-        playerManager.stopToPlay()
+        //TODO: - Check if player manager will be stopped by default
+        //        playerManager.stopToPlay()
         
         // telemetry
         telemetryAction(.mainViewAction(.recordTaskButtonTapped(.tryRecording)))
@@ -363,7 +369,13 @@ public final class MainVM {
         var hashOfAudio: String?
         
         if let audioURLString = recorderManager.stopRecording() {
-            //            hashOfAudio = casManager.storeAudio(url: audioURLString)
+            if let data = try? Data(contentsOf: audioURLString) {
+                do {
+                    hashOfAudio = try await taskManager.storeAudio(data)
+                } catch {
+                    print("Couldn't create audio hash - MainVM.363")
+                }
+            }
         }
         
         createTask(with: hashOfAudio)
@@ -378,7 +390,7 @@ public final class MainVM {
     
     //MARK: - Create task
     func createTask(with audioHash: String? = nil) {
-        let model = MainModel(
+        let model = UITaskModel(
             .initial(
                 TaskModel(
                     title: defaultTitle(),
@@ -391,7 +403,7 @@ public final class MainVM {
             )
         )
         
-        taskDetailsButtonTapped(model: model)
+//        taskDetailsButtonTapped(model: model)
     }
     
     //MARK: - Recognize data
@@ -425,11 +437,10 @@ public final class MainVM {
         }
     }
     
-    //MARK: - Calendar
-    func calendarButtonTapped() {
-        path.append(Destination.calendar)
-        mainViewIsOpen = false
-        
+    //MARK: - Calendar Button
+    
+    func calendarButtonTapped() async {
+        path.append(.calendar(calendarVM))
         // telemetry
         telemetryAction(.mainViewAction(.calendarButtonTapped))
     }
@@ -521,4 +532,16 @@ enum PresentationMode: CGFloat, CaseIterable {
     static let detents = Set(PresentationMode.allCases.map { $0.detent })
 }
 
+enum MainViewNavigation: Hashable {
+    case calendar(CalendarVM)
+}
 
+extension MainViewNavigation {
+    @ViewBuilder
+    func destination() -> some View {
+        switch self {
+        case .calendar(let monthVM):
+            CalendarView(vm: monthVM)
+        }
+    }
+}

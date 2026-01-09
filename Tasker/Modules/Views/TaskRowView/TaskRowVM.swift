@@ -15,7 +15,7 @@ import TaskManager
 import TelemetryManager
 
 @Observable
-final class TaskRowVM: HashableObject {
+public final class TaskRowVM: HashableObject {
     //MARK: Dependecies
     private var dateManager: DateManagerProtocol
     private var notificationManager: NotificationManagerProtocol
@@ -29,7 +29,7 @@ final class TaskRowVM: HashableObject {
     var playingTask: UITaskModel?
     var selectedTask: UITaskModel?
     
-    var task: UITaskModel
+    public var task: UITaskModel
     
     var taskTitle: String {
         if task.title != "" {
@@ -81,20 +81,18 @@ final class TaskRowVM: HashableObject {
     
     //MARK: - Create TaskRowVm
     
-    static func createTaskRowVM(task: UITaskModel, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol) async -> TaskRowVM {
+    public static func createTaskRowVM(task: UITaskModel, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol) async -> TaskRowVM {
         let playerManager = await PlayerManager.createPlayerManager()
         let vm = TaskRowVM(task: task, dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, playerManager: playerManager)
         await vm.timeRemainingString()
         await vm.checkCompletedTaskForToday()
-        
         
         return vm
     }
     
     //MARK: - Create Preview TaskRowVM
     
-    static func createPreviewTaskRowVM() -> TaskRowVM {
-        let task = mockModel()
+    public static func createPreviewTaskRowVM(task: UITaskModel) -> TaskRowVM {
         let dateManager = DateManager.createMockDateManager()
         let notificationManager = MockNotificationManager()
         let taskManager = TaskManager.createMockTaskManager()
@@ -122,19 +120,17 @@ final class TaskRowVM: HashableObject {
         completedForToday = await taskManager.checkCompletedTaskForToday(task: task)
     }
     
-    func checkMarkTapped() async {
+    public func checkMarkTapped() async {
         do {
             try await taskManager.checkMarkTapped(task: task)
+            stopToPlay()
         } catch {
             
         }
-        
-        //        taskDoneTrigger.toggle()
-        stopToPlay()
     }
     
     //MARK: - Delete functions
-    func deleteTaskButtonSwiped() {
+    public func deleteTaskButtonSwiped() {
         guard task.repeatTask == .never else {
             messageForDelete = "This's a recurring task."
             singleTask = false

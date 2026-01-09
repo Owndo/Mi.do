@@ -148,10 +148,10 @@ public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable, @unchecked Send
         set { model.value.voiceMode = nilIfNeed(newValue, is: false) }
     }
     
-    public var markAsDeleted: Bool {
-        get { model.value.markAsDeleted ?? false }
-        set { model.value.markAsDeleted = nilIfNeed(newValue, is: false) }
-    }
+//    public var markAsDeleted: Bool {
+//        get { model.value.markAsDeleted ?? false }
+//        set { model.value.markAsDeleted = nilIfNeed(newValue, is: false) }
+//    }
     
     public var repeatTask: RepeatTask {
         get { model.value.repeatTask ?? .never }

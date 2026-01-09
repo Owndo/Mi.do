@@ -9,30 +9,29 @@ import SwiftUI
 import Models
 import UIComponents
 
-struct TaskRow: View {
+public struct TaskRow: View {
     @Environment(\.colorScheme) var colorScheme
     
-    @State var vm: TaskRowVM
+    @Bindable var vm: TaskRowVM
     
-    
-    init(vm: TaskRowVM) {
+    public init(vm: TaskRowVM) {
         self.vm = vm
     }
     
     //MARK: - Body
     
-    var body: some View {
+    public var body: some View {
         TaskRow()
-                    .taskDeleteDialog(
-                        isPresented: $vm.confirmationDialogIsPresented,
-                        task: vm.task,
-                        message: vm.messageForDelete,
-                        isSingleTask: vm.singleTask,
-                        onDelete: vm.deleteButtonTapped
-                    )
-//                    .sheet(item: $vm.taskVM) { taskVM in
-//                        TaskView(taskVM: taskVM)
-//                    }
+            .taskDeleteDialog(
+                isPresented: $vm.confirmationDialogIsPresented,
+                task: vm.task,
+                message: vm.messageForDelete,
+                isSingleTask: vm.singleTask,
+                onDelete: vm.deleteButtonTapped
+            )
+        //                    .sheet(item: $vm.taskVM) { taskVM in
+        //                        TaskView(taskVM: taskVM)
+        //                    }
             .sensoryFeedback(.selection, trigger: vm.selectedTask)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.decrease, trigger: vm.taskDeleteTrigger)
@@ -135,7 +134,7 @@ struct TaskRow: View {
 }
 
 #Preview {
-    TaskRow(vm: TaskRowVM.createPreviewTaskRowVM())
+    TaskRow(vm: TaskRowVM.createPreviewTaskRowVM(task: mockModel()))
 }
 
 struct ContentSizePreferenceKey: PreferenceKey {

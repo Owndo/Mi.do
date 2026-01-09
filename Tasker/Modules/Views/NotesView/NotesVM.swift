@@ -6,28 +6,50 @@
 //
 
 import Foundation
-import Managers
+import ProfileManager
+import TelemetryManager
 import Models
 import SwiftUI
 
 @Observable
-final class NotesVM {
-    @ObservationIgnored
-    @Injected(\.casManager) var casManager
-    @ObservationIgnored
-    @Injected(\.appearanceManager) var appearanceManager
-    @ObservationIgnored
-    @Injected(\.telemetryManager) var telemetryManager
+public final class NotesVM {
+    //MARK: - Dependencies
     
-    var profileModel: ProfileData = mockProfileData()
+    var profileManager: ProfileManagerProtocol
+    var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
-    init() {
-        profileModel = casManager.profileModel
+    var profileModel: UIProfileModel
+    
+    public var mainViewIsOpen = true
+    
+    //MARK: - Init
+    
+    private init(profileManager: ProfileManagerProtocol) {
+        self.profileManager = profileManager
+        self.profileModel = profileManager.profileModel
     }
     
-    func saveNotes() {
-        casManager.saveProfileData(profileModel)
-        telemetryAction(.mainViewAction(.addNotesButtonTapped))
+    //MARK: - Create VM
+    
+    public static func createVM(profileManager: ProfileManagerProtocol) -> NotesVM {
+        let vm = NotesVM(profileManager: profileManager)
+        return vm
+    }
+    
+    //MARK: - CreatePreview VM
+    
+    public static func createPreviewVM() -> NotesVM {
+        let vm = NotesVM(profileManager: ProfileManager.createMockProfileManager())
+        return vm
+    }
+    
+    func saveNotes() async {
+        do {
+            try await profileManager.updateProfileModel()
+            telemetryAction(.mainViewAction(.addNotesButtonTapped))
+        } catch {
+            print("Couldn't update profile model notes")
+        }
     }
     
     private func telemetryAction(_ event: EventType) {

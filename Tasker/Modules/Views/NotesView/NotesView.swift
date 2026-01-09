@@ -8,18 +8,19 @@
 import SwiftUI
 import UIComponents
 
-struct NotesView: View {
+public struct NotesView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
-    @Binding var mainViewIsOpen: Bool
+    @Bindable var vm: NotesVM
     
     @FocusState var notesFocusState: Bool
     
-    @State private var vm = NotesVM()
+    public init(vm: NotesVM) {
+        self.vm = vm
+    }
     
-    var body: some View {
-        NavigationStack {
+    public var body: some View {
             ScrollView {
                 ZStack {
                     VStack {
@@ -33,7 +34,9 @@ struct NotesView: View {
                             .scrollDismissesKeyboard(.immediately)
                             .textEditorStyle(.plain)
                             .onSubmit {
-                                vm.saveNotes()
+                                Task {
+                                    await vm.saveNotes()
+                                }
                             }
                             .padding([.top, .horizontal])
                             .padding(.bottom, notesFocusState ? 20 : 80)
@@ -50,12 +53,13 @@ struct NotesView: View {
                     KeyboardSafeAreaInset()
                 }
             }
-//            .customBlurForContainer(colorScheme: colorScheme)
+            //            .customBlurForContainer(colorScheme: colorScheme)
             .onChange(of: notesFocusState) { _, _ in
-                vm.saveNotes()
+                Task {
+                    await vm.saveNotes()
+                }
             }
-        }
-        .sensoryFeedback(.selection, trigger: mainViewIsOpen)
+        .sensoryFeedback(.selection, trigger: vm.mainViewIsOpen)
     }
     
     //MARK: - Mock View
@@ -88,8 +92,10 @@ struct NotesView: View {
                     Spacer()
                     
                     Button {
-                        notesFocusState = false
-                        vm.saveNotes()
+                        Task {
+                            notesFocusState = false
+                            await vm.saveNotes()
+                        }
                     } label: {
                         Text("Done", bundle: .module)
                             .foregroundStyle(colorScheme.accentColor())
@@ -105,8 +111,10 @@ struct NotesView: View {
                     Spacer()
                     
                     Button {
-                        notesFocusState = false
-                        vm.saveNotes()
+                        Task {
+                            notesFocusState = false
+                            await vm.saveNotes()
+                        }
                     } label: {
                         
                         Text("Done", bundle: .module)
@@ -126,5 +134,5 @@ struct NotesView: View {
 }
 
 #Preview {
-    NotesView(mainViewIsOpen: .constant(false))
+    NotesView(vm: NotesVM.createPreviewVM())
 }

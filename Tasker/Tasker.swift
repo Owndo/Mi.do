@@ -6,18 +6,14 @@
 //
 
 import SwiftUI
-//import MainView
-//import Managers
-import PaywallView
-import SubscriptionManager
+import MainView
 
 @main
 struct Tasker: App {
-    @State private var paywallVM: PaywallVM? = nil
     //    @Environment(\.scenePhase) var scenePhase
     //    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     //
-    //    @State private var mainVM = MainVM()
+    @State var mainVM = MainVM.createPreviewVM()
     //
     //    @Injected(\.appearanceManager) var appearanceManager
     //    @Injected(\.subscriptionManager) var subscriptionManager
@@ -31,16 +27,16 @@ struct Tasker: App {
     
     var body: some Scene {
         WindowGroup {
-            if self.paywallVM != nil {
-                PaywallView(vm: paywallVM!)
-            } else {
-                ProgressView()
-                    .task {
-                        let subscription = await SubscriptionManager.createSubscriptionManager()
-                        self.paywallVM = await PaywallVM.createPaywallVM(subscription)
-                    }
-            }
-            //            MainView(vm: mainVM)
+//            if self.paywallVM != nil {
+//                
+//            } else {
+//                ProgressView()
+//                    .task {
+//                        let subscription = await SubscriptionManager.createSubscriptionManager()
+//                        self.paywallVM = await PaywallVM.createPaywallVM(subscription)
+//                    }
+//            }
+                        MainView(vm: mainVM)
             //                .preferredColorScheme(appearanceManager.selectedColorScheme)
             //                .onAppear {
             //                    if let pendingId = UserDefaults.standard.string(forKey: "pendingTaskID") {

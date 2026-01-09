@@ -34,7 +34,7 @@ public final class TaskVM {
     
     let recorderManager: RecorderManagerProtocol
     
-    let permissionManager: PermissionProtocol
+    let permissionManager: PermissionProtocol = PermissionManager.createPermissionManager()
     
     let subscriptionManager: SubscriptionManagerProtocol
     
@@ -210,22 +210,19 @@ public final class TaskVM {
         dateManager: DateManagerProtocol,
         playerManager: PlayerManagerProtocol,
         recorderManager: RecorderManagerProtocol,
-        permissionManager: PermissionProtocol,
         storageManager: StorageManagerProtocol,
         subscriptionManager: SubscriptionManagerProtocol,
         task: UITaskModel,
-        profileModel: UIProfileModel
     ) {
         self.taskManager = taskManager
         self.profileManager = profileManager
         self.dateManager = dateManager
         self.playerManager = playerManager
         self.recorderManager = recorderManager
-        self.permissionManager = permissionManager
         self.storageManager = storageManager
         self.subscriptionManager = subscriptionManager
         self.task = task
-        self.profileModel = profileModel
+        self.profileModel = profileManager.profileModel
     }
     
     //MARK: - VM Creator
@@ -236,23 +233,19 @@ public final class TaskVM {
         dateManager: DateManagerProtocol,
         playerManager: PlayerManagerProtocol,
         recorderManager: RecorderManagerProtocol,
-        permissionManager: PermissionProtocol,
-        subscriptionManager: SubscriptionManagerProtocol,
         storageManager: StorageManagerProtocol,
         task: UITaskModel,
-        profileModel: UIProfileModel
     ) async -> TaskVM {
+        let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
         let vm = TaskVM(
             taskManager: taskManager,
             profileManager: profileManager,
             dateManager: dateManager,
             playerManager: playerManager,
             recorderManager: recorderManager,
-            permissionManager: permissionManager,
             storageManager: storageManager,
             subscriptionManager: subscriptionManager,
-            task: task,
-            profileModel: profileModel
+            task: task
         )
         
         await vm.setUPViewModel()
@@ -268,12 +261,10 @@ public final class TaskVM {
         let dateManager = DateManager.createMockDateManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
-        let permissionManager = PermissionManager.createPermissionManager()
         let storageManager = StorageManager.createMockStorageManager()
         let subscriptionManager = MockSubscriptionManager.createNotSubscribedManager()
         
         let task = UITaskModel(.initial(mockModel().model.value))
-        let profileModel = UIProfileModel(.initial(mockProfileData().model.value))
         
         let vm = TaskVM(
             taskManager: taskManager,
@@ -281,11 +272,9 @@ public final class TaskVM {
             dateManager: dateManager,
             playerManager: playerManager,
             recorderManager: recorderManager,
-            permissionManager: permissionManager,
             storageManager: storageManager,
             subscriptionManager: subscriptionManager,
             task: task,
-            profileModel: profileModel
         )
         
         return vm
@@ -299,11 +288,9 @@ public final class TaskVM {
         let dateManager = DateManager.createMockDateManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
-        let permissionManager = PermissionManager.createPermissionManager()
         let storageManager = StorageManager.createMockStorageManager()
         
         let task = UITaskModel(.initial(mockModel().model.value))
-        let profileModel = UIProfileModel(.initial(mockProfileData().model.value))
         
         let subscriptionManager = MockSubscriptionManager.createSubscribedManager()
         
@@ -313,11 +300,10 @@ public final class TaskVM {
             dateManager: dateManager,
             playerManager: playerManager,
             recorderManager: recorderManager,
-            permissionManager: permissionManager,
+            
             storageManager: storageManager,
             subscriptionManager: subscriptionManager,
             task: task,
-            profileModel: profileModel
         )
         
         return vm

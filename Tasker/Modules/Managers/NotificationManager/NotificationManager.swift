@@ -12,6 +12,7 @@ import StorageManager
 import DateManager
 import SubscriptionManager
 import PermissionManager
+import ProfileManager
 import SwiftUI
 
 @Observable
@@ -41,6 +42,16 @@ public final class NotificationManager: NotificationManagerProtocol {
         self.dateManager = dateManager
         
         self.calendar = dateManager.calendar
+    }
+    
+    //MARK: - Create Notification Manager
+    
+    public static func createNotificationManager(profileManager: ProfileManagerProtocol) async -> NotificationManagerProtocol {
+        let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
+        let storageManager = await StorageManager.createStorageManager()
+        let dateManager = await DateManager.createDateManager(profileManager: profileManager)
+        
+        return NotificationManager(subscriptionManager: subscriptionManager, storageManager: storageManager, dateManager: dateManager)
     }
     
     //update cash

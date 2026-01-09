@@ -38,7 +38,8 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     
     //MARK: - Manager creator
     
-    public static func createPlayerManager(storageManager: StorageManagerProtocol) -> PlayerManagerProtocol {
+    public static func createPlayerManager() async -> PlayerManagerProtocol {
+        let storageManager = await StorageManager.createStorageManager()
         return PlayerManager(storageManager: storageManager)
     }
     

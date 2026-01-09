@@ -1,6 +1,6 @@
 //
 //  CalendarVM.swift
-//  BlockSet
+//  Tasker
 //
 //  Created by Rodion Akhmedov on 7/9/25.
 //
@@ -23,7 +23,9 @@ public final class CalendarVM: HashableNavigation {
     
     public var backToMainView: (() -> Void)?
     
-    var scrollID: Int?
+    public var scrollID: Int?
+    
+    var viewStarted = false
     
     var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
@@ -53,44 +55,50 @@ public final class CalendarVM: HashableNavigation {
     
     //MARK: - CreateMonthVM
     
-    public static func createMonthVM(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) -> CalendarVM {
-        CalendarVM(dateManager: dateManager, appearanceManager: appearanceManager, taskManager: taskManager)
+    public static func createMonthVM(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) async -> CalendarVM {
+        let vm = CalendarVM(dateManager: dateManager, appearanceManager: appearanceManager, taskManager: taskManager)
+        
+        return vm
     }
     
     //MARK: - Create previewVm
     
-    static func createPreviewVM() -> CalendarVM {
-        CalendarVM(dateManager: DateManager.createMockDateManager(), appearanceManager: AppearanceManager.createMockAppearanceManager(), taskManager: TaskManager.createMockTaskManager())
+    public static func createPreviewVM() -> CalendarVM {
+        let vm = CalendarVM(dateManager: DateManager.createMockDateManager(), appearanceManager: AppearanceManager.createMockAppearanceManager(), taskManager: TaskManager.createMockTaskManager())
+        
+        
+        return vm
     }
+    
+    //MARK: - On appear
+    
+    func onAppear() {
+        if scrollID == nil {
+            scrollID = 10
+        }
+        
+        viewStarted = true
+    }
+    
+    func onDissapear() {
+        guard calendar.isDateInToday(selectedDate) else {
+            viewStarted = false
+            return
+        }
+        
+        scrollID = nil
+        viewStarted = false
+    }
+    
+    //MARK: - Go to selected date button
     
     func selectedDateChange(_ day: Date) {
         dateManager.selectedDateChange(day)
         dateManager.initializeWeek()
+        backToMainView?()
         
         // telemetry
         telemetryAction(.calendarAction(.selectedDateButtonTapped(.calendarView)))
-    }
-    
-    func onAppear() async {
-        scrollID = 1
-        
-        try? await Task.sleep(for: .seconds(0.5))
-        
-        //        guard checkSubscription() else {
-        //            return
-        //        }
-        
-        telemetryAction(.openView(.calendar(.open)))
-    }
-    
-    func checkSubscription() -> Bool {
-        true
-        //        return subscriptionManager.hasSubscription()
-    }
-    
-    func onDissapear() {
-        //        subscriptionManager.showPaywall = false
-        telemetryAction(.openView(.calendar(.close)))
     }
     
     func calculateEmptyDay(for month: PeriodModel) -> Int {
@@ -120,10 +128,10 @@ public final class CalendarVM: HashableNavigation {
     }
     
     func backToTodayButtonTapped() async {
-        dateManager.backToToday()
-        scrollID = 1
-        
-        await dateManager.initializeMonth()
+        await MainActor.run {
+            dateManager.selectedDateChange(today)
+            scrollID = 10
+        }
         
         // telemetry
         telemetryAction(.calendarAction(.backToTodayButtonTapped(.calendarView)))
@@ -141,30 +149,31 @@ public final class CalendarVM: HashableNavigation {
         }
     }
     
-    func closeScreenButtonTapped() {
+    //MARK: - Back to MainView Button
+    
+    func backToMainViewButtonTapped() {
         backToMainView?()
         
         // telemetry
         telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))
     }
     
-    func automaticlyClossScreen(path: inout NavigationPath, mainViewIsOpen: inout Bool) {
-        //        if showPaywall == false && !checkSubscription() {
-        //            subscriptionManager.closePaywall()
-        //
-        //            path.removeLast()
-        //            mainViewIsOpen = true
-        //
-        //            // telemetry
-        //            telemetryAction(.calendarAction(.backToSelectedDateButtonTapped(.calendarView)))
-        //        }
-    }
-    
     func handleMonthAppeared(_ month: PeriodModel) {
-        if let last = allMonths.last, month.id >= last.id - 5 {
+        guard viewStarted else { return }
+
+        guard let first = allMonths.first else { return }
+
+        if month.id <= first.id + 2 {
+            let anchorID = first.id
+            scrollID = anchorID
+            dateManager.generatePreviousMonth()
+        }
+
+        if let last = allMonths.last, month.id >= last.id - 1 {
             dateManager.appendMonthsForward()
         }
     }
+
     
     //MARK: Telemtry action
     private func telemetryAction(_ action: EventType) {

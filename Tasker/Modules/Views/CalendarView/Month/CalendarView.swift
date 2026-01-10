@@ -19,7 +19,7 @@ public struct CalendarView: View {
     }
     
     public var body: some View {
-        ZStack {
+        ZStack(alignment: .bottomTrailing) {
             colorScheme.backgroundColor()
                 .ignoresSafeArea()
             
@@ -41,12 +41,6 @@ public struct CalendarView: View {
                         }
                     }
                     .scrollTargetLayout()
-                }
-                .task {
-                    await vm.onAppear()
-                }
-                .onDisappear {
-                    vm.onDissapear()
                 }
                 .scrollIndicators(.hidden)
                 .scrollPosition(id: $vm.scrollID, anchor: .top)
@@ -70,19 +64,35 @@ public struct CalendarView: View {
                     }
                     .scrollTargetLayout()
                 }
-                .task {
-                    await vm.onAppear()
-                }
-                .onDisappear {
-                    vm.onDissapear()
-                }
                 .scrollIndicators(.hidden)
                 .scrollPosition(id: $vm.scrollID, anchor: .top)
             }
+            
+            ScrollBackButton()
+                .padding(.trailing, 25)
+                .padding(.bottom, 20)
+        }
+        .task {
+            await vm.onAppear()
+        }
+        .onDisappear {
+            vm.onDissapear()
         }
         .navigationTitle(vm.navigationTitle)
+        .navigationBarBackButtonHidden(osVersion.majorVersion > 25 ? true : false)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if osVersion.majorVersion > 25 {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        vm.backToMainViewButtonTapped()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .foregroundStyle(colorScheme.accentColor())
+                    }
+                }
+            }
+            
             ToolbarItem(placement: .confirmationAction) {
                 if vm.selectedDayIsToday() {
                     Button {
@@ -104,7 +114,7 @@ public struct CalendarView: View {
                 }
             }
         }
-        .animation(.default, value: vm.isScrolling)
+        .animation(.spring, value: vm.scrolledFromCurrentMonth)
     }
     
     @ViewBuilder
@@ -167,6 +177,27 @@ public struct CalendarView: View {
             }
             .frame(width: 45, height: 45)
             .padding(.vertical, 14)
+        }
+    }
+    
+    //MARK: - ScrollBack Button
+    
+    @ViewBuilder
+    private func ScrollBackButton() -> some View {
+        if vm.scrolledFromCurrentMonth {
+            Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                Task {
+                    await vm.backToSelectedDateButtonTapped()
+                }
+            } label: {
+                Image(systemName: vm.imageForScrollBackButton)
+                    .font(.title2.weight(.medium))
+                    .contentTransition(.symbolEffect(.replace))
+                    .foregroundStyle(colorScheme.accentColor())
+                    .frame(width: 44, height: 44)
+                    .liquidIfAvailable(glass: .regular, isInteractive: true)
+            }
         }
     }
 }

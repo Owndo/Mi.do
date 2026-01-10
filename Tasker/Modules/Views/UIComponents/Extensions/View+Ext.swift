@@ -58,10 +58,7 @@ public struct LiquidIfAvailable: ViewModifier {
     public func body(content: Content) -> some View {
         if #available(iOS 26.0, *) {
             content
-                .glassEffect(
-                    glass.asGlass()
-                        .interactive(isInteractive)
-                )
+                .glassEffect(glass.asGlass().interactive(isInteractive))
         } else {
             content
         }
@@ -69,10 +66,7 @@ public struct LiquidIfAvailable: ViewModifier {
 }
 
 public extension View {
-    func liquidIfAvailable(
-        glass: LiquidIfAvailable.GlassEffectType = .regular,
-        isInteractive: Bool = false
-    ) -> some View {
+    func liquidIfAvailable(glass: LiquidIfAvailable.GlassEffectType = .regular, isInteractive: Bool = false) -> some View {
         modifier(LiquidIfAvailable(glass: glass, isInteractive: isInteractive))
     }
 }

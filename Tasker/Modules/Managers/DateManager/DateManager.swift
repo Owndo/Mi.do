@@ -206,8 +206,17 @@ public final class DateManager: DateManagerProtocol {
         let nameOfMonth = getMonthName(from: monthStart)
         let newId = allMonths.first!.id - 1
         
-        allMonths.removeLast()
+//        allMonths.removeLast()
         allMonths.insert(PeriodModel(id: newId, date: newMonth, name: nameOfMonth), at: 0)
+    }
+    
+    public func generateFeatureMonth() async {
+        guard let lastMonthStart = allMonths.last?.date.first else { return }
+        let monthStart = calendar.date(byAdding: .month, value: 1, to: lastMonthStart)!
+        let newMonth = generateMonth(for: monthStart)
+        let nameOfMonth = getMonthName(from: monthStart)
+        let nextID = (allMonths.last?.id ?? 0) + 1
+        allMonths.append(PeriodModel(id: nextID, date: newMonth, name: nameOfMonth))
     }
     
     public func appendMonthsBackward() async {
@@ -226,15 +235,6 @@ public final class DateManager: DateManagerProtocol {
         }
         
         allMonths.insert(contentsOf: newMonths, at: 0)
-    }
-    
-    public func generateFeatureMonth() async {
-        guard let lastMonthStart = allMonths.last?.date.first else { return }
-        let monthStart = calendar.date(byAdding: .month, value: 1, to: lastMonthStart)!
-        let newMonth = generateMonth(for: monthStart)
-        let nameOfMonth = getMonthName(from: monthStart)
-        let nextID = (allMonths.last?.id ?? 0) + 1
-        allMonths.append(PeriodModel(id: nextID, date: newMonth, name: nameOfMonth))
     }
     
     private func generateMonth(for date: Date) -> [Date] {

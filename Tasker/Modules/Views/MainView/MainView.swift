@@ -134,10 +134,8 @@ public struct MainView: View {
                 Spacer()
                 
                 if vm.presentationPosition != PresentationMode.bottom.detent {
-//                    withAnimation {
                         CreateButton()
                             .fixedSize()
-//                    }
                 }
             }
             .ignoresSafeArea(.keyboard)

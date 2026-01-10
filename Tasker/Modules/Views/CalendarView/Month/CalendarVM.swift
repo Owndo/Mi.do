@@ -35,9 +35,10 @@ public final class CalendarVM: HashableNavigation {
     var navigationTitle = ""
     var navigationSubtitle = ""
     
-    var imageForTodayButton = "chevron.up"
+    var imageForScrollBackButton = "chevron.up"
     
     var isScrolling = false
+    var scrolledFromCurrentMonth = false
     
     var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
@@ -86,8 +87,7 @@ public final class CalendarVM: HashableNavigation {
     
     func onAppear() async {
         await dateManager.initializeMonth()
-        navigationTitle = allMonths[10].name ?? ""
-        scrollID = 10
+        jumpToSelectedMonth()
         
         try? await Task.sleep(for: .seconds(0.5))
         viewStarted = true
@@ -138,10 +138,18 @@ public final class CalendarVM: HashableNavigation {
     func backToTodayButtonTapped() async {
         dateManager.selectedDateChange(today)
         await dateManager.initializeMonth()
-        scrollID = 10
+        jumpToSelectedMonth()
         
         // telemetry
         telemetryAction(.calendarAction(.backToTodayButtonTapped(.calendarView)))
+    }
+    
+    func backToSelectedDateButtonTapped() async {
+        await dateManager.initializeMonth()
+        viewStarted = false
+        jumpToSelectedMonth()
+        viewStarted = true
+        scrolledFromCurrentMonth = false
     }
     
     func currentYear(_ month: PeriodModel) -> String? {
@@ -179,18 +187,35 @@ public final class CalendarVM: HashableNavigation {
     
     func findNameForMonth() {
         guard let id = scrollID else { return }
-        let month = allMonths.first(where: { $0.id == id })!
+        let month = allMonths.first(where: { $0.id == id })
         
-        if let date = month.date.first {
-            if date > today {
-                imageForTodayButton = "chevron.up"
-            } else {
-                imageForTodayButton = "chevron.down"
-            }
-        }
+        guard let month else { return }
         
         navigationTitle = month.name ?? ""
         navigationSubtitle = currentYear(month) ?? ""
+        
+        checkIfUserScrolledFromSelectedDate(month)
+    }
+    
+    func checkIfUserScrolledFromSelectedDate(_ month: PeriodModel) {
+        guard viewStarted else { return }
+        
+        guard !month.date.contains(where: { calendar.isDate($0, inSameDayAs: selectedDate)}) else {
+            scrolledFromCurrentMonth = false
+            return
+        }
+        
+        scrolledFromCurrentMonth = true
+        
+        if let first = month.date.first, first > selectedDate {
+            imageForScrollBackButton = "chevron.up"
+        } else {
+            imageForScrollBackButton = "chevron.down"
+        }
+    }
+    
+    func jumpToSelectedMonth() {
+        scrollID = allMonths.first { $0.date.contains { calendar.isDate($0, inSameDayAs: selectedDate) }}?.id
     }
     
     //MARK: Telemtry action

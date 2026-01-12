@@ -90,6 +90,7 @@ public struct TaskView: View {
                 .sensoryFeedback(.selection, trigger: vm.showDeadline)
                 .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)
                 .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.isRecording)
+                .sensoryFeedback(.error, trigger: vm.paywallHapticFeedback)
                 .animation(.default, value: vm.task.audio)
                 .animation(.easeInOut, value: vm.showDatePicker)
                 .animation(.easeInOut, value: vm.showTimePicker)

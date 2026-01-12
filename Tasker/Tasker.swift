@@ -13,7 +13,7 @@ struct Tasker: App {
     //    @Environment(\.scenePhase) var scenePhase
     //    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     //
-    @State var mainVM = MainVM.createPreviewVM()
+    @State private var vm: MainVM?
     //
     //    @Injected(\.appearanceManager) var appearanceManager
     //    @Injected(\.subscriptionManager) var subscriptionManager
@@ -27,16 +27,24 @@ struct Tasker: App {
     
     var body: some Scene {
         WindowGroup {
-//            if self.paywallVM != nil {
-//                
-//            } else {
-//                ProgressView()
-//                    .task {
-//                        let subscription = await SubscriptionManager.createSubscriptionManager()
-//                        self.paywallVM = await PaywallVM.createPaywallVM(subscription)
-//                    }
-//            }
-                        MainView(vm: mainVM)
+            if let mainVM = vm {
+                MainView(vm: mainVM)
+            } else {
+                ProgressView()
+                    .task {
+                        vm = await MainVM.createVM()
+                    }
+            }
+            //            if self.paywallVM != nil {
+            //
+            //            } else {
+            //                ProgressView()
+            //                    .task {
+            //                        let subscription = await SubscriptionManager.createSubscriptionManager()
+            //                        self.paywallVM = await PaywallVM.createPaywallVM(subscription)
+            //                    }
+            //            }
+            
             //                .preferredColorScheme(appearanceManager.selectedColorScheme)
             //                .onAppear {
             //                    if let pendingId = UserDefaults.standard.string(forKey: "pendingTaskID") {

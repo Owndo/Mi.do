@@ -17,7 +17,7 @@ import TelemetryManager
 @Observable
 public final class TaskRowVM: HashableObject {
     //MARK: Dependecies
-    private var dateManager: DateManagerProtocol
+    private var dateManager:  DateManagerProtocol
     private var notificationManager: NotificationManagerProtocol
     private var playerManager: PlayerManagerProtocol
     private var taskManager: TaskManagerProtocol
@@ -81,8 +81,7 @@ public final class TaskRowVM: HashableObject {
     
     //MARK: - Create TaskRowVm
     
-    public static func createTaskRowVM(task: UITaskModel, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol) async -> TaskRowVM {
-        let playerManager = await PlayerManager.createPlayerManager()
+    public static func createTaskRowVM(task: UITaskModel, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, playerManager: PlayerManagerProtocol, taskManager: TaskManagerProtocol) async -> TaskRowVM {
         let vm = TaskRowVM(task: task, dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, playerManager: playerManager)
         await vm.timeRemainingString()
         await vm.checkCompletedTaskForToday()

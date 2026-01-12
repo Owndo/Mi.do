@@ -49,24 +49,6 @@ public struct MainView: View {
                         }
                     }
             }
-            //            .sheet(isPresented: $vm.mainViewIsOpen) {
-            //                MainViewBase()
-            //                    .sheet(item: $vm.sheetDestination) { destination in
-            //                        switch destination {
-            //                        case .details(let taskModel):
-            //                            TaskView(taskVM: taskModel)
-            //                                .preferredColorScheme(colorScheme)
-            //                        case .profile:
-            //                            ProfileView()
-            //                                .preferredColorScheme(colorScheme)
-            //                        }
-            //                    }
-            ////                    .sheet(isPresented: $vm.onboardingManager.sayHello) {
-            ////                        SayHelloView()
-            ////                            .preferredColorScheme(colorScheme)
-            ////                            .presentationDragIndicator(.visible)
-            ////                    }
-            //            }
             //MARK: - Toolbar
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -134,8 +116,8 @@ public struct MainView: View {
                 Spacer()
                 
                 if vm.presentationPosition != PresentationMode.bottom.detent {
-                        CreateButton()
-                            .fixedSize()
+                    CreateButton()
+                        .fixedSize()
                 }
             }
             .ignoresSafeArea(.keyboard)

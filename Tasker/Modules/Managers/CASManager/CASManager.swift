@@ -21,10 +21,15 @@ public final actor CASManager: CASManagerProtocol {
     //MARK: - Static methods for init
     
     public static func createCASManager() async -> CASManager {
+        print("init cas")
         let localDirectory = createLocalDirectory()!
         
         let cas = FileCas(localDirectory)
         let list = await fetchList(cas: cas)
+        
+        for i in list {
+            print(i.returnId())
+        }
         
         let casManager = CASManager(cas: cas, allIdentifiers: list)
         return casManager

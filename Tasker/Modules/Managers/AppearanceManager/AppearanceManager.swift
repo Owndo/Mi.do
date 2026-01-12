@@ -257,6 +257,7 @@ public enum BackgroundColorEnum: Codable, CaseIterable, Equatable, Hashable {
 }
 
 // MARK: - ColorSchemeHelper
+
 struct ColorSchemeHelper {
     static func isSystemLight() -> Bool {
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,

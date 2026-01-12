@@ -423,7 +423,6 @@ public final class DateManager: DateManagerProtocol {
     
     public func backToToday() {
         selectedDateChange(currentTime)
-        initializeWeek()
         indexForWeek = 1
     }
     

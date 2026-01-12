@@ -38,13 +38,15 @@ let project = Project(
             settings: .settings(defaultSettings: .recommended),
         ),
         .module(.blockSet),
-        .moduleTests(.blockSet, dependencies: [.target(name: Modules.blockSet.name)]),
+        .module(.blockSetTests, dependencies: [.target(name: Modules.blockSet.name)]),
         .module(.models, dependencies: [.target(name: Modules.blockSet.name)]),
         //MARK: - Config file
         .module(.config),
         //MARK: - Managers
+        
         //MARK: - Delegate
             .module(.appDelegate),
+        
         //MARK: - Telemetry
         .module(.telemetry,
                 dependencies: [
@@ -55,8 +57,10 @@ let project = Project(
                     .external(name: "PostHog")
                 ]
                ),
+        
         //MARK: - Errors
         .module(.customErrors),
+        
         //MARK: - Permission
         .module(.permissionManager,
                 dependencies: [
@@ -64,8 +68,10 @@ let project = Project(
                     .target(name: Modules.telemetry.name)
                 ]
                ),
+        
         //MARK: - Subscription
         .module(.subscriptionManager),
+        
         //MARK: - Cas manager
         .module(.cas,
                 dependencies: [
@@ -73,10 +79,13 @@ let project = Project(
                     .target(name: Modules.models.name)
                 ]
                ),
+        
         //MARK: - Profile manager
         .module(.profileManager, dependencies: [.target(name: Modules.models.name), .target(name: Modules.cas.name)]),
+        
         //MARK: - Storage manager
         .module(.storageManager, dependencies: [.target(name: Modules.cas.name)]),
+        
         //MARK: - Task manager
         .module(.taskManager,
                 dependencies: [
@@ -85,6 +94,14 @@ let project = Project(
                     .target(name: Modules.notificationManager.name)
                 ]
                ),
+        .module(
+            .taskManagerTests,
+            dependencies: [
+                .target(name: Modules.taskManager.name),
+                .target(name: Modules.dependencyManager.name),
+            ]
+        ),
+        
         //MARK: - Date manager
         .module(.dateManager,
                 dependencies: [
@@ -94,6 +111,7 @@ let project = Project(
                     .target(name: Modules.telemetry.name)
                 ]
                ),
+        
         //MARK: - Notification Manager
         .module(.notificationManager,
                 dependencies: [
@@ -104,6 +122,7 @@ let project = Project(
                     .target(name: Modules.permissionManager.name)
                 ]
                ),
+        
         //MARK: - Recorder
         .module(.recorderManager,
                 dependencies: [
@@ -112,22 +131,49 @@ let project = Project(
                     .target(name: Modules.dateManager.name)
                 ]
                ),
+        
         //MARK: - Magic
         .module(.magic, dependencies: [.target(name: Modules.dateManager.name)]),
+        
         //MARK: - Player
         .module(.playerManager,
                 dependencies: [.target(name: Modules.models.name), .target(name: Modules.storageManager.name)]
                ),
+        
         //MARK: - Appearance
         .module(.appearanceManager, dependencies: [.target(name: Modules.profileManager.name)]),
+        
         //MARK: - Onboarding
         .module(.onboardingManager,
                 dependencies: [
+                    .target(name: Modules.config.name),
                     .target(name: Modules.profileManager.name),
                     .target(name: Modules.taskManager.name),
                     .target(name: Modules.dateManager.name)
                 ]
                ),
+        
+        //MARK: - Dependency
+        .module(
+            .dependencyManager,
+            dependencies: [
+                .target(name: Modules.appearanceManager.name),
+                .target(name: Modules.cas.name),
+                .target(name: Modules.dateManager.name),
+                .target(name: Modules.models.name),
+                .target(name: Modules.notificationManager.name),
+                .target(name: Modules.onboardingManager.name),
+                .target(name: Modules.permissionManager.name),
+                .target(name: Modules.playerManager.name),
+                .target(name: Modules.profileManager.name),
+                .target(name: Modules.recorderManager.name),
+                .target(name: Modules.storageManager.name),
+                .target(name: Modules.subscriptionManager.name),
+                .target(name: Modules.taskManager.name),
+                .target(name: Modules.telemetry.name)
+            ]
+        ),
+        
         //MARK: - Views
         .moduleView(.uiComponents, dependencies: [.target(name: Modules.models.name)]),
         .moduleView(.paywallView,
@@ -137,6 +183,7 @@ let project = Project(
                         .target(name: Modules.config.name)
                     ]
                    ),
+        
         //MARK: - Calendar
         .moduleView(.calendarView,
                     dependencies: [
@@ -148,6 +195,7 @@ let project = Project(
                         .target(name: Modules.uiComponents.name)
                     ]
                    ),
+        
         //MARK: - TaskView
         .moduleView(.taskView,
                     dependencies: [
@@ -164,12 +212,16 @@ let project = Project(
                         .target(name: Modules.uiComponents.name)
                     ]
                    ),
+        
         //MARK: - HistoryView
         .moduleView(.historyView, dependencies: [.target(name: Modules.uiComponents.name)]),
+        
         //MARK: - ArticlesView
         .moduleView(.articlesView, dependencies: [.target(name: Modules.uiComponents.name)]),
+        
         //MARK: - AppearanceView
         .moduleView(.appearanceView, dependencies: [.target(name: Modules.appearanceManager.name), .target(name: Modules.uiComponents.name)]),
+        
         //MARK: - SettingsView
         .moduleView(.settingsView,
                     dependencies: [
@@ -180,6 +232,7 @@ let project = Project(
                         .target(name: Modules.config.name)
                     ]
                    ),
+        
         //MARK: - ProfileView
         .moduleView(.profileView,
                     dependencies: [
@@ -196,6 +249,7 @@ let project = Project(
                         .target(name: Modules.uiComponents.name)
                     ]
                    ),
+        
         //MARK: - TaskRowView
         .moduleView(.taskRowView,
                     dependencies: [
@@ -206,6 +260,7 @@ let project = Project(
                         .target(name: Modules.uiComponents.name)
                     ]
                    ),
+        
         //MARK: - ListView
         .moduleView(.listView,
                     dependencies: [
@@ -213,20 +268,19 @@ let project = Project(
                         .target(name: Modules.telemetry.name),
                         .target(name: Modules.taskManager.name),
                         .target(name: Modules.profileManager.name),
+                        .target(name: Modules.playerManager.name),
                         .target(name: Modules.dateManager.name),
                         .target(name: Modules.notificationManager.name),
-                        .target(name: Modules.playerManager.name),
                         .target(name: Modules.uiComponents.name),
                         .target(name: Modules.taskRowView.name),
                         .target(name: Modules.taskView.name)
                     ]
                    ),
+        
         //MARK: - OnboardingView
-        .moduleView(.onboaringView,
-                    dependencies: [
-                        .target(name: Modules.onboardingManager.name)
-                    ]
-                   ),
+        .moduleView(.onboaringView,dependencies: [.target(name: Modules.onboardingManager.name)]),
+        
+        //MARK: - NotesView
         .moduleView(.notesView,
                     dependencies: [
                         .target(name: Modules.profileManager.name),
@@ -234,6 +288,7 @@ let project = Project(
                         .target(name: Modules.uiComponents.name)
                     ]
                    ),
+        
         //MARK: - MainView
         .moduleView(.mainView,
                     dependencies: [
@@ -248,6 +303,7 @@ let project = Project(
                         .target(name: Modules.subscriptionManager.name),
                         .target(name: Modules.customErrors.name),
                         
+                        .target(name: Modules.paywallView.name),
                         .target(name: Modules.calendarView.name),
                         .target(name: Modules.listView.name),
                         .target(name: Modules.notesView.name),
@@ -256,20 +312,6 @@ let project = Project(
                         .target(name: Modules.uiComponents.name),
                     ]
                    )
-        //        .moduleView(
-        //            name: "MainView",
-        //            dependencies: [
-        //                .target(name: "Models"),
-        //                //                .target(name: "Managers"),
-        //                .target(name: "UIComponents"),
-        //                .target(name: "CalendarView"),
-        //                .target(name: "ListView"),
-        //                .target(name: "TaskView"),
-        //                .target(name: "ProfileView"),
-        //                .target(name: "PaywallView")
-        //            ]
-        //        ),
-        
     ],
     schemes: [
         Scheme.scheme(
@@ -312,6 +354,8 @@ let project = Project(
 
 
 extension Target {
+    
+    //MARK: - Module
     static func module(_ module: Modules, dependencies: [TargetDependency] = []) -> Target {
         var resources: [ResourceFileElement] = []
         
@@ -322,7 +366,7 @@ extension Target {
         return .target(
             name: module.name,
             destinations: App.destinations,
-            product: .framework,
+            product: module.kind == .tests ? .unitTests : .framework,
             bundleId: App.bundleId + "." + module.name,
             deploymentTargets: App.deploymentTargets,
             sources: ["\(module.sourcesPath)"],
@@ -332,19 +376,7 @@ extension Target {
         )
     }
     
-    static func moduleTests(_ module: Modules, dependencies: [TargetDependency] = []) -> Target {
-        .target(
-            name: "\(module.name)Tests",
-            destinations: App.destinations,
-            product: .unitTests,
-            bundleId: App.bundleId + "." + module.name + ".Tests",
-            deploymentTargets: App.deploymentTargets,
-            infoPlist: .default,
-            sources: ["\(module.sourcesPath)"],
-            dependencies: dependencies
-        )
-    }
-    
+    //MARK: - ModuleView
     static func moduleView(_ module: Modules, dependencies: [TargetDependency] = []) -> Target {
         
         var resources: [ResourceFileElement] = []
@@ -384,6 +416,7 @@ extension SettingsDictionary {
     }
 }
 
+//MARK: - Flag for check time "View"
 extension Array where Element == String {
     static let longTypeCheckingFlags = [
         "-Xfrontend",

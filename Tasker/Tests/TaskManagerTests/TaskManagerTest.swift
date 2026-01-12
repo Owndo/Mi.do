@@ -5,28 +5,27 @@
 //  Created by Rodion Akhmedov on 10/27/25.
 //
 
-import Foundation
-import Managers
-import Models
 import BlockSet
+import DateManager
+import Foundation
+import Models
+import TaskManager
 import Testing
 
 struct TaskManagerTest {
-    var dependenciesManager: DependenciesManagerProtocol
     var taskManager: TaskManagerProtocol
+    var dateManager: DateManagerProtocol
     
-    private init(dependenciesManager: DependenciesManagerProtocol, taskManager: TaskManagerProtocol) {
-        self.dependenciesManager = dependenciesManager
+    private init(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
+        self.dateManager = dateManager
         self.taskManager = taskManager
     }
     
     static func createTestsManager() async -> TaskManagerTest {
-        let dependenciesManager = await DependenciesManager.createDependenciesForTesting()
+        let dateManager = DateManager.createMockDateManager()
+        let taskManager = TaskManager.createMockTaskManager()
         
-        let test = TaskManagerTest(
-            dependenciesManager: dependenciesManager,
-            taskManager: dependenciesManager.taskManager
-        )
+        let test = TaskManagerTest(dateManager: dateManager, taskManager: taskManager)
         
         return test
     }
@@ -76,7 +75,7 @@ func fetchEmptyTasks() async throws {
     
     let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
     
-    manager.dependenciesManager.dateManager.selectedDateChange(nextDay)
+    manager.dateManager.selectedDateChange(nextDay)
     
     try await Task.sleep(for: .seconds(0.1))
     

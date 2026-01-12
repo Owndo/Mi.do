@@ -7,17 +7,21 @@
 
 
 import AppearanceManager
+import CASManager
 import CalendarView
 import CustomErrors
 import DateManager
 import Foundation
 import Models
 import NotesView
+import NotificationManager
 import PaywallView
 import PermissionManager
+import PlayerManager
 import ProfileManager
 import RecorderManager
 import SubscriptionManager
+import StorageManager
 import SwiftUI
 import TaskManager
 import TaskView
@@ -27,8 +31,8 @@ import ProfileView
 
 @Observable
 public final class MainVM: HashableNavigation {
-    //MARK: - Depencies
-    private let appearanceManager: AppearanceManagerProtocol
+    //MARK: - Depency
+    public let appearanceManager: AppearanceManagerProtocol
     private let dateManager: DateManagerProtocol
     private let profileManager: ProfileManagerProtocol
     private let subscriptionManager: SubscriptionManagerProtocol
@@ -42,6 +46,7 @@ public final class MainVM: HashableNavigation {
     
     private var calendarVM: CalendarVM
     private var profileVM: ProfileVM?
+    private var taskViewVM: TaskVM?
     
     var weekVM: WeekVM
     var listVM: ListVM
@@ -167,7 +172,7 @@ public final class MainVM: HashableNavigation {
         telemetryManager: TelemetryManagerProtocol,
         profileModel: UIProfileModel,
         calendarVM: CalendarVM,
-//        profileVM: ProfileVM,
+        //        profileVM: ProfileVM,
         weekVM: WeekVM,
         listVM: ListVM,
         notesVM: NotesVM
@@ -181,10 +186,61 @@ public final class MainVM: HashableNavigation {
         self.telemetryManager = telemetryManager
         self.profileModel = profileModel
         self.calendarVM = calendarVM
-//        self.profileVM = profileVM
+        //        self.profileVM = profileVM
         self.weekVM = weekVM
         self.listVM = listVM
         self.notesVM = notesVM
+    }
+    
+    //MARK: - Create VM
+    
+    public static func createVM() async -> MainVM {
+        // Managers
+        
+        let casManager = await CASManager.createCASManager()
+        let profileManager = await ProfileManager.createProfileManager(casManager: casManager)
+        let storageManager = StorageManager.createStorageManager(casManager: casManager)
+        
+        let appearanceManager = AppearanceManager.createAppearanceManager(profileManager: profileManager)
+        let dateManager = await DateManager.createDateManager(profileManager: profileManager)
+        
+        let notificationManager = await NotificationManager.createNotificationManager(profileManager: profileManager, storageManager: storageManager)
+        let playerManager = PlayerManager.createPlayerManager(storageManager: storageManager)
+        
+        let taskManager = await TaskManager.createTaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
+        let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
+        
+        let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
+        let telemetryManager = TelemetryManager.createTelemetryManager()
+        
+        // Models
+        let profileModel = profileManager.profileModel
+        
+        // ViewModels
+        
+        let calendarVM = await CalendarVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        let weekVM = WeekVM.createVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        let listVM = await ListVM.createListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
+        let notesVM = NotesVM.createVM(profileManager: profileManager)
+        
+        let vm = MainVM(
+            appearanceManager: appearanceManager,
+            profileManager: profileManager,
+            taskManager: taskManager,
+            dateManager: dateManager,
+            recorderManager: recorderManager,
+            subscriptionManager: subscriptionManager,
+            telemetryManager: telemetryManager,
+            profileModel: profileModel,
+            calendarVM: calendarVM,
+            weekVM: weekVM,
+            listVM: listVM,
+            notesVM: notesVM
+        )
+        
+        vm.syncNavigation()
+        
+        return vm
     }
     
     //MARK: - Create PreviewVM
@@ -200,7 +256,7 @@ public final class MainVM: HashableNavigation {
         let profileModel = profileManager.profileModel
         
         let calendarVM = CalendarVM.createPreviewVM()
-//        let profileVM = ProfileVM.createProfilePreviewVM()
+        //        let profileVM = ProfileVM.createProfilePreviewVM()
         let weekVM = WeekVM.createPreviewVM()
         let listVM = ListVM.creteMockListVM()
         let notesVM = NotesVM.createPreviewVM()
@@ -215,7 +271,7 @@ public final class MainVM: HashableNavigation {
             telemetryManager: telemetryManager,
             profileModel: profileModel,
             calendarVM: calendarVM,
-//            profileVM: profileVM,
+            //            profileVM: profileVM,
             weekVM: weekVM,
             listVM: listVM,
             
@@ -223,7 +279,6 @@ public final class MainVM: HashableNavigation {
         )
         
         vm.syncNavigation()
-        vm.syncSheetNavigation()
         
         return vm
     }
@@ -291,10 +346,10 @@ public final class MainVM: HashableNavigation {
     func profileViewButtonTapped() async {
 #if targetEnvironment(simulator)
         profileVM = ProfileVM.createProfilePreviewVM()
-    
+        
 #else
         profileVM = await ProfileVM.createProfileVM(profileManager: profileManager, taskManager: taskManager, appearanceManager: appearanceManager, dateManager: dateManager)
-    
+        
 #endif
         
         guard let profileVM else { return }
@@ -398,7 +453,7 @@ public final class MainVM: HashableNavigation {
             }
         }
         
-        createTask(with: hashOfAudio)
+        await createTask(with: hashOfAudio)
         recorderManager.clearFileFromDirectory()
         
         // telemetry
@@ -409,7 +464,7 @@ public final class MainVM: HashableNavigation {
     }
     
     //MARK: - Create task
-    func createTask(with audioHash: String? = nil) {
+    func createTask(with audioHash: String? = nil) async {
         let model = UITaskModel(
             .initial(
                 TaskModel(
@@ -418,12 +473,21 @@ public final class MainVM: HashableNavigation {
                     audio: audioHash,
                     notificationDate: defaultNotificationTime(),
                     voiceMode: audioHash != nil ? true : nil,
-                    taskColor: profileModel.settings.defaultTaskColor
                 )
             )
         )
         
-        //        taskDetailsButtonTapped(model: model)
+//        taskViewVM = await TaskVM.createTaskVM(
+//            taskManager: taskManager,
+//            playerManager: ,
+//            storageManager: ,
+//            profileManager: <#T##any ProfileManagerProtocol#>,
+//            dateManager: <#T##any DateManagerProtocol#>,
+//            recorderManager: <#T##any RecorderManagerProtocol#>,
+//            task: <#T##UITaskModel#>
+//        )
+        guard let taskViewVM else { return }
+//        sheetNavigation = .taskDetails(taskViewVM)
     }
     
     //MARK: - Recognize data
@@ -450,7 +514,7 @@ public final class MainVM: HashableNavigation {
         if recordingState == .recording {
             await stopRecord()
         } else {
-            createTask()
+            await createTask()
             
             // telemetry
             telemetryAction(.mainViewAction(.addTaskButtonTapped))

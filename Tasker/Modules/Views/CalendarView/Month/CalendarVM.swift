@@ -15,8 +15,8 @@ import TaskManager
 
 @Observable
 public final class CalendarVM: HashableNavigation {
-    var dateManager: DateManagerProtocol
     var appearanceManager: AppearanceManagerProtocol
+    var dateManager: DateManagerProtocol
     var taskManager: TaskManagerProtocol
     
     private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
@@ -60,16 +60,16 @@ public final class CalendarVM: HashableNavigation {
         dateManager.allMonths
     }
     
-    private init(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) {
-        self.dateManager = dateManager
+    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
         self.appearanceManager = appearanceManager
+        self.dateManager = dateManager
         self.taskManager = taskManager
     }
     
     //MARK: - CreateMonthVM
     
-    public static func createMonthVM(dateManager: DateManagerProtocol, appearanceManager: AppearanceManagerProtocol, taskManager: TaskManagerProtocol) async -> CalendarVM {
-        let vm = CalendarVM(dateManager: dateManager, appearanceManager: appearanceManager, taskManager: taskManager)
+    public static func createMonthVM(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) async -> CalendarVM {
+        let vm = CalendarVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         
         return vm
     }
@@ -77,8 +77,7 @@ public final class CalendarVM: HashableNavigation {
     //MARK: - Create previewVm
     
     public static func createPreviewVM() -> CalendarVM {
-        let vm = CalendarVM(dateManager: DateManager.createMockDateManager(), appearanceManager: AppearanceManager.createMockAppearanceManager(), taskManager: TaskManager.createMockTaskManager())
-        
+        let vm = CalendarVM(appearanceManager: AppearanceManager.createMockAppearanceManager(), dateManager: DateManager.createMockDateManager(), taskManager: TaskManager.createMockTaskManager())
         
         return vm
     }

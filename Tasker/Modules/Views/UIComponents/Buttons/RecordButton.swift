@@ -107,10 +107,10 @@ public struct RecordButton: View {
                 }
             }
         }
-//        .onDisappear {
-//            shadowYOffset = 0
-//            shadowXOffset = 0
-//        }
+        .onDisappear {
+            shadowYOffset = 0
+            shadowXOffset = 0
+        }
     }
     
     @ViewBuilder

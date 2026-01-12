@@ -87,6 +87,7 @@ public final class TaskVM: HashableNavigation {
     //MARK: - Show paywall
     
     var showPaywall = false
+    var paywallHapticFeedback = false
     
     // MARK: - Confirmation dialog
     
@@ -229,11 +230,11 @@ public final class TaskVM: HashableNavigation {
     
     public static func createTaskVM(
         taskManager: TaskManagerProtocol,
+        playerManager: PlayerManagerProtocol,
+        storageManager: StorageManagerProtocol,
         profileManager: ProfileManagerProtocol,
         dateManager: DateManagerProtocol,
-        playerManager: PlayerManagerProtocol,
         recorderManager: RecorderManagerProtocol,
-        storageManager: StorageManagerProtocol,
         task: UITaskModel,
     ) async -> TaskVM {
         let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
@@ -310,6 +311,7 @@ public final class TaskVM: HashableNavigation {
     }
     
     private func createPaywallVM() async {
+        paywallHapticFeedback.toggle()
         paywallVM = await PaywallVM.createPaywallVM(subscriptionManager: subscriptionManager)
         
         paywallVM?.closePaywall = {
@@ -450,13 +452,14 @@ public final class TaskVM: HashableNavigation {
     }
     
     //MARK: - Save task
+    
     func saveTask() async {
         saveRepeat()
         
         task.notificationDate = changeNotificationTime()
         
         do {
-            try  await taskManager.saveTask(task)
+            try await taskManager.saveTask(task)
             //            createTempAudioFile(audioHash: task.audio)
         } catch {
             //TODO: - Error

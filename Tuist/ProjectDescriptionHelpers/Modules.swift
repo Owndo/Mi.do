@@ -11,6 +11,7 @@ public enum ModuleKind: String {
     case feature
     case manager
     case view
+    case tests
     
     var folder: String {
         switch self {
@@ -20,6 +21,8 @@ public enum ModuleKind: String {
             return "Tasker/Modules/Managers"
         case .view:
             return "Tasker/Modules/Views"
+        case .tests:
+            return "Tasker/Tests"
         }
     }
 }
@@ -50,6 +53,7 @@ public enum Modules: String {
     
     case subscriptionManager = "SubscriptionManager"
     case telemetry = "TelemetryManager"
+    case dependencyManager = "DependencyManager"
     
     //MARK: - Views
     case uiComponents = "UIComponents"
@@ -67,7 +71,12 @@ public enum Modules: String {
     case notesView = "NotesView"
     case mainView = "MainView"
     
-    private var kind: ModuleKind {
+    //MARK: - Tests
+    
+    case blockSetTests = "BlockSetTests"
+    case taskManagerTests = "TaskManagerTests"
+    
+    public var kind: ModuleKind {
         switch self {
         case .blockSet, .models, .config:
             return .feature
@@ -86,6 +95,9 @@ public enum Modules: String {
              .notesView,
              .mainView:
             return .view
+        case .blockSetTests,
+            .taskManagerTests:
+            return .tests
         default:
             return .manager
         }

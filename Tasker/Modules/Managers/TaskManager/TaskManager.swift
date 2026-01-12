@@ -105,6 +105,7 @@ public final actor TaskManager: TaskManagerProtocol {
         let casManager = MockCas.createCASManager()
         let manager = TaskManager(casManager: casManager, dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
         await manager.fakeModelForPreview()
+        
         return manager
     }
     
@@ -138,7 +139,6 @@ public final actor TaskManager: TaskManagerProtocol {
             
             for await _ in await self.dateManager.dateChanges {
                 guard !Task.isCancelled else { break }
-                
                 await self.setTasks(await self.updateTasks())
             }
         }
@@ -263,11 +263,11 @@ public final actor TaskManager: TaskManagerProtocol {
         try await casManager.saveModel(task.model)
         notify()
         
-        guard calendar.isDate(Date(timeIntervalSince1970: task.notificationDate), inSameDayAs: dateManager.selectedDate) else {
-            return
-        }
+//        guard calendar.isDate(Date(timeIntervalSince1970: task.notificationDate), inSameDayAs: dateManager.selectedDate) else {
+//            return
+//        }
         
-        //        tasks[task.id] = task
+        tasks[task.id] = task
     }
     
     // MARK: - Delete task

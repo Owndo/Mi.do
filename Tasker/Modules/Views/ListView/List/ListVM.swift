@@ -10,11 +10,12 @@ import SwiftUI
 import Models
 import AppearanceManager
 import DateManager
+import PlayerManager
+import ProfileManager
 import TaskManager
 import TelemetryManager
 import TaskRowView
 import NotificationManager
-import ProfileManager
 
 @Observable
 public final class ListVM: HashableNavigation {
@@ -23,8 +24,9 @@ public final class ListVM: HashableNavigation {
     
     private var dateManager: DateManagerProtocol
     private var notificationManager: NotificationManagerProtocol
-    private var taskManager: TaskManagerProtocol
+    private var playerManager: PlayerManagerProtocol
     private let profileManager: ProfileManagerProtocol
+    private var taskManager: TaskManagerProtocol
     
     private var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
@@ -42,17 +44,31 @@ public final class ListVM: HashableNavigation {
     
     //MARK: - Private Init
     
-    private init(dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol, profileManager: ProfileManagerProtocol) {
+    private init(
+        dateManager: DateManagerProtocol,
+        notificationManager: NotificationManagerProtocol,
+        playerManager: PlayerManagerProtocol,
+        profileManager: ProfileManagerProtocol,
+        taskManager: TaskManagerProtocol
+    ) {
         self.dateManager = dateManager
         self.notificationManager = notificationManager
-        self.taskManager = taskManager
+        self.playerManager = playerManager
         self.profileManager = profileManager
+        self.taskManager = taskManager
+        
     }
     
     //MARK: - Create ListVM
     
-    public static func createListVM(dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, taskManager: TaskManagerProtocol, profileManager: ProfileManagerProtocol) async -> ListVM {
-        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, profileManager: profileManager)
+    public static func createListVM(
+        dateManager: DateManagerProtocol,
+        notificationManager: NotificationManagerProtocol,
+        playerManager: PlayerManagerProtocol,
+        profileManager: ProfileManagerProtocol,
+        taskManager: TaskManagerProtocol
+    ) async -> ListVM {
+        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         await vm.updateTasks()
         vm.completedTasksHidden = profileManager.profileModel.settings.completedTasksHidden
         vm.observeTasks()
@@ -63,26 +79,28 @@ public final class ListVM: HashableNavigation {
     //MARK: - Create mock ListVM
     
     public static func creteMockListVM() -> ListVM {
-            let taskManager = TaskManager.createMockTaskManager()
-            let dateManager = DateManager.createMockDateManager()
-            let notificationManager = MockNotificationManager()
-            let profileManager = ProfileManager.createMockProfileManager()
-            
-            let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, profileManager: profileManager)
-            vm.observeTasks()
-            
-            return vm
+        let dateManager = DateManager.createMockDateManager()
+        let notificationManager = MockNotificationManager()
+        let profileManager = ProfileManager.createMockProfileManager()
+        let playerManager = PlayerManager.createMockPlayerManager()
+        let taskManager = TaskManager.createMockTaskManager()
+        
+        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
+        vm.observeTasks()
+        
+        return vm
     }
     
     //MARK: - Create PreviewListVM
     
     public static func createPreviewListVM() async -> ListVM {
-        let taskManager = await TaskManager.createMockTaskManagerWithModels()
         let dateManager = DateManager.createMockDateManager()
         let notificationManager = MockNotificationManager()
+        let playerManager = PlayerManager.createMockPlayerManager()
         let profileManager = ProfileManager.createMockProfileManager()
+        let taskManager = await TaskManager.createMockTaskManagerWithModels()
         
-        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, taskManager: taskManager, profileManager: profileManager)
+        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         await vm.updateTasks()
         vm.observeTasks()
         
@@ -103,6 +121,7 @@ public final class ListVM: HashableNavigation {
                         task: task,
                         dateManager: self.dateManager,
                         notificationManager: self.notificationManager,
+                        playerManager: self.playerManager,
                         taskManager: self.taskManager
                     )
                 }
@@ -120,6 +139,7 @@ public final class ListVM: HashableNavigation {
                         task: task,
                         dateManager: self.dateManager,
                         notificationManager: self.notificationManager,
+                        playerManager: self.playerManager,
                         taskManager: self.taskManager
                     )
                 }
@@ -148,7 +168,8 @@ public final class ListVM: HashableNavigation {
     }
     
     func completedTaskViewChange() async {
-        profileManager.profileModel.settings.completedTasksHidden.toggle()
+        completedTasksHidden.toggle()
+        profileManager.profileModel.settings.completedTasksHidden = completedTasksHidden
         
         do {
             try await profileManager.updateProfileModel()

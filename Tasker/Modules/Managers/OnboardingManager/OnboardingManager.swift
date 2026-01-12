@@ -10,12 +10,13 @@ import Models
 import ProfileManager
 import TaskManager
 import DateManager
+import ConfigurationFile
 
 @Observable
 public final class OnboardingManager: OnboardingManagerProtocol {
+    private var dateManager: DateManagerProtocol
     private var profileManager: ProfileManagerProtocol
     private var taskManager: TaskManagerProtocol
-    private var dateManager: DateManagerProtocol
     
     private var profileModel: UIProfileModel {
         get {
@@ -33,12 +34,32 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     
     public var onboardingComplete = false
     
-    init(profileManager: ProfileManagerProtocol, taskManager: TaskManagerProtocol, dateManager: DateManagerProtocol) {
+    private init(
+        dateManager: DateManagerProtocol,
+        profileManager: ProfileManagerProtocol,
+        taskManager: TaskManagerProtocol,
+    ) {
+        self.dateManager = dateManager
         self.taskManager = taskManager
         self.profileManager = profileManager
-        self.dateManager = dateManager
+    }
+    
+    //MARK: - Create Manager
+    
+    public static func createManager(
+        dateManager: DateManagerProtocol,
+        profileManager: ProfileManagerProtocol,
+        taskManager: TaskManagerProtocol,
         
-        firstTimeOpen()
+    ) -> OnboardingManagerProtocol {
+        let manager = OnboardingManager(
+            dateManager: dateManager,
+            profileManager: profileManager,
+            taskManager: taskManager,
+        )
+        manager.firstTimeOpen()
+        
+        return manager
     }
     
     func firstTimeOpen() {

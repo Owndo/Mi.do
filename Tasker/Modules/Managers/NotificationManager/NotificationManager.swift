@@ -46,9 +46,11 @@ public final class NotificationManager: NotificationManagerProtocol {
     
     //MARK: - Create Notification Manager
     
-    public static func createNotificationManager(profileManager: ProfileManagerProtocol) async -> NotificationManagerProtocol {
+    public static func createNotificationManager(
+        profileManager: ProfileManagerProtocol,
+        storageManager: StorageManagerProtocol
+    ) async -> NotificationManagerProtocol {
         let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
-        let storageManager = await StorageManager.createStorageManager()
         let dateManager = await DateManager.createDateManager(profileManager: profileManager)
         
         return NotificationManager(subscriptionManager: subscriptionManager, storageManager: storageManager, dateManager: dateManager)

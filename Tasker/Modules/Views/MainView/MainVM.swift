@@ -34,13 +34,16 @@ public final class MainVM: HashableNavigation {
     //MARK: - Depency
     public let appearanceManager: AppearanceManagerProtocol
     private let dateManager: DateManagerProtocol
-    private let profileManager: ProfileManagerProtocol
-    private let subscriptionManager: SubscriptionManagerProtocol
-    private let recorderManager: RecorderManagerProtocol
-    private let taskManager: TaskManagerProtocol
-    
     private let permissionManager: PermissionProtocol = PermissionManager.createPermissionManager()
+    private let playerManager: PlayerManagerProtocol
+    private let profileManager: ProfileManagerProtocol
+    private let recorderManager: RecorderManagerProtocol
+    private let storageManager: StorageManagerProtocol
+    private let subscriptionManager: SubscriptionManagerProtocol
+    
+    private let taskManager: TaskManagerProtocol
     private let telemetryManager: TelemetryManagerProtocol
+    
     
     //MARK: - ViewModels
     
@@ -164,33 +167,40 @@ public final class MainVM: HashableNavigation {
     
     private init(
         appearanceManager: AppearanceManagerProtocol,
-        profileManager: ProfileManagerProtocol,
-        taskManager: TaskManagerProtocol,
         dateManager: DateManagerProtocol,
+        playerManager: PlayerManagerProtocol,
+        profileManager: ProfileManagerProtocol,
         recorderManager: RecorderManagerProtocol,
+        storageManager: StorageManagerProtocol,
         subscriptionManager: SubscriptionManagerProtocol,
+        taskManager: TaskManagerProtocol,
         telemetryManager: TelemetryManagerProtocol,
+        
         profileModel: UIProfileModel,
+        
         calendarVM: CalendarVM,
-        //        profileVM: ProfileVM,
-        weekVM: WeekVM,
         listVM: ListVM,
-        notesVM: NotesVM
+        notesVM: NotesVM,
+        weekVM: WeekVM,
     ) {
         self.appearanceManager = appearanceManager
-        self.profileManager = profileManager
-        self.taskManager = taskManager
         self.dateManager = dateManager
+        self.playerManager = playerManager
+        self.profileManager = profileManager
         self.recorderManager = recorderManager
+        self.storageManager = storageManager
         self.subscriptionManager = subscriptionManager
+        self.taskManager = taskManager
         self.telemetryManager = telemetryManager
+        
         self.profileModel = profileModel
+        
         self.calendarVM = calendarVM
-        //        self.profileVM = profileVM
-        self.weekVM = weekVM
         self.listVM = listVM
         self.notesVM = notesVM
+        self.weekVM = weekVM
     }
+    
     
     //MARK: - Create VM
     
@@ -225,17 +235,19 @@ public final class MainVM: HashableNavigation {
         
         let vm = MainVM(
             appearanceManager: appearanceManager,
-            profileManager: profileManager,
-            taskManager: taskManager,
             dateManager: dateManager,
+            playerManager: playerManager,
+            profileManager: profileManager,
             recorderManager: recorderManager,
+            storageManager: storageManager,
             subscriptionManager: subscriptionManager,
+            taskManager: taskManager,
             telemetryManager: telemetryManager,
             profileModel: profileModel,
             calendarVM: calendarVM,
-            weekVM: weekVM,
             listVM: listVM,
-            notesVM: notesVM
+            notesVM: notesVM,
+            weekVM: weekVM
         )
         
         vm.syncNavigation()
@@ -246,36 +258,38 @@ public final class MainVM: HashableNavigation {
     //MARK: - Create PreviewVM
     
     public static func createPreviewVM() -> MainVM {
-        let profileManager = ProfileManager.createMockProfileManager()
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
-        let taskManager = TaskManager.createMockTaskManager()
         let dateManager = DateManager.createMockDateManager()
+        let playerManager = PlayerManager.createMockPlayerManager()
+        let profileManager = ProfileManager.createMockProfileManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
+        let storageManager = StorageManager.createMockStorageManager()
         let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
+        let taskManager = TaskManager.createMockTaskManager()
         let telemetryManager = TelemetryManager.createTelemetryManager(mock: true)
+        
         let profileModel = profileManager.profileModel
         
         let calendarVM = CalendarVM.createPreviewVM()
-        //        let profileVM = ProfileVM.createProfilePreviewVM()
-        let weekVM = WeekVM.createPreviewVM()
         let listVM = ListVM.creteMockListVM()
         let notesVM = NotesVM.createPreviewVM()
+        let weekVM = WeekVM.createPreviewVM()
         
         let vm = MainVM(
             appearanceManager: appearanceManager,
-            profileManager: profileManager,
-            taskManager: taskManager,
             dateManager: dateManager,
+            playerManager: playerManager,
+            profileManager: profileManager,
             recorderManager: recorderManager,
+            storageManager: storageManager,
             subscriptionManager: subscriptionManager,
+            taskManager: taskManager,
             telemetryManager: telemetryManager,
             profileModel: profileModel,
             calendarVM: calendarVM,
-            //            profileVM: profileVM,
-            weekVM: weekVM,
             listVM: listVM,
-            
-            notesVM: notesVM
+            notesVM: notesVM,
+            weekVM: weekVM
         )
         
         vm.syncNavigation()
@@ -477,17 +491,17 @@ public final class MainVM: HashableNavigation {
             )
         )
         
-//        taskViewVM = await TaskVM.createTaskVM(
-//            taskManager: taskManager,
-//            playerManager: ,
-//            storageManager: ,
-//            profileManager: <#T##any ProfileManagerProtocol#>,
-//            dateManager: <#T##any DateManagerProtocol#>,
-//            recorderManager: <#T##any RecorderManagerProtocol#>,
-//            task: <#T##UITaskModel#>
-//        )
+        taskViewVM = await TaskVM.createTaskVM(
+            taskManager: taskManager,
+            playerManager: playerManager,
+            storageManager: storageManager,
+            profileManager: profileManager,
+            dateManager: dateManager,
+            recorderManager: recorderManager,
+            task: model
+        )
         guard let taskViewVM else { return }
-//        sheetNavigation = .taskDetails(taskViewVM)
+        sheetNavigation = .taskDetails(taskViewVM)
     }
     
     //MARK: - Recognize data

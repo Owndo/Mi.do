@@ -32,10 +32,22 @@ let project = Project(
             )],
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
             entitlements: .file(path: "Tasker/Tasker.entitlements"),
-            dependencies: [
-                .target(name: Modules.mainView.name),
-            ],
-            settings: .settings(defaultSettings: .recommended),
+            dependencies: [.target(name: Modules.mainView.name),],
+            settings: .settings(
+                base: [:],
+                configurations: [
+                    .debug(
+                        name: "Debug",
+                        settings: [
+                            "PRODUCT_BUNDLE_IDENTIFIER": "mido.robocode.debug"
+                        ]
+                    ),
+                    .release(
+                        name: "Release",
+                        settings: ["PRODUCT_BUNDLE_IDENTIFIER": "mido.robocode.tasker"]
+                    )
+                ]
+            )
         ),
         .module(.blockSet),
         .module(.blockSetTests, dependencies: [.target(name: Modules.blockSet.name)]),
@@ -295,7 +307,6 @@ let project = Project(
                         .target(name: Modules.appDelegate.name),
                         .target(name: Modules.appearanceManager.name),
                         .target(name: Modules.dateManager.name),
-                        .target(name: Modules.paywallView.name),
                         .target(name: Modules.permissionManager.name),
                         .target(name: Modules.profileManager.name),
                         .target(name: Modules.recorderManager.name),
@@ -303,7 +314,7 @@ let project = Project(
                         .target(name: Modules.subscriptionManager.name),
                         .target(name: Modules.customErrors.name),
                         
-                        .target(name: Modules.paywallView.name),
+                            .target(name: Modules.paywallView.name),
                         .target(name: Modules.calendarView.name),
                         .target(name: Modules.listView.name),
                         .target(name: Modules.notesView.name),
@@ -335,6 +346,7 @@ let project = Project(
                     .runAction(
                         configuration: .debug,
                         attachDebugger: true,
+                        options: .options(storeKitConfigurationPath: "Tasker/Modules/Managers/SubscriptionManager/Mi.storekit"),
                         expandVariableFromTarget: .target("Tasker"),
                         launchStyle: .automatically
                     )

@@ -36,7 +36,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         async let h1 = cas.store(Data("A".utf8))
         async let h2 = cas.store(Data("B".utf8))
@@ -55,7 +55,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let asyncableCas: AsyncableCasProtocol = FileCas(dir)
+        let asyncableCas: AsyncableCas = FileCas(dir)
         let cas: Cas = FileCas(dir)
         
         /// Asyncable cas
@@ -79,7 +79,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         let hashForText = try await cas.store(rightText)
         let returnedHashForText = await cas.hash(for: rightText)
@@ -104,7 +104,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         let data = Data([1, 2, 3, 4, 5])
         let hash = try await cas.store(data)
@@ -123,7 +123,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         let mutable = Mutable.initial()
         var modelForTest: ModelForTest? = ModelForTest(name: "Steve", age: 42, isStudent: false)
@@ -180,7 +180,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         try await cas.saveJSONModel(model)
         var list: [Mutable] = try await cas.listOfActiveMutables()
@@ -203,7 +203,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         try await cas.saveJSONModel(model)
         var list = try await cas.allIdentifiers()
@@ -232,7 +232,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         let mutable = Mutable.initial()
         
         try await cas.saveJSON(mutable, "Hello CAS!")
@@ -254,7 +254,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         let mutable = Mutable.initial()
         
         try await cas.saveJSON(mutable, "Hello CAS!")
@@ -275,7 +275,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         try await cas.saveJSONModel(model)
         var list = try await cas.allIdentifiers()
@@ -315,7 +315,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         try await cas.saveJSONModel(model)
         try await cas.saveJSONModel(wrongModel)
@@ -356,7 +356,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         let descriptionForModel = "Jobs he has been like a student just for one year"
         var hashForDescription: String?
         
@@ -402,7 +402,7 @@ struct AsyncFileCasTests {
             return
         }
         
-        let cas: AsyncableCasProtocol = FileCas(dir)
+        let cas: AsyncableCas = FileCas(dir)
         
         try await cas.saveJSONModel(model)
         var list = try await cas.allIdentifiers()

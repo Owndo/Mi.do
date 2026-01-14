@@ -21,15 +21,10 @@ public final actor CASManager: CASManagerProtocol {
     //MARK: - Static methods for init
     
     public static func createCASManager() async -> CASManager {
-        print("init cas")
         let localDirectory = createLocalDirectory()!
         
         let cas = FileCas(localDirectory)
         let list = await fetchList(cas: cas)
-        
-        for i in list {
-            print(i.returnId())
-        }
         
         let casManager = CASManager(cas: cas, allIdentifiers: list)
         return casManager
@@ -37,7 +32,7 @@ public final actor CASManager: CASManagerProtocol {
     
     //MARK: - Fetch list
     
-    static private func fetchList(cas: AsyncableCasProtocol) async -> [Mutable] {
+    static private func fetchList(cas: AsyncableCas) async -> [Mutable] {
         do {
             return try await cas.listOfAllMutables()
         } catch {
@@ -48,23 +43,32 @@ public final actor CASManager: CASManagerProtocol {
     //MARK: - Fetch models
     
     nonisolated public func fetchModels<T: Codable>(_ model: T.Type) async -> [T] {
-        var models = [T]()
-        
-        await withTaskGroup(of: Model<T>?.self) { group in
-            for i in allIdentifiers {
+        return await withTaskGroup(of: T?.self) { group in
+            for identifier in allIdentifiers {
                 group.addTask {
-                    return try? await self.cas.loadJSONModel(i)
+                    do {
+                        if let loadedModel: Model<T> = try await self.cas.loadJSONModel(identifier) {
+                            return loadedModel.value
+                        } else {
+                            return nil
+                        }
+                    } catch {
+                        print("Couldn't load the model: \(identifier), error - \(error.localizedDescription)")
+                        return nil
+                    }
                 }
             }
             
+            var result: [T] = []
+            
             for await model in group {
                 if let model = model {
-                    models.append(model.value)
+                    result.append(model)
                 }
             }
+            
+            return result
         }
-        
-        return models
     }
     
     //MARK: - Retriev data from cas

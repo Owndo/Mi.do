@@ -68,7 +68,13 @@ struct DayView: View {
                 
                 .animation(.default, value: vm.showSmallFire)
             } else {
-                ProgressView()
+                HStack {
+                    Spacer()
+                    
+                    ProgressView()
+                    
+                    Spacer()
+                }
             }
         }
         .task {

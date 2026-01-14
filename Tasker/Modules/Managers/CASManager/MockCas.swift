@@ -52,7 +52,7 @@ public final actor MockCas: CASManagerProtocol {
     
     //MARK: - Fetch list
     
-    static private func fetchList(cas: AsyncableCasProtocol) async -> [Mutable] {
+    static private func fetchList(cas: AsyncableCas) async -> [Mutable] {
         do {
             return try await cas.listOfAllMutables()
         } catch {

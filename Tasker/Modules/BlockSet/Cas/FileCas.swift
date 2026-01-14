@@ -6,7 +6,7 @@
 //
 import Foundation
 
-public actor FileCas: AsyncableCasProtocol, Cas {
+public actor FileCas: AsyncableCas, Cas {
     // private:
     private let dir: URL
     

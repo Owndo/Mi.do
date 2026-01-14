@@ -7,12 +7,12 @@
 
 import Foundation
 
-public actor MultiCas: AsyncableCasProtocol {
+public actor MultiCas: AsyncableCas {
     
-    private var local: AsyncableCasProtocol
-    private var remote: AsyncableCasProtocol
+    private var local: AsyncableCas
+    private var remote: AsyncableCas
     
-    public init(local: AsyncableCasProtocol, remote: AsyncableCasProtocol) {
+    public init(local: AsyncableCas, remote: AsyncableCas) {
         self.local = local
         self.remote = remote
     }

@@ -16,15 +16,15 @@ public final class DateManager: DateManagerProtocol {
     ///for the set up first day of week
     private var telemetryManager: TelemetryManagerProtocol
     
-    private let _dateChangeContinuation: AsyncStream<Date>.Continuation
     public let dateChanges: AsyncStream<Date>
+    private let dateChangeContinuation: AsyncStream<Date>.Continuation
     
     public var calendar = Calendar.current
     
     public var selectedDate = Date() {
         didSet {
             guard selectedDate != oldValue else { return }
-            _dateChangeContinuation.yield(selectedDate)
+            dateChangeContinuation.yield(selectedDate)
         }
     }
     
@@ -69,11 +69,13 @@ public final class DateManager: DateManagerProtocol {
     private init(telemetryManager: TelemetryManagerProtocol) {
         self.telemetryManager = telemetryManager
         
-        (self.dateChanges, self._dateChangeContinuation) = AsyncStream.makeStream()
+        let (stream, cont) = AsyncStream<Date>.makeStream()
+        self.dateChanges = stream
+        self.dateChangeContinuation = cont
     }
     
     deinit {
-        _dateChangeContinuation.finish()
+        dateChangeContinuation.finish()
     }
     
     public static func createDateManager(profileManager: ProfileManagerProtocol) async -> DateManagerProtocol {

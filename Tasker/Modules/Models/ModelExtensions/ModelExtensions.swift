@@ -11,77 +11,62 @@ import SwiftUI
 
 //MARK: - Check for visible
 public extension UITaskModel {
-    
-    //    func determinateID() -> String {
-    //        let encoder = JSONEncoder()
-    //        encoder.outputFormatting = [.sortedKeys]
-    //
-    //        do {
-    //            let data = try encoder.encode(self)
-    //            return data.base32()
-    //        } catch {
-    //            print("Couldn't create hash for task")
-    //            return UUID().uuidString
-    //        }
-    //    }
     ///Function for check schedule task
     func isScheduledForDate(_ date: Double, calendar: Calendar = Calendar.current) -> Bool {
-        // ✅ СРАЗУ нормализуем даты до startOfDay
-        let selectedDay = calendar.startOfDay(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970
-        let taskDay = calendar.startOfDay(for: Date(timeIntervalSince1970: self.notificationDate)).timeIntervalSince1970
         
-        // Проверка на удаление
-        guard !self.deleteRecords.contains(where: { $0.deletedFor == selectedDay }) else {
+        guard !self.deleteRecords.contains(where: { $0.deletedFor == calendar.startOfDay(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970 }) else {
             return false
         }
         
-        // Для разовых задач - просто сравниваем дни
+        let taskNotificationDate = self.notificationDate
+        
         if self.repeatTask == .never {
-            return taskDay == selectedDay  // ✅ Сравниваем startOfDay
+            return taskNotificationDate >= date && taskNotificationDate < date + 86400
         }
         
-        // Задача не может показаться ДО даты создания
-        guard selectedDay >= taskDay else {
+        let dateAsDate = Date(timeIntervalSince1970: date)
+        let taskNotificationDateAsDate = Date(timeIntervalSince1970: taskNotificationDate)
+        
+        guard dateAsDate >= calendar.startOfDay(for: taskNotificationDateAsDate) else {
             return false
         }
         
-        // Проверка deadline
         if let deadline = self.deadline {
-            let endDay = calendar.startOfDay(for: Date(timeIntervalSince1970: deadline)).timeIntervalSince1970
-            guard selectedDay <= endDay else { return false }
+            let endDateAsDate = Date(timeIntervalSince1970: deadline)
+            let dateDay = calendar.startOfDay(for: dateAsDate)
+            let endDay = calendar.startOfDay(for: endDateAsDate)
+            
+            guard dateDay <= endDay else { return false }
         }
-        
-        // Для повторяющихся задач используем Date для component()
-        let selectedDate = Date(timeIntervalSince1970: selectedDay)
-        let taskDate = Date(timeIntervalSince1970: taskDay)
         
         switch self.repeatTask {
         case .never:
-            return true  // Уже проверили выше
-            
+            return true
         case .daily:
             return true
-            
         case .weekly:
-            let taskWeekday = calendar.component(.weekday, from: taskDate)
-            let selectedWeekday = calendar.component(.weekday, from: selectedDate)
+            let taskWeekday = calendar.component(.weekday, from: taskNotificationDateAsDate)
+            let selectedWeekday = calendar.component(.weekday, from: dateAsDate)
             return taskWeekday == selectedWeekday
             
         case .monthly:
-            let taskDayOfMonth = calendar.component(.day, from: taskDate)
-            let selectedDayOfMonth = calendar.component(.day, from: selectedDate)
-            return taskDayOfMonth == selectedDayOfMonth
+            let taskDay = calendar.component(.day, from: taskNotificationDateAsDate)
+            let selectedDay = calendar.component(.day, from: dateAsDate)
+            return taskDay == selectedDay
             
         case .yearly:
-            let taskMonth = calendar.component(.month, from: taskDate)
-            let taskDayOfMonth = calendar.component(.day, from: taskDate)
-            let selectedMonth = calendar.component(.month, from: selectedDate)
-            let selectedDayOfMonth = calendar.component(.day, from: selectedDate)
-            return taskMonth == selectedMonth && taskDayOfMonth == selectedDayOfMonth
+            let taskMonth = calendar.component(.month, from: taskNotificationDateAsDate)
+            let taskDay = calendar.component(.day, from: taskNotificationDateAsDate)
+            let selectedMonth = calendar.component(.month, from: dateAsDate)
+            let selectedDay = calendar.component(.day, from: dateAsDate)
+            return taskMonth == selectedMonth && taskDay == selectedDay
             
         case .dayOfWeek:
-            let selectedWeekday = calendar.component(.weekday, from: selectedDate)
-            let actualDays = self.dayOfWeek.actualyDayOFWeek(calendar)
+            let selectedWeekday = calendar.component(.weekday, from: dateAsDate)
+            
+            var orderedDayOfWeek = self.dayOfWeek
+            let actualDays = orderedDayOfWeek.actualyDayOFWeek(calendar)
+            
             let dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
             let selectedDayName = dayNames[selectedWeekday - 1]
             

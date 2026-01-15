@@ -74,11 +74,6 @@ public final actor TaskManager: TaskManagerProtocol {
     public static func createTaskManager(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol) async -> TaskManagerProtocol {
         let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         await manager.startManager()
-        print("Manager inited, tasks: \(await manager.tasks.count)")
-        
-        for i in await manager.tasks.values {
-            print("task - \(i.model.value), id - \(i.id)")
-        }
         
         return manager
     }
@@ -190,9 +185,7 @@ public final actor TaskManager: TaskManagerProtocol {
     // MARK: - Check mark tapped
     
     public func checkMarkTapped(task: UITaskModel) async throws {
-        print("mark tapped - \(task.id)")
         task.completeRecords = updateExistingTaskCompletion(task: task)
-        print("completed record updated - \(task.id)")
         
         try await saveTask(task)
         

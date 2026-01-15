@@ -21,44 +21,44 @@ public struct NotesView: View {
     }
     
     public var body: some View {
-            ScrollView {
-                ZStack {
-                    VStack {
-                        Spacer()
-                        
-                        TextEditor(text: $vm.profileModel.notes)
-                            .font(.system(.callout, design: .rounded, weight: .semibold))
-                            .foregroundStyle(.labelPrimary)
-                            .focused($notesFocusState)
-                            .scrollIndicators(.hidden)
-                            .scrollDismissesKeyboard(.immediately)
-                            .textEditorStyle(.plain)
-                            .onSubmit {
-                                Task {
-                                    await vm.saveNotes()
-                                }
-                            }
-                            .padding([.top, .horizontal])
-                            .padding(.bottom, notesFocusState ? 20 : 80)
-                        
-                        MockView()
+        ZStack {
+//            ScrollView {
+                Spacer()
+                
+                TextEditor(text: $vm.profileModel.notes)
+                    .font(.system(.callout, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.labelPrimary)
+                    .focused($notesFocusState)
+                    .scrollIndicators(.hidden)
+                    .scrollDismissesKeyboard(.immediately)
+                    .textEditorStyle(.plain)
+                    .onSubmit {
+                        Task {
+                            await vm.saveNotes()
+                        }
                     }
-                }
+                    .padding([.top, .horizontal])
+                    .padding(.bottom, notesFocusState ? 20 : 80)
+                    .padding(.top, 100)
+                    .ignoresSafeArea()
+                
+                MockView()
+//            }
+        }
+        .onTapGesture {
+            notesFocusState = true
+        }
+        .toolbar {
+            ToolbarItem(placement: .keyboard) {
+                KeyboardSafeAreaInset()
             }
-            .onTapGesture {
-                notesFocusState = true
+        }
+        //            .customBlurForContainer(colorScheme: colorScheme)
+        .onChange(of: notesFocusState) { _, _ in
+            Task {
+                await vm.saveNotes()
             }
-            .toolbar {
-                ToolbarItem(placement: .keyboard) {
-                    KeyboardSafeAreaInset()
-                }
-            }
-            //            .customBlurForContainer(colorScheme: colorScheme)
-            .onChange(of: notesFocusState) { _, _ in
-                Task {
-                    await vm.saveNotes()
-                }
-            }
+        }
         .sensoryFeedback(.selection, trigger: vm.mainViewIsOpen)
     }
     
@@ -116,7 +116,6 @@ public struct NotesView: View {
                             await vm.saveNotes()
                         }
                     } label: {
-                        
                         Text("Done", bundle: .module)
                             .foregroundStyle(colorScheme.accentColor())
                             .padding(.vertical, 9)

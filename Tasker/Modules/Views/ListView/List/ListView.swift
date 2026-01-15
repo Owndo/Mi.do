@@ -8,7 +8,6 @@
 import SwiftUI
 import UIComponents
 import Models
-import TaskRowView
 import TaskView
 
 public struct ListView: View {

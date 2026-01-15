@@ -44,7 +44,9 @@ let project = Project(
                     ),
                     .release(
                         name: "Release",
-                        settings: ["PRODUCT_BUNDLE_IDENTIFIER": "mido.robocode.tasker"]
+                        settings: [
+                            "PRODUCT_BUNDLE_IDENTIFIER": "mido.robocode"
+                        ]
                     )
                 ]
             )

@@ -28,9 +28,6 @@ public final actor CASManager: CASManagerProtocol {
         
         let casManager = CASManager(cas: cas, allIdentifiers: list)
         
-        for i in list {
-            print(i.returnId())
-        }
         return casManager
     }
     

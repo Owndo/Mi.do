@@ -14,7 +14,6 @@ import PlayerManager
 import ProfileManager
 import TaskManager
 import TelemetryManager
-import TaskRowView
 import NotificationManager
 
 @Observable

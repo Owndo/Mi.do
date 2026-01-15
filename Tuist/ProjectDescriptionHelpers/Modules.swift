@@ -65,7 +65,6 @@ public enum Modules: String {
     case appearanceView = "AppearanceView"
     case settingsView = "SettingsView"
     case profileView = "ProfileView"
-    case taskRowView = "TaskRowView"
     case listView = "ListView"
     case onboaringView = "OnboardingView"
     case notesView = "NotesView"
@@ -89,7 +88,6 @@ public enum Modules: String {
              .appearanceView,
              .settingsView,
              .profileView,
-             .taskRowView,
              .listView,
              .onboaringView,
              .notesView,

@@ -500,7 +500,10 @@ public final class MainVM: HashableNavigation {
             recorderManager: recorderManager,
             task: model
         )
+        
         guard let taskViewVM else { return }
+        
+        taskViewVM.titleFocused = true
         sheetNavigation = .taskDetails(taskViewVM)
     }
     

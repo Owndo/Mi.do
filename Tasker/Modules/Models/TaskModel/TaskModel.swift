@@ -80,7 +80,7 @@ public class TaskModelWrapper<T: Encodable>: Identifiable, Equatable {
     
     public init(_ model: Model<T>) {
         self.model = model
-        self.id = UUID().uuidString
+        self.id = hashID(model.value)
     }
     
     public static func == (lhs: TaskModelWrapper<T>, rhs: TaskModelWrapper<T>) -> Bool {

@@ -39,9 +39,9 @@ public final class StorageManager: StorageManagerProtocol {
         let tempUrl = soundsDirectory.appendingPathComponent(hash + ".wav")
         
         do {
-            let pathToAudio = try await casManager.pathToFile(hash)
+            let pathToAudio = URL(string: hash)!
             
-            guard FileManager.default.fileExists(atPath: pathToAudio.path) else {
+            guard FileManager.default.fileExists(atPath: hash) else {
                 return tempUrl
             }
             

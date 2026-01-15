@@ -34,13 +34,44 @@ public final class ListVM: HashableNavigation {
     
     //MARK: UI State
     
-    var contentHeight: CGFloat = 0
+    /// For task Row
+    var playingTask: UITaskModel?
+    
+    var showDeadlinePicker = false
+    var taskDoneTrigger = false
+    var deletTaskButtonTrigger = false
+    var startPlay = false
     
     //MARK: Confirmation dialog
+    
+    var confirmationDialogIsPresented = false
+    
+    /// Show or hide completed tasks
     var completedTasksHidden = false
     
-    var tasksRowVM: [TaskRowVM] = []
-    var completedTasksRowVM: [TaskRowVM] = []
+    //MARK: - Tasks
+    
+    var activeTasks: [UITaskModel] = []
+    var completedTasks: [UITaskModel] = []
+    
+    var candidateForDeletion: UITaskModel?
+    
+    private var tasksTask: Task<Void, Never>?
+    
+    //MARK: - Computed properties
+    
+    var calendar: Calendar {
+        dateManager.calendar
+    }
+    
+    var selectedDate: Date {
+        dateManager.selectedDate
+    }
+    
+    var playing: Bool {
+        playerManager.isPlaying && playerManager.task?.id == playingTask?.id
+    }
+    
     
     //MARK: - Private Init
     
@@ -56,7 +87,6 @@ public final class ListVM: HashableNavigation {
         self.playerManager = playerManager
         self.profileManager = profileManager
         self.taskManager = taskManager
-        
     }
     
     //MARK: - Create ListVM
@@ -69,9 +99,9 @@ public final class ListVM: HashableNavigation {
         taskManager: TaskManagerProtocol
     ) async -> ListVM {
         let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
-        await vm.updateTasks()
         vm.completedTasksHidden = profileManager.profileModel.settings.completedTasksHidden
-        vm.observeTasks()
+        await vm.downloadTasks()
+        vm.asyncUpdateTasks()
         
         return vm
     }
@@ -86,7 +116,6 @@ public final class ListVM: HashableNavigation {
         let taskManager = TaskManager.createMockTaskManager()
         
         let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
-        vm.observeTasks()
         
         return vm
     }
@@ -101,63 +130,59 @@ public final class ListVM: HashableNavigation {
         let taskManager = await TaskManager.createMockTaskManagerWithModels()
         
         let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
-        await vm.updateTasks()
-        vm.observeTasks()
         
         return vm
     }
     
-    
-    //MARK: - Update tasks
-    
-    private func updateTasks() async {
-        let active = await taskManager.activeTasks
-        let completed = await taskManager.completedTasks
+    func downloadTasks() async {
+        self.activeTasks = sortedTasks(tasks: await taskManager.activeTasks(for: selectedDate))
         
-        tasksRowVM = await withTaskGroup(of: TaskRowVM.self) { group in
-            for task in active {
-                group.addTask {
-                    await TaskRowVM.createTaskRowVM(
-                        task: task,
-                        dateManager: self.dateManager,
-                        notificationManager: self.notificationManager,
-                        playerManager: self.playerManager,
-                        taskManager: self.taskManager
-                    )
-                }
-            }
+        self.completedTasks = sortedTasks(tasks: await taskManager.completedTasks(for: selectedDate))
+    }
+    
+    //MARK: - Async Stream
+    
+    func asyncUpdateTasks() {
+        tasksTask = Task { [weak self] in
+            guard let self else { return }
             
-            var result: [TaskRowVM] = []
-            for await vm in group { result.append(vm) }
-            return result
-        }
-        
-        completedTasksRowVM = await withTaskGroup(of: TaskRowVM.self) { group in
-            for task in completed {
-                group.addTask {
-                    await TaskRowVM.createTaskRowVM(
-                        task: task,
-                        dateManager: self.dateManager,
-                        notificationManager: self.notificationManager,
-                        playerManager: self.playerManager,
-                        taskManager: self.taskManager
-                    )
-                }
-            }
+            async let tasksStreamTask: () = listenTasksStream()
+            async let dataStreamTask: () = listenDataStream()
             
-            var result: [TaskRowVM] = []
-            for await vm in group { result.append(vm) }
-            return result
+            _ = await (tasksStreamTask, dataStreamTask)
         }
     }
     
-    private func observeTasks() {
-        Task { [weak self] in
-            guard let self else { return }
+    private func listenTasksStream() async {
+        for await _ in await taskManager.tasksStream {
+            await updateTasks()
+        }
+    }
+    
+    private func listenDataStream() async {
+        for await _ in dateManager.dateStream {
+            await updateTasks()
+        }
+    }
+    
+    @MainActor
+    private func updateTasks() async {
+        activeTasks = sortedTasks(tasks: await taskManager.activeTasks(for: selectedDate))
+        
+        completedTasks = sortedTasks(tasks: await taskManager.completedTasks(for: selectedDate))
+    }
+    
+    //MARK: - Sorted tasks
+    
+    private func sortedTasks(tasks: [UITaskModel]) -> [UITaskModel] {
+        tasks.sorted {
+            let hour1 = calendar.component(.hour, from: Date(timeIntervalSince1970: $0.notificationDate))
+            let hour2 = calendar.component(.hour, from: Date(timeIntervalSince1970: $1.notificationDate))
             
-            for await _ in await taskManager.updates {
-                await self.updateTasks()
-            }
+            let minutes1 = calendar.component(.minute, from: Date(timeIntervalSince1970: $0.notificationDate))
+            let minutes2 = calendar.component(.minute, from: Date(timeIntervalSince1970: $1.notificationDate))
+            
+            return (hour1, minutes1, $0.createDate) < (hour2, minutes2, $1.createDate)
         }
     }
     
@@ -184,9 +209,208 @@ public final class ListVM: HashableNavigation {
         }
     }
     
-    func heightOfList() -> CGFloat {
-        CGFloat((tasksRowVM.count + completedTasksRowVM.count) * 52 + 170)
+    //MARK: - TaskRow
+    
+    //MARK: - Task title
+    func taskTitle(task: UITaskModel) -> String {
+        if task.title != "" {
+            return task.title
+        } else {
+            return "New task"
+        }
     }
+    
+    //MARK: - Check Mark Function
+    
+    func checkCompletedTaskForToday(task: UITaskModel) -> Bool {
+        task.completeRecords.contains(where: { $0.completedFor == calendar.startOfDay(for: selectedDate).timeIntervalSince1970 })
+    }
+    
+    //MARK: - Checkmark tapped
+    
+    public func checkMarkTapped(task: UITaskModel) async {
+        do {
+            taskDoneTrigger.toggle()
+            try await taskManager.checkMarkTapped(task: task)
+            stopToPlay()
+        } catch {
+            
+        }
+    }
+    
+    //MARK: - Delete functions
+    
+    func dialogBinding(for task: UITaskModel) -> Binding<Bool> {
+        guard let candidateForDeletion else {
+            return Binding(get:  { self.confirmationDialogIsPresented } , set: { _ in })
+        }
+        
+        return Binding(
+            get: { self.confirmationDialogIsPresented && candidateForDeletion.id == task.id },
+            set: { newValue in self.confirmationDialogIsPresented = newValue }
+        )
+    }
+    
+    public func deleteTaskButtonSwiped(task: UITaskModel) {
+        candidateForDeletion = task
+        confirmationDialogIsPresented.toggle()
+    }
+    
+    func deleteButtonTapped(task: UITaskModel, deleteCompletely: Bool = false) async {
+        do {
+            deletTaskButtonTrigger.toggle()
+            try await taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+        } catch {
+            
+        }
+    }
+    
+    //MARK: Play sound function
+    
+    func playButtonTapped(task: UITaskModel) async {
+        if !playing {
+            playingTask = task
+            await playerManager.playAudioFromData(task: task)
+        } else {
+            stopToPlay()
+        }
+        
+        // telemetry
+        telemetryAction(.taskAction(.playVoiceButtonTapped(.taskListView)))
+    }
+    
+    //MARK: - Stop play
+    
+    private func stopToPlay() {
+        if playerManager.isPlaying {
+            playerManager.stopToPlay()
+            playingTask = nil
+            
+            // telemetry
+            telemetryAction(.taskAction(.stopPlayingVoiceButtonTapped(.taskListView)))
+        }
+    }
+    
+    //MARK: - Deadline
+    func showDedalineButtonTapped(task: UITaskModel) {
+        guard isTaskHasDeadline(task: task) else {
+            return
+        }
+        
+        showDeadlinePicker.toggle()
+    }
+    
+    //MARK: - Is task has deadline
+    
+    func isTaskHasDeadline(task: UITaskModel) -> Bool {
+        guard task.deadline != nil else {
+            return false
+        }
+        return true
+    }
+    
+    //MARK: - Is task overdue
+    
+    func isTaskOverdue(task: UITaskModel) -> Bool {
+        guard let endTimestamp = task.deadline,
+              endTimestamp < dateManager.currentTime.timeIntervalSince1970 else {
+            return false
+        }
+        
+        if task.completeRecords.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.deadline!)) }) {
+            return false
+        }
+        return true
+    }
+    
+    func timeRemainingString(task: UITaskModel) -> String {
+        guard !task.completeRecords.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) else {
+            return "Completed"
+        }
+        
+        guard let endTimestamp = task.deadline,
+              endTimestamp > dateManager.currentTime.timeIntervalSince1970 else {
+            
+            if task.completeRecords.contains(where: {
+                dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: Date(timeIntervalSince1970: task.deadline!)) &&
+                dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) {
+                return "Completed"
+            }
+            
+            return "Overdue"
+        }
+        
+        guard let lastDay = dayUntillDeadLine(task) else {
+            return ""
+        }
+        
+        return "\(lastDay) days left"
+    }
+    
+    
+    //MARK: Deadline logic
+    
+    public func dayUntillDeadLine(_ task: UITaskModel) -> Int? {
+        guard task.deadline != nil else {
+            return nil
+        }
+        
+        guard task.repeatTask != .never else {
+            return nil
+        }
+        
+        let today = dateManager.currentTime
+        let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
+        
+        var day: Date
+        var lastActualDay: Date
+        
+        if calendar.isDate(notificationDate, inSameDayAs: today) || notificationDate <= today {
+            day = today
+            lastActualDay = today
+            
+            while task.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) {
+                lastActualDay = day
+                
+                if task.repeatTask == .weekly {
+                    day = calendar.date(byAdding: .day, value: 7, to: day)!
+                } else if task.repeatTask == .monthly {
+                    day = calendar.date(byAdding: .month, value: 1, to: day)!
+                } else if task.repeatTask == .yearly {
+                    day = calendar.date(byAdding: .year, value: 1, to: day)!
+                } else {
+                    day = calendar.date(byAdding: .day, value: 1, to: day)!
+                }
+            }
+            
+            let difference = calendar.dateComponents([.day], from: today, to: lastActualDay)
+            return difference.day ?? 0
+            
+        } else {
+            day = notificationDate
+            lastActualDay = notificationDate
+            
+            while task.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) {
+                lastActualDay = day
+                
+                if task.repeatTask == .weekly {
+                    day = calendar.date(byAdding: .day, value: 7, to: day)!
+                } else if task.repeatTask == .monthly {
+                    day = calendar.date(byAdding: .month, value: 1, to: day)!
+                } else if task.repeatTask == .yearly {
+                    day = calendar.date(byAdding: .year, value: 1, to: day)!
+                } else {
+                    day = calendar.date(byAdding: .day, value: 1, to: day)!
+                }
+            }
+            
+            let todayToNotification = calendar.dateComponents([.day], from: today, to: notificationDate)
+            let notificationToLast = calendar.dateComponents([.day], from: notificationDate, to: lastActualDay)
+            
+            return (todayToNotification.day ?? 0) + (notificationToLast.day ?? 0)
+        }
+    }
+    
     
     //MARK: - Date
     func backToTodayButtonTapped() {

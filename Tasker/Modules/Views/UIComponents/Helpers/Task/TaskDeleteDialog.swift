@@ -16,13 +16,27 @@ import SwiftUI
 import Models
 
 public struct TaskDeleteDialog: ViewModifier {
+    @Environment(\.dismiss) var dismissButton
     @Binding var isPresented: Bool
     
     let task: UITaskModel
-    let message: LocalizedStringKey
-    let isSingleTask: Bool
-    let dismissAction: DismissAction?
+    var message: LocalizedStringKey = ""
+    var isSingleTask: Bool = true
     let onDelete: (Bool) async -> Void
+    
+    public init(isPresented: Binding<Bool>, task: UITaskModel, onDelete: @escaping (Bool) async -> Void) {
+        self._isPresented = isPresented
+        self.task = task
+        self.onDelete = onDelete
+        
+        if task.repeatTask == .never {
+            isSingleTask = true
+            message = "Delete task?"
+        } else {
+            isSingleTask = false
+            message = "This's a recurring task."
+        }
+    }
     
     public func body(content: Content) -> some View {
         content
@@ -38,7 +52,7 @@ public struct TaskDeleteDialog: ViewModifier {
                 } else {
                     Button(role: .destructive) {
                         Task {
-                            dismissAction?()
+                            dismissButton()
                             try await Task.sleep(nanoseconds: 30_000_000)
                             await onDelete(false)
                         }
@@ -59,8 +73,9 @@ public struct TaskDeleteDialog: ViewModifier {
             }
     }
     
+    
     private func deleteTask() async {
-        dismissAction?()
+        dismissButton()
         try? await Task.sleep(nanoseconds: 30_000_000)
         await onDelete(true)
     }
@@ -68,14 +83,14 @@ public struct TaskDeleteDialog: ViewModifier {
 
 public extension View {
     /// Confirmation dialog
-    func taskDeleteDialog(isPresented: Binding<Bool>, task: UITaskModel, message: LocalizedStringKey, isSingleTask: Bool, onDelete: @escaping (Bool) async -> Void, dismissButton: DismissAction? = nil) -> some View {
+    func taskDeleteDialog(isPresented: Binding<Bool>, task: UITaskModel, onDelete: @escaping (Bool) async -> Void, dismissButton: DismissAction? = nil) -> some View {
         modifier(
             TaskDeleteDialog(
                 isPresented: isPresented,
                 task: task,
-                message: message,
-                isSingleTask: isSingleTask,
-                dismissAction: dismissButton,
+//                message: message,
+//                isSingleTask: isSingleTask,
+//                dismissAction: dismissButton,
                 onDelete: onDelete
             )
         )

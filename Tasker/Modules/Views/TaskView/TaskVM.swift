@@ -66,7 +66,7 @@ public final class TaskVM: HashableNavigation {
     var dayOfWeek = [DayOfWeek]()
     
     // MARK: - UI States
-    var titleFocused = false
+    public var titleFocused = false
     var showDatePicker = false
     var showTimePicker = false
     var showDayOfWeekSelector = false
@@ -549,10 +549,10 @@ public final class TaskVM: HashableNavigation {
     //MARK: - First time check
     
     private func firstTimeCreateTask(_ task: UITaskModel) async -> Date? {
-        guard await taskManager.activeTasks.contains(where: { $0.id == task.id }) else {
-            defaultTimeHasBeenSet = true
-            return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: originalNotificationTimeComponents)
-        }
+//        guard await taskManager.activeTasks.contains(where: { $0.id == task.id }) else {
+//            defaultTimeHasBeenSet = true
+//            return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: originalNotificationTimeComponents)
+//        }
         
         return nil
     }
@@ -665,13 +665,6 @@ public final class TaskVM: HashableNavigation {
     
     //MARK: - Delete
     func deleteTaskButtonTapped() {
-        if task.repeatTask == .never {
-            messageForDelete = "Delete task?"
-            singleTask = true
-        } else {
-            messageForDelete = "This's a recurring task."
-            singleTask = false
-        }
         confirmationDialogIsPresented.toggle()
     }
     

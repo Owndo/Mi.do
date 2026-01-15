@@ -106,6 +106,7 @@ public struct MainView: View {
                     .padding(.top, 17)
                 
                 ListView(vm: listVM)
+                    .padding(.horizontal, 8)
                     .presentationContentInteraction(.scrolls)
                 
                 Spacer()

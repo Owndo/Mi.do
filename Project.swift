@@ -262,17 +262,6 @@ let project = Project(
                     ]
                    ),
         
-        //MARK: - TaskRowView
-        .moduleView(.taskRowView,
-                    dependencies: [
-                        .target(name: Modules.dateManager.name),
-                        .target(name: Modules.notificationManager.name),
-                        .target(name: Modules.playerManager.name),
-                        .target(name: Modules.taskManager.name),
-                        .target(name: Modules.uiComponents.name)
-                    ]
-                   ),
-        
         //MARK: - ListView
         .moduleView(.listView,
                     dependencies: [
@@ -284,7 +273,6 @@ let project = Project(
                         .target(name: Modules.dateManager.name),
                         .target(name: Modules.notificationManager.name),
                         .target(name: Modules.uiComponents.name),
-                        .target(name: Modules.taskRowView.name),
                         .target(name: Modules.taskView.name)
                     ]
                    ),

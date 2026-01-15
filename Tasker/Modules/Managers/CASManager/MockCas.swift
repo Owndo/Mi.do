@@ -10,11 +10,11 @@ import BlockSet
 import Models
 
 public final actor MockCas: CASManagerProtocol {
-    private let cas: FileCas
+    private let cas: AsyncableCas
     private let models: [UITaskModel]
     private let allIdentifiers: [Mutable] = [Mutable.initial(), .initial()]
-
-    private init(cas: FileCas, models: [UITaskModel]) {
+    
+    private init(cas: AsyncableCas, models: [UITaskModel]) {
         self.cas = cas
         self.models = models
     }
@@ -24,7 +24,7 @@ public final actor MockCas: CASManagerProtocol {
     public static func createCASManager() -> CASManagerProtocol {
         let localDirectory = createLocalDirectory()!
         
-        let cas = FileCas(localDirectory)
+        let cas = AsyncFileCas(localDirectory)
         
         let models = [
             UITaskModel(
@@ -62,8 +62,8 @@ public final actor MockCas: CASManagerProtocol {
     
     //MARK: - Fetch models
     
-    nonisolated public func fetchModels<T: Codable>(_ model: T.Type) async -> [T] {
-        var models = [T]()
+    public func fetchModels<T: Codable & Sendable>(_ model: T.Type) async -> [Model<T>] {
+        var models = [Model<T>]()
         
         await withTaskGroup(of: Model<T>?.self) { group in
             for i in allIdentifiers {
@@ -74,7 +74,7 @@ public final actor MockCas: CASManagerProtocol {
             
             for await model in group {
                 if let model = model {
-                    models.append(model.value)
+                    models.append(model)
                 }
             }
         }
@@ -147,9 +147,9 @@ public final actor MockCas: CASManagerProtocol {
     
     //MARK: - Path to file
     
-    public func pathToFile(_ hash: String) async throws -> URL {
-        try await cas.fileURL(forHash: hash)
-    }
+    //    public func pathToFile(_ hash: String) async throws -> URL {
+    //        try await cas.fileURL(forHash: hash)
+    //    }
     
     //MARK: Delete model
     

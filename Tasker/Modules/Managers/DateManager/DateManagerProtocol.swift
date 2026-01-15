@@ -11,7 +11,7 @@ import Models
 import SwiftUI
 
 public protocol DateManagerProtocol {
-    var dateChanges: AsyncStream<Date> { get }
+    var dateStream: AsyncStream<Void> { get }
     
     var calendar: Calendar { get set }
     var currentTime: Date { get }

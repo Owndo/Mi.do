@@ -117,14 +117,9 @@ public struct TaskView: View {
                                 Text("Delete", bundle: .module)
                                     .font(.system(.body, design: .rounded, weight: .regular))
                                     .foregroundStyle(.accentRed)
-                                    .taskDeleteDialog(
-                                        isPresented: $vm.confirmationDialogIsPresented,
-                                        task: vm.task,
-                                        message: vm.messageForDelete,
-                                        isSingleTask: vm.singleTask,
-                                        onDelete: vm.deleteButtonTapped,
-                                        dismissButton: dismissButton
-                                    )
+                                    .taskDeleteDialog(isPresented: $vm.confirmationDialogIsPresented, task: vm.task) { value in
+                                        await vm.deleteButtonTapped(deleteCompletely: value)
+                                    }
                             }
                             .opacity(vm.paywallVM != nil ? 0 : 1)
                             .disabled(vm.paywallVM != nil)
@@ -138,14 +133,9 @@ public struct TaskView: View {
                                 Text("Delete", bundle: .module)
                                     .font(.system(.body, design: .rounded, weight: .regular))
                                     .foregroundStyle(.accentRed)
-                                    .taskDeleteDialog(
-                                        isPresented: $vm.confirmationDialogIsPresented,
-                                        task: vm.task,
-                                        message: vm.messageForDelete,
-                                        isSingleTask: vm.singleTask,
-                                        onDelete: vm.deleteButtonTapped,
-                                        dismissButton: dismissButton
-                                    )
+                                    .taskDeleteDialog(isPresented: $vm.confirmationDialogIsPresented, task: vm.task) { value in
+                                        await vm.deleteButtonTapped(deleteCompletely: value)
+                                    }
                             }
                             .opacity(vm.paywallVM != nil ? 0 : 1)
                             .disabled(vm.paywallVM != nil)

@@ -29,6 +29,10 @@ public extension Data {
     func sha256Id() -> String {
         SHA256.hash(data: self).base32()
     }
+
+    func sha256Id() async -> String {
+        SHA256.hash(data: self).base32()
+    }
 }
 
 private struct CasWithSet {

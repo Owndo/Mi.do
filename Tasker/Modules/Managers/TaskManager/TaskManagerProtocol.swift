@@ -10,11 +10,10 @@ import Models
 
 public protocol TaskManagerProtocol: Actor {
     var tasks: [String: UITaskModel] { get set }
-    var activeTasks: [UITaskModel] { get }
-    var completedTasks: [UITaskModel] { get }
+    var tasksStream: AsyncStream<Void> { get }
     
-    var updates: AsyncStream<[UITaskModel]> { get }
-    
+    func activeTasks(for date: Date) -> [UITaskModel]
+    func completedTasks(for date: Date) -> [UITaskModel]
     func thisWeekTasks(date: Double) async -> [UITaskModel]
     
     /// Save Audio to cas

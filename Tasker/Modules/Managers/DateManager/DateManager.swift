@@ -16,15 +16,15 @@ public final class DateManager: DateManagerProtocol {
     ///for the set up first day of week
     private var telemetryManager: TelemetryManagerProtocol
     
-    public let dateChanges: AsyncStream<Date>
-    private let dateChangeContinuation: AsyncStream<Date>.Continuation
+    public let dateStream: AsyncStream<Void>
+    private let dateChangeContinuation: AsyncStream<Void>.Continuation
     
     public var calendar = Calendar.current
     
     public var selectedDate = Date() {
         didSet {
             guard selectedDate != oldValue else { return }
-            dateChangeContinuation.yield(selectedDate)
+            dateChangeContinuation.yield()
         }
     }
     
@@ -69,13 +69,9 @@ public final class DateManager: DateManagerProtocol {
     private init(telemetryManager: TelemetryManagerProtocol) {
         self.telemetryManager = telemetryManager
         
-        let (stream, cont) = AsyncStream<Date>.makeStream()
-        self.dateChanges = stream
+        let (stream, cont) = AsyncStream<Void>.makeStream()
+        self.dateStream = stream
         self.dateChangeContinuation = cont
-    }
-    
-    deinit {
-        dateChangeContinuation.finish()
     }
     
     public static func createDateManager(profileManager: ProfileManagerProtocol) async -> DateManagerProtocol {
@@ -208,7 +204,7 @@ public final class DateManager: DateManagerProtocol {
         let nameOfMonth = getMonthName(from: monthStart)
         let newId = allMonths.first!.id - 1
         
-//        allMonths.removeLast()
+        //        allMonths.removeLast()
         allMonths.insert(PeriodModel(id: newId, date: newMonth, name: nameOfMonth), at: 0)
     }
     
@@ -266,6 +262,7 @@ public final class DateManager: DateManagerProtocol {
     
     
     //MARK: - Date to string
+    
     public func dateToString(for date: Date, useForWeekView: Bool) -> LocalizedStringKey {
         if useForWeekView {
             return formatterDate(date: date, useForWeek: useForWeekView)
@@ -423,8 +420,11 @@ public final class DateManager: DateManagerProtocol {
         }
     }
     
+    //MARK: - Back to today
+    
     public func backToToday() {
         selectedDateChange(currentTime)
+        initializeWeek()
         indexForWeek = 1
     }
     

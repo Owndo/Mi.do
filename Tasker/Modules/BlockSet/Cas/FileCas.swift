@@ -6,7 +6,7 @@
 //
 import Foundation
 
-public actor FileCas: AsyncableCas, Cas {
+public actor FileCas: Cas {
     // private:
     private let dir: URL
     
@@ -46,33 +46,33 @@ public actor FileCas: AsyncableCas, Cas {
         return dir.appending(a, true).appending(b, true).appending(c, false)
     }
     
-    //MARK: - Asyncable CAS
-    
-    public func hash(for data: Data) async -> String {
-        data.sha256Id()
-    }
-    
-    public func store(_ data: Data) async throws -> String {
-        let id = await hash(for: data)
-        let path = try await fileURL(forHash: id)
-        
-        try FileManager.default.createDirectory(at: path.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try data.write(to: path, options: .atomic)
-        
-        return id
-    }
-    
-    public func retrieve(_ hash: String) async throws -> Data? {
-        try? Data(contentsOf: try await fileURL(forHash: hash))
-    }
-    
-    public func allIdentifiers() async throws -> [String] {
-        try await dir.asyncList()
-    }
-    
-    public func fileURL(forHash hash: String) async throws -> URL {
-        let (a, bc) = hash[...].split2()
-        let (b, c) = bc.split2()
-        return dir.appending(a, true).appending(b, true).appending(c, false)
-    }
+//    //MARK: - Asyncable CAS
+//    
+//    public func hash(for data: Data) async -> String {
+//        await data.sha256Id()
+//    }
+//    
+//    public func store(_ data: Data) async throws -> String {
+//        let id = await hash(for: data)
+//        let path = try await fileURL(forHash: id)
+//        
+//        try FileManager.default.createDirectory(at: path.deletingLastPathComponent(), withIntermediateDirectories: true)
+//        try data.write(to: path, options: .atomic)
+//        
+//        return id
+//    }
+//    
+//    public func retrieve(_ hash: String) async throws -> Data? {
+//        try? Data(contentsOf: try await fileURL(forHash: hash))
+//    }
+//    
+//    public func allIdentifiers() async throws -> [String] {
+//        try await dir.asyncList()
+//    }
+//    
+//    public func fileURL(forHash hash: String) async throws -> URL {
+//        let (a, bc) = hash[...].split2()
+//        let (b, c) = bc.split2()
+//        return dir.appending(a, true).appending(b, true).appending(c, false)
+//    }
 }

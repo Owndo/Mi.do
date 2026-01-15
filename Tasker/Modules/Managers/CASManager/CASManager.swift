@@ -10,10 +10,10 @@ import BlockSet
 import Models
 
 public final actor CASManager: CASManagerProtocol {
-    let cas: FileCas
+    let cas: AsyncableCas
     let allIdentifiers: [Mutable]
     
-    private init(cas: FileCas, allIdentifiers: [Mutable]) {
+    private init(cas: AsyncableCas, allIdentifiers: [Mutable]) {
         self.cas = cas
         self.allIdentifiers = allIdentifiers
     }
@@ -23,10 +23,14 @@ public final actor CASManager: CASManagerProtocol {
     public static func createCASManager() async -> CASManager {
         let localDirectory = createLocalDirectory()!
         
-        let cas = FileCas(localDirectory)
+        let cas = AsyncFileCas(localDirectory)
         let list = await fetchList(cas: cas)
         
         let casManager = CASManager(cas: cas, allIdentifiers: list)
+        
+        for i in list {
+            print(i.returnId())
+        }
         return casManager
     }
     
@@ -42,33 +46,24 @@ public final actor CASManager: CASManagerProtocol {
     
     //MARK: - Fetch models
     
-    nonisolated public func fetchModels<T: Codable>(_ model: T.Type) async -> [T] {
-        return await withTaskGroup(of: T?.self) { group in
-            for identifier in allIdentifiers {
+    public func fetchModels<T: Codable & Sendable>(_ model: T.Type) async -> [Model<T>] {
+        var models = [Model<T>]()
+        
+        await withTaskGroup(of: Model<T>?.self) { group in
+            for i in allIdentifiers {
                 group.addTask {
-                    do {
-                        if let loadedModel: Model<T> = try await self.cas.loadJSONModel(identifier) {
-                            return loadedModel.value
-                        } else {
-                            return nil
-                        }
-                    } catch {
-                        print("Couldn't load the model: \(identifier), error - \(error.localizedDescription)")
-                        return nil
-                    }
+                    return try? await self.cas.loadJSONModel(i)
                 }
             }
-            
-            var result: [T] = []
             
             for await model in group {
                 if let model = model {
-                    result.append(model)
+                    models.append(model)
                 }
             }
-            
-            return result
         }
+        
+        return models
     }
     
     //MARK: - Retriev data from cas
@@ -80,6 +75,7 @@ public final actor CASManager: CASManagerProtocol {
     //MARK: - Save model
     
     public func saveModel<T: Codable>(_ model: Model<T>) async throws {
+        print("task inside cas - \(model.value), id - \(model.id)")
         try await cas.saveJSONModel(model)
     }
     
@@ -136,9 +132,9 @@ public final actor CASManager: CASManagerProtocol {
     
     //MARK: - Path to file
     
-    public func pathToFile(_ hash: String) async throws -> URL {
-        try await cas.fileURL(forHash: hash)
-    }
+//    public func pathToFile(_ hash: String) async throws -> URL {
+//        try await cas.fileURL(forHash: hash)
+//    }
     
     //MARK: Delete model
     

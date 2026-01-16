@@ -483,6 +483,7 @@ public final class MainVM: HashableNavigation {
     }
     
     //MARK: - Create task
+    
     func createTask(with audioHash: String? = nil) async {
         let model = UITaskModel(
             .initial(
@@ -492,6 +493,7 @@ public final class MainVM: HashableNavigation {
                     audio: audioHash,
                     notificationDate: defaultNotificationTime(),
                     voiceMode: audioHash != nil ? true : nil,
+                    taskColor: appearanceManager.profileModel.settings.defaultTaskColor == .baseColor ? nil : appearanceManager.profileModel.settings.defaultTaskColor
                 )
             )
         )

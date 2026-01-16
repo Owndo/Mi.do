@@ -29,7 +29,7 @@ public enum TaskColor: Codable, CaseIterable, Equatable, Identifiable {
     
     public var id: String {
         switch self {
-        case .baseColor: return "base color"
+        case .baseColor: return "defaultColor"
         case .yellow: return "yellow"
         case .purple: return "purple"
         case .red: return "red"

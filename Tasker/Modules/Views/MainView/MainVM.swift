@@ -499,6 +499,7 @@ public final class MainVM: HashableNavigation {
         )
         
         taskViewVM = await TaskVM.createTaskVM(
+            appearanceManager: appearanceManager,
             taskManager: taskManager,
             playerManager: playerManager,
             storageManager: storageManager,

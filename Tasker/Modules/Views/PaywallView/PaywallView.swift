@@ -12,7 +12,7 @@ import ConfigurationFile
 import Models
 
 public struct PaywallView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) var appearanceManager
     @Environment(\.openURL) var openUrl
     
     @Bindable var vm: PaywallVM
@@ -77,9 +77,7 @@ public struct PaywallView: View {
         .frame(maxHeight: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 26)
-                .fill(
-                    colorScheme.backgroundColor()
-                )
+                .fill(appearanceManager.backgroundColor)
         )
         .padding(.horizontal, 16)
     }
@@ -99,7 +97,7 @@ public struct PaywallView: View {
                     HStack {
                         
                         Image(systemName: "checkmark")
-                            .foregroundStyle(colorScheme.accentColor())
+                            .foregroundStyle(appearanceManager.accentColor)
                         
                         Text(LocalizedStringKey(benefit), bundle: .module)
                             .font(.system(.subheadline, design: .rounded, weight: .medium))
@@ -138,69 +136,72 @@ public struct PaywallView: View {
                 await vm.selectProductButtonTapped(product)
             }
         } label: {
-            VStack {
-                Text(LocalizedStringKey(product.displayName), bundle: .module)
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelSecondary)
-                
-                Text(LocalizedStringKey(product.displayPrice), bundle: .module)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelPrimary)
-                
-                HStack(spacing: 0) {
-                    Text(product.subscription?.subscriptionPeriod.unit == .month ? product.dividedByWeek : product.dividedYearByWeek)
-                        .font(.system(.caption2, design: .rounded, weight: .medium))
-                        .foregroundStyle(.labelTertiary)
-                    
-                    Text(product.subscription?.subscriptionPeriod.unit.devidedPeriodByWeek ?? "", bundle: .module)
-                        .font(.system(.caption2, design: .rounded, weight: .medium))
-                        .foregroundStyle(.labelTertiary)
-                }
-            }
-            .padding(.vertical, 16)
-            .frame(maxWidth: .infinity)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.backgroundTertiary)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(product == vm.selecetedProduct ? colorScheme.accentColor() : .clear, lineWidth: 1.5)
-                    )
-            )
-            .padding(.top, 9)
-            .overlay(alignment: .top) {
-                if product == vm.products.last {
-                    HStack {
-                        Text("Popular", bundle: .module)
-                            .font(.system(.caption, design: .rounded, weight: .medium))
-                            .foregroundStyle(.labelPrimaryInverted)
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(
-                                        colorScheme.accentColor()
-                                    )
-                            )
+            BaseForRow(product)
+                .padding(.vertical, 16)
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.backgroundTertiary)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(product == vm.selecetedProduct ? appearanceManager.accentColor : .clear, lineWidth: 1.5)
+                        )
+                )
+                .padding(.top, 9)
+                .overlay(alignment: .top) {
+                    if product == vm.products.last {
+                        HStack {
+                            Text("Popular", bundle: .module)
+                                .font(.system(.caption, design: .rounded, weight: .medium))
+                                .foregroundStyle(.labelPrimaryInverted)
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(appearanceManager.accentColor)
+                                )
+                        }
                     }
                 }
-            }
-            .overlay(alignment: .top) {
-                if let offer = product.intoductoryOffer() {
-                    HStack {
-                        Text(offer, bundle: .module)
-                            .font(.system(.caption, design: .rounded, weight: .medium))
-                            .foregroundStyle(.labelPrimaryInverted)
-                            .padding(.vertical, 4)
-                            .padding(.horizontal, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 26)
-                                    .fill(
-                                        colorScheme.accentColor()
-                                    )
-                            )
+                .overlay(alignment: .top) {
+                    if let offer = product.intoductoryOffer() {
+                        HStack {
+                            Text(offer, bundle: .module)
+                                .font(.system(.caption, design: .rounded, weight: .medium))
+                                .foregroundStyle(.labelPrimaryInverted)
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 26)
+                                        .fill(appearanceManager.accentColor)
+                                )
+                        }
                     }
                 }
+        }
+    }
+    
+    //MARK: - Base for row
+    
+    @ViewBuilder
+    private func BaseForRow(_ product: Product) -> some View {
+        VStack {
+            Text(LocalizedStringKey(product.displayName), bundle: .module)
+                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                .foregroundStyle(.labelSecondary)
+            
+            Text(LocalizedStringKey(product.displayPrice), bundle: .module)
+                .font(.system(.title2, design: .rounded, weight: .bold))
+                .foregroundStyle(.labelPrimary)
+            
+            HStack(spacing: 0) {
+                Text(product.subscription?.subscriptionPeriod.unit == .month ? product.dividedByWeek : product.dividedYearByWeek)
+                    .font(.system(.caption2, design: .rounded, weight: .medium))
+                    .foregroundStyle(.labelTertiary)
+                
+                Text(product.subscription?.subscriptionPeriod.unit.devidedPeriodByWeek ?? "", bundle: .module)
+                    .font(.system(.caption2, design: .rounded, weight: .medium))
+                    .foregroundStyle(.labelTertiary)
             }
         }
     }
@@ -221,9 +222,7 @@ public struct PaywallView: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 26)
-                        .fill(
-                            colorScheme.accentColor()
-                        )
+                        .fill(appearanceManager.accentColor)
                 )
                 .liquidIfAvailable(glass: .clear, isInteractive: true)
         }

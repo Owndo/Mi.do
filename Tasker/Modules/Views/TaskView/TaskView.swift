@@ -413,7 +413,7 @@ public struct TaskView: View {
                     .datePickerStyle(.graphical)
                     .scrollDismissesKeyboard(.immediately)
                     .id(vm.notificationDate)
-                    .tint(colorScheme.accentColor())
+                    .tint(appearanceManager.accentColor)
             }
             
             CustomDivider()
@@ -453,7 +453,7 @@ public struct TaskView: View {
             if vm.showTimePicker {
                 DatePicker("", selection: $vm.notificationDate, displayedComponents: .hourAndMinute)
                     .datePickerStyle(.wheel)
-                    .tint(colorScheme.accentColor())
+                    .tint(appearanceManager.accentColor)
             }
             
             CustomDivider()
@@ -648,7 +648,7 @@ public struct TaskView: View {
                     }
                     
                     Toggle(isOn: $vm.hasDeadline) {}
-                        .tint(colorScheme.accentColor())
+                        .tint(appearanceManager.accentColor)
                         .padding(.trailing, 2)
                         .fixedSize()
                 }
@@ -660,7 +660,7 @@ public struct TaskView: View {
                 DatePicker("", selection: $vm.deadLineDate, in: vm.notificationDate..., displayedComponents: .date, )
                     .datePickerStyle(.graphical)
                     .id(vm.deadLineDate)
-                    .tint(colorScheme.accentColor())
+                    .tint(appearanceManager.accentColor)
             }
         }
         //        .onChange(of: vm.hasDeadline) { oldValue, newValue in

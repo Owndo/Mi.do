@@ -12,12 +12,12 @@ struct Commit: Codable {
     var blob: String?
 }
 
-struct Parent {
+public struct Parent {
     var commitId: String
     var blobId: String?
 }
 
-public class Mutable: Hashable, @unchecked Sendable {
+public actor Mutable: Hashable, Sendable {
     var parent: Parent?
     
     // internal:
@@ -32,6 +32,10 @@ public class Mutable: Hashable, @unchecked Sendable {
     
     public func returnId() -> String? {
         parent?.commitId
+    }
+    
+    public func updateParent(_ parent: Parent)  {
+        self.parent = parent
     }
     
     // Hashable:

@@ -11,6 +11,7 @@ import Models
 
 //MARK: - Clock animation
 struct SegmentedCircleView: View {
+    @Environment(\.appearanceManager) private var appearanceManager
     var colorScheme: ColorScheme = .dark
     var date: Date
     
@@ -70,9 +71,7 @@ struct SegmentedCircleView: View {
                     .fill(gradient)
                     .opacity(baseOpacity)
             } else {
-                let baseColor = completed
-                ? colorScheme.accentColor().opacity(0.42)
-                : .clear
+                let baseColor = completed ? appearanceManager.accentColor.opacity(0.42) : .clear
                 Circle()
                     .fill(baseColor)
             }
@@ -90,8 +89,8 @@ struct SegmentedCircleView: View {
         let dynamicEnd = startAngle + segmentAngle * segmentProgress
         
         let segmentColor = vm.useTaskColors
-        ? task.taskColor == .baseColor ? colorScheme.accentColor() : task.taskColor.color(for: colorScheme)
-        : isCompleted ? colorScheme.accentColor() : .separatorSecondary
+        ? task.taskColor == .baseColor ? appearanceManager.accentColor : task.taskColor.color(for: colorScheme)
+        : isCompleted ? appearanceManager.accentColor : .separatorSecondary
         
         let appear = min(segmentProgress * 2, 1.0)
         let scale = 0.8 + 0.2 * appear

@@ -5,6 +5,7 @@
 //  Created by Rodion Akhmedov on 4/14/25.
 //
 
+import AppearanceManager
 import Foundation
 import SwiftUI
 import Models
@@ -23,6 +24,8 @@ import CustomErrors
 @Observable
 public final class TaskVM: HashableNavigation {
     // MARK: - Managers
+    
+    let appearanceManager: AppearanceManagerProtocol
     
     let taskManager: TaskManagerProtocol
     
@@ -206,6 +209,7 @@ public final class TaskVM: HashableNavigation {
     // MARK: - Init
     
     private init(
+        appearanceManager: AppearanceManagerProtocol,
         taskManager: TaskManagerProtocol,
         profileManager: ProfileManagerProtocol,
         dateManager: DateManagerProtocol,
@@ -215,6 +219,7 @@ public final class TaskVM: HashableNavigation {
         subscriptionManager: SubscriptionManagerProtocol,
         task: UITaskModel,
     ) {
+        self.appearanceManager = appearanceManager
         self.taskManager = taskManager
         self.profileManager = profileManager
         self.dateManager = dateManager
@@ -229,6 +234,7 @@ public final class TaskVM: HashableNavigation {
     //MARK: - VM Creator
     
     public static func createTaskVM(
+        appearanceManager: AppearanceManagerProtocol,
         taskManager: TaskManagerProtocol,
         playerManager: PlayerManagerProtocol,
         storageManager: StorageManagerProtocol,
@@ -239,6 +245,7 @@ public final class TaskVM: HashableNavigation {
     ) async -> TaskVM {
         let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
         let vm = TaskVM(
+            appearanceManager: appearanceManager,
             taskManager: taskManager,
             profileManager: profileManager,
             dateManager: dateManager,
@@ -257,6 +264,7 @@ public final class TaskVM: HashableNavigation {
     //MARK: - Mock VM Creator
     
     static func createPreviewTaskVM() -> TaskVM {
+        let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let taskManager = TaskManager.createMockTaskManager()
         let profileManager = ProfileManager.createMockManager()
         let dateManager = DateManager.createMockDateManager()
@@ -268,6 +276,7 @@ public final class TaskVM: HashableNavigation {
         let task = UITaskModel(.initial(mockModel().model.value))
         
         let vm = TaskVM(
+            appearanceManager: appearanceManager,
             taskManager: taskManager,
             profileManager: profileManager,
             dateManager: dateManager,
@@ -284,6 +293,7 @@ public final class TaskVM: HashableNavigation {
     //MARK: - CreateSubscriptionPreviewTaskVM
     
     static func createSubscribedPreviewTaskVM() -> TaskVM {
+        let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let taskManager = TaskManager.createMockTaskManager()
         let profileManager = ProfileManager.createMockManager()
         let dateManager = DateManager.createMockDateManager()
@@ -296,6 +306,7 @@ public final class TaskVM: HashableNavigation {
         let subscriptionManager = MockSubscriptionManager.createSubscribedManager()
         
         let vm = TaskVM(
+            appearanceManager: appearanceManager,
             taskManager: taskManager,
             profileManager: profileManager,
             dateManager: dateManager,
@@ -416,7 +427,7 @@ public final class TaskVM: HashableNavigation {
     //MARK: - Color task
     func backgroundColorForTask(colorScheme: ColorScheme) {
         if task.taskColor == .baseColor {
-            backgroundColor = colorScheme.backgroundColor()
+            backgroundColor = appearanceManager.backgroundColor
         } else {
             backgroundColor = task.taskColor.color(for: colorScheme)
         }
@@ -431,13 +442,9 @@ public final class TaskVM: HashableNavigation {
         telemetryAction(.taskAction(.changeColorButtonTapped(taskColor)))
     }
     
-    func checkColorForCheckMark(_ taskColor: TaskColor, for colorScheme: ColorScheme) -> Bool {
-        guard taskColor == .baseColor && backgroundColor == colorScheme.backgroundColor() else {
-            if taskColor.color(for: colorScheme) == backgroundColor {
-                return true
-            } else {
-                return false
-            }
+    func checkColorForCheckMark(_ taskColor: TaskColor,  for colorScheme: ColorScheme) -> Bool {
+        guard taskColor == .baseColor && backgroundColor == appearanceManager.backgroundColor else {
+            return taskColor.color(for: colorScheme) == backgroundColor
         }
         
         return true

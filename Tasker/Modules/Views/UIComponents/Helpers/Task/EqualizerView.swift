@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct EqualizerView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) private var appearanceManager
     
     @State private var animationTrigger = false
     
@@ -26,7 +26,7 @@ public struct EqualizerView: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
-                            colors: [colorScheme.accentColor()],
+                            colors: [appearanceManager.accentColor],
                             startPoint: .bottom,
                             endPoint: .top
                         )

@@ -227,6 +227,7 @@ let project = Project(
             .moduleView(.taskView,
                         dependencies: [
                             .target(name: Modules.models.name),
+                            .target(name: Modules.appearanceManager.name),
                             .target(name: Modules.taskManager.name),
                             .target(name: Modules.profileManager.name),
                             .target(name: Modules.dateManager.name),

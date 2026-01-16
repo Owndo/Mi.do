@@ -9,7 +9,7 @@ import SwiftUI
 import UIComponents
 
 public struct NotesView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) var appearanceManager
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     @Bindable var vm: NotesVM
@@ -22,28 +22,27 @@ public struct NotesView: View {
     
     public var body: some View {
         ZStack {
-//            ScrollView {
-                Spacer()
-                
-                TextEditor(text: $vm.profileModel.notes)
-                    .font(.system(.callout, design: .rounded, weight: .semibold))
-                    .foregroundStyle(.labelPrimary)
-                    .focused($notesFocusState)
-                    .scrollIndicators(.hidden)
-                    .scrollDismissesKeyboard(.immediately)
-                    .textEditorStyle(.plain)
-                    .onSubmit {
-                        Task {
-                            await vm.saveNotes()
-                        }
+            
+            Spacer()
+            
+            TextEditor(text: $vm.profileModel.notes)
+                .font(.system(.callout, design: .rounded, weight: .semibold))
+                .foregroundStyle(.labelPrimary)
+                .focused($notesFocusState)
+                .scrollIndicators(.hidden)
+                .scrollDismissesKeyboard(.immediately)
+                .textEditorStyle(.plain)
+                .onSubmit {
+                    Task {
+                        await vm.saveNotes()
                     }
-                    .padding([.top, .horizontal])
-                    .padding(.bottom, notesFocusState ? 20 : 80)
-                    .padding(.top, 100)
-                    .ignoresSafeArea()
-                
-                MockView()
-//            }
+                }
+                .padding([.top, .horizontal])
+                .padding(.bottom, notesFocusState ? 20 : 80)
+                .padding(.top, 100)
+                .ignoresSafeArea()
+            
+            MockView()
         }
         .onTapGesture {
             notesFocusState = true
@@ -78,6 +77,8 @@ public struct NotesView: View {
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(.labelQuaternary)
                     .padding(.top, 3)
+                
+                Spacer()
             }
         }
     }
@@ -98,7 +99,7 @@ public struct NotesView: View {
                         }
                     } label: {
                         Text("Done", bundle: .module)
-                            .foregroundStyle(colorScheme.accentColor())
+                            .foregroundStyle(appearanceManager.accentColor)
                             .padding(.vertical, 9)
                     }
                 }
@@ -117,15 +118,12 @@ public struct NotesView: View {
                         }
                     } label: {
                         Text("Done", bundle: .module)
-                            .foregroundStyle(colorScheme.accentColor())
+                            .foregroundStyle(appearanceManager.accentColor)
                             .padding(.vertical, 9)
                     }
                 }
                 .frame(maxHeight: .infinity)
                 .padding(.horizontal, 16)
-                .background(
-                    colorScheme.backgroundColor()
-                )
                 .padding(.horizontal, horizontalSizeClass == .regular ? -20 : -16)
             }
         }

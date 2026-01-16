@@ -11,9 +11,9 @@ import Models
 import ConfigurationFile
 
 public struct SettingsView: View {
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.dismiss) var dismissButton
-    @Environment(\.openURL) var openURL
+    @Environment(\.appearanceManager) private var appearanceManager
+    @Environment(\.dismiss) private var dismissButton
+    @Environment(\.openURL) private var openURL
     
     var vm: SettingsVM
     
@@ -23,8 +23,8 @@ public struct SettingsView: View {
     
     public var body: some View {
         ZStack {
-            colorScheme.backgroundColor()
-                .ignoresSafeArea()
+            appearanceManager.backgroundColor.ignoresSafeArea()
+            
             ScrollView {
                 VStack {
                     SettingsButtonRow(icon: "swirl.circle.righthalf.filled", title: "Appearance") {
@@ -37,7 +37,7 @@ public struct SettingsView: View {
                     
                     HStack {
                         Image(systemName: "calendar.badge.checkmark")
-                            .foregroundStyle(colorScheme.accentColor())
+                            .foregroundStyle(appearanceManager.accentColor)
                             .frame(width: 32, height: 32)
                         
                         Text("Week start day", bundle: .module)
@@ -102,16 +102,16 @@ public struct SettingsView: View {
                         HStack {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 17))
-                                .foregroundStyle(colorScheme.accentColor())
+                                .foregroundStyle(appearanceManager.accentColor)
                             
                             Text("Profile", bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .medium))
-                                .foregroundStyle(colorScheme.accentColor())
+                                .foregroundStyle(appearanceManager.accentColor)
                         }
                     }
                 }
             }
-            .toolbarBackground(osVersion.majorVersion >= 26 ? .clear : colorScheme.backgroundColor(), for: .navigationBar)
+            .toolbarBackground(osVersion.majorVersion >= 26 ? .clear : appearanceManager.backgroundColor, for: .navigationBar)
             .navigationTitle(Text("Settings", bundle: .module))
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden()

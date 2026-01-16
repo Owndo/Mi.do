@@ -69,6 +69,7 @@ public enum Modules: String {
     case onboaringView = "OnboardingView"
     case notesView = "NotesView"
     case mainView = "MainView"
+    case appView = "AppView"
     
     //MARK: - Tests
     
@@ -91,7 +92,8 @@ public enum Modules: String {
              .listView,
              .onboaringView,
              .notesView,
-             .mainView:
+             .mainView,
+             .appView:
             return .view
         case .blockSetTests,
             .taskManagerTests:

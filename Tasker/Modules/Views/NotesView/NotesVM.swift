@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AppearanceManager
 import ProfileManager
 import TelemetryManager
 import Models
@@ -13,10 +14,12 @@ import SwiftUI
 
 @Observable
 public final class NotesVM {
+    
     //MARK: - Dependencies
     
-    var profileManager: ProfileManagerProtocol
-    var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    private var appearanceManager: AppearanceManagerProtocol
+    private var profileManager: ProfileManagerProtocol
+    private var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
     var profileModel: UIProfileModel
     
@@ -24,22 +27,23 @@ public final class NotesVM {
     
     //MARK: - Init
     
-    private init(profileManager: ProfileManagerProtocol) {
+    private init(appearanceManager: AppearanceManagerProtocol, profileManager: ProfileManagerProtocol) {
+        self.appearanceManager = appearanceManager
         self.profileManager = profileManager
         self.profileModel = profileManager.profileModel
     }
     
     //MARK: - Create VM
     
-    public static func createVM(profileManager: ProfileManagerProtocol) -> NotesVM {
-        let vm = NotesVM(profileManager: profileManager)
+    public static func createVM(appearanceManager: AppearanceManagerProtocol, profileManager: ProfileManagerProtocol) -> NotesVM {
+        let vm = NotesVM(appearanceManager: appearanceManager, profileManager: profileManager)
         return vm
     }
     
     //MARK: - CreatePreview VM
     
     public static func createPreviewVM() -> NotesVM {
-        let vm = NotesVM(profileManager: ProfileManager.createMockProfileManager())
+        let vm = NotesVM(appearanceManager: AppearanceManager.createMockAppearanceManager(), profileManager: ProfileManager.createMockManager())
         return vm
     }
     

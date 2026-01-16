@@ -110,7 +110,7 @@ public final class ListVM: HashableNavigation {
     public static func creteMockListVM() -> ListVM {
         let dateManager = DateManager.createMockDateManager()
         let notificationManager = MockNotificationManager()
-        let profileManager = ProfileManager.createMockProfileManager()
+        let profileManager = ProfileManager.createMockManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let taskManager = TaskManager.createMockTaskManager()
         
@@ -125,7 +125,7 @@ public final class ListVM: HashableNavigation {
         let dateManager = DateManager.createMockDateManager()
         let notificationManager = MockNotificationManager()
         let playerManager = PlayerManager.createMockPlayerManager()
-        let profileManager = ProfileManager.createMockProfileManager()
+        let profileManager = ProfileManager.createMockManager()
         let taskManager = await TaskManager.createMockTaskManagerWithModels()
         
         let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)

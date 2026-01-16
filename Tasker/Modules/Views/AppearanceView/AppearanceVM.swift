@@ -36,7 +36,6 @@ public final class AppearanceVM: HashableNavigation {
         didSet {
             changeStateTrigger.toggle()
             profileData.settings.accentColor = AccentColorEnum.custom(customAccentColor.toHex()).setUpColor()
-            //            casManager.saveProfileData(profileData)
         }
     }
     

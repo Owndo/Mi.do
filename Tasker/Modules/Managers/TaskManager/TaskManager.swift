@@ -81,14 +81,14 @@ public final actor TaskManager: TaskManagerProtocol {
     //MARK: - Create MockTaskManager
     
     public static func createMockTaskManager() -> TaskManagerProtocol {
-        let casManager = MockCas.createCASManager()
+        let casManager = MockCas.createManager()
         let manager = TaskManager(casManager: casManager, dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
         
         return manager
     }
     
     public static func createMockTaskManagerWithModels() async -> TaskManagerProtocol {
-        let casManager = MockCas.createCASManager()
+        let casManager = MockCas.createManager()
         let manager = TaskManager(casManager: casManager, dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
         await manager.fakeModelForPreview()
         

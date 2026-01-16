@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct SettingsButtonRow: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) var appearanceManager
     
     public var icon: String
     public var title: LocalizedStringKey
@@ -27,7 +27,7 @@ public struct SettingsButtonRow: View {
         } label: {
             HStack {
                 Image(systemName: icon)
-                    .foregroundStyle(colorScheme.accentColor())
+                    .foregroundStyle(appearanceManager.accentColor)
                     .frame(width: 32, height: 32)
                 
                 Text(title, bundle: .module)

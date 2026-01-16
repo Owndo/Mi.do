@@ -9,7 +9,6 @@ import SwiftUI
 import UIComponents
 
 public struct WeekView: View {
-    @Environment(\.colorScheme) var colorScheme
     
     @Bindable var vm: WeekVM
     

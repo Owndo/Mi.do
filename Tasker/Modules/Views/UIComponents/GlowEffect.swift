@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct GlowEffect: View {
     
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) var appearanceManager
     
     @State private var gradientStops: [Gradient.Stop] = []
     
@@ -37,7 +37,7 @@ public struct GlowEffect: View {
     }
     
     private func generateGradientStops() -> [Gradient.Stop] {
-        let c = colorScheme.accentColor()
+        let c = appearanceManager.accentColor
         
         let pairs: [(Double, Double)] = [
             (0.00, 0.5),

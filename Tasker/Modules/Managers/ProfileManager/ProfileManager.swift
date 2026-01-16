@@ -22,9 +22,9 @@ public final class ProfileManager: ProfileManagerProtocol {
         self.profileModel = profileModel
     }
     
-    //MARK: - Create manager
+    //MARK: - Create Manager
     
-    public static func createProfileManager(casManager: CASManagerProtocol) async -> ProfileManagerProtocol {
+    public static func createManager(casManager: CASManagerProtocol) async -> ProfileManagerProtocol {
         let model = await casManager.fetchModels(ProfileModel.self).map { UIProfileModel($0) }.first ?? mockProfileData()
         
         let manager = ProfileManager(casManager: casManager, profileModel: model)
@@ -32,9 +32,20 @@ public final class ProfileManager: ProfileManagerProtocol {
         return manager
     }
     
-    public static func createMockProfileManager() -> ProfileManagerProtocol {
+    //MARK: - Create Mock Manager
+    
+    public static func createMockManager() -> ProfileManagerProtocol {
         let model = mockProfileData().model.value
-        let manager = ProfileManager(casManager: MockCas.createCASManager(), profileModel: UIProfileModel(.initial(model)))
+        let manager = ProfileManager(casManager: MockCas.createManager(), profileModel: UIProfileModel(.initial(model)))
+        
+        return manager
+    }
+    
+    //MARK: - Create Environment Manager
+    
+    public static func createEnvironmentManager() -> ProfileManagerProtocol {
+        let model = mockProfileData().model.value
+        let manager = ProfileManager(casManager: MockCas.mockManager(), profileModel: UIProfileModel(.initial(model)))
         
         return manager
     }
@@ -42,6 +53,7 @@ public final class ProfileManager: ProfileManagerProtocol {
     public func updateProfileModel() async throws {
         try await saveProfile()
     }
+    
     //MARK: - Update Photo
     
     public func updatePhoto(_ data: Data) async throws {

@@ -10,7 +10,7 @@ import Models
 import UIComponents
 
 public struct CalendarView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) private var appearanceManager
     
     @Bindable var vm: CalendarVM
     
@@ -20,8 +20,7 @@ public struct CalendarView: View {
     
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            colorScheme.backgroundColor()
-                .ignoresSafeArea()
+            appearanceManager.backgroundColor.ignoresSafeArea()
             
             if #available(iOS 26, *) {
                 ScrollView {
@@ -88,7 +87,7 @@ public struct CalendarView: View {
                         vm.backToMainViewButtonTapped()
                     } label: {
                         Image(systemName: "chevron.left")
-                            .foregroundStyle(colorScheme.accentColor())
+                            .foregroundStyle(appearanceManager.accentColor)
                     }
                 }
             }
@@ -194,7 +193,7 @@ public struct CalendarView: View {
                 Image(systemName: vm.imageForScrollBackButton)
                     .font(.title2.weight(.medium))
                     .contentTransition(.symbolEffect(.replace))
-                    .foregroundStyle(colorScheme.accentColor())
+                    .foregroundStyle(appearanceManager.accentColor)
                     .frame(width: 44, height: 44)
                     .liquidIfAvailable(glass: .regular, isInteractive: true)
             }

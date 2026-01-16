@@ -11,7 +11,8 @@ import Models
 import TaskView
 
 public struct ListView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) private var appearanceManager
+    @Environment(\.colorScheme) private var colorScheme
     
     @Bindable public var vm: ListVM
     
@@ -21,7 +22,7 @@ public struct ListView: View {
     
     public var body: some View {
         ListBase()
-            .ignoresSafeArea(edges: [.top, .horizontal])
+            .ignoresSafeArea()
             .animation(.default, value: vm.completedTasksHidden)
             .animation(.default, value: vm.activeTasks)
             .animation(.default, value: vm.completedTasks)
@@ -37,7 +38,6 @@ public struct ListView: View {
             
             CompletedTasks()
         }
-        .customBlurForContainer(colorScheme: colorScheme, apply: true)
         .listSectionSpacing(.compact)
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
@@ -107,7 +107,7 @@ public struct ListView: View {
                         Image(systemName: "trash")
                             .resizable()
                             .frame(width: 10, height: 10)
-                            .tint(colorScheme.backgroundColor())
+                            .tint(appearanceManager.backgroundColor)
                         
                     }
                 }
@@ -198,7 +198,7 @@ public struct ListView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 5, height: 5)
-                                .tint(colorScheme.backgroundColor())
+                                .tint(appearanceManager.backgroundColor)
                         }
                     }
                 }

@@ -258,7 +258,7 @@ public final class TaskVM: HashableNavigation {
     
     static func createPreviewTaskVM() -> TaskVM {
         let taskManager = TaskManager.createMockTaskManager()
-        let profileManager = ProfileManager.createMockProfileManager()
+        let profileManager = ProfileManager.createMockManager()
         let dateManager = DateManager.createMockDateManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
@@ -285,7 +285,7 @@ public final class TaskVM: HashableNavigation {
     
     static func createSubscribedPreviewTaskVM() -> TaskVM {
         let taskManager = TaskManager.createMockTaskManager()
-        let profileManager = ProfileManager.createMockProfileManager()
+        let profileManager = ProfileManager.createMockManager()
         let dateManager = DateManager.createMockDateManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)

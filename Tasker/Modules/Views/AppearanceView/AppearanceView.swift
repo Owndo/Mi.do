@@ -11,7 +11,8 @@ import UIComponents
 import AppearanceManager
 
 public struct AppearanceView: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) private var appearanceManager
+    @Environment(\.colorScheme) private var colorScheme
     
     @Bindable var vm: AppearanceVM
     
@@ -23,7 +24,7 @@ public struct AppearanceView: View {
     
     public var body: some View {
         ZStack {
-            colorScheme.backgroundColor()
+            appearanceManager.backgroundColor
                 .ignoresSafeArea()
             
             VStack {
@@ -64,24 +65,26 @@ public struct AppearanceView: View {
                     HStack {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 17))
-                            .foregroundStyle(colorScheme.accentColor())
+                            .foregroundStyle(appearanceManager.accentColor)
                         
                         Text("Settings", bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .medium))
-                            .foregroundStyle(colorScheme.accentColor())
+                            .foregroundStyle(appearanceManager.accentColor)
                     }
                 }
             }
         }
-        .toolbarBackground(osVersion.majorVersion >= 26 ? .clear : colorScheme.backgroundColor(), for: .navigationBar)
+        .toolbarBackground(osVersion.majorVersion >= 26 ? .clear : appearanceManager.backgroundColor, for: .navigationBar)
         .navigationBarBackButtonHidden()
         .navigationTitle(Text("Appearance", bundle: .module))
         .navigationBarTitleDisplayMode(.inline)
-        .background(colorScheme.backgroundColor())
-        .animation(.default, value: colorScheme)
-        .animation(.default, value: vm.profileData.settings.colorScheme)
-        .animation(.default, value: vm.profileData.settings.background)
-        .animation(.default, value: vm.profileData.settings.accentColor)
+        .animation(.default, value: appearanceManager.colorScheme)
+        .animation(.default, value: vm.changeStateTrigger)
+        .animation(.default, value: vm.accentSymbolAnimate)
+        .animation(.default, value: vm.backgroundSymbolAnimate)
+        .sensoryFeedback(.selection, trigger: vm.changeStateTrigger)
+        .sensoryFeedback(.selection, trigger: vm.accentSymbolAnimate)
+        .sensoryFeedback(.selection, trigger: vm.backgroundSymbolAnimate)
     }
     
     //MARK: - Scheme selector
@@ -89,9 +92,7 @@ public struct AppearanceView: View {
     private func SchemeSelector(_ scheme: ColorSchemeMode) -> some View {
         Button {
             Task {
-                //            withAnimation {
                 await vm.changeScheme(scheme)
-                //                }
             }
         } label: {
             VStack(spacing: 12) {
@@ -122,8 +123,8 @@ public struct AppearanceView: View {
                     .liquidIfAvailable(glass: .regular, isInteractive: true)
             }
         }
-        .animation(.default, value: vm.appearanceManager.selectedColorScheme)
-        .sensoryFeedback(.selection, trigger: vm.appearanceManager.selectedColorScheme)
+        //        .animation(.default, value: vm.appearanceManager.selectedColorScheme)
+        //        .sensoryFeedback(.selection, trigger: vm.appearanceManager.selectedColorScheme)
     }
     
     //MARK: - Progress mode
@@ -136,17 +137,27 @@ public struct AppearanceView: View {
                 .foregroundStyle(.labelPrimary)
             
             HStack(spacing: 16) {
-                ProgressRowButton(colorScheme == .dark ? Image(uiImage: .minimalDark) : Image(uiImage: .minimal), text: "Minimal", value: true) {
+                ProgressRowButton(
+                    colorScheme == .dark ? Image(uiImage: .minimalDark) :
+                        colorScheme == .light ? Image(uiImage: .minimal) :
+                        Image(uiImage: .minimalDark),
+                    text: "Minimal",
+                    value: true
+                ) {
                     await vm.changeProgressMode(true)
                 }
                 
-                ProgressRowButton(colorScheme == .dark ? Image(uiImage: .colorfulDark) : Image(uiImage: .colorful), text: "Colorful", value: false) {
+                ProgressRowButton(
+                    colorScheme == .dark ? Image(uiImage: .colorfulDark) :
+                        colorScheme == .light ? Image(uiImage: .colorful) :
+                        Image(uiImage: .colorfulDark),
+                    text: "Colorful",
+                    value: false
+                ) {
                     await vm.changeProgressMode(false)
                 }
             }
         }
-        .sensoryFeedback(.selection, trigger: vm.changeStateTrigger)
-        .animation(.default, value: vm.changeStateTrigger)
     }
     
     //MARK: - Progress row Button
@@ -171,16 +182,10 @@ public struct AppearanceView: View {
                     .padding(.bottom, 4)
                     .minimumScaleFactor(0.5)
                 
-                //                if value == vm.profileData.settings.minimalProgressMode {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.system(.body, design: .rounded, weight: .semibold))
                     .symbolEffect(.bounce, value: isSelected)
                     .foregroundStyle(isSelected ? .labelPrimary : .labelQuaternary)
-                //                } else {
-                //                    Image(systemName: "circle")
-                //                        .font(.system(.body, design: .rounded, weight: .semibold))
-                //                        .foregroundStyle(.labelQuaternary)
-                //                }
             }
         }
     }

@@ -15,71 +15,100 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     
     private var profileManager: ProfileManagerProtocol
     
-    public var profileModel: UIProfileModel {
-        get { profileManager.profileModel }
-        set { profileManager.profileModel = newValue }
-    }
+    public var profileModel: UIProfileModel
+    public var colorScheme: ColorScheme?
     
-    public var selectedColorScheme: ColorScheme? {
-        currentColorScheme()
-    }
+    public var accentColor: Color = .green
+    public var backgroundColor: Color = .white
     
     private init(profileManager: ProfileManagerProtocol) {
         self.profileManager = profileManager
+        self.profileModel = profileManager.profileModel
+        self.colorScheme = profileModel.settings.colorScheme.colorScheme
     }
     
-    static public func createAppearanceManager(profileManager: ProfileManagerProtocol) -> AppearanceManager {
-        AppearanceManager(profileManager: profileManager)
+    //MARK: - Create Manager
+    
+    public static func createAppearanceManager(profileManager: ProfileManagerProtocol) -> AppearanceManagerProtocol {
+        let manager = AppearanceManager(profileManager: profileManager)
+        manager.accentColor = manager.returnAccentColor()
+        manager.backgroundColor = manager.returnBackgroundColor()
+        
+        return manager
     }
     
-    static public func createMockAppearanceManager() -> AppearanceManager {
-        AppearanceManager(profileManager: ProfileManager.createMockProfileManager())
+    //MARK: - Create Mock Manager
+    
+    public static func createMockAppearanceManager() -> AppearanceManagerProtocol {
+        AppearanceManager(profileManager: ProfileManager.createMockManager())
     }
     
+    //MARK: - Create Environment Manager
     
-    public func backgroundColor() -> Color {
-        profileModel.settings.backgroundColor().hexColor()
+    public static func createEnvironmentManager() -> AppearanceManagerProtocol {
+        AppearanceManager(profileManager: ProfileManager.createEnvironmentManager())
     }
     
-    public func currentColorScheme() -> ColorScheme? {
+    //MARK: - Current color scheme
+    
+    public func updateColorScheme() {
         switch profileModel.settings.colorScheme {
-        case .dark: return .dark
-        case .light: return .light
-        default: return ColorScheme(.unspecified)
+        case .dark:
+            colorScheme = .dark
+        case .light:
+            colorScheme = .light
+        default:
+            colorScheme =  nil
         }
     }
     
+    //MARK: - Set color Scheme
+    
     public func setColorScheme(_ mode: ColorSchemeMode) async throws {
-        profileManager.profileModel.settings.colorScheme = mode
+        
+        profileModel.settings.colorScheme = mode
+        
         try await profileManager.updateProfileModel()
+        
+        updateColorScheme()
+        updateColors()
     }
     
     public func changeProgressMode(_ value: Bool) async throws {
-        profileManager.profileModel.settings.minimalProgressMode = value
+        profileModel.settings.minimalProgressMode = value
         try await profileManager.updateProfileModel()
     }
     
     //MARK: - Default Task Color
     
     public func changeDefaultTaskColor(_ color: TaskColor) async throws {
-        profileManager.profileModel.settings.defaultTaskColor = color
+        profileModel.settings.defaultTaskColor = color
         try await profileManager.updateProfileModel()
     }
     
     public func changeAccentColor(_ color: AccentColorEnum) async throws {
-        profileManager.profileModel.settings.accentColor = color.setUpColor()
+        profileModel.settings.accentColor = color.setUpColor()
         try await profileManager.updateProfileModel()
+        accentColor = returnAccentColor()
     }
     
     public func changeBackgroundColor(_ color: BackgroundColorEnum) async throws {
-        profileManager.profileModel.settings.background = color.setUpColor()
+        profileModel.settings.background = color.setUpColor()
         try await profileManager.updateProfileModel()
+        backgroundColor = returnBackgroundColor()
+    }
+    
+    //MARK: - UpdateColors
+    
+    public func updateColors() {
+        accentColor = returnAccentColor()
+        backgroundColor = returnBackgroundColor()
     }
     
     //MARK: - Accent Color
     
-    public func mainAccentColor() -> Color {
-        if profileModel.settings.colorScheme == .dark {
+    private func returnAccentColor() -> Color {
+        if colorScheme == .dark {
             return profileModel.settings.accentColor.dark.hexColor()
         } else {
             return profileModel.settings.accentColor.light.hexColor()
@@ -88,12 +117,21 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     
     //MARK: - Background Color
     
-    public func mainBackgroundColor() -> Color {
-        if profileModel.settings.colorScheme == .dark {
+    private func returnBackgroundColor() -> Color {
+        switch colorScheme {
+        case .dark:
             return profileModel.settings.background.dark.hexColor()
-        } else {
+        case .light:
             return profileModel.settings.background.light.hexColor()
+        default:
+            return currentSystemColorSchemeIsDark() ? profileModel.settings.background.dark.hexColor() : profileModel.settings.background.light.hexColor()
         }
+    }
+    
+    //MARK: - Track current color scheme
+    
+    private func currentSystemColorSchemeIsDark() -> Bool {
+        return UITraitCollection.current.userInterfaceStyle == .dark
     }
 }
 
@@ -253,7 +291,6 @@ public enum BackgroundColorEnum: Codable, CaseIterable, Equatable, Hashable {
             return AccentBackgroundColor(light: "#\(color)", dark: "#\(color)")
         }
     }
-    
 }
 
 // MARK: - ColorSchemeHelper

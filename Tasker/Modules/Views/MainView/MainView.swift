@@ -16,8 +16,9 @@ import StoreKit
 import NotesView
 
 public struct MainView: View {
-    @Environment(\.requestReview) var requestReview
+    @Environment(\.appearanceManager) var appearanceManager
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.requestReview) var requestReview
     
     @Bindable var vm: MainVM
     
@@ -33,19 +34,21 @@ public struct MainView: View {
                 CustomBackground()
                 
                 NotesView(vm: vm.notesVM)
-                //                    .disabled(vm.presentationPosition == .fraction(0.93))
             }
             .navigationDestination(for: MainViewNavigation.self) { destination in
                 destination.destination()
             }
             .sheet(isPresented: $vm.mainViewSheetIsPresented) {
                 MainViewBase(weekVM: vm.weekVM, listVM: vm.listVM)
+                    .background(appearanceManager.backgroundColor)
                     .sheet(item: $vm.sheetNavigation) { navigation in
                         switch navigation {
                         case .taskDetails(let taskVM):
                             TaskView(taskVM: taskVM)
+                                .preferredColorScheme(colorScheme)
                         case .profile(let profileVM):
                             ProfileView(vm: profileVM)
+                                .preferredColorScheme(colorScheme)
                         }
                     }
             }
@@ -59,7 +62,7 @@ public struct MainView: View {
                     } label: {
                         Image(systemName: "calendar")
                             .font(.system(size: 18))
-                            .foregroundStyle(colorScheme.accentColor())
+                            .foregroundStyle(appearanceManager.accentColor)
                     }
                     .disabled(vm.disabledButton)
                 }
@@ -98,7 +101,6 @@ public struct MainView: View {
     @ViewBuilder
     private func MainViewBase(weekVM: WeekVM, listVM: ListVM) -> some View {
         ZStack {
-            colorScheme.backgroundColor().ignoresSafeArea()
             
             VStack(spacing: 0) {
                 
@@ -177,7 +179,7 @@ public struct MainView: View {
                 .padding(.bottom, 15)
         }
         .frame(maxWidth: .infinity)
-        .blendMode(colorScheme == .dark ? .normal : .darken)
+        .blendMode(colorScheme == .dark ? .normal : colorScheme == .light ? .darken : .normal)
         .ignoresSafeArea(.keyboard)
     }
     
@@ -193,21 +195,25 @@ public struct MainView: View {
         //        } else {
         Image(systemName: "person.circle")
             .font(.system(size: 18))
-            .foregroundStyle(colorScheme.accentColor())
+            .foregroundStyle(appearanceManager.accentColor)
         //        }
     }
     
     @ViewBuilder
     private func CustomBackground() -> some View {
         if osVersion.majorVersion >= 26 && vm.presentationPosition == PresentationMode.base.detent {
-            colorScheme.backgroundColor().ignoresSafeArea()
+            appearanceManager.backgroundColor.ignoresSafeArea()
             
             Color.black.opacity(0.10).ignoresSafeArea()
         } else if osVersion.majorVersion >= 26 && vm.presentationPosition != PresentationMode.base.detent {
-            LinearGradient(colors: [.black.opacity(0.15), colorScheme.backgroundColor(), colorScheme.backgroundColor()], startPoint: .bottom, endPoint: .top)
-                .ignoresSafeArea()
+            LinearGradient(
+                colors: [.black.opacity(0.15), appearanceManager.backgroundColor, appearanceManager.backgroundColor],
+                startPoint: .bottom,
+                endPoint: .top
+            )
+            .ignoresSafeArea()
         } else {
-            colorScheme.backgroundColor().ignoresSafeArea()
+            appearanceManager.backgroundColor.ignoresSafeArea()
         }
     }
 }

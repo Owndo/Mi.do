@@ -72,7 +72,6 @@ public final actor CASManager: CASManagerProtocol {
     //MARK: - Save model
     
     public func saveModel<T: Codable>(_ model: Model<T>) async throws {
-        print("task inside cas - \(model.value), id - \(model.id)")
         try await cas.saveJSONModel(model)
     }
     
@@ -170,7 +169,8 @@ public final actor CASManager: CASManagerProtocol {
         //        try cas.syncRemote()
     }
     
-    //MARK: Create directory for CAS
+    //MARK: Create local directory
+    
     private static func createLocalDirectory() -> URL? {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask).first else {
             return nil

@@ -52,6 +52,8 @@ public final class ProfileVM: HashableNavigation {
     var alert: AlertModel?
     var navigationTriger = false
     
+    var colorSchemeTrigger = false
+    
     var settingsScreenIsPresented = false
     
     // Animation
@@ -131,7 +133,7 @@ public final class ProfileVM: HashableNavigation {
     
     public static func createProfilePreviewVM() -> ProfileVM {
         let dateManager = DateManager.createMockDateManager()
-        let profileManager = ProfileManager.createMockProfileManager()
+        let profileManager = ProfileManager.createMockManager()
         let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let taskManager = TaskManager.createMockTaskManager()

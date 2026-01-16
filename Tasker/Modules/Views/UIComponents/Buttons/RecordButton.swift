@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct RecordButton: View {
-    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.appearanceManager) var appearanceManager 
     
     @Binding var isRecording: Bool
     
@@ -36,19 +36,11 @@ public struct RecordButton: View {
             
             VStack {
                 if isRecording {
-                    if #available(iOS 26.0, *) {
                         StopRecording()
-                            .glassEffect(.regular.tint(colorScheme == .dark ? .clear : .white).interactive())
-                    } else {
-                        StopRecording()
-                    }
-                } else {
-                    if #available(iOS 26.0, *) {
-                        StartRecording()
-                            .glassEffect(.regular.tint(colorScheme == .dark ? .clear : .white).interactive())
+                            .liquidIfAvailable(glass: .regular, isInteractive: true)
                     } else {
                         StartRecording()
-                    }
+                        .liquidIfAvailable(glass: .regular, isInteractive: true)
                 }
             }
         }
@@ -84,14 +76,14 @@ public struct RecordButton: View {
         VStack {
             Image(systemName: "plus")
                 .font(.system(size: 42))
-                .foregroundStyle(colorScheme.accentColor())
+                .foregroundStyle(appearanceManager.accentColor)
                 .frame(width: 64, height: 64)
                 .padding(13)
                 .background(
                     Circle()
                         .fill(.white)
                         .shadow(
-                            color: colorScheme.accentColor(),
+                            color: appearanceManager.accentColor,
                             radius: shadowRadius,
                             x: shadowXOffset,
                             y: shadowYOffset
@@ -117,7 +109,7 @@ public struct RecordButton: View {
     private func StopRecording() -> some View {
         Image(systemName: "pause.fill")
             .font(.system(size: 42))
-            .foregroundStyle(colorScheme.accentColor())
+            .foregroundStyle(appearanceManager.accentColor)
             .frame(width: 64, height: 64)
             .padding(13)
             .background(
@@ -126,7 +118,7 @@ public struct RecordButton: View {
                         .stroke(.backgroundTertiary, style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
                     Circle()
                         .trim(from: 0, to: CGFloat(progress))
-                        .stroke(colorScheme.accentColor(), style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
+                        .stroke(appearanceManager.accentColor, style: StrokeStyle(lineWidth: 3.0, lineCap: .round, lineJoin: .round))
                         .rotationEffect(Angle(degrees: 270))
                         .animation(.easeInOut(duration: 0.1), value: progress)
                         .overlay {
@@ -144,22 +136,22 @@ public struct RecordButton: View {
     private func AnimationView() -> some View {
         ZStack {
             Circle()
-                .stroke(colorScheme.accentColor().opacity(0.4), lineWidth: 0.7)
+                .stroke(appearanceManager.accentColor.opacity(0.4), lineWidth: 0.7)
                 .scaleEffect(CGFloat(decivelsLVL) + 0.8)
                 .animation(.easeOut(duration: 0.3), value: decivelsLVL)
-                .shadow(color: colorScheme.accentColor(), radius: 3)
+                .shadow(color: appearanceManager.accentColor, radius: 3)
             
             Circle()
-                .stroke(colorScheme.accentColor().opacity(0.6), lineWidth: 1.0)
+                .stroke(appearanceManager.accentColor.opacity(0.6), lineWidth: 1.0)
                 .scaleEffect(CGFloat(decivelsLVL) + 0.55)
                 .animation(.easeOut(duration: 0.3).delay(0.05), value: decivelsLVL)
-                .shadow(color: colorScheme.accentColor(), radius: 2)
+                .shadow(color: appearanceManager.accentColor, radius: 2)
             
             Circle()
-                .stroke(colorScheme.accentColor().opacity(0.8), lineWidth: 1.5)
+                .stroke(appearanceManager.accentColor.opacity(0.8), lineWidth: 1.5)
                 .scaleEffect(CGFloat(decivelsLVL) + 0.3)
                 .animation(.easeOut(duration: 0.3).delay(0.1), value: decivelsLVL)
-                .shadow(color: colorScheme.accentColor(), radius: 1)
+                .shadow(color: appearanceManager.accentColor, radius: 1)
         }
     }
 }

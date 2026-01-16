@@ -101,7 +101,7 @@ public final class DependencyManager: DependencyManagerProtocol {
         
         let storageManager = StorageManager.createStorageManager(casManager: casManager)
         
-        let profileManager = await ProfileManager.createProfileManager(casManager: casManager)
+        let profileManager = await ProfileManager.createManager(casManager: casManager)
         let dateManager = await DateManager.createDateManager(profileManager: profileManager)
         
         let notificationManager = await NotificationManager.createNotificationManager(profileManager: profileManager, storageManager: storageManager)
@@ -122,9 +122,9 @@ public final class DependencyManager: DependencyManagerProtocol {
     }
     
     public static func createDependenciesForTesting() async -> DependencyManagerProtocol {
-        let casManager = MockCas.createCASManager()
+        let casManager = MockCas.createManager()
         
-        let profileManager = await ProfileManager.createProfileManager(casManager: casManager)
+        let profileManager = await ProfileManager.createManager(casManager: casManager)
         let dateManager = await DateManager.createDateManager(profileManager: profileManager)
         
         let notificationManager = MockNotificationManager()

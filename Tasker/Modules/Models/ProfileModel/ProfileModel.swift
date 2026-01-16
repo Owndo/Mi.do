@@ -124,7 +124,7 @@ public enum ColorSchemeMode: CaseIterable, Codable, Sendable {
         case .dark:
             return ColorScheme.dark
         case .system:
-            return ColorScheme(.unspecified)
+            return nil
         }
     }
 }

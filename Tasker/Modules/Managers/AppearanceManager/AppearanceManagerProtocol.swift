@@ -11,15 +11,15 @@ import Models
 
 public protocol AppearanceManagerProtocol {
     var profileModel: UIProfileModel { get }
-    var selectedColorScheme: ColorScheme? { get }
+    var colorScheme: ColorScheme? { get }
     
-    func currentColorScheme() -> ColorScheme?
+    var accentColor: Color { get }
+    var backgroundColor: Color { get }
     
     func setColorScheme(_ mode: ColorSchemeMode) async throws
     func changeProgressMode(_ value: Bool) async throws
     func changeDefaultTaskColor(_ color: TaskColor) async throws
     func changeAccentColor(_ color: AccentColorEnum) async throws
     func changeBackgroundColor(_ color: BackgroundColorEnum) async throws
-    func mainAccentColor() -> Color
-    func mainBackgroundColor() -> Color
+    func updateColors()
 }

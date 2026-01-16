@@ -18,10 +18,10 @@ import AppearanceManager
 
 //TODO: - Keyboard ignore safe area
 public struct ProfileView: View {
+    @Environment(\.appearanceManager) private var appearanceManager
+    @Environment(\.colorScheme) private var colorScheme
     
     @Bindable var vm: ProfileVM
-    
-    @Environment(\.colorScheme) var colorScheme
     
     @State private var avatarItem: PhotosPickerItem?
     @State private var avatarImage: Image?
@@ -33,8 +33,7 @@ public struct ProfileView: View {
     public var body: some View {
         NavigationStack(path: $vm.path) {
             ZStack {
-                colorScheme.backgroundColor()
-                    .ignoresSafeArea()
+                appearanceManager.backgroundColor.ignoresSafeArea()
                 
                 ScrollViewContent()
                     .photosPicker(
@@ -62,7 +61,7 @@ public struct ProfileView: View {
                         } label: {
                             Text("Close", bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .medium))
-                                .foregroundStyle(colorScheme.accentColor())
+                                .foregroundStyle(appearanceManager.accentColor)
                                 .opacity(vm.showPaywall ? 0.0 : 1)
                         }
                     }
@@ -74,7 +73,7 @@ public struct ProfileView: View {
                         } label: {
                             Text("Close", bundle: .module)
                                 .font(.system(.body, design: .rounded, weight: .medium))
-                                .foregroundStyle(colorScheme.accentColor())
+                                .foregroundStyle(appearanceManager.accentColor)
                             
                         }
                     }
@@ -91,12 +90,16 @@ public struct ProfileView: View {
             vm.navigationTriger.toggle()
             vm.gearAnimation.toggle()
         }
-        .toolbarBackground(colorScheme.backgroundColor(), for: .navigationBar)
+        .onChange(of: colorScheme) { _, newValue in
+            vm.gearAnimation.toggle()
+        }
+        .toolbarBackground(appearanceManager.backgroundColor, for: .navigationBar)
         .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
         .presentationDragIndicator(.visible)
         .animation(.bouncy, value: vm.showPaywall)
         .animation(.bouncy, value: vm.selectedImage)
         .sensoryFeedback(.selection, trigger: vm.navigationTriger)
+        .sensoryFeedback(.decrease, trigger: vm.gearAnimation)
     }
     
     //MARK: - Scroll View
@@ -118,7 +121,7 @@ public struct ProfileView: View {
                     .font(.system(.title2, design: .rounded, weight: .semibold))
                     .foregroundStyle(.labelPrimary)
                     .multilineTextAlignment(.center)
-                    .tint(colorScheme.accentColor())
+                    .tint(appearanceManager.accentColor)
                     .onSubmit {
                         Task {
                             await vm.profileModelSave()
@@ -150,7 +153,7 @@ public struct ProfileView: View {
         } label: {
             if #available(iOS 26.0, *) {
                 Image(systemName: "gearshape")
-                    .foregroundStyle(colorScheme.accentColor())
+                    .foregroundStyle(appearanceManager.accentColor)
                     .font(.system(size: 30))
                     .rotationEffect(Angle(degrees: vm.gearAnimation ? -360 : 0))
                     .symbolEffect(.bounce, options: .speed(0.6), value: vm.gearAnimation)
@@ -159,12 +162,12 @@ public struct ProfileView: View {
                     .disabled(vm.showPaywall ? true : false)
             } else {
                 Image(systemName: "gearshape")
-                    .foregroundStyle(colorScheme.accentColor())
+                    .foregroundStyle(appearanceManager.accentColor)
                     .font(.system(size: 30))
                     .rotationEffect(Angle(degrees: vm.gearAnimation ? 270 : 0))
                     .symbolEffect(.bounce,options: .speed(0.6), value: vm.gearAnimation)
                     .padding(4)
-                    .shadow(color: colorScheme.accentColor().opacity(0.5), radius: 16, y: 4)
+                    .shadow(color: appearanceManager.accentColor.opacity(0.5), radius: 16, y: 4)
                     .background(
                         Circle()
                             .fill(.backgroundTertiary)
@@ -204,8 +207,8 @@ public struct ProfileView: View {
                 }
             }
             .clipShape(Circle())
-            .overlay(Circle().stroke(colorScheme.backgroundColor(), lineWidth: 1))
-            .shadow(color: colorScheme.accentColor().opacity(0.7), radius: 15, x: 0, y: 8)
+            .overlay(Circle().stroke(appearanceManager.backgroundColor, lineWidth: 1))
+            .shadow(color: appearanceManager.accentColor.opacity(0.7), radius: 15, x: 0, y: 8)
             .frame(width: 148, height: 148)
             
             VStack(spacing: 0) {
@@ -263,21 +266,15 @@ public struct ProfileView: View {
                 }
             }
         } label: {
-            if #available(iOS 26.0, *) {
                 Image(systemName: "ellipsis.circle.fill")
-                    .foregroundStyle(colorScheme.accentColor())
+                    .foregroundStyle(appearanceManager.accentColor)
                     .font(.system(size: 28))
-                    .glassEffect(.regular.interactive())
-            } else {
-                Image(systemName: "ellipsis.circle.fill")
-                    .foregroundStyle(colorScheme.accentColor())
-                    .font(.system(size: 28))
-            }
+                    .liquidIfAvailable(glass: .regular, isInteractive: true)
         }
         .padding(2)
         .background(
             Circle()
-                .fill(colorScheme.backgroundColor())
+                .fill(appearanceManager.backgroundColor)
         )
     }
     

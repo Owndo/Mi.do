@@ -63,7 +63,12 @@ public final class MainVM: HashableNavigation {
     
     //MARK: - Model
     var mainModel: UIProfileModel?
-    var profileModel: UIProfileModel
+    
+    public var profileModel: UIProfileModel {
+        didSet {
+            print("Changed")
+        }
+    }
     
     //    let listVM = ListVM()
     //    var taskVM: TaskVM?
@@ -208,7 +213,7 @@ public final class MainVM: HashableNavigation {
         // Managers
         
         let casManager = await CASManager.createCASManager()
-        let profileManager = await ProfileManager.createProfileManager(casManager: casManager)
+        let profileManager = await ProfileManager.createManager(casManager: casManager)
         let storageManager = StorageManager.createStorageManager(casManager: casManager)
         
         let appearanceManager = AppearanceManager.createAppearanceManager(profileManager: profileManager)
@@ -231,7 +236,7 @@ public final class MainVM: HashableNavigation {
         let calendarVM = await CalendarVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         let weekVM = WeekVM.createVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         let listVM = await ListVM.createListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
-        let notesVM = NotesVM.createVM(profileManager: profileManager)
+        let notesVM = NotesVM.createVM(appearanceManager: appearanceManager, profileManager: profileManager)
         
         let vm = MainVM(
             appearanceManager: appearanceManager,
@@ -261,7 +266,7 @@ public final class MainVM: HashableNavigation {
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let dateManager = DateManager.createMockDateManager()
         let playerManager = PlayerManager.createMockPlayerManager()
-        let profileManager = ProfileManager.createMockProfileManager()
+        let profileManager = ProfileManager.createMockManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
         let storageManager = StorageManager.createMockStorageManager()
         let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()

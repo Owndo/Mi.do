@@ -76,7 +76,7 @@ public final class SettingsVM: HashableNavigation {
     
     static func createMOCKSettingsVM() -> SettingsVM {
         let dateManager = DateManager.createMockDateManager()
-        let profilemanager = ProfileManager.createMockProfileManager()
+        let profilemanager = ProfileManager.createMockManager()
         let settingsVM = SettingsVM(dateManager: dateManager, profilemanager: profilemanager, profileModel: profilemanager.profileModel)
         settingsVM.firstDayOfWeek = profilemanager.profileModel.settings.firstDayOfWeek == 1 ? .sunday : .monday
         

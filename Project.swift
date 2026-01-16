@@ -32,7 +32,7 @@ let project = Project(
             )],
             resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
             entitlements: .file(path: "Tasker/Tasker.entitlements"),
-            dependencies: [.target(name: Modules.mainView.name),],
+            dependencies: [.target(name: Modules.appView.name),],
             settings: .settings(
                 base: [:],
                 configurations: [
@@ -189,46 +189,60 @@ let project = Project(
         ),
         
         //MARK: - Views
-        .moduleView(.uiComponents, dependencies: [.target(name: Modules.models.name)]),
-        .moduleView(.paywallView,
-                    dependencies: [
-                        .target(name: Modules.subscriptionManager.name),
-                        .target(name: Modules.uiComponents.name),
-                        .target(name: Modules.config.name)
-                    ]
-                   ),
+        
+            .moduleView(.uiComponents,
+                        dependencies: [
+                            .target(name: Modules.models.name),
+                            .target(
+                                name: Modules.appearanceManager.name
+                            )
+                        ]
+                       ),
+        
+        //MARK: - PaywallView
+        
+            .moduleView(.paywallView,
+                        dependencies: [
+                            .target(name: Modules.subscriptionManager.name),
+                            .target(name: Modules.uiComponents.name),
+                            .target(name: Modules.config.name)
+                        ]
+                       ),
         
         //MARK: - Calendar
-        .moduleView(.calendarView,
-                    dependencies: [
-                        .target(name: Modules.models.name),
-                        .target(name: Modules.dateManager.name),
-                        .target(name: Modules.taskManager.name),
-                        .target(name: Modules.appearanceManager.name),
-                        .target(name: Modules.telemetry.name),
-                        .target(name: Modules.uiComponents.name)
-                    ]
-                   ),
+        
+            .moduleView(.calendarView,
+                        dependencies: [
+                            .target(name: Modules.models.name),
+                            .target(name: Modules.dateManager.name),
+                            .target(name: Modules.taskManager.name),
+                            .target(name: Modules.appearanceManager.name),
+                            .target(name: Modules.telemetry.name),
+                            .target(name: Modules.uiComponents.name)
+                        ]
+                       ),
         
         //MARK: - TaskView
-        .moduleView(.taskView,
-                    dependencies: [
-                        .target(name: Modules.models.name),
-                        .target(name: Modules.taskManager.name),
-                        .target(name: Modules.profileManager.name),
-                        .target(name: Modules.dateManager.name),
-                        .target(name: Modules.playerManager.name),
-                        .target(name: Modules.recorderManager.name),
-                        .target(name: Modules.permissionManager.name),
-                        .target(name: Modules.storageManager.name),
-                        .target(name: Modules.telemetry.name),
-                        .target(name: Modules.paywallView.name),
-                        .target(name: Modules.uiComponents.name)
-                    ]
-                   ),
+        
+            .moduleView(.taskView,
+                        dependencies: [
+                            .target(name: Modules.models.name),
+                            .target(name: Modules.taskManager.name),
+                            .target(name: Modules.profileManager.name),
+                            .target(name: Modules.dateManager.name),
+                            .target(name: Modules.playerManager.name),
+                            .target(name: Modules.recorderManager.name),
+                            .target(name: Modules.permissionManager.name),
+                            .target(name: Modules.storageManager.name),
+                            .target(name: Modules.telemetry.name),
+                            .target(name: Modules.paywallView.name),
+                            .target(name: Modules.uiComponents.name)
+                        ]
+                       ),
         
         //MARK: - HistoryView
-        .moduleView(.historyView, dependencies: [.target(name: Modules.uiComponents.name)]),
+        
+            .moduleView(.historyView, dependencies: [.target(name: Modules.uiComponents.name)]),
         
         //MARK: - ArticlesView
         .moduleView(.articlesView, dependencies: [.target(name: Modules.uiComponents.name)]),
@@ -285,6 +299,7 @@ let project = Project(
         //MARK: - NotesView
         .moduleView(.notesView,
                     dependencies: [
+                        .target(name: Modules.appearanceManager.name),
                         .target(name: Modules.profileManager.name),
                         .target(name: Modules.telemetry.name),
                         .target(name: Modules.uiComponents.name)
@@ -312,7 +327,8 @@ let project = Project(
                         .target(name: Modules.taskView.name),
                         .target(name: Modules.uiComponents.name),
                     ]
-                   )
+                   ),
+        .moduleView(.appView, dependencies: [.target(name: Modules.mainView.name)])
     ],
     schemes: [
         Scheme.scheme(

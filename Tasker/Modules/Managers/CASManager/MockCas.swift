@@ -11,18 +11,19 @@ import Models
 
 public final actor MockCas: CASManagerProtocol {
     private let cas: AsyncableCas
-    private let models: [UITaskModel]
+    private let models: [UITaskModel]?
     private let allIdentifiers: [Mutable] = [Mutable.initial(), .initial()]
     
-    private init(cas: AsyncableCas, models: [UITaskModel]) {
+    private init(cas: AsyncableCas, models: [UITaskModel]? = nil) {
         self.cas = cas
         self.models = models
     }
     
-    //MARK: - Static methods for init
+    //MARK: - Create manager
     
-    public static func createCASManager() -> CASManagerProtocol {
-        let localDirectory = createLocalDirectory()!
+    /// This manager create empty directory with two basic models
+    public static func createManager() -> CASManagerProtocol {
+        let localDirectory = createEmptyLocalDirectory()!
         
         let cas = AsyncFileCas(localDirectory)
         
@@ -46,6 +47,18 @@ public final actor MockCas: CASManagerProtocol {
         ]
         
         let casManager = MockCas(cas: cas, models: models)
+        
+        return casManager
+    }
+    
+    //MARK: - Mock Cas
+    
+    public static func mockManager() -> CASManagerProtocol {
+        let localDirectory = createLocalDirectory()!
+        
+        let cas = AsyncFileCas(localDirectory)
+        
+        let casManager = MockCas(cas: cas)
         
         return casManager
     }
@@ -188,8 +201,27 @@ public final actor MockCas: CASManagerProtocol {
         //        try cas.syncRemote()
     }
     
-    //MARK: Create directory for CAS
+    //MARK: - Create directory
+    
     private static func createLocalDirectory() -> URL? {
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask).first else {
+            return nil
+        }
+        
+        let directoryPath = documentDirectory.appending(path: "Storage", directoryHint: .isDirectory)
+        
+        do {
+            try FileManager.default.createDirectory(atPath: directoryPath.path(), withIntermediateDirectories: true)
+            return directoryPath
+        } catch {
+            return nil
+        }
+    }
+    
+    //MARK: Create empty directory
+    
+    ///Total delete storagedirectory before return url
+    private static func createEmptyLocalDirectory() -> URL? {
         guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask).first else {
             return nil
         }

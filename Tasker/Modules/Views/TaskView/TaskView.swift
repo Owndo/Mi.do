@@ -12,6 +12,7 @@ import UIKit
 import PaywallView
 
 public struct TaskView: View {
+    @Environment(\.appearanceManager) var appearanceManager
     @Environment(\.colorScheme) var colorScheme
     
     @Environment(\.dismiss) var dismissButton
@@ -35,7 +36,7 @@ public struct TaskView: View {
     public var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(colors: [vm.backgroundColor, colorScheme.backgroundColor()], startPoint: .bottom, endPoint: .top)
+                LinearGradient(colors: [vm.backgroundColor, appearanceManager.backgroundColor], startPoint: .bottom, endPoint: .top)
                     .opacity(0.7)
                     .ignoresSafeArea()
                 
@@ -146,7 +147,7 @@ public struct TaskView: View {
         }
         .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
         .animation(.bouncy, value: vm.showPaywall)
-        .animation(.default, value: colorScheme)
+        .animation(.default, value: appearanceManager.colorScheme)
         .animation(.default, value: vm.task.taskColor)
     }
     
@@ -172,7 +173,7 @@ public struct TaskView: View {
             //            }
                 .padding(.vertical)
         }
-        .tint(colorScheme.accentColor())
+        .tint(appearanceManager.accentColor)
         .padding(.top, 14)
         .padding(.bottom, 3)
     }
@@ -225,7 +226,7 @@ public struct TaskView: View {
                     vm.isDragging = editing
                 }
             )
-            .tint(colorScheme.accentColor())
+            .tint(appearanceManager.accentColor)
             
             Text(vm.currentTimeString())
                 .font(.system(.callout, design: .rounded, weight: .regular))
@@ -250,7 +251,7 @@ public struct TaskView: View {
     private func VoiceModeToogle() -> some View {
         HStack(spacing: 12) {
             Image(systemName: "bell")
-                .foregroundStyle(colorScheme.accentColor())
+                .foregroundStyle(appearanceManager.accentColor)
             
             Toggle(isOn: $vm.task.voiceMode) {
                 Text("Play your voice in notification", bundle: .module)
@@ -292,14 +293,12 @@ public struct TaskView: View {
                     Image(systemName: vm.isRecording ? "pause.fill" : "microphone.fill")
                         .foregroundStyle(.white)
                         .padding(8)
-                        .glassEffect(.regular.tint(colorScheme.accentColor()).interactive(), in: .circle)
+                        .glassEffect(.regular.tint(appearanceManager.accentColor).interactive(), in: .circle)
                     
                 } else {
                     ZStack {
                         Circle()
-                            .fill(
-                                colorScheme.accentColor()
-                            )
+                            .fill(appearanceManager.accentColor)
                             .frame(width: 34, height: 34)
                         
                         Image(systemName: vm.isRecording ? "pause.fill" : "microphone.fill")
@@ -327,7 +326,7 @@ public struct TaskView: View {
             TextField("", text: $vm.task.title, prompt: Text("New task", bundle: .module))
                 .font(.title2)
                 .fontWeight(.bold)
-                .tint(colorScheme.accentColor())
+                .tint(appearanceManager.accentColor)
                 .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
@@ -344,7 +343,7 @@ public struct TaskView: View {
             TextField("", text: $vm.task.description, prompt: Text("Add more information", bundle: .module), axis: .vertical)
                 .font(.system(.body, design: .rounded, weight: .regular))
                 .frame(minHeight: 70, alignment: .top)
-                .tint(colorScheme.accentColor())
+                .tint(appearanceManager.accentColor)
                 .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
@@ -392,7 +391,7 @@ public struct TaskView: View {
             } label: {
                 HStack(spacing: 13) {
                     Image(systemName: "calendar")
-                        .foregroundStyle(colorScheme.accentColor())
+                        .foregroundStyle(appearanceManager.accentColor)
                     
                     Text("Date", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
@@ -433,7 +432,7 @@ public struct TaskView: View {
             } label: {
                 HStack(spacing: 13) {
                     Image(systemName: "clock")
-                        .foregroundStyle(colorScheme.accentColor())
+                        .foregroundStyle(appearanceManager.accentColor)
                     
                     Text("Time", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
@@ -470,7 +469,7 @@ public struct TaskView: View {
         VStack(spacing: 0) {
             HStack {
                 Image(systemName: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
-                    .foregroundStyle(colorScheme.accentColor())
+                    .foregroundStyle(appearanceManager.accentColor)
                 
                 Text("Repeat", bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .regular))
@@ -520,7 +519,7 @@ public struct TaskView: View {
                     } label: {
                         Text(LocalizedStringKey(day.name), bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
-                            .foregroundStyle(day.value ? colorScheme.accentColor() : vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                            .foregroundStyle(day.value ? appearanceManager.accentColor : vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
                             .padding(.vertical, 13)
                     }
                 }
@@ -633,7 +632,7 @@ public struct TaskView: View {
                     vm.showDedalineButtonTapped()
                 } label: {
                     Image(systemName: "flame.fill")
-                        .foregroundStyle(colorScheme.accentColor())
+                        .foregroundStyle(appearanceManager.accentColor)
                     
                     Text("Deadline", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
@@ -720,7 +719,7 @@ public struct TaskView: View {
                             .foregroundStyle(.white)
                             .padding(.vertical, 15)
                             .frame(maxWidth: .infinity)
-                            .glassEffect(.regular.tint(colorScheme.accentColor()).interactive())
+                            .glassEffect(.regular.tint(appearanceManager.accentColor).interactive())
                     } else {
                         Text("Close", bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
@@ -729,9 +728,7 @@ public struct TaskView: View {
                             .frame(maxWidth: .infinity)
                             .background(
                                 RoundedRectangle(cornerRadius: 26)
-                                    .fill(
-                                        colorScheme.accentColor()
-                                    )
+                                    .fill(appearanceManager.accentColor)
                             )
                     }
                 }
@@ -740,20 +737,20 @@ public struct TaskView: View {
             }
         }
         .padding(.vertical, 5)
-        .background(
-            RoundedRectangle(cornerRadius: 26)
-                .fill(
-                    colorScheme.backgroundColor()
-                        .opacity(
-                            vm.showDatePicker ||
-                            vm.showTimePicker ||
-                            vm.showDeadline ||
-                            vm.repeatTask == .dayOfWeek ||
-                            sectionInFocus != nil
-                            ? 0.6 : 0.0)
-                )
-                .blur(radius: 4)
-        )
+        //        .background(
+        //            RoundedRectangle(cornerRadius: 26)
+        //                .fill(
+        //                    appearanceManager.backgroundColor()
+        //                        .opacity(
+        //                            vm.showDatePicker ||
+        //                            vm.showTimePicker ||
+        //                            vm.showDeadline ||
+        //                            vm.repeatTask == .dayOfWeek ||
+        //                            sectionInFocus != nil
+        //                            ? 0.6 : 0.0)
+        //                )
+        //                .blur(radius: 4)
+        //        )
     }
     
     //MARK: - Created Date

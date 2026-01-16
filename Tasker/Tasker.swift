@@ -6,35 +6,14 @@
 //
 
 import SwiftUI
-import MainView
+import AppView
 
 @main
 struct Tasker: App {
-    //    @Environment(\.scenePhase) var scenePhase
-    //    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    //
-    @State private var vm: MainVM?
-    //
-    //    @Injected(\.appearanceManager) var appearanceManager
-    //    @Injected(\.subscriptionManager) var subscriptionManager
-    //    @Injected(\.telemetryManager) var telemetryManager
-    //
-    //    init() {
-    //        Task {
-    //            await DependencyContext.initialize()
-    //        }
-    //    }
-    
+
     var body: some Scene {
         WindowGroup {
-            if let mainVM = vm {
-                MainView(vm: mainVM)
-            } else {
-                ProgressView()
-                    .task {
-                        vm = await MainVM.createVM()
-                    }
-            }
+            AppView()
             //            if self.paywallVM != nil {
             //
             //            } else {

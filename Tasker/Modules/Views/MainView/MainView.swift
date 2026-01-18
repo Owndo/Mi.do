@@ -40,7 +40,7 @@ public struct MainView: View {
             }
             .sheet(isPresented: $vm.mainViewSheetIsPresented) {
                 MainViewBase(weekVM: vm.weekVM, listVM: vm.listVM)
-                    .background(appearanceManager.backgroundColor)
+                    .presentationBackground(appearanceManager.backgroundColor)
                     .sheet(item: $vm.sheetNavigation) { navigation in
                         switch navigation {
                         case .taskDetails(let taskVM):
@@ -101,21 +101,16 @@ public struct MainView: View {
     @ViewBuilder
     private func MainViewBase(weekVM: WeekVM, listVM: ListVM) -> some View {
         ZStack {
-            
             VStack(spacing: 0) {
-                
-                WeekView(vm: weekVM)
-                    .padding(.top, 17)
-                
                 ListView(vm: listVM)
                     .padding(.horizontal, 8)
                     .presentationContentInteraction(.scrolls)
                 
                 Spacer()
             }
+            .ignoresSafeArea()
             
             VStack {
-                
                 Spacer()
                 
                 if vm.presentationPosition != PresentationMode.bottom.detent {
@@ -124,6 +119,28 @@ public struct MainView: View {
                 }
             }
             .ignoresSafeArea(.keyboard)
+            
+            VStack {
+                WeekView(vm: weekVM)
+                    .padding(.top, 17)
+                    .padding(.bottom, 20)
+                    .background(
+                        LinearGradient(
+                            colors: [
+                                appearanceManager.backgroundColor,
+                                appearanceManager.backgroundColor,
+                                appearanceManager.backgroundColor.opacity(0.99),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .ignoresSafeArea()
+                        .blur(radius: 5)
+                        .offset(y: -12.5)
+                    )
+                
+                Spacer()
+            }
         }
         .overlay(
             GlowEffect(decibelLevel: vm.decibelLvl)

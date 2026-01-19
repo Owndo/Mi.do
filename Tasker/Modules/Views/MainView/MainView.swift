@@ -102,11 +102,24 @@ public struct MainView: View {
     private func MainViewBase(weekVM: WeekVM, listVM: ListVM) -> some View {
         ZStack {
             VStack(spacing: 0) {
-                ListView(vm: listVM)
-                    .padding(.horizontal, 8)
+                    ListView(vm: listVM)
                     .presentationContentInteraction(.scrolls)
                 
                 Spacer()
+            }
+            .overlay(alignment: .bottom) {
+                LinearGradient(
+                    colors: [
+                        appearanceManager.backgroundColor.opacity(0.98),
+                        appearanceManager.backgroundColor.opacity(0.99),
+                        appearanceManager.backgroundColor
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .blur(radius: 10)
+                .frame(maxHeight: 60)
+                .offset(y: 20)
             }
             .ignoresSafeArea()
             

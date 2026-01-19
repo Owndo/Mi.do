@@ -53,7 +53,7 @@ public final actor MockCas: CASManagerProtocol {
     
     //MARK: - Mock Cas
     
-    public static func mockManager() -> CASManagerProtocol {
+    public static func createMockManager() -> CASManagerProtocol {
         let localDirectory = createLocalDirectory()!
         
         let cas = AsyncFileCas(localDirectory)

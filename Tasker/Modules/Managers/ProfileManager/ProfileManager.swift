@@ -45,7 +45,7 @@ public final class ProfileManager: ProfileManagerProtocol {
     
     public static func createEnvironmentManager() -> ProfileManagerProtocol {
         let model = mockProfileData().model.value
-        let manager = ProfileManager(casManager: MockCas.mockManager(), profileModel: UIProfileModel(.initial(model)))
+        let manager = ProfileManager(casManager: MockCas.createMockManager(), profileModel: UIProfileModel(.initial(model)))
         
         return manager
     }

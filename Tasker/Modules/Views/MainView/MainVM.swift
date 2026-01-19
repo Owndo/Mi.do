@@ -235,7 +235,7 @@ public final class MainVM: HashableNavigation {
         
         let calendarVM = await CalendarVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         let weekVM = WeekVM.createVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
-        let listVM = await ListVM.createListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
+        let listVM = await ListVM.createListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         let notesVM = NotesVM.createVM(appearanceManager: appearanceManager, profileManager: profileManager)
         
         let vm = MainVM(

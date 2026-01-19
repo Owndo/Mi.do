@@ -283,14 +283,16 @@ let project = Project(
         .moduleView(.listView,
                     dependencies: [
                         .target(name: Modules.appearanceManager.name),
-                        .target(name: Modules.telemetry.name),
-                        .target(name: Modules.taskManager.name),
+                        .target(name: Modules.dateManager.name),
                         .target(name: Modules.profileManager.name),
                         .target(name: Modules.playerManager.name),
-                        .target(name: Modules.dateManager.name),
                         .target(name: Modules.notificationManager.name),
-                        .target(name: Modules.uiComponents.name),
-                        .target(name: Modules.taskView.name)
+                        .target(name: Modules.storageManager.name),
+                        .target(name: Modules.recorderManager.name),
+                        .target(name: Modules.taskManager.name),
+                        .target(name: Modules.taskView.name),
+                        .target(name: Modules.telemetry.name),
+                        .target(name: Modules.uiComponents.name)
                     ]
                    ),
         

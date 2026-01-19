@@ -51,7 +51,7 @@ public final class TaskVM: HashableNavigation {
     
     // MARK: - Models
     
-    var task: UITaskModel
+    public var task: UITaskModel
     var profileModel: UIProfileModel
     
     var backgroundColor: Color = .white

@@ -108,9 +108,8 @@ public struct WeekView: View {
             .padding(.horizontal, 14)
             .background(
                 RoundedRectangle(cornerRadius: 14)
-                    .fill(
-                        .backgroundTertiary
-                    )
+                    .fill(.backgroundTertiary)
+                    .liquidIfAvailable(glass: .regular, isInteractive: true)
             )
         }
     }

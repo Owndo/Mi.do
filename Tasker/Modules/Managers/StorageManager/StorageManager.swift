@@ -27,7 +27,7 @@ public final class StorageManager: StorageManagerProtocol {
     }
     
     public static func createMockStorageManager() -> StorageManagerProtocol {
-        let mockCasManager = MockCas.createManager()
+        let mockCasManager = MockCas.createMockManager()
         
         return StorageManager(casManager: mockCasManager)
     }

@@ -5,6 +5,7 @@
 //  Created by Rodion Akhmedov on 4/26/25.
 //
 
+import AppearanceManager
 import Foundation
 import SwiftUI
 import Models
@@ -13,23 +14,34 @@ import DateManager
 import PlayerManager
 import ProfileManager
 import TaskManager
+import TaskView
 import TelemetryManager
 import NotificationManager
+//For Preview
+import RecorderManager
+import StorageManager
 
 @Observable
 public final class ListVM: HashableNavigation {
     
     //MARK: - Dependencies
-    
+    private let appearanceManager: AppearanceManagerProtocol
     private var dateManager: DateManagerProtocol
     private var notificationManager: NotificationManagerProtocol
     private var playerManager: PlayerManagerProtocol
     private let profileManager: ProfileManagerProtocol
     private var taskManager: TaskManagerProtocol
     
+    let recorderManager = RecorderManager.createMock()
+    let storageManager = StorageManager.createMockStorageManager()
+    
     private var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
     public var onTaskSelected: ((UITaskModel) -> Void)?
+    
+    var taskVM: TaskVM?
+    
+    var tasksVM: [TaskVM] = []
     
     //MARK: UI State
     
@@ -54,6 +66,7 @@ public final class ListVM: HashableNavigation {
     var completedTasks: [UITaskModel] = []
     
     var candidateForDeletion: UITaskModel?
+    var previewTask: UITaskModel?
     
     private var tasksTask: Task<Void, Never>?
     
@@ -75,12 +88,14 @@ public final class ListVM: HashableNavigation {
     //MARK: - Private Init
     
     private init(
+        appearanceManager: AppearanceManagerProtocol,
         dateManager: DateManagerProtocol,
         notificationManager: NotificationManagerProtocol,
         playerManager: PlayerManagerProtocol,
         profileManager: ProfileManagerProtocol,
         taskManager: TaskManagerProtocol
     ) {
+        self.appearanceManager = appearanceManager
         self.dateManager = dateManager
         self.notificationManager = notificationManager
         self.playerManager = playerManager
@@ -91,13 +106,14 @@ public final class ListVM: HashableNavigation {
     //MARK: - Create ListVM
     
     public static func createListVM(
+        appearanceManager: AppearanceManagerProtocol,
         dateManager: DateManagerProtocol,
         notificationManager: NotificationManagerProtocol,
         playerManager: PlayerManagerProtocol,
         profileManager: ProfileManagerProtocol,
         taskManager: TaskManagerProtocol
     ) async -> ListVM {
-        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
+        let vm = ListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         vm.completedTasksHidden = profileManager.profileModel.settings.completedTasksHidden
         await vm.downloadTasks()
         vm.asyncUpdateTasks()
@@ -108,13 +124,14 @@ public final class ListVM: HashableNavigation {
     //MARK: - Create mock ListVM
     
     public static func creteMockListVM() -> ListVM {
+        let appearanceManager = AppearanceManager.createEnvironmentManager()
         let dateManager = DateManager.createMockDateManager()
         let notificationManager = MockNotificationManager()
         let profileManager = ProfileManager.createMockManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let taskManager = TaskManager.createMockTaskManager()
         
-        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
+        let vm = ListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         
         return vm
     }
@@ -122,21 +139,20 @@ public final class ListVM: HashableNavigation {
     //MARK: - Create PreviewListVM
     
     public static func createPreviewListVM() async -> ListVM {
+        let appearanceManager = AppearanceManager.createEnvironmentManager()
         let dateManager = DateManager.createMockDateManager()
         let notificationManager = MockNotificationManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let profileManager = ProfileManager.createMockManager()
         let taskManager = await TaskManager.createMockTaskManagerWithModels()
         
-        let vm = ListVM(dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
+        let vm = ListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         
         return vm
     }
     
     func downloadTasks() async {
-        self.activeTasks = sortedTasks(tasks: await taskManager.activeTasks(for: selectedDate))
-        
-        self.completedTasks = sortedTasks(tasks: await taskManager.completedTasks(for: selectedDate))
+        await updateTasks()
     }
     
     //MARK: - Async Stream
@@ -169,6 +185,23 @@ public final class ListVM: HashableNavigation {
         activeTasks = sortedTasks(tasks: await taskManager.activeTasks(for: selectedDate))
         
         completedTasks = sortedTasks(tasks: await taskManager.completedTasks(for: selectedDate))
+        
+        let tasks = [activeTasks, completedTasks].flatMap { $0 }
+        
+        for i in tasks {
+            let taskVM = await TaskVM.createTaskVM(
+                appearanceManager: appearanceManager,
+                taskManager: taskManager,
+                playerManager: playerManager,
+                storageManager: storageManager,
+                profileManager: profileManager,
+                dateManager: dateManager,
+                recorderManager: recorderManager,
+                task: i
+            )
+            
+            tasksVM.append(taskVM)
+        }
     }
     
     //MARK: - Sorted tasks

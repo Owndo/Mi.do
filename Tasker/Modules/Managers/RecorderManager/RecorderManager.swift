@@ -58,6 +58,12 @@ public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable
         return RecorderManager(dateManager: dateManager)
     }
     
+    //MARK: - Create MockManager
+    
+    public static func createMock() -> RecorderManagerProtocol {
+        return RecorderManager(dateManager: DateManager.createMockDateManager())
+    }
+    
     // MARK: - Start recording with speech recognition
     public func startRecording() async {
         let fileName = baseDirectoryURL.appending(path: "\(UUID().uuidString).wav")

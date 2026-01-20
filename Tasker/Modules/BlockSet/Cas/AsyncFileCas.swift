@@ -20,7 +20,7 @@ public actor AsyncFileCas: AsyncableCas {
     }
 
     public func hash(for data: Data) async -> String {
-        await data.sha256Id()
+        data.sha256Id()
     }
 
     public func store(_ data: Data) async throws -> String {

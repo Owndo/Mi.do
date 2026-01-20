@@ -37,8 +37,6 @@ public final class ListVM: HashableNavigation {
     
     private var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
-    public var onTaskSelected: ((UITaskModel) -> Void)?
-    
     var taskVM: TaskVM?
     
     var tasksVM: [TaskVM] = []
@@ -66,7 +64,11 @@ public final class ListVM: HashableNavigation {
     var completedTasks: [UITaskModel] = []
     
     var candidateForDeletion: UITaskModel?
-    var previewTask: UITaskModel?
+    
+    //MARK: - Async stream
+    
+    public var selectedTaskStream: AsyncStream<UITaskModel>?
+    private var continuation: AsyncStream<UITaskModel>.Continuation?
     
     private var tasksTask: Task<Void, Never>?
     
@@ -114,6 +116,11 @@ public final class ListVM: HashableNavigation {
         taskManager: TaskManagerProtocol
     ) async -> ListVM {
         let vm = ListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
+        
+        let (stream, cont) = AsyncStream<UITaskModel>.makeStream()
+        vm.selectedTaskStream = stream
+        vm.continuation = cont
+        
         vm.completedTasksHidden = profileManager.profileModel.settings.completedTasksHidden
         await vm.downloadTasks()
         vm.asyncUpdateTasks()
@@ -170,6 +177,7 @@ public final class ListVM: HashableNavigation {
     
     private func listenTasksStream() async {
         for await _ in await taskManager.tasksStream {
+            print("here")
             await updateTasks()
         }
     }
@@ -221,7 +229,7 @@ public final class ListVM: HashableNavigation {
     //MARK: - Task tapped
     
     func taskTapped(_ task: UITaskModel) {
-        onTaskSelected?(task)
+        continuation?.yield(task)
     }
     
     func completedTaskViewChange() async {

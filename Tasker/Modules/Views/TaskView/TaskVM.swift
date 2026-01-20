@@ -85,6 +85,8 @@ public final class TaskVM: HashableNavigation {
     var disabledButton = false
     var defaultTimeHasBeenSet = false
     
+    var taskCompletedforToday = false
+    
     var initing = false
     
     //MARK: - Show paywall
@@ -229,6 +231,8 @@ public final class TaskVM: HashableNavigation {
         self.subscriptionManager = subscriptionManager
         self.task = task
         self.profileModel = profileManager.profileModel
+        
+        print(task.taskColor.id)
     }
     
     //MARK: - VM Creator
@@ -337,6 +341,7 @@ public final class TaskVM: HashableNavigation {
         
         await setUpTime()
         await playerManager.setUpTotalTime(task: task)
+        await checkCompletedTaskForToday()
         
         setUpColor()
     }
@@ -466,6 +471,7 @@ public final class TaskVM: HashableNavigation {
         task.notificationDate = changeNotificationTime()
         
         do {
+            print("after save \(task.taskColor.id)")
             try await taskManager.saveTask(task)
             //            createTempAudioFile(audioHash: task.audio)
         } catch {
@@ -651,8 +657,8 @@ public final class TaskVM: HashableNavigation {
     
     //MARK: - Check Complete Task
     
-    func checkCompletedTaskForToday() async -> Bool {
-        await taskManager.checkCompletedTaskForToday(task: task)
+    func checkCompletedTaskForToday() async {
+        taskCompletedforToday = await taskManager.checkCompletedTaskForToday(task: task)
     }
     
     //MARK: - Complete tasks

@@ -21,7 +21,7 @@ public struct TaskView: View {
     
     @FocusState var sectionInFocus: SectionInFocus?
     
-    var preview: Bool = false
+    var preview = false
     
     public enum SectionInFocus: Hashable {
         case title
@@ -44,27 +44,28 @@ public struct TaskView: View {
                     VStack(spacing: 28) {
                         
                         AudioSection()
-                            .ifHidden(preview)
+                            .hidden(preview)
                         
                         MainSection()
                         
                         SetupSection()
                         
                         CustomColorPicker()
+                            .hidden(preview)
                         
                         CreatedDate()
                     }
                 }
+                .fixedSize(horizontal: false, vertical: preview)
                 .ignoresSafeArea(edges: .bottom)
                 .scrollIndicators(.hidden)
                 .scrollDismissesKeyboard(.immediately)
                 .disabled(vm.showPaywall)
-                .padding(.top, preview ? 30 : 0)
                 .padding(.horizontal, 16)
                 .safeAreaInset(edge: .bottom) {
                     SaveButton()
                         .disabled(vm.paywallVM != nil)
-                        .ifHidden(preview)
+                        .hidden(preview)
                         .padding(.leading, 16)
                         .padding(.trailing, 10)
                 }
@@ -149,33 +150,6 @@ public struct TaskView: View {
         .animation(.bouncy, value: vm.showPaywall)
         .animation(.default, value: appearanceManager.colorScheme)
         .animation(.default, value: vm.task.taskColor)
-    }
-    
-    //MARK: - TabBar
-    
-    @ViewBuilder
-    private func CustomTabBar() -> some View {
-        HStack(alignment: .center) {
-            Button {
-                vm.deleteTaskButtonTapped()
-            } label: {
-                Text("Delete", bundle: .module)
-                    .font(.system(.body, design: .rounded, weight: .regular))
-                    .foregroundStyle(.accentRed)
-            }
-            
-            Spacer()
-            
-            //            Button {
-            //                vm.shareViewButtonTapped()
-            //            } label: {
-            //                Image(systemName: "square.and.arrow.up")
-            //            }
-                .padding(.vertical)
-        }
-        .tint(appearanceManager.accentColor)
-        .padding(.top, 14)
-        .padding(.bottom, 3)
     }
     
     //MARK: - Audio Section
@@ -619,7 +593,6 @@ public struct TaskView: View {
                     vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
                 )
         )
-        .ifHidden(preview)
     }
     
     //MARK: - Deadline
@@ -680,20 +653,13 @@ public struct TaskView: View {
         
         //TODO: - Add complete to preset mode
         
-        var complete = false
-        
         HStack {
-            TaskCheckMark(complete: complete, task: vm.task) {
+            TaskCheckMark(complete: vm.taskCompletedforToday, task: vm.task) {
                 Task {
                     dismissButton()
                     
                     try await Task.sleep(nanoseconds: 50_000_000)
                     await vm.checkMarkTapped()
-                }
-            }
-            .onAppear {
-                Task {
-                    complete = await vm.checkCompletedTaskForToday()
                 }
             }
             .padding(12)

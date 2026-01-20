@@ -62,6 +62,7 @@ public final class MainVM: HashableNavigation {
     //    var onboardingManager: OnboardingManagerProtocol
     
     //MARK: - Model
+    
     var mainModel: UIProfileModel?
     
     public var profileModel: UIProfileModel {
@@ -82,6 +83,10 @@ public final class MainVM: HashableNavigation {
     //            }
     //        }
     //    }
+    
+    //MARK: - Async Stream
+    
+    private var selectedTaskTask: Task<Void, Never>?
     
     //MARK: - UI States
     
@@ -255,6 +260,7 @@ public final class MainVM: HashableNavigation {
             weekVM: weekVM
         )
         
+        await vm.selectedTaskSheetSync()
         vm.syncNavigation()
         
         return vm
@@ -311,7 +317,22 @@ public final class MainVM: HashableNavigation {
         }
     }
     
-    private func syncSheetNavigation() {
+    //MARK: - Selected Task Sheet
+    
+    private func selectedTaskSheetSync() async {
+        selectedTaskTask = Task { [weak self, stream = listVM.selectedTaskStream] in
+            guard let stream else { return }
+            for await i in stream {
+                guard let self else { break }
+                
+                await createTaskVM(i)
+            }
+        }
+    }
+    
+    //MARK: - Profile Sheet
+    
+    private func profileSheetSync() async {
         profileVM?.closeButton = { [weak self] in
             guard let self else { return }
             self.sheetNavigation = nil
@@ -373,7 +394,7 @@ public final class MainVM: HashableNavigation {
         
         guard let profileVM else { return }
         
-        syncSheetNavigation()
+        await profileSheetSync()
         
         sheetNavigation = .profile(profileVM)
         backgroundAnimation.toggle()
@@ -498,6 +519,12 @@ public final class MainVM: HashableNavigation {
             )
         )
         
+        await createTaskVM(model, newTask: true)
+    }
+    
+    //MARK: - Create Task VM
+    
+    private func createTaskVM(_ task: UITaskModel, newTask: Bool = false) async {
         taskViewVM = await TaskVM.createTaskVM(
             appearanceManager: appearanceManager,
             taskManager: taskManager,
@@ -506,12 +533,12 @@ public final class MainVM: HashableNavigation {
             profileManager: profileManager,
             dateManager: dateManager,
             recorderManager: recorderManager,
-            task: model
+            task: task
         )
         
         guard let taskViewVM else { return }
         
-        taskViewVM.titleFocused = true
+        taskViewVM.titleFocused = newTask
         sheetNavigation = .taskDetails(taskViewVM)
     }
     

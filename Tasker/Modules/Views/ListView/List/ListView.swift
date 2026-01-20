@@ -114,46 +114,11 @@ public struct ListView: View {
     private func ForEachRespresentable(_ tasks: [UITaskModel]) -> some View {
         ForEach(tasks) { task in
             Button {
-                
+                vm.taskTapped(task)
             } label: {
-                TaskRow(task: task)
+                TaskRowView(task: task, vm: vm)
                     .padding(.vertical, 2)
                     .padding(.horizontal, 8)
-            }
-            
-            //MARK: - Context Menu
-            
-            .contextMenu {
-                ControlGroup {
-                    // Open task
-                    Button {
-                        vm.taskTapped(task)
-                    } label: {
-                        VerticalButtonLabel(text: "Share", systemImage: "square.and.arrow.up")
-                    }
-                    
-                    // Uncomplete task
-                    Button {
-                        Task {
-                            await vm.checkMarkTapped(task: task)
-                        }
-                    } label: {
-                        if vm.checkCompletedTaskForToday(task: task) {
-                            VerticalButtonLabel(text: "Undo", systemImage: "circle")
-                        } else {
-                            VerticalButtonLabel(text: "Done", systemImage: "checkmark.circle")
-                        }
-                    }
-                    
-                    // Delete task
-                    Button(role: .destructive) {
-                        vm.deleteTaskButtonSwiped(task: task)
-                    } label: {
-                        VerticalButtonLabel(text: "Delete", systemImage: "trash")
-                    }
-                }
-            } preview: {
-                TaskViewPreview(listVM: vm, task: task)
             }
             
             //MARK: - Swipe action
@@ -179,113 +144,6 @@ public struct ListView: View {
         .listRowSeparator(.hidden)
         .listRowInsets(EdgeInsets())
     }
-    
-    //MARK: Task row
-    
-    @ViewBuilder
-    private func TaskRow(task: UITaskModel) -> some View {
-        HStack(spacing: 0) {
-            HStack(spacing: 12) {
-                TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task), task: task) {
-                    Task {
-                        await vm.checkMarkTapped(task: task)
-                    }
-                }
-                
-                HStack {
-                    Text(LocalizedStringKey(vm.taskTitle(task: task)), bundle: .module)
-                        .font(.system(.body, design: .rounded, weight: .regular))
-                        .multilineTextAlignment(.leading)
-                        .foregroundStyle(task.taskRowColor(colorScheme: colorScheme).invertedPrimaryLabel(task: task, colorScheme))
-                        .font(.callout)
-                        .lineLimit(1)
-                    
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            
-            HStack(spacing: 12) {
-                NotificationDeadlineDate(task: task)
-                    .allowsHitTesting(vm.isTaskHasDeadline(task: task))
-                    .onTapGesture {
-                        vm.showDedalineButtonTapped(task: task)
-                    }
-                
-                PlayButton(task: task)
-            }
-        }
-        .taskDeleteDialog(isPresented: vm.dialogBinding(for: task), task: task) { value in
-            await vm.deleteButtonTapped(task: task, deleteCompletely: value)
-        }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 11)
-        .background(
-            withAnimation {
-                RoundedRectangle(cornerRadius: 22)
-                    .fill(
-                        task.taskRowColor(colorScheme: colorScheme)
-                    )
-            }
-        )
-        .frame(height: 52)
-    }
-    
-    //MARK: - Notification/Deadline date
-    @ViewBuilder
-    private func NotificationDeadlineDate(task: UITaskModel) -> some View {
-        if vm.showDeadlinePicker {
-            Text(LocalizedStringKey(vm.timeRemainingString(task: task)), bundle: .module)
-                .font(.system(.subheadline, design: .rounded, weight: .regular))
-                .foregroundStyle(vm.isTaskOverdue(task: task) ? .accentRed : task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                .underline(true, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
-        } else {
-            Text(Date(timeIntervalSince1970: task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
-                .font(.system(.subheadline, design: .rounded, weight: .regular))
-                .foregroundStyle(task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
-                .underline(vm.isTaskHasDeadline(task: task) ? true : false, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
-                .padding(.leading, 6)
-                .lineLimit(1)
-        }
-    }
-    
-    //MARK: - Play Button
-    
-    @ViewBuilder
-    private func PlayButton(task: UITaskModel) -> some View {
-        ZStack {
-            Circle()
-                .fill(task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(task: task, colorScheme))
-            
-            if task.audio != nil {
-                Image(systemName: vm.playing ? "pause.fill" : "play.fill")
-                    .foregroundStyle(.white)
-                    .animation(.default, value: vm.playing)
-                    .onTapGesture {
-                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        Task {
-                            await vm.playButtonTapped(task: task)
-                        }
-                    }
-            } else {
-                Image(systemName: "plus").bold()
-                    .foregroundStyle(.white)
-                    .animation(.default, value: vm.playing)
-            }
-        }
-        .frame(width: 28, height: 28)
-    }
-    
-    //MARK: - Menu Buttons
-    
-    @ViewBuilder
-    private func VerticalButtonLabel(text: LocalizedStringKey, systemImage: String) -> some View {
-        VStack {
-            Text(text, bundle: .module)
-            
-            Image(systemName: systemImage)
-        }
-    }
 }
 
 struct TaskViewPreview: View {
@@ -295,9 +153,6 @@ struct TaskViewPreview: View {
     
     var body: some View {
         TaskView(taskVM: listVM.tasksVM.first(where: { $0.task.id == task.id })!, preview: true)
-            .task {
-                listVM.previewTask = task
-            }
     }
 }
 

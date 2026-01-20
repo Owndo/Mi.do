@@ -74,7 +74,7 @@ public extension View {
 //MARK: - Check TaskView for preview
 public extension View {
     @ViewBuilder
-    func ifHidden(_ shouldHide: Bool) -> some View {
+    func hidden(_ shouldHide: Bool) -> some View {
         if !shouldHide {
             self
         }

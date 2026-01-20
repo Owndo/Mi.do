@@ -146,16 +146,6 @@ public struct ListView: View {
     }
 }
 
-struct TaskViewPreview: View {
-    
-    var listVM: ListVM
-    var task: UITaskModel
-    
-    var body: some View {
-        TaskView(taskVM: listVM.tasksVM.first(where: { $0.task.id == task.id })!, preview: true)
-    }
-}
-
 #Preview {
     @Previewable
     @State var listVM: ListVM?

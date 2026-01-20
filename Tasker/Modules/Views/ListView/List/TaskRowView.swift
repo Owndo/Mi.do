@@ -8,6 +8,7 @@
 import SwiftUI
 import Models
 import UIComponents
+import TaskView
 
 struct TaskRowView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -49,6 +50,12 @@ struct TaskRowView: View {
                 PlayButton(task: task)
             }
         }
+//        .onChange(of: isPressed) { _, newValue in
+//            Task {
+//                try? await Task.sleep(for: .seconds(0.5))
+//                isPressed = false
+//            }
+//        }
         //MARK: - Context menu
         .taskDeleteDialog(isPresented: vm.dialogBinding(for: task), task: task) { value in
             await vm.deleteButtonTapped(task: task, deleteCompletely: value)
@@ -76,6 +83,7 @@ struct TaskRowView: View {
     }
     
     //MARK: - Notification/Deadline date
+    
     @ViewBuilder
     private func NotificationDeadlineDate(task: UITaskModel) -> some View {
         if vm.showDeadlinePicker {
@@ -156,12 +164,26 @@ struct TaskRowView: View {
     TaskRowView(task: mockModel(), vm: ListVM.creteMockListVM())
 }
 
+
+//MARK: - Task View Preview
+
+struct TaskViewPreview: View {
+    
+    var listVM: ListVM
+    var task: UITaskModel
+    
+    var body: some View {
+        TaskView(taskVM: listVM.tasksVM.first(where: { $0.task.id == task.id })!, preview: true)
+    }
+}
+
 extension View {
     func contextMenuWithPreview<Content: View>(menu: UIMenu, @ViewBuilder preview: @escaping () -> Content, isPressed: Binding<Bool>, action: @escaping () -> Void) -> some View {
         self
             .scaleEffect(isPressed.wrappedValue ? 0.96 : 1)
             .opacity(isPressed.wrappedValue ? 0.85 : 1)
-            .animation(.easeOut(duration: 0.15), value: isPressed.wrappedValue)
+            .animation(.easeIn(duration: 0.2), value: isPressed.wrappedValue)
+            .shadow(radius: isPressed.wrappedValue ? 5 : 0)
             .overlay(
                 InteractionView(
                     preview: preview,
@@ -225,8 +247,11 @@ private struct InteractionView<Content: View>: UIViewRepresentable {
         }
         
         func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-            DispatchQueue.main.async {
+            Task {
                 self.isPressed.wrappedValue = true
+                
+                try? await Task.sleep(for: .seconds(0.5))
+                self.isPressed.wrappedValue = false
             }
             
             return UIContextMenuConfiguration(
@@ -240,11 +265,11 @@ private struct InteractionView<Content: View>: UIViewRepresentable {
             )
         }
         
-        func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willDisplayMenuFor configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
-            animator?.addAnimations {
-                self.isPressed.wrappedValue = false
-            }
-        }
+//        func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willDisplayMenuFor configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
+//            animator?.addAnimations {
+//                self.isPressed.wrappedValue = false
+//            }
+//        }
         
         func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
             animator.addCompletion(self.didTapPreview)

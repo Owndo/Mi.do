@@ -177,7 +177,6 @@ public final class ListVM: HashableNavigation {
     
     private func listenTasksStream() async {
         for await _ in await taskManager.tasksStream {
-            print("here")
             await updateTasks()
         }
     }

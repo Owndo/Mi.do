@@ -63,6 +63,9 @@ public final class ListVM: HashableNavigation {
     var activeTasks: [UITaskModel] = []
     var completedTasks: [UITaskModel] = []
     
+    /// ID for update ForEach inside the view
+    var forEachID = UUID()
+    
     var candidateForDeletion: UITaskModel?
     
     //MARK: - Async stream
@@ -209,6 +212,8 @@ public final class ListVM: HashableNavigation {
             
             tasksVM.append(taskVM)
         }
+        
+        forEachID = UUID()
     }
     
     //MARK: - Sorted tasks

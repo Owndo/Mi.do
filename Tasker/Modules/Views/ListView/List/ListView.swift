@@ -61,7 +61,6 @@ public struct ListView: View {
                         
                         Spacer()
                         
-                        //                        Text(vm.completedTasksHidden ? "Show" : "Hide")
                         Image(systemName: "chevron.down")
                             .rotationEffect(.degrees(vm.completedTasksHidden ? 180 : 0))
                             .symbolEffect(.bounce, value: vm.completedTasksHidden)
@@ -140,6 +139,7 @@ public struct ListView: View {
                 }
             }
         }
+        .id(vm.forEachID)
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
         .listRowInsets(EdgeInsets())

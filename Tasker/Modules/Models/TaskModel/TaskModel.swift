@@ -89,12 +89,12 @@ public class TaskModelWrapper<T: Encodable>: Identifiable, Equatable {
 }
 
 @Observable
-public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable, @unchecked Sendable {
+public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable {
     
     public static func == (lhs: UITaskModel, rhs: UITaskModel) -> Bool {
         lhs.model.id == rhs.model.id
     }
-
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(model.id)
     }
@@ -148,10 +148,10 @@ public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable, @unchecked Send
         set { model.value.voiceMode = nilIfNeed(newValue, is: false) }
     }
     
-//    public var markAsDeleted: Bool {
-//        get { model.value.markAsDeleted ?? false }
-//        set { model.value.markAsDeleted = nilIfNeed(newValue, is: false) }
-//    }
+    //    public var markAsDeleted: Bool {
+    //        get { model.value.markAsDeleted ?? false }
+    //        set { model.value.markAsDeleted = nilIfNeed(newValue, is: false) }
+    //    }
     
     public var repeatTask: RepeatTask {
         get { model.value.repeatTask ?? .never }

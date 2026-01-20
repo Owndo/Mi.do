@@ -231,7 +231,6 @@ public final actor TaskManager: TaskManagerProtocol {
         tasks[task.id] = task
         
         continuation.yield()
-        print("yield in task manager")
     }
     
     // MARK: - Delete task

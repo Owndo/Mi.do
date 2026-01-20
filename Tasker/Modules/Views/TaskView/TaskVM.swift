@@ -231,8 +231,6 @@ public final class TaskVM: HashableNavigation {
         self.subscriptionManager = subscriptionManager
         self.task = task
         self.profileModel = profileManager.profileModel
-        
-        print(task.taskColor.id)
     }
     
     //MARK: - VM Creator
@@ -471,7 +469,6 @@ public final class TaskVM: HashableNavigation {
         task.notificationDate = changeNotificationTime()
         
         do {
-            print("after save \(task.taskColor.id)")
             try await taskManager.saveTask(task)
             //            createTempAudioFile(audioHash: task.audio)
         } catch {
@@ -562,10 +559,10 @@ public final class TaskVM: HashableNavigation {
     //MARK: - First time check
     
     private func firstTimeCreateTask(_ task: UITaskModel) async -> Date? {
-//        guard await taskManager.activeTasks.contains(where: { $0.id == task.id }) else {
-//            defaultTimeHasBeenSet = true
-//            return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: originalNotificationTimeComponents)
-//        }
+        //        guard await taskManager.activeTasks.contains(where: { $0.id == task.id }) else {
+        //            defaultTimeHasBeenSet = true
+        //            return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: originalNotificationTimeComponents)
+        //        }
         
         return nil
     }

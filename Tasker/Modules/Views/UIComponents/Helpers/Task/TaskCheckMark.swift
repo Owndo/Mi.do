@@ -27,8 +27,8 @@ public struct TaskCheckMark: View {
     public var body: some View {
         ZStack {
             Circle()
-                .fill(task.taskColor.color(for: colorScheme)
-                    .invertedBackgroundTertiary(task: task, colorScheme))
+                .fill(colorScheme
+                    .invertedBackgroundTertiary(task))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .overlay(
                     Circle()
@@ -40,7 +40,7 @@ public struct TaskCheckMark: View {
             
             if animate {
                 Image(systemName: "checkmark")
-                    .foregroundStyle(task.taskColor.color(for: colorScheme).invertedSecondaryLabel(task: task, colorScheme))
+                    .foregroundStyle(colorScheme.invertedSecondaryLabel(task))
                     .bold()
                     .transition(.scale)
             }

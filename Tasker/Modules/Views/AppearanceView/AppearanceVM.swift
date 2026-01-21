@@ -26,16 +26,18 @@ public final class AppearanceVM: HashableNavigation {
     @ObservationIgnored
     var customBackgroundColor = Color.black {
         didSet {
-            changeStateTrigger.toggle()
-            profileData.settings.background = BackgroundColorEnum.custom(customBackgroundColor.toHex()).setUpColor()
+            Task {
+                await changeBackgroundColor(BackgroundColorEnum.custom(customBackgroundColor.toHex()))
+            }
         }
     }
     
     @ObservationIgnored
     var customAccentColor = Color.black {
         didSet {
-            changeStateTrigger.toggle()
-            profileData.settings.accentColor = AccentColorEnum.custom(customAccentColor.toHex()).setUpColor()
+            Task {
+                await changeAccentColor(AccentColorEnum.custom(customAccentColor.toHex()))
+            }
         }
     }
     

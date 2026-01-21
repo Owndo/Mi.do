@@ -12,7 +12,7 @@ import UIKit
 import PaywallView
 
 public struct TaskView: View {
-    @Environment(\.appearanceManager) var appearanceManager
+//    @Environment(\.appearanceManager) var appearanceManager
     @Environment(\.colorScheme) var colorScheme
     
     @Environment(\.dismiss) var dismissButton
@@ -36,8 +36,7 @@ public struct TaskView: View {
     public var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(colors: [vm.backgroundColor, appearanceManager.backgroundColor], startPoint: .bottom, endPoint: .top)
-                    .opacity(0.7)
+            BackgroundGradient()
                     .ignoresSafeArea()
                 
                 ScrollView {
@@ -69,7 +68,7 @@ public struct TaskView: View {
                         .padding(.leading, 16)
                         .padding(.trailing, 10)
                 }
-                .onAppear {
+                .task {
                     vm.onAppear(colorScheme: colorScheme)
                     
                     if vm.titleFocused {
@@ -148,8 +147,23 @@ public struct TaskView: View {
         }
         .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
         .animation(.bouncy, value: vm.showPaywall)
-        .animation(.default, value: appearanceManager.colorScheme)
+        .animation(.default, value: vm.appearanceManager.colorScheme)
         .animation(.default, value: vm.task.taskColor)
+    }
+    
+    //MARK: - Background gradient
+    
+    @ViewBuilder
+    private func BackgroundGradient() -> some View {
+        LinearGradient(
+            colors: [
+                colorScheme.taskBackground(
+                    vm.task,
+                    vm.appearanceManager),
+                vm.appearanceManager.backgroundColor
+            ],
+            startPoint: .bottom, endPoint: .top)
+            .opacity(0.7)
     }
     
     //MARK: - Audio Section
@@ -200,7 +214,7 @@ public struct TaskView: View {
                     vm.isDragging = editing
                 }
             )
-            .tint(appearanceManager.accentColor)
+            .tint(vm.appearanceManager.accentColor)
             
             Text(vm.currentTimeString())
                 .font(.system(.callout, design: .rounded, weight: .regular))
@@ -225,7 +239,7 @@ public struct TaskView: View {
     private func VoiceModeToogle() -> some View {
         HStack(spacing: 12) {
             Image(systemName: "bell")
-                .foregroundStyle(appearanceManager.accentColor)
+                .foregroundStyle(vm.appearanceManager.accentColor)
             
             Toggle(isOn: $vm.task.voiceMode) {
                 Text("Play your voice in notification", bundle: .module)
@@ -267,12 +281,12 @@ public struct TaskView: View {
                     Image(systemName: vm.isRecording ? "pause.fill" : "microphone.fill")
                         .foregroundStyle(.white)
                         .padding(8)
-                        .glassEffect(.regular.tint(appearanceManager.accentColor).interactive(), in: .circle)
+                        .glassEffect(.regular.tint(vm.appearanceManager.accentColor).interactive(), in: .circle)
                     
                 } else {
                     ZStack {
                         Circle()
-                            .fill(appearanceManager.accentColor)
+                            .fill(vm.appearanceManager.accentColor)
                             .frame(width: 34, height: 34)
                         
                         Image(systemName: vm.isRecording ? "pause.fill" : "microphone.fill")
@@ -300,7 +314,7 @@ public struct TaskView: View {
             TextField("", text: $vm.task.title, prompt: Text("New task", bundle: .module))
                 .font(.title2)
                 .fontWeight(.bold)
-                .tint(appearanceManager.accentColor)
+                .tint(vm.appearanceManager.accentColor)
                 .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
@@ -317,7 +331,7 @@ public struct TaskView: View {
             TextField("", text: $vm.task.description, prompt: Text("Add more information", bundle: .module), axis: .vertical)
                 .font(.system(.body, design: .rounded, weight: .regular))
                 .frame(minHeight: 70, alignment: .top)
-                .tint(appearanceManager.accentColor)
+                .tint(vm.appearanceManager.accentColor)
                 .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
@@ -349,7 +363,7 @@ public struct TaskView: View {
         .background(
             RoundedRectangle(cornerRadius: 26)
                 .fill(
-                    vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
+                    colorScheme.invertedBackgroundTertiary(vm.task)
                 )
         )
         
@@ -365,18 +379,18 @@ public struct TaskView: View {
             } label: {
                 HStack(spacing: 13) {
                     Image(systemName: "calendar")
-                        .foregroundStyle(appearanceManager.accentColor)
+                        .foregroundStyle(vm.appearanceManager.accentColor)
                     
                     Text("Date", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                        .foregroundStyle(colorScheme.invertedPrimaryLabel(vm.task))
                         .padding(.vertical, 13)
                     
                     Spacer()
                     
                     Text(vm.textForNotificationDate, bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
+                        .foregroundStyle(colorScheme.invertedSecondaryLabel(vm.task))
                 }
             }
             .padding(.leading, 17)
@@ -387,7 +401,7 @@ public struct TaskView: View {
                     .datePickerStyle(.graphical)
                     .scrollDismissesKeyboard(.immediately)
                     .id(vm.notificationDate)
-                    .tint(appearanceManager.accentColor)
+                    .tint(vm.appearanceManager.accentColor)
             }
             
             CustomDivider()
@@ -406,11 +420,11 @@ public struct TaskView: View {
             } label: {
                 HStack(spacing: 13) {
                     Image(systemName: "clock")
-                        .foregroundStyle(appearanceManager.accentColor)
+                        .foregroundStyle(vm.appearanceManager.accentColor)
                     
                     Text("Time", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                        .foregroundStyle(colorScheme.invertedPrimaryLabel(vm.task))
                         .padding(.vertical, 13)
                     
                     
@@ -418,7 +432,7 @@ public struct TaskView: View {
                     
                     Text(vm.notificationDate, format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
+                        .foregroundStyle(colorScheme.invertedSecondaryLabel(vm.task))
                 }
             }
             .padding(.leading, 17)
@@ -427,7 +441,7 @@ public struct TaskView: View {
             if vm.showTimePicker {
                 DatePicker("", selection: $vm.notificationDate, displayedComponents: .hourAndMinute)
                     .datePickerStyle(.wheel)
-                    .tint(appearanceManager.accentColor)
+                    .tint(vm.appearanceManager.accentColor)
             }
             
             CustomDivider()
@@ -443,11 +457,11 @@ public struct TaskView: View {
         VStack(spacing: 0) {
             HStack {
                 Image(systemName: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
-                    .foregroundStyle(appearanceManager.accentColor)
+                    .foregroundStyle(vm.appearanceManager.accentColor)
                 
                 Text("Repeat", bundle: .module)
                     .font(.system(.body, design: .rounded, weight: .regular))
-                    .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                    .foregroundStyle(colorScheme.invertedPrimaryLabel(vm.task))
                     .padding(.vertical, 13)
                 
                 Spacer()
@@ -464,7 +478,7 @@ public struct TaskView: View {
                             .font(.system(.body, design: .rounded, weight: .regular))
                     }
                 }
-                .tint(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
+                .tint(colorScheme.invertedSecondaryLabel(vm.task))
                 .pickerStyle(.menu)
             }
             .padding(.leading, 17)
@@ -493,7 +507,7 @@ public struct TaskView: View {
                     } label: {
                         Text(LocalizedStringKey(day.name), bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
-                            .foregroundStyle(day.value ? appearanceManager.accentColor : vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                            .foregroundStyle(day.value ? vm.appearanceManager.accentColor : colorScheme.invertedPrimaryLabel(vm.task))
                             .padding(.vertical, 13)
                     }
                 }
@@ -503,11 +517,11 @@ public struct TaskView: View {
             
             HStack(alignment: .center,spacing: 4) {
                 Image(systemName: "info.circle")
-                    .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                    .foregroundStyle(colorScheme.invertedPrimaryLabel(vm.task))
                 
                 Text("Pick the days of the week to repeat", bundle: .module)
                     .font(.system(.footnote, design: .rounded, weight: .regular))
-                    .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                    .foregroundStyle(colorScheme.invertedPrimaryLabel(vm.task))
             }
             .padding(.bottom, 13)
         }
@@ -523,7 +537,7 @@ public struct TaskView: View {
             HStack {
                 Text("Color task", bundle: .module)
                     .font(.system(.callout, design: .rounded, weight: .regular))
-                    .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
+                    .foregroundStyle(colorScheme.invertedSecondaryLabel(vm.task))
                 
                 Spacer()
             }
@@ -552,7 +566,7 @@ public struct TaskView: View {
                                         Image(systemName: "checkmark")
                                             .symbolEffect(.bounce, value: vm.selectedColorTapped)
                                             .foregroundStyle(
-                                                vm.checkColorForCheckMark(color, for: colorScheme) ? vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme) : .clear
+                                                vm.checkColorForCheckMark(color, for: colorScheme) ? colorScheme.invertedSecondaryLabel(vm.task) : .clear
                                             )
                                     }
                                 )
@@ -576,7 +590,7 @@ public struct TaskView: View {
                         
                         if vm.task.taskColor == .custom(vm.color.toHex()) {
                             Image(systemName: "checkmark")
-                                .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
+                                .foregroundStyle(colorScheme.invertedSecondaryLabel(vm.task))
                         }
                     }
                     .offset(y: 5)
@@ -590,7 +604,7 @@ public struct TaskView: View {
         .background(
             RoundedRectangle(cornerRadius: 26)
                 .fill(
-                    vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme)
+                    colorScheme.invertedBackgroundTertiary(vm.task)
                 )
         )
     }
@@ -605,11 +619,11 @@ public struct TaskView: View {
                     vm.showDedalineButtonTapped()
                 } label: {
                     Image(systemName: "flame.fill")
-                        .foregroundStyle(appearanceManager.accentColor)
+                        .foregroundStyle(vm.appearanceManager.accentColor)
                     
                     Text("Deadline", bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
-                        .foregroundStyle(vm.backgroundColor.invertedPrimaryLabel(task: vm.task, colorScheme))
+                        .foregroundStyle(colorScheme.invertedPrimaryLabel(vm.task))
                         .padding(.vertical, 13)
                     
                     Spacer()
@@ -617,11 +631,11 @@ public struct TaskView: View {
                     if vm.task.deadline != nil {
                         Text(vm.textForDeadlineDate, bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
-                            .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
+                            .foregroundStyle(colorScheme.invertedSecondaryLabel(vm.task))
                     }
                     
                     Toggle(isOn: $vm.hasDeadline) {}
-                        .tint(appearanceManager.accentColor)
+                        .tint(vm.appearanceManager.accentColor)
                         .padding(.trailing, 2)
                         .fixedSize()
                 }
@@ -633,7 +647,7 @@ public struct TaskView: View {
                 DatePicker("", selection: $vm.deadLineDate, in: vm.notificationDate..., displayedComponents: .date, )
                     .datePickerStyle(.graphical)
                     .id(vm.deadLineDate)
-                    .tint(appearanceManager.accentColor)
+                    .tint(vm.appearanceManager.accentColor)
             }
         }
         //        .onChange(of: vm.hasDeadline) { oldValue, newValue in
@@ -665,7 +679,7 @@ public struct TaskView: View {
             .padding(12)
             .background(
                 Circle()
-                    .fill(vm.backgroundColor.invertedBackgroundTertiary(task: vm.task, colorScheme))
+                    .fill(colorScheme.invertedBackgroundTertiary(vm.task))
             )
             
             HStack {
@@ -685,7 +699,7 @@ public struct TaskView: View {
                             .foregroundStyle(.white)
                             .padding(.vertical, 15)
                             .frame(maxWidth: .infinity)
-                            .glassEffect(.regular.tint(appearanceManager.accentColor).interactive())
+                            .glassEffect(.regular.tint(vm.appearanceManager.accentColor).interactive())
                     } else {
                         Text("Close", bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
@@ -694,7 +708,7 @@ public struct TaskView: View {
                             .frame(maxWidth: .infinity)
                             .background(
                                 RoundedRectangle(cornerRadius: 26)
-                                    .fill(appearanceManager.accentColor)
+                                    .fill(vm.appearanceManager.accentColor)
                             )
                     }
                 }
@@ -726,15 +740,15 @@ public struct TaskView: View {
         HStack(alignment: .center, spacing: 4) {
             Image(systemName: "calendar")
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
-                .foregroundStyle(vm.backgroundColor.invertedTertiaryLabel(task: vm.task, colorScheme))
+                .foregroundStyle(colorScheme.invertedTertiaryLabel(vm.task))
             
             Text("Created:", bundle: .module)
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
-                .foregroundStyle(vm.backgroundColor.invertedTertiaryLabel(task: vm.task, colorScheme))
+                .foregroundStyle(colorScheme.invertedTertiaryLabel(vm.task))
             
             Text(Date(timeIntervalSince1970:vm.task.createDate).formatted(.dateTime.month().day().hour().minute().year()))
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
-                .foregroundStyle(vm.backgroundColor.invertedSecondaryLabel(task: vm.task, colorScheme))
+                .foregroundStyle(colorScheme.invertedSecondaryLabel(vm.task))
         }
     }
     
@@ -743,7 +757,7 @@ public struct TaskView: View {
     @ViewBuilder
     private func CustomDivider() -> some View {
         RoundedRectangle(cornerRadius: 1)
-            .fill(vm.backgroundColor.invertedSeparartorPrimary(task: vm.task, colorScheme))
+            .fill(colorScheme.invertedSeparartorPrimary(vm.task))
             .frame(height: 1)
             .padding(.leading, 16)
     }

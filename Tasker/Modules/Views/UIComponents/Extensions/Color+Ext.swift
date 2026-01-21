@@ -75,65 +75,6 @@ public extension Color {
         return shouldInvertForReadability() ? Color.white : Color.black
     }
     
-    func invertedPrimaryLabel(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
-        guard task.taskColor != .baseColor else {
-            return .labelPrimary
-        }
-        
-        if colorScheme == .dark {
-            return .labelPrimary
-        } else {
-            return shouldInvertForReadability() ? .labelPrimaryInverted : .labelPrimary
-        }
-    }
-    
-    func invertedSecondaryLabel(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
-        guard task.taskColor != .baseColor else {
-            return .labelSecondary
-        }
-        
-        if colorScheme == .dark {
-            return .labelSecondary
-        } else {
-            return shouldInvertForReadability() ? .labelSecondaryInverted : .labelSecondary
-        }
-    }
-    
-    func invertedTertiaryLabel(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
-        guard task.taskColor != .baseColor else {
-            return .labelTertiary
-        }
-        
-        if colorScheme == .dark {
-            return .labelTertiary
-        } else {
-            return shouldInvertForReadability() ? .labelTertiaryInverted : .labelTertiary
-        }
-    }
-    
-    func invertedBackgroundTertiary(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
-        guard task.taskColor != .baseColor else {
-            return .backgroundTertiary
-        }
-        
-        if colorScheme == .dark {
-            return .backgroundTertiary
-        } else {
-            return shouldInvertForReadability() ? .backgroundTertiaryInverted : .backgroundTertiary
-        }
-    }
-    
-    func invertedSeparartorPrimary(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
-        guard task.taskColor != .baseColor else {
-            return .separatorPrimary
-        }
-        
-        if colorScheme == .dark {
-            return .separatorPrimary
-        } else {
-            return shouldInvertForReadability() ? .separatorPrimaryInverted : .separatorPrimary
-        }
-    }
     
     func invertedSeparartorSecondary(task: UITaskModel, _ colorScheme: ColorScheme) -> Color {
         guard task.taskColor != .baseColor else {

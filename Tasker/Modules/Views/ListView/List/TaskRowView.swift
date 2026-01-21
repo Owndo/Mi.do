@@ -31,7 +31,7 @@ struct TaskRowView: View {
                     Text(LocalizedStringKey(vm.taskTitle(task: task)), bundle: .module)
                         .font(.system(.body, design: .rounded, weight: .regular))
                         .multilineTextAlignment(.leading)
-                        .foregroundStyle(task.taskRowColor(colorScheme: colorScheme).invertedPrimaryLabel(task: task, colorScheme))
+                        .foregroundStyle(colorScheme.invertedPrimaryLabel(task))
                         .font(.callout)
                         .lineLimit(1)
                     
@@ -89,12 +89,12 @@ struct TaskRowView: View {
         if vm.showDeadlinePicker {
             Text(LocalizedStringKey(vm.timeRemainingString(task: task)), bundle: .module)
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
-                .foregroundStyle(vm.isTaskOverdue(task: task) ? .accentRed : task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                .foregroundStyle(vm.isTaskOverdue(task: task) ? .accentRed : colorScheme.invertedTertiaryLabel(task))
                 .underline(true, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
         } else {
             Text(Date(timeIntervalSince1970: task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
-                .foregroundStyle(task.taskRowColor(colorScheme: colorScheme).invertedTertiaryLabel(task: task, colorScheme))
+                .foregroundStyle(colorScheme.invertedTertiaryLabel(task))
                 .underline(vm.isTaskHasDeadline(task: task) ? true : false, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
                 .padding(.leading, 6)
                 .lineLimit(1)
@@ -107,7 +107,7 @@ struct TaskRowView: View {
     private func PlayButton(task: UITaskModel) -> some View {
         ZStack {
             Circle()
-                .fill(task.taskColor.color(for: colorScheme).invertedBackgroundTertiary(task: task, colorScheme))
+                .fill(colorScheme.invertedBackgroundTertiary(task))
             
             if task.audio != nil {
                 Image(systemName: vm.playing ? "pause.fill" : "play.fill")
@@ -183,7 +183,6 @@ extension View {
             .scaleEffect(isPressed.wrappedValue ? 0.96 : 1)
             .opacity(isPressed.wrappedValue ? 0.85 : 1)
             .animation(.easeIn(duration: 0.2), value: isPressed.wrappedValue)
-            .shadow(radius: isPressed.wrappedValue ? 5 : 0)
             .overlay(
                 InteractionView(
                     preview: preview,
@@ -264,12 +263,6 @@ private struct InteractionView<Content: View>: UIViewRepresentable {
                 }
             )
         }
-        
-//        func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willDisplayMenuFor configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionAnimating?) {
-//            animator?.addAnimations {
-//                self.isPressed.wrappedValue = false
-//            }
-//        }
         
         func contextMenuInteraction(_ interaction: UIContextMenuInteraction, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
             animator.addCompletion(self.didTapPreview)

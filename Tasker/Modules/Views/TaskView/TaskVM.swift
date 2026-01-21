@@ -445,7 +445,7 @@ public final class TaskVM: HashableNavigation {
         telemetryAction(.taskAction(.changeColorButtonTapped(taskColor)))
     }
     
-    func checkColorForCheckMark(_ taskColor: TaskColor,  for colorScheme: ColorScheme) -> Bool {
+    func checkColorForCheckMark(_ taskColor: TaskColor, for colorScheme: ColorScheme) -> Bool {
         guard taskColor == .baseColor && backgroundColor == appearanceManager.backgroundColor else {
             return taskColor.color(for: colorScheme) == backgroundColor
         }

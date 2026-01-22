@@ -11,11 +11,11 @@ public struct SettingsButtonRow: View {
     @Environment(\.appearanceManager) var appearanceManager
     
     public var icon: String
-    public var title: LocalizedStringKey
+    public var title: Text
     public var actionIcon: String = "chevron.right"
     public var action: () -> Void
     
-    public init(icon: String, title: LocalizedStringKey, action: @escaping () -> Void) {
+    public init(icon: String, title: Text, action: @escaping () -> Void) {
         self.icon = icon
         self.title = title
         self.action = action
@@ -30,7 +30,7 @@ public struct SettingsButtonRow: View {
                     .foregroundStyle(appearanceManager.accentColor)
                     .frame(width: 32, height: 32)
                 
-                Text(title, bundle: .module)
+                title
                     .font(.system(.callout, design: .rounded, weight: .regular))
                     .foregroundStyle(.labelPrimary)
                     .minimumScaleFactor(0.5)
@@ -46,5 +46,5 @@ public struct SettingsButtonRow: View {
 }
 
 #Preview {
-    SettingsButtonRow(icon: "", title: "", action: {})
+    SettingsButtonRow(icon: "", title: Text(""), action: {})
 }

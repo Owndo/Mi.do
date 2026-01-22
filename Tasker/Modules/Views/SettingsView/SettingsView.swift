@@ -27,7 +27,7 @@ public struct SettingsView: View {
             
             ScrollView {
                 VStack {
-                    SettingsButtonRow(icon: "swirl.circle.righthalf.filled", title: "Appearance") {
+                    SettingsButtonRow(icon: "swirl.circle.righthalf.filled", title: Text("Appearance", bundle: .module)) {
                         vm.appearanceButtonTapped()
                     }
                     
@@ -70,7 +70,7 @@ public struct SettingsView: View {
                     //                        .frame(height: 1)
                     //                        .padding(.leading, 38)
                     
-                    SettingsButtonRow(icon: "lock.shield", title: "Privacy Policy") {
+                    SettingsButtonRow(icon: "lock.shield", title: Text("Privacy Policy", bundle: .module)) {
                         openURL(ConfigurationFile.privacy)
                     }
                     
@@ -78,7 +78,7 @@ public struct SettingsView: View {
                         .frame(height: 1)
                         .padding(.leading, 38)
                     
-                    SettingsButtonRow(icon: "doc", title: "Terms of Use") {
+                    SettingsButtonRow(icon: "doc", title: Text("Terms of Use", bundle: .module)) {
                         openURL(ConfigurationFile.terms)
                     }
                     .padding(.bottom, 28)

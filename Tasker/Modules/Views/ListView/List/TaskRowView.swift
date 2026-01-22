@@ -19,67 +19,149 @@ struct TaskRowView: View {
     @State var isPressed = false
     
     var body: some View {
-        HStack(spacing: 0) {
-            HStack(spacing: 12) {
-                TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task), task: task) {
-                    Task {
-                        await vm.checkMarkTapped(task: task)
+        if #available(iOS 26, *) {
+            HStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task), task: task) {
+                        Task {
+                            await vm.checkMarkTapped(task: task)
+                        }
                     }
+                    
+                    HStack {
+                        Text(LocalizedStringKey(vm.taskTitle(task: task)), bundle: .module)
+                            .font(.system(.body, design: .rounded, weight: .regular))
+                            .multilineTextAlignment(.leading)
+                            .foregroundStyle(colorScheme.invertedPrimaryLabel(task))
+                            .font(.callout)
+                            .lineLimit(1)
+                        
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
                 
-                HStack {
-                    Text(LocalizedStringKey(vm.taskTitle(task: task)), bundle: .module)
-                        .font(.system(.body, design: .rounded, weight: .regular))
-                        .multilineTextAlignment(.leading)
-                        .foregroundStyle(colorScheme.invertedPrimaryLabel(task))
-                        .font(.callout)
-                        .lineLimit(1)
+                HStack(spacing: 12) {
+                    NotificationDeadlineDate(task: task)
+                        .allowsHitTesting(vm.isTaskHasDeadline(task: task))
+                        .onTapGesture {
+                            vm.showDedalineButtonTapped(task: task)
+                        }
                     
-                    Spacer()
+                    PlayButton(task: task)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             
-            HStack(spacing: 12) {
-                NotificationDeadlineDate(task: task)
-                    .allowsHitTesting(vm.isTaskHasDeadline(task: task))
-                    .onTapGesture {
-                        vm.showDedalineButtonTapped(task: task)
+            //MARK: - Delete dialog
+            
+            .taskDeleteDialog(isPresented: vm.dialogBinding(for: task), task: task) { value in
+                await vm.deleteButtonTapped(task: task, deleteCompletely: value)
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 11)
+            .background(
+                withAnimation {
+                    RoundedRectangle(cornerRadius: 22)
+                        .fill(
+                            task.taskRowColor(colorScheme: colorScheme)
+                        )
+                }
+            )
+            
+            //MARK: - Context menu
+            
+            .contextMenuWithPreview(
+                menu: CustomMenu(),
+                preview: {
+                    TaskViewPreview(listVM: vm, task: task)
+                },
+                isPressed: $isPressed,
+                action: {
+                    vm.taskTapped(task)
+                })
+            .frame(height: 52)
+        } else {
+            HStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task), task: task) {
+                        Task {
+                            await vm.checkMarkTapped(task: task)
+                        }
                     }
+                    
+                    HStack {
+                        Text(LocalizedStringKey(vm.taskTitle(task: task)), bundle: .module)
+                            .font(.system(.body, design: .rounded, weight: .regular))
+                            .multilineTextAlignment(.leading)
+                            .foregroundStyle(colorScheme.invertedPrimaryLabel(task))
+                            .font(.callout)
+                            .lineLimit(1)
+                        
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
                 
-                PlayButton(task: task)
+                HStack(spacing: 12) {
+                    NotificationDeadlineDate(task: task)
+                        .allowsHitTesting(vm.isTaskHasDeadline(task: task))
+                        .onTapGesture {
+                            vm.showDedalineButtonTapped(task: task)
+                        }
+                    
+                    PlayButton(task: task)
+                }
             }
-        }
-//        .onChange(of: isPressed) { _, newValue in
-//            Task {
-//                try? await Task.sleep(for: .seconds(0.5))
-//                isPressed = false
-//            }
-//        }
-        //MARK: - Context menu
-        .taskDeleteDialog(isPresented: vm.dialogBinding(for: task), task: task) { value in
-            await vm.deleteButtonTapped(task: task, deleteCompletely: value)
-        }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 11)
-        .background(
-            withAnimation {
-                RoundedRectangle(cornerRadius: 22)
-                    .fill(
-                        task.taskRowColor(colorScheme: colorScheme)
-                    )
-            }
-        )
-        .contextMenuWithPreview(
-            menu: CustomMenu(),
-            preview: {
+            
+            //MARK: - Context menu
+            
+            .contextMenu {
+                ControlGroup {
+                    Button {
+                        vm.taskTapped(task)
+                    } label: {
+                        VerticalButtonLabel(text: "Open", systemImage: "arrowshape.up")
+                    }
+                    
+                    Button {
+                        Task {
+                            await vm.checkMarkTapped(task: task)
+                        }
+                    } label: {
+                        if vm.checkCompletedTaskForToday(task: task) {
+                            VerticalButtonLabel(text: "Undo", systemImage: "circle")
+                        } else {
+                            VerticalButtonLabel(text: "Done", systemImage: "checkmark.circle")
+                        }
+                    }
+                    
+                    Button(role: .destructive) {
+                        vm.deleteTaskButtonSwiped(task: task)
+                    } label: {
+                        VerticalButtonLabel(text: "Delete", systemImage: "trash")
+                    }
+                }
+            } preview: {
                 TaskViewPreview(listVM: vm, task: task)
-            },
-            isPressed: $isPressed,
-            action: {
-                vm.taskTapped(task)
-            })
-        .frame(height: 52)
+            }
+            
+            //MARK: - Delete dialog
+            
+            .taskDeleteDialog(isPresented: vm.dialogBinding(for: task), task: task) { value in
+                await vm.deleteButtonTapped(task: task, deleteCompletely: value)
+            }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 11)
+            .background(
+                withAnimation {
+                    RoundedRectangle(cornerRadius: 22)
+                        .fill(
+                            task.taskRowColor(colorScheme: colorScheme)
+                        )
+                }
+            )
+            .frame(height: 52)
+        }
     }
     
     //MARK: - Notification/Deadline date
@@ -140,7 +222,9 @@ struct TaskRowView: View {
     //MARK: - Menu Actions
     private func DoneUndoAction(task: UITaskModel) -> UIAction {
         UIAction(
-            title: vm.checkCompletedTaskForToday(task: task) ? "Undo" : "Done",
+            title: vm.checkCompletedTaskForToday(task: task) ?
+            NSLocalizedString("Undo", bundle: .module, comment: "Context menu done/undo button") :
+            NSLocalizedString("Done", bundle: .module, comment: "Context menu done/undo button"),
             image: UIImage(systemName: vm.checkCompletedTaskForToday(task: task) ? "circle" : "checkmark.circle"),
             handler: { _ in
                 Task {
@@ -151,12 +235,23 @@ struct TaskRowView: View {
     
     private func DeleteAction(task: UITaskModel) -> UIAction {
         UIAction(
-            title: "Delete",
+            title: NSLocalizedString("Delete", bundle: .module, comment: "Context menu delete button"),
             image: UIImage(systemName: "trash"),
             attributes: .destructive,
             handler: { _ in
                 vm.deleteTaskButtonSwiped(task: task)
             })
+    }
+    
+    //MARK: - Menu Buttons
+    
+    @ViewBuilder
+    private func VerticalButtonLabel(text: LocalizedStringKey, systemImage: String) -> some View {
+        VStack {
+            Text(text, bundle: .module)
+            
+            Image(systemName: systemImage)
+        }
     }
 }
 

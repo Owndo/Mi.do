@@ -68,6 +68,7 @@ public struct ListView: View {
                             .foregroundStyle(.labelTertiary)
                             .bold()
                     }
+                    .padding(.bottom, 12)
                     .listRowBackground(Color.clear)
                     .contentShape(Rectangle())
                     .onTapGesture {

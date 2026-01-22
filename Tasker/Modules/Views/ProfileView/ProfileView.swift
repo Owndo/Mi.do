@@ -338,7 +338,7 @@ public struct ProfileView: View {
     @ViewBuilder
     private func ButtonsList() -> some View {
         VStack {
-            SettingsButtonRow(icon: "text.rectangle.page", title: "Articles") {
+            SettingsButtonRow(icon: "text.rectangle.page", title: Text("Articles", bundle: .module)) {
                 vm.articlesButtonTapped()
             }
             
@@ -346,7 +346,7 @@ public struct ProfileView: View {
                 .frame(height: 1)
                 .padding(.leading, 38)
             
-            SettingsButtonRow(icon: "clock.arrow.circlepath", title: "Task history") {
+            SettingsButtonRow(icon: "clock.arrow.circlepath", title: Text("Task history", bundle: .module)) {
                 vm.taskHistoryButtonTapped()
             }
             
@@ -355,7 +355,7 @@ public struct ProfileView: View {
                     .frame(height: 1)
                     .padding(.leading, 38)
                 
-                SettingsButtonRow(icon: "crown", title: "Purchase a subscription") {
+                SettingsButtonRow(icon: "crown", title: Text("Purchase a subscription", bundle: .module)) {
                     Task {
                         await vm.subscriptionButtonTapped()
                     }

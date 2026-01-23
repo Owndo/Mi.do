@@ -78,6 +78,18 @@ public extension UITaskModel {
         }
     }
     
+    /// Return only active task for the date
+    func activeTask(calendar: Calendar, date: Double) -> Bool {
+        self.isScheduledForDate(date, calendar: calendar) &&
+        !self.completeRecords.contains { $0.completedFor == date }
+    }
+    
+    /// Return only complited task for the date
+    func completedTask(calendar: Calendar, date: Double) -> Bool {
+        self.isScheduledForDate(date, calendar: calendar) &&
+        self.completeRecords.contains { $0.completedFor == date }
+    }
+    
     
     func hexToCGColor(hex: String) -> CGColor {
         var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)

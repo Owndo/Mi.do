@@ -37,21 +37,20 @@ public final class DateManager: DateManagerProtocol {
         calendar.component(.weekday, from: selectedDate)
     }
     
-    public var indexForWeek = 1 {
+    public var indexForWeek = 0 {
         didSet {
-            let weeksDate = allWeeks.first(where: { $0.id == indexForWeek})!.date
-            if let sameWeekDay = weeksDate.first(where: {
-                calendar.component(.weekday, from: $0) == selectedWeekDay
-            }) {
-                selectedDateChange(sameWeekDay)
-            } else {
-                selectedDateChange(allWeeks[1].date.first!)
+            guard let week = allWeeks.first(where: { $0.id == indexForWeek }) else {
+                return
             }
             
-            if indexForWeek == allWeeks.last?.id {
-                appendWeeksForward()
-            } else if indexForWeek == allWeeks.first?.id {
+            if let matchingDay = week.date.first(where: { calendar.component(.weekday, from: $0) == calendar.component(.weekday, from: selectedDate)}) {
+                selectedDateChange(matchingDay)
+            }
+            
+            if indexForWeek == allWeeks.first?.id {
                 appendWeeksBackward()
+            } else if indexForWeek == allWeeks.count - 1 {
+                appendWeeksForward()
             }
         }
         willSet {
@@ -85,12 +84,23 @@ public final class DateManager: DateManagerProtocol {
         return manager
     }
     
-    public static func createMockDateManager() -> DateManagerProtocol {
+    //MARK: - Create Preview Manager
+    
+    public static func createPreviewManager() -> DateManagerProtocol {
         let dateManager = DateManager(telemetryManager: TelemetryManager.createTelemetryManager(mock: true))
         dateManager.initializeWeek()
+        
         Task {
             await dateManager.initializeMonth()
         }
+        
+        return dateManager
+    }
+    
+    //MARK: - Create Empty Manager
+    
+    public static func createEmptyManager() -> DateManagerProtocol {
+        let dateManager = DateManager(telemetryManager: TelemetryManager.createTelemetryManager(mock: true))
         
         return dateManager
     }
@@ -104,7 +114,9 @@ public final class DateManager: DateManagerProtocol {
     //MARK: - Logic for week
     public func initializeWeek() {
         allWeeks.removeAll()
+        
         //MARK: Previous 4 weeks
+        
         for i in (1...4).reversed() {
             let week = calendar.date(byAdding: .weekOfYear, value: -i, to: startOfWeek(for: selectedDate))!
             let newWeek = generateWeek(for: week)
@@ -112,9 +124,9 @@ public final class DateManager: DateManagerProtocol {
         }
         
         let currentWeekStart = startOfWeek(for: selectedDate)
-        allWeeks.append(PeriodModel(id: 1, date: generateWeek(for: currentWeekStart)))
+        allWeeks.append(PeriodModel(id: 0, date: generateWeek(for: currentWeekStart)))
         
-        var idNumber = 2
+        var idNumber = 1
         for i in 1...4 {
             let week = calendar.date(byAdding: .weekOfYear, value: i, to: startOfWeek(for: selectedDate))!
             let newWeek = generateWeek(for: week)
@@ -129,7 +141,7 @@ public final class DateManager: DateManagerProtocol {
     //MARK: - Initialize months
     
     public func initializeMonth() async {
-        allMonths = []
+        allMonths.removeAll()
         
         await withTaskGroup(of: PeriodModel.self) { group in
             for id in 0...19 {
@@ -157,27 +169,23 @@ public final class DateManager: DateManagerProtocol {
         allMonths.sort { $0.id < $1.id }
     }
     
-    public func startOfWeek(for date: Date) -> Date {
-        calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)) ?? date
-    }
-    
-    public func changeIndexForWeek(_ index: Int) {
-        indexForWeek = index
-    }
-    
     public func selectedDayIsToday() -> Bool {
         calendar.isDate(selectedDate, inSameDayAs: currentTime)
     }
     
-    //MARK: - Weeks
+    //MARK: - Append Week Forward
+    
     public func appendWeeksForward() {
         guard let lastWeekStart = allWeeks.last?.date.first else { return }
+        
         for i in 1...24 {
             let weekStart = calendar.date(byAdding: .weekOfYear, value: i, to: lastWeekStart)!
             let newWeek = generateWeek(for: weekStart)
             allWeeks.append(PeriodModel(id: allWeeks.last!.id + 1, date: newWeek))
         }
     }
+    
+    //MARK: - Append Week Backward
     
     public func appendWeeksBackward() {
         guard let firstWeekStart = allWeeks.first?.date.first else { return }
@@ -190,8 +198,8 @@ public final class DateManager: DateManagerProtocol {
     
     private func generateWeek(for date: Date) -> [Date] {
         let startOfWeek = startOfWeek(for: date)
-        return (0..<7).map { dayOffset in
-            calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)!
+        return (0..<7).compactMap { dayOffset in
+            calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)
         }
     }
     
@@ -389,7 +397,7 @@ public final class DateManager: DateManagerProtocol {
         
         //check if day last in week
         if let lastDate = allWeeks.last?.date.last, newDate > lastDate {
-            appendWeeksForward()
+            //            appendWeeksForward()
         }
         
         selectedDateChange(newDate)
@@ -398,7 +406,7 @@ public final class DateManager: DateManagerProtocol {
         let newWeek = calendar.component(.weekOfYear, from: newDate)
         
         if newWeek != currentWeek {
-            updateWeekIndex(for: newDate)
+            //            updateWeekIndex(for: newDate)
         }
     }
     
@@ -416,7 +424,7 @@ public final class DateManager: DateManagerProtocol {
         let newWeek = calendar.component(.weekOfYear, from: newDate)
         
         if newWeek != currentWeek {
-            updateWeekIndex(for: newDate)
+            //                        updateWeekIndex(for: newDate)
         }
     }
     
@@ -424,8 +432,9 @@ public final class DateManager: DateManagerProtocol {
     
     public func backToToday() {
         selectedDateChange(currentTime)
+        
         initializeWeek()
-        indexForWeek = 1
+        indexForWeek = 0
     }
     
     //MARK: - Days of week
@@ -448,19 +457,31 @@ public final class DateManager: DateManagerProtocol {
         return targetDate
     }
     
+    //MARK: - Start of the day
     
-    private func updateWeekIndex(for date: Date) {
-        let newWeekStart = startOfWeek(for: date)
-        
-        if let newWeek = allWeeks.first(where: { startOfWeek(for: $0.date.first!) == newWeekStart }) {
-            indexForWeek = newWeek.id
-        } else {
-            appendWeeksForward()
-            appendWeeksBackward()
-            
-            if let refreshedWeek = allWeeks.first(where: { startOfWeek(for: $0.date.first!) == newWeekStart }) {
-                indexForWeek = refreshedWeek.id
-            }
-        }
+    public func startOfDay(for date: Date) -> Date {
+        calendar.startOfDay(for: date)
+    }
+    
+    //MARK: - Start of the week
+    
+    /// Find start of week for the date
+    public func startOfWeek(for date: Date) -> Date {
+        calendar.dateInterval(of: .weekOfYear, for: date)!.start
+    }
+    
+    //MARK: - End of the week
+    
+    /// Find end of week (start of next week)
+    public func endOfWeek(for date: Date) -> Date {
+        calendar.dateInterval(of: .weekOfYear, for: date)!.end
+    }
+    
+    public func startOfMonth(for date: Date) -> Date {
+        calendar.dateInterval(of: .month, for: date)!.start
+    }
+    
+    public func endOfMonth(for date: Date) -> Date {
+        calendar.dateInterval(of: .month, for: date)!.end
     }
 }

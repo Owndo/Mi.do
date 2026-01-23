@@ -132,7 +132,7 @@ public final class ProfileVM: HashableNavigation {
     //MARK: - Create PreviewProfileVM
     
     public static func createProfilePreviewVM() -> ProfileVM {
-        let dateManager = DateManager.createMockDateManager()
+        let dateManager = DateManager.createPreviewManager()
         let profileManager = ProfileManager.createMockManager()
         let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
@@ -242,6 +242,7 @@ public final class ProfileVM: HashableNavigation {
     }
     
     //MARK: Task's statistics
+    
     func tasksState(of type: TypeOfTask) -> String {
         
         var tasks = [UITaskModel]()

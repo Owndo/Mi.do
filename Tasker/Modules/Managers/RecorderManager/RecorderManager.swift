@@ -61,7 +61,7 @@ public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable
     //MARK: - Create MockManager
     
     public static func createMock() -> RecorderManagerProtocol {
-        return RecorderManager(dateManager: DateManager.createMockDateManager())
+        return RecorderManager(dateManager: DateManager.createEmptyManager())
     }
     
     // MARK: - Start recording with speech recognition

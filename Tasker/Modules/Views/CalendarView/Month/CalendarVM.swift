@@ -15,11 +15,16 @@ import TaskManager
 
 @Observable
 public final class CalendarVM: HashableNavigation {
+    
     var appearanceManager: AppearanceManagerProtocol
     var dateManager: DateManagerProtocol
     var taskManager: TaskManagerProtocol
     
+    private var dayVMStore: DayVMStore
+    
     private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
+    
+    var dayVMs: [TimeInterval: DayViewVM] = [:]
     
     public var backToMainView: (() -> Void)?
     
@@ -60,16 +65,22 @@ public final class CalendarVM: HashableNavigation {
         dateManager.allMonths
     }
     
-    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
+    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, dayVMStore: DayVMStore) {
         self.appearanceManager = appearanceManager
         self.dateManager = dateManager
         self.taskManager = taskManager
+        self.dayVMStore = dayVMStore
     }
     
     //MARK: - CreateMonthVM
     
-    public static func createMonthVM(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) async -> CalendarVM {
-        let vm = CalendarVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+    public static func createMonthVM(
+        appearanceManager: AppearanceManagerProtocol,
+        dateManager: DateManagerProtocol,
+        taskManager: TaskManagerProtocol,
+        dayVMStore: DayVMStore
+    ) async  -> CalendarVM {
+        let vm = CalendarVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
         
         return vm
     }
@@ -77,7 +88,17 @@ public final class CalendarVM: HashableNavigation {
     //MARK: - Create previewVm
     
     public static func createPreviewVM() -> CalendarVM {
-        let vm = CalendarVM(appearanceManager: AppearanceManager.createMockAppearanceManager(), dateManager: DateManager.createMockDateManager(), taskManager: TaskManager.createMockTaskManager())
+        let appearanceManager = AppearanceManager.createMockAppearanceManager()
+        let dateManager = DateManager.createPreviewManager()
+        let taskManager = TaskManager.createMockTaskManager()
+        let dayStore = DayVMStore.createStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        
+        let vm = CalendarVM(
+            appearanceManager: appearanceManager,
+            dateManager: dateManager,
+            taskManager: taskManager,
+            dayVMStore: dayStore
+        )
         
         return vm
     }
@@ -100,9 +121,10 @@ public final class CalendarVM: HashableNavigation {
     //MARK: - Go to selected date button
     
     func selectedDateChange(_ day: Date) {
+        backToMainView?()
+        
         dateManager.selectedDateChange(day)
         dateManager.initializeWeek()
-        backToMainView?()
         
         // telemetry
         telemetryAction(.calendarAction(.selectedDateButtonTapped(.calendarView)))
@@ -136,6 +158,9 @@ public final class CalendarVM: HashableNavigation {
     
     func backToTodayButtonTapped() async {
         dateManager.selectedDateChange(today)
+        
+        guard scrollID != 10 else { return }
+        
         await dateManager.initializeMonth()
         jumpToSelectedMonth()
         
@@ -215,6 +240,30 @@ public final class CalendarVM: HashableNavigation {
     
     func jumpToSelectedMonth() {
         scrollID = allMonths.first { $0.date.contains { calendar.isDate($0, inSameDayAs: selectedDate) }}?.id
+    }
+    
+    @MainActor
+    func downloadDaysVMs() async {
+        guard let scrollID else { return }
+        await dayVMStore.createMonthVMs(scrollID: scrollID)
+    }
+    
+    @MainActor
+    func syncDayVM(for day: Date) async {
+        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+        if dayVMs[key] != nil { return }
+        
+        if let vm = await dayVMStore.returnDayVM(day) {
+            dayVMs[key] = vm
+        }
+    }
+    
+    //MARK: - Return DayVM
+    
+    @MainActor
+    func returnDayVM(_ day: Date) -> DayViewVM? {
+        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+        return dayVMs[key]
     }
     
     //MARK: Telemtry action

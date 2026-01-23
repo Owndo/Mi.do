@@ -47,6 +47,7 @@ public struct ListView: View {
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
                         .foregroundStyle(.labelTertiary)
                         .listRowBackground(Color.clear)
+                        .padding(.bottom, 12)
                 }
             }
             

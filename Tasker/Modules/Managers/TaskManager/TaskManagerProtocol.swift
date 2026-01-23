@@ -12,9 +12,12 @@ public protocol TaskManagerProtocol: Actor {
     var tasks: [String: UITaskModel] { get set }
     var tasksStream: AsyncStream<Void> { get }
     
-    func activeTasks(for date: Date) -> [UITaskModel]
-    func completedTasks(for date: Date) -> [UITaskModel]
-    func thisWeekTasks(date: Double) async -> [UITaskModel]
+    func activeTasks(for date: Date) async -> [UITaskModel]
+    func completedTasks(for date: Date) async -> [UITaskModel]
+//    func retrieveWeekTasks(for date: Date) async -> [UITaskModel]
+    
+    /// Retrieve all tasks for date
+    func retrieveDayTasks(for date: Date) async -> [UITaskModel]
     
     /// Save Audio to cas
     func storeAudio(_ audio: Data) async throws -> String?

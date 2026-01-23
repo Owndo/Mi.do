@@ -22,7 +22,16 @@ public protocol DateManagerProtocol {
     
     func initializeWeek()
     func initializeMonth() async
+    /// Find start of the day for the date
+    func startOfDay(for date: Date) -> Date
+    /// Find start of week for the date
     func startOfWeek(for date: Date) -> Date
+    /// Find end of week (start of next week)
+    func endOfWeek(for date: Date) -> Date
+    /// Find start of month for the date
+    func startOfMonth(for date: Date) -> Date
+    /// Find end of month (start of next month)
+    func endOfMonth(for date: Date) -> Date
     func selectedDateChange(_ day: Date)
     func appendWeeksForward()
     func appendWeeksBackward()

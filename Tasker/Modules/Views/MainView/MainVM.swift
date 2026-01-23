@@ -224,7 +224,7 @@ public final class MainVM: HashableNavigation {
         let appearanceManager = AppearanceManager.createAppearanceManager(profileManager: profileManager)
         let dateManager = await DateManager.createDateManager(profileManager: profileManager)
         
-        let notificationManager = await NotificationManager.createNotificationManager(profileManager: profileManager, storageManager: storageManager)
+        let notificationManager = await NotificationManager.createNotificationManager(dateManager: dateManager, profileManager: profileManager, storageManager: storageManager)
         let playerManager = PlayerManager.createPlayerManager(storageManager: storageManager)
         
         let taskManager = await TaskManager.createTaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
@@ -238,8 +238,9 @@ public final class MainVM: HashableNavigation {
         
         // ViewModels
         
-        let calendarVM = await CalendarVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
-        let weekVM = WeekVM.createVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        let dayVMStore = DayVMStore.createStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        let calendarVM = await CalendarVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
+        let weekVM = await WeekVM.createVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
         let listVM = await ListVM.createListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         let notesVM = NotesVM.createVM(appearanceManager: appearanceManager, profileManager: profileManager)
         
@@ -270,7 +271,7 @@ public final class MainVM: HashableNavigation {
     
     public static func createPreviewVM() -> MainVM {
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
-        let dateManager = DateManager.createMockDateManager()
+        let dateManager = DateManager.createPreviewManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let profileManager = ProfileManager.createMockManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)

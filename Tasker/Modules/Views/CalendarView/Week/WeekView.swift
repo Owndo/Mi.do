@@ -39,7 +39,7 @@ public struct WeekView: View {
                     }
                 }
                 
-                VStack {
+                VStack(spacing: 0) {
                     HStack {
                         ForEach(0..<vm.orderedWeekdaySymbols().count, id: \.self) { symbol in
                             Text(vm.orderedWeekdaySymbols()[symbol])
@@ -49,15 +49,17 @@ public struct WeekView: View {
                                 .frame(maxWidth: .infinity)
                         }
                     }
+                    
                     DayOfWeeksView()
                 }
+                .padding(.top, 8)
             }
             .frame(height: 84)
             
             TodayButton()
                 .padding(.top, 8)
         }
-        .padding(.bottom, 2)
+        .padding(.top, 5)
         .animation(.default, value: vm.indexForWeek)
         .animation(.default, value: vm.selectedDate)
         .animation(.default, value: vm.scaleEffect)
@@ -76,14 +78,30 @@ public struct WeekView: View {
                         Button {
                             vm.selectedDateButtonTapped(day)
                         } label: {
-                            DayView(day: day, dateManager: vm.dateManager, taskManager: vm.taskManager, appearanceManager: vm.appearanceManager)
+                            if let vm = vm.returnDayVM(day) {
+                                DayView(vm: vm)
+                            } else {
+                                HStack {
+                                    
+                                    Spacer()
+                                    
+                                    ProgressView()
+                                    
+                                    Spacer()
+                                }
+                                .task {
+                                    await vm.syncDayVM(for: day)
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+        .task(id: vm.indexForWeek) {
+            await vm.downloadDaysVMs()
+        }
         .animation(.spring(response: 0.2, dampingFraction: 1.8, blendDuration: 0), value: vm.indexForWeek)
-        .frame(height: 36)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     

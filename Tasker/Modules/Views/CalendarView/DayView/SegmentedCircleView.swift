@@ -11,48 +11,34 @@ import Models
 
 //MARK: - Clock animation
 struct SegmentedCircleView: View {
-    @Environment(\.appearanceManager) private var appearanceManager
-    var colorScheme: ColorScheme = .dark
-    var date: Date
     
-    @State var vm: SegmentedCircleVM
-    
-    @State private var segmentProgress: Double = 0.0
-    
-    private let center = CGPoint(x: 18, y: 18)
-    private let radius: CGFloat = 18
-    private let gapAngle: Double = 20.0
+    var vm: DayViewVM
     
     var body: some View {
-        let visibleTasks = Array(vm.tasksForToday.prefix(10))
-        let completedFlags = Array(vm.completedFlagsForToday.prefix(10))
+        let visibleSegments = Array(vm.segmentedTasks.prefix(10))
         
         ZStack {
-            CircleBackgroundFill(colors: visibleTasks.map { $0.taskColor.color(for: colorScheme) },
-                                 completed: completedFlags.allSatisfy { $0 })
+            CircleBackgroundFill(colors: visibleSegments.map { $0.task.taskColor.color(for: .dark) },
+                                 completed: visibleSegments.allSatisfy { $0.isCompleted })
             .frame(width: 36, height: 36)
             
-            ForEach(0..<visibleTasks.count, id: \.self) { index in
-                CreateSegmentBorder(for: index,
-                                    count: visibleTasks.count,
-                                    task: visibleTasks[index],
-                                    isCompleted: completedFlags[index])
+            ForEach(Array(visibleSegments.enumerated()), id: \.element.id) { index, segment in
+                CreateSegmentBorder(
+                    for: index,
+                    count: visibleSegments.count,
+                    task: segment.task,
+                    isCompleted: segment.isCompleted
+                )
             }
         }
         .animation(.easeIn(duration: 0.3), value: vm.completedFlagsForToday)
-        .animation(.default, value: vm.updateTask)
         .frame(width: 36, height: 36)
-        .task(id: date) {
-            segmentProgress = 0
-            
-            vm.onAppear(date: date)
+        .task(id: vm.day) {
+            vm.segmentProgress = 0
             
             withAnimation(.easeOut(duration: 0.4)) {
-                segmentProgress = 1.0
+                vm.segmentProgress = 1.0
             }
-        }
-        .onChange(of: vm.updateTask) { _, _ in
-            Task { await vm.updateTasks() }
         }
     }
     
@@ -71,7 +57,7 @@ struct SegmentedCircleView: View {
                     .fill(gradient)
                     .opacity(baseOpacity)
             } else {
-                let baseColor = completed ? appearanceManager.accentColor.opacity(0.42) : .clear
+                let baseColor = completed ? vm.appearanceManager.accentColor.opacity(0.42) : .clear
                 Circle()
                     .fill(baseColor)
             }
@@ -80,19 +66,19 @@ struct SegmentedCircleView: View {
     
     @ViewBuilder
     private func CreateSegmentBorder(for index: Int, count: Int, task: UITaskModel, isCompleted: Bool) -> some View {
-        let totalGapAngle = count > 1 ? Double(count) * gapAngle : 0
+        let totalGapAngle = count > 1 ? Double(count) * vm.gapAngle : 0
         let availableAngle = 360.0 - totalGapAngle
         let segmentAngle = availableAngle / Double(count)
         
         let baseRotation = -90.0
-        let startAngle = baseRotation + Double(index) * (segmentAngle + (count > 1 ? gapAngle : 0))
-        let dynamicEnd = startAngle + segmentAngle * segmentProgress
+        let startAngle = baseRotation + Double(index) * (segmentAngle + (count > 1 ? vm.gapAngle : 0))
+        let dynamicEnd = startAngle + segmentAngle * vm.segmentProgress
         
         let segmentColor = vm.useTaskColors
-        ? task.taskColor == .baseColor ? appearanceManager.accentColor : task.taskColor.color(for: colorScheme)
-        : isCompleted ? appearanceManager.accentColor : .separatorSecondary
+        ? task.taskColor == .baseColor ? vm.appearanceManager.accentColor : task.taskColor.color(for: .dark)
+        : isCompleted ? vm.appearanceManager.accentColor : .separatorSecondary
         
-        let appear = min(segmentProgress * 2, 1.0)
+        let appear = min(vm.segmentProgress * 2, 1.0)
         let scale = 0.8 + 0.2 * appear
         
         AnimatedArcShape(startAngle: startAngle, endAngle: dynamicEnd)
@@ -134,5 +120,5 @@ struct AnimatedArcShape: Shape {
 }
 
 #Preview {
-    SegmentedCircleView(date: Date(), vm: SegmentedCircleVM.createPreview())
+    SegmentedCircleView(vm: DayViewVM.createPreviewVM())
 }

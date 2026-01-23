@@ -19,30 +19,9 @@ public final class WeekVM: HashableNavigation {
     var taskManager: TaskManagerProtocol
     var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
-    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
-        self.appearanceManager = appearanceManager
-        self.dateManager = dateManager
-        self.taskManager = taskManager
-    }
+    private var dayVMStore: DayVMStore
     
-    //MARK: - Create VM
-    
-    public static func createVM(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) -> WeekVM {
-        WeekVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
-    }
-    
-    
-    //MARK: - Create PreviewVM
-    
-    public static func createPreviewVM() -> WeekVM {
-        WeekVM(
-            appearanceManager: AppearanceManager.createMockAppearanceManager(),
-            dateManager: DateManager.createMockDateManager(),
-            taskManager: TaskManager.createMockTaskManager()
-        )
-    }
-    
-    var selectedDayOfWeek = Date()
+    private var dayVMs: [TimeInterval: DayViewVM] = [:]
     
     var scaleEffect: CGFloat = 1
     
@@ -76,17 +55,90 @@ public final class WeekVM: HashableNavigation {
         dateManager.allWeeks
     }
     
+    //MARK: - Private init
+    
+    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, dayVMStore: DayVMStore) {
+        self.appearanceManager = appearanceManager
+        self.dateManager = dateManager
+        self.taskManager = taskManager
+        self.dayVMStore = dayVMStore
+    }
+    
+    //MARK: - Create VM
+    
+    public static func createVM(
+        appearanceManager: AppearanceManagerProtocol,
+        dateManager: DateManagerProtocol,
+        taskManager: TaskManagerProtocol,
+        dayVMStore: DayVMStore
+    ) async -> WeekVM {
+        let vm = WeekVM(
+            appearanceManager: appearanceManager,
+            dateManager: dateManager,
+            taskManager: taskManager,
+            dayVMStore: dayVMStore
+        )
+        
+        await vm.downloadDaysVMs()
+        
+        return vm
+    }
+    
+    
+    //MARK: - Create PreviewVM
+    
+    public static func createPreviewVM() -> WeekVM {
+        let appearanceManager = AppearanceManager.createMockAppearanceManager()
+        let dateManager = DateManager.createPreviewManager()
+        let taskManager = TaskManager.createMockTaskManager()
+        let dayStore = DayVMStore.createStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        
+        let vm = WeekVM(
+            appearanceManager: appearanceManager,
+            dateManager: dateManager,
+            taskManager: taskManager,
+            dayVMStore: dayStore
+        )
+        
+        return vm
+    }
+    
+    @MainActor
+    func downloadDaysVMs() async {
+        await dayVMStore.createWeekDayVMs()
+    }
+    
+    @MainActor
+    func syncDayVM(for day: Date) async {
+        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+        if dayVMs[key] != nil { return }
+
+        if let vm = await dayVMStore.returnDayVM(day) {
+            dayVMs[key] = vm
+        }
+    }
+    
+    //MARK: - Return DayVM
+
+    @MainActor
+    func returnDayVM(_ day: Date) -> DayViewVM? {
+        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+        return dayVMs[key]
+    }
+    
     func selectedDateButtonTapped(_ day: Date) {
         dateManager.selectedDateChange(day)
-        selectedDayOfWeek = day
         
         // telemetry
         telemetryAction(.calendarAction(.selectedDateButtonTapped(.mainView)))
     }
     
+    //MARK: - Back to today
+    
     func backToTodayButtonTapped() {
-        if selectedDayIsToday() {
+        guard !selectedDayIsToday() else {
             trigger.toggle()
+            return
         }
         
         dateManager.backToToday()

@@ -71,6 +71,9 @@ public struct CalendarView: View {
                 .padding(.trailing, 25)
                 .padding(.bottom, 20)
         }
+        .task(id: vm.scrollID) {
+            await vm.downloadDaysVMs()
+        }
         .task {
             await vm.onAppear()
         }
@@ -159,7 +162,7 @@ public struct CalendarView: View {
     
     @ViewBuilder
     private func MonthRowView(_ dates: [Date]) -> some View {
-        ForEach(dates, id: \.self) { day in
+        ForEach(dates, id: \.timeIntervalSince1970) { day in
             VStack {
                 Button {
                     vm.selectedDateChange(day)
@@ -170,9 +173,16 @@ public struct CalendarView: View {
                                 .fill(.backgroundTertiary)
                         }
                         
-                        DayView(day: day, dateManager: vm.dateManager, taskManager: vm.taskManager, appearanceManager: vm.appearanceManager)
+                        if let vm = vm.returnDayVM(day) {
+                            DayView(vm: vm)
+                        } else {
+                            ProgressView()
+                        }
                     }
                 }
+            }
+            .task {
+                await vm.syncDayVM(for: day)
             }
             .frame(width: 45, height: 45)
             .padding(.vertical, 14)

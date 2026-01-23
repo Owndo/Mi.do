@@ -14,8 +14,6 @@ public final actor TaskManager: TaskManagerProtocol {
     private var notificationManager: NotificationManagerProtocol
     private var telemetryManager: TelemetryManagerProtocol
     
-    private var weekTasksCache: [Double: [UITaskModel]] = [:] // key: startOfWeek timestamp
-    
     //MARK: Computer properties
     private var calendar: Calendar {
         dateManager.calendar
@@ -29,32 +27,27 @@ public final actor TaskManager: TaskManagerProtocol {
         dateManager.currentTime.timeIntervalSince1970
     }
     
-    private func startOfWeek(for date: Date) -> Double {
-        calendar.dateInterval(of: .weekOfYear, for: date)?.start.timeIntervalSince1970 ?? 0
-    }
-    
-    private var firstWeekDate: Double? {
-        let allDates = dateManager.allWeeks.flatMap { $0.date }
-        return allDates.min()?.timeIntervalSince1970
-    }
-    
-    private var lastWeekDate: Double? {
-        let allDates = dateManager.allWeeks.flatMap { $0.date }
-        return allDates.max()?.timeIntervalSince1970
-    }
-    
     //MARK: Tasks properties
     
     public var tasks = [String: UITaskModel]()
+    
+    //MARK: - Cache
+    
+    private var activeTasksCache: [TimeInterval: [UITaskModel]] = [:]
+    private var completedTasksCache: [TimeInterval: [UITaskModel]] = [:]
+    
+    private var dayTasksCache: [TimeInterval: [UITaskModel]] = [:]
+    private var weekTasksCache: [TimeInterval: [UITaskModel]] = [:]
+    private var monthTasksCache: [TimeInterval: [UITaskModel]] = [:]
     
     //MARK: - AsyncStream
     
     public var tasksStream: AsyncStream<Void>
     private var continuation: AsyncStream<Void>.Continuation
     
-    private var thisWeekCasheTasks: [UITaskModel] = []
-    private var cacheWeekStart: Double = 0
-    private var cacheWeekEnd: Double = 0
+    //    private var thisWeekCasheTasks: [UITaskModel] = []
+    //    private var cacheWeekStart: Double = 0
+    //    private var cacheWeekEnd: Double = 0
     
     //    private var dateObserverTask: Task<Void, Never>?
     
@@ -73,7 +66,8 @@ public final actor TaskManager: TaskManagerProtocol {
     
     public static func createTaskManager(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol) async -> TaskManagerProtocol {
         let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
-        await manager.startManager()
+        await manager.fetchTasksFromCAS()
+        await manager.retrieveWeekTasks(for: Date())
         
         return manager
     }
@@ -82,14 +76,14 @@ public final actor TaskManager: TaskManagerProtocol {
     
     public static func createMockTaskManager() -> TaskManagerProtocol {
         let casManager = MockCas.createManager()
-        let manager = TaskManager(casManager: casManager, dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
+        let manager = TaskManager(casManager: casManager, dateManager: DateManager.createPreviewManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
         
         return manager
     }
     
     public static func createMockTaskManagerWithModels() async -> TaskManagerProtocol {
         let casManager = MockCas.createManager()
-        let manager = TaskManager(casManager: casManager, dateManager: DateManager.createMockDateManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
+        let manager = TaskManager(casManager: casManager, dateManager: DateManager.createPreviewManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
         await manager.fakeModelForPreview()
         
         return manager
@@ -119,47 +113,141 @@ public final actor TaskManager: TaskManagerProtocol {
         tasks = [task.id: task, task1.id: task1]
     }
     
-    func startManager() async {
+    func fetchTasksFromCAS() async {
         tasks = await casManager.fetchModels(TaskModel.self).reduce(into: [String: UITaskModel]()) { dict, model in
             let uiModel = UITaskModel(model)
             dict[uiModel.id] = uiModel
         }
+        
     }
     
     //MARK: - Active Tasks
     
-    public func activeTasks(for date: Date) -> [UITaskModel] {
-        let startOfDate = startOFSelectedDay(date)
+    public func activeTasks(for date: Date) async -> [UITaskModel] {
+        let dayStart = dateManager.startOfDay(for: date).timeIntervalSince1970
         
-        return tasks.values.filter { task in
-            task.isScheduledForDate(startOfDate, calendar: calendar) &&
-            task.completeRecords.contains { $0.completedFor == startOfDate } != true
+        if let cached = activeTasksCache[dayStart] {
+            return cached
         }
+        
+        let tasks = await retrieveDayTasks(for: date)
+        
+        let filteredTasks = tasks.filter { task in
+            task.activeTask(calendar: calendar, date: dayStart)
+        }
+        
+        activeTasksCache[dayStart] = filteredTasks
+        return filteredTasks
     }
     
     //MARK: - Completed Tasks
     
-    public func completedTasks(for date: Date) -> [UITaskModel] {
-        let startOfDate = startOFSelectedDay(date)
+    public func completedTasks(for date: Date) async -> [UITaskModel] {
+        let dayStart = dateManager.startOfDay(for: date).timeIntervalSince1970
         
-        return tasks.values.filter { task in
-            task.isScheduledForDate(startOfDate, calendar: calendar) &&
-            task.completeRecords.contains { $0.completedFor == startOfDate }
+        if let cached = completedTasksCache[dayStart] {
+            return cached
         }
+        
+        let tasks = await retrieveDayTasks(for: date)
+        
+        let filteredTasks = tasks.filter { task in
+            task.completedTask(calendar: calendar, date: dayStart)
+        }
+        
+        completedTasksCache[dayStart] = filteredTasks
+        return filteredTasks
     }
     
-    /// Start of date from parameter, task stores this time like a pointer
-    private func startOFSelectedDay(_ date: Date) -> Double {
-        calendar.startOfDay(for: date).timeIntervalSince1970
+    //MARK: - Retrieve Day Tasks
+    
+    public func retrieveDayTasks(for date: Date) async -> [UITaskModel] {
+        let dayStart = dateManager.startOfDay(for: date).timeIntervalSince1970
+        let dayKey = dayStart
+        
+        if let cached = dayTasksCache[dayKey] {
+            return cached
+        }
+        
+        await retrieveWeekTasks(for: date)
+        
+        let weekKey = dateManager.startOfWeek(for: date).timeIntervalSince1970
+        let weekTasks = weekTasksCache[weekKey] ?? []
+        
+        let dayTasks = weekTasks.filter { task in
+            task.isScheduledForDate(dayStart, calendar: calendar)
+        }
+        
+        dayTasksCache[dayKey] = dayTasks
+        return dayTasks
     }
     
-    //MARK: - Cashe for week
     
-    public func thisWeekTasks(date: Double) async -> [UITaskModel] {
-        return tasks.values
-            .filter { task in
-                return task.deleteRecords.contains { $0.deletedFor == date } != true
-            }
+    //MARK: - Week Tasks
+    
+    @discardableResult
+    private func retrieveWeekTasks(for date: Date) async -> [UITaskModel]? {
+        let startOfWeek = dateManager.startOfWeek(for: date)
+        let weekKey = startOfWeek.timeIntervalSince1970
+        
+        if let cached = weekTasksCache[weekKey] {
+            return cached
+        }
+        
+        await retrieveMonthTasks(for: date)
+        
+        let startOfMonth = dateManager.startOfMonth(for: date)
+        let monthKey = startOfMonth.timeIntervalSince1970
+        
+        let endOfWeek = dateManager.endOfWeek(for: date)
+        let weekEnd = endOfWeek.timeIntervalSince1970
+        
+        let monthTasks = monthTasksCache[monthKey] ?? []
+        
+        let weekTasks = monthTasks.filter { task in
+            task.notificationDate >= weekKey &&
+            task.notificationDate < weekEnd
+        }
+        
+        weekTasksCache[weekKey] = weekTasks
+        return weekTasks
+    }
+    
+    
+    //MARK: - Month Tasks
+    
+    @discardableResult
+    private func retrieveMonthTasks(for date: Date) async -> [UITaskModel]? {
+        let startOfMonth = dateManager.startOfMonth(for: date)
+        let key = startOfMonth.timeIntervalSince1970
+        
+        if let cached = monthTasksCache[key] {
+            return cached
+        }
+        
+        let endOfMonth = dateManager.endOfMonth(for: date)
+        let end = endOfMonth.timeIntervalSince1970
+        
+        let monthTasks = tasks.values.filter { task in
+            task.notificationDate >= key && task.notificationDate < end
+        }
+        
+        monthTasksCache[key] = monthTasks
+        return monthTasks
+    }
+    
+    //MARK: - Invalidate Tasks Cache
+    
+    private func invalidateTasksCache(_ date: Double) {
+        let startOfDate = dateManager.startOfDay(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970
+        let startOfWeek = dateManager.startOfWeek(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970
+        let startOfMonth = dateManager.startOfMonth(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970
+        
+        activeTasksCache.removeValue(forKey: startOfDate)
+        completedTasksCache.removeValue(forKey: startOfDate)
+        dayTasksCache.removeValue(forKey: startOfDate)
+        weekTasksCache.removeValue(forKey: startOfWeek)
+        monthTasksCache.removeValue(forKey: startOfMonth)
     }
     
     private func isTaskInWeeksRange(_ task: UITaskModel, startDate: Double, endDate: Double) -> Bool {
@@ -229,6 +317,8 @@ public final actor TaskManager: TaskManagerProtocol {
         try await casManager.saveModel(task.model)
         
         tasks[task.id] = task
+        
+        invalidateTasksCache(task.notificationDate)
         
         continuation.yield()
     }

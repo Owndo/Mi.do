@@ -28,7 +28,7 @@ final class DayViewVM: HashableNavigation {
     private var isLoading = false
     
     /// Flag in case we already download the tasks
-    private var hasLoaded = false
+    var hasLoaded = false
     
     var completedFlags: [Bool] = []
     var allCompleted: Bool = false
@@ -159,7 +159,11 @@ final class DayViewVM: HashableNavigation {
     //MARK: - Segmented Circle
     
     @MainActor
-    func updateTasks() async {
+    func updateTasks(update: Bool = false) async {
+        if update == true {
+            hasLoaded = false
+        }
+        
         guard !hasLoaded else {
             return
         }

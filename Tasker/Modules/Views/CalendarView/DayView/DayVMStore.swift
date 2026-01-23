@@ -18,6 +18,8 @@ public final actor DayVMStore {
     
     private var dayVMs: [TimeInterval: DayViewVM] = [:]
     
+    private var asyncStreamTask: Task<Void, Never>?
+    
     var weeks: [PeriodModel] {
         dateManager.allWeeks
     }
@@ -32,10 +34,46 @@ public final actor DayVMStore {
         self.taskManager = taskManager
     }
     
+    func asyncUpdateDayVM() async {
+        asyncStreamTask = Task { [weak self] in
+            guard let self else { return }
+            
+            async let updDayStream: () = listenUpdatedDateStream()
+            
+            _ = await updDayStream
+        }
+    }
+    
+    private func listenUpdatedDateStream() async {
+        guard let stream = await taskManager.updatedDayStream else { return }
+        
+        for await i in stream {
+            await updateOneDayVM(i)
+        }
+    }
+    
+    private func updateOneDayVM(_ date: Date) async {
+        let key = dateManager.startOfDay(for: date).timeIntervalSince1970
+        
+        guard let day = dayVMs[key] else { return }
+        await day.updateTasks(update: true)
+    }
+    
     //MARK: - Create Store
     
-    public static func createStore(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) -> DayVMStore {
-        .init(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+    public static func createStore(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) async -> DayVMStore {
+        let vm = DayVMStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        await vm.asyncUpdateDayVM()
+        
+        return vm
+    }
+    
+    //MARK: - Create PreviewStore
+    
+    public static func createPreviewStore(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) -> DayVMStore {
+        let vm = DayVMStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        
+        return vm
     }
     
     func createWeekDayVMs() {
@@ -50,7 +88,7 @@ public final actor DayVMStore {
         ]
             .compactMap { $0 }
             .flatMap { $0 }
-
+        
         for day in days {
             let key = dateManager.startOfDay(for: day).timeIntervalSince1970
             guard dayVMs[key] == nil else { continue }

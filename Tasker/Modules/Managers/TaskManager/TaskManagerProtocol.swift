@@ -10,7 +10,8 @@ import Models
 
 public protocol TaskManagerProtocol: Actor {
     var tasks: [String: UITaskModel] { get set }
-    var tasksStream: AsyncStream<Void> { get }
+    var tasksStream: AsyncStream<Void>? { get }
+    var updatedDayStream: AsyncStream<Date>? { get }
     
     func activeTasks(for date: Date) async -> [UITaskModel]
     func completedTasks(for date: Date) async -> [UITaskModel]

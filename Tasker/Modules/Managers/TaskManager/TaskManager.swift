@@ -42,8 +42,11 @@ public final actor TaskManager: TaskManagerProtocol {
     
     //MARK: - AsyncStream
     
-    public var tasksStream: AsyncStream<Void>
-    private var continuation: AsyncStream<Void>.Continuation
+    public var tasksStream: AsyncStream<Void>?
+    private var continuation: AsyncStream<Void>.Continuation?
+    
+    public var updatedDayStream: AsyncStream<Date>?
+    private var updatedDayStreamContinuation: AsyncStream<Date>.Continuation?
     
     //    private var thisWeekCasheTasks: [UITaskModel] = []
     //    private var cacheWeekStart: Double = 0
@@ -59,15 +62,16 @@ public final actor TaskManager: TaskManagerProtocol {
         self.notificationManager = notificationManager
         self.telemetryManager = telemetryManager ?? TelemetryManager.createTelemetryManager()
         
-        let (stream, cont) = AsyncStream<Void>.makeStream()
-        self.tasksStream = stream
-        self.continuation = cont
+        
     }
+    
+    //MARK: - Create
     
     public static func createTaskManager(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol) async -> TaskManagerProtocol {
         let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         await manager.fetchTasksFromCAS()
         await manager.retrieveWeekTasks(for: Date())
+        await manager.createStreams()
         
         return manager
     }
@@ -81,6 +85,8 @@ public final actor TaskManager: TaskManagerProtocol {
         return manager
     }
     
+    //MARK: - Create Mock With Models
+    
     public static func createMockTaskManagerWithModels() async -> TaskManagerProtocol {
         let casManager = MockCas.createManager()
         let manager = TaskManager(casManager: casManager, dateManager: DateManager.createPreviewManager(), notificationManager: MockNotificationManager(), telemetryManager: MockTelemetryManager())
@@ -89,8 +95,21 @@ public final actor TaskManager: TaskManagerProtocol {
         return manager
     }
     
+    //MARK: - Create Stream
+    
+    private func createStreams() async {
+        let (taskStream, taskCont) = AsyncStream<Void>.makeStream()
+        
+        self.tasksStream = taskStream
+        self.continuation = taskCont
+        
+        let (updDayStream, updDayCont) = AsyncStream<Date>.makeStream()
+        self.updatedDayStream = updDayStream
+        self.updatedDayStreamContinuation = updDayCont
+    }
     
     //MARK: - Fake Models For Preview
+    
     func fakeModelForPreview() async {
         let task =  UITaskModel(
             .initial(
@@ -320,7 +339,8 @@ public final actor TaskManager: TaskManagerProtocol {
         
         invalidateTasksCache(task.notificationDate)
         
-        continuation.yield()
+        continuation?.yield()
+        updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: task.notificationDate))
     }
     
     // MARK: - Delete task
@@ -329,14 +349,17 @@ public final actor TaskManager: TaskManagerProtocol {
         if deleteCompletely {
             try await casManager.deleteModel(task.model)
             tasks.removeValue(forKey: task.id)
+            
+            invalidateTasksCache(task.notificationDate)
+            
+            continuation?.yield()
+            updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: task.notificationDate))
         } else {
             task.deleteRecords = updateExistingTaskDeleted(task: task)
             try await saveTask(task)
         }
         
         await updateNotifications()
-        
-        continuation.yield()
         
         if task.repeatTask == .never {
             telemetryAction(.taskAction(.deleteButtonTapped(.deleteSingleTask(.taskListView))))

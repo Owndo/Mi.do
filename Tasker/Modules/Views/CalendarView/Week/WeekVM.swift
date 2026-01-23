@@ -91,7 +91,7 @@ public final class WeekVM: HashableNavigation {
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let dateManager = DateManager.createPreviewManager()
         let taskManager = TaskManager.createMockTaskManager()
-        let dayStore = DayVMStore.createStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        let dayStore = DayVMStore.createPreviewStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         
         let vm = WeekVM(
             appearanceManager: appearanceManager,

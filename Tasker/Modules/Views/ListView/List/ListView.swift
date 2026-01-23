@@ -47,7 +47,7 @@ public struct ListView: View {
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
                         .foregroundStyle(.labelTertiary)
                         .listRowBackground(Color.clear)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 6)
                 }
             }
             
@@ -69,7 +69,7 @@ public struct ListView: View {
                             .foregroundStyle(.labelTertiary)
                             .bold()
                     }
-                    .padding(.bottom, 12)
+                    .padding(.bottom, 6)
                     .listRowBackground(Color.clear)
                     .contentShape(Rectangle())
                     .onTapGesture {

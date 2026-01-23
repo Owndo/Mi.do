@@ -238,7 +238,7 @@ public final class MainVM: HashableNavigation {
         
         // ViewModels
         
-        let dayVMStore = DayVMStore.createStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        let dayVMStore = await DayVMStore.createStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         let calendarVM = await CalendarVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
         let weekVM = await WeekVM.createVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
         let listVM = await ListVM.createListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)

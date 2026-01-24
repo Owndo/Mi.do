@@ -1,5 +1,5 @@
 //
-//  CalendarVM.swift
+//  MonthsViewVM.swift
 //  Tasker
 //
 //  Created by Rodion Akhmedov on 7/9/25.
@@ -14,7 +14,7 @@ import TelemetryManager
 import TaskManager
 
 @Observable
-public final class CalendarVM: HashableNavigation {
+public final class MonthsViewVM: HashableNavigation {
     
     var appearanceManager: AppearanceManagerProtocol
     var dateManager: DateManagerProtocol
@@ -33,6 +33,8 @@ public final class CalendarVM: HashableNavigation {
             findNameForMonth()
         }
     }
+    
+    public var scrollAnchor: UnitPoint = .top
     
     //MARK: - UI State
     
@@ -79,21 +81,21 @@ public final class CalendarVM: HashableNavigation {
         dateManager: DateManagerProtocol,
         taskManager: TaskManagerProtocol,
         dayVMStore: DayVMStore
-    ) async  -> CalendarVM {
-        let vm = CalendarVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
+    ) async  -> MonthsViewVM {
+        let vm = MonthsViewVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
         
         return vm
     }
     
     //MARK: - Create previewVm
     
-    public static func createPreviewVM() -> CalendarVM {
+    public static func createPreviewVM() -> MonthsViewVM {
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let dateManager = DateManager.createPreviewManager()
         let taskManager = TaskManager.createMockTaskManager()
         let dayStore = DayVMStore.createPreviewStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         
-        let vm = CalendarVM(
+        let vm = MonthsViewVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
             taskManager: taskManager,
@@ -121,10 +123,10 @@ public final class CalendarVM: HashableNavigation {
     //MARK: - Go to selected date button
     
     func selectedDateChange(_ day: Date) {
-        backToMainView?()
-        
         dateManager.selectedDateChange(day)
         dateManager.initializeWeek()
+        
+        backToMainView?()
         
         // telemetry
         telemetryAction(.calendarAction(.selectedDateButtonTapped(.calendarView)))
@@ -156,20 +158,22 @@ public final class CalendarVM: HashableNavigation {
         !dateManager.selectedDayIsToday()
     }
     
+    //MARK: - Back to today Button
+    
     func backToTodayButtonTapped() async {
-        dateManager.selectedDateChange(today)
+        dateManager.backToToday()
         
-        guard scrollID != 10 else { return }
-        
-        await dateManager.initializeMonth()
         jumpToSelectedMonth()
+        
+        
+//        await dateManager.initializeMonth()
         
         // telemetry
         telemetryAction(.calendarAction(.backToTodayButtonTapped(.calendarView)))
     }
     
     func backToSelectedDateButtonTapped() async {
-        await dateManager.initializeMonth()
+//        await dateManager.initializeMonth()
         viewStarted = false
         jumpToSelectedMonth()
         viewStarted = true
@@ -240,6 +244,7 @@ public final class CalendarVM: HashableNavigation {
     
     func jumpToSelectedMonth() {
         scrollID = allMonths.first { $0.date.contains { calendar.isDate($0, inSameDayAs: selectedDate) }}?.id
+        scrollAnchor = .center
     }
     
     @MainActor

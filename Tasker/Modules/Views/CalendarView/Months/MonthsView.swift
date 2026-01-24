@@ -1,5 +1,5 @@
 //
-//  CalendarView.swift
+//  MonthsView.swift
 //  Tasker
 //
 //  Created by Rodion Akhmedov on 7/9/25.
@@ -9,12 +9,12 @@ import SwiftUI
 import Models
 import UIComponents
 
-public struct CalendarView: View {
+public struct MonthsView: View {
     @Environment(\.appearanceManager) private var appearanceManager
     
-    @Bindable var vm: CalendarVM
+    @Bindable var vm: MonthsViewVM
     
-    public init(vm: CalendarVM) {
+    public init(vm: MonthsViewVM) {
         self.vm = vm
     }
     
@@ -64,7 +64,7 @@ public struct CalendarView: View {
                     .scrollTargetLayout()
                 }
                 .scrollIndicators(.hidden)
-                .scrollPosition(id: $vm.scrollID, anchor: .top)
+                .scrollPosition(id: $vm.scrollID, anchor: vm.scrollAnchor)
             }
             
             ScrollBackButton()
@@ -117,6 +117,7 @@ public struct CalendarView: View {
             }
         }
         .animation(.spring, value: vm.scrolledFromCurrentMonth)
+        .animation(.default, value: vm.selectedDate)
     }
     
     @ViewBuilder
@@ -213,7 +214,7 @@ public struct CalendarView: View {
 
 #Preview {
     NavigationStack {
-        CalendarView(vm: CalendarVM.createPreviewVM())
+        MonthsView(vm: MonthsViewVM.createPreviewVM())
     }
 }
 

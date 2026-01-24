@@ -47,7 +47,7 @@ final class DayViewVM: HashableNavigation {
     
     ///Property for segmented's color
     var useTaskColors: Bool {
-        appearanceManager.profileModel.settings.minimalProgressMode
+        !appearanceManager.profileModel.settings.minimalProgressMode
     }
     
     var calendar: Calendar {
@@ -74,8 +74,6 @@ final class DayViewVM: HashableNavigation {
             taskManager: taskManager,
             day: day
         )
-        
-        //        vm.tasks = await taskManager.tasks.map { $0.value }
         
         return vm
     }

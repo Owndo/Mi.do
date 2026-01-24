@@ -47,7 +47,7 @@ public final class MainVM: HashableNavigation {
     
     //MARK: - ViewModels
     
-    private var calendarVM: CalendarVM
+    private var calendarVM: MonthsViewVM
     private var profileVM: ProfileVM?
     private var taskViewVM: TaskVM?
     
@@ -188,7 +188,7 @@ public final class MainVM: HashableNavigation {
         
         profileModel: UIProfileModel,
         
-        calendarVM: CalendarVM,
+        calendarVM: MonthsViewVM,
         listVM: ListVM,
         notesVM: NotesVM,
         weekVM: WeekVM,
@@ -239,7 +239,7 @@ public final class MainVM: HashableNavigation {
         // ViewModels
         
         let dayVMStore = await DayVMStore.createStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
-        let calendarVM = await CalendarVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
+        let calendarVM = await MonthsViewVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
         let weekVM = await WeekVM.createVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
         let listVM = await ListVM.createListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         let notesVM = NotesVM.createVM(appearanceManager: appearanceManager, profileManager: profileManager)
@@ -282,7 +282,7 @@ public final class MainVM: HashableNavigation {
         
         let profileModel = profileManager.profileModel
         
-        let calendarVM = CalendarVM.createPreviewVM()
+        let calendarVM = MonthsViewVM.createPreviewVM()
         let listVM = ListVM.creteMockListVM()
         let notesVM = NotesVM.createPreviewVM()
         let weekVM = WeekVM.createPreviewVM()
@@ -672,7 +672,7 @@ enum PresentationMode: CGFloat, CaseIterable {
 //MARK: - Navigation
 
 enum MainViewNavigation: Hashable {
-    case calendar(CalendarVM)
+    case calendar(MonthsViewVM)
 }
 
 extension MainViewNavigation {
@@ -680,7 +680,7 @@ extension MainViewNavigation {
     func destination() -> some View {
         switch self {
         case .calendar(let monthVM):
-            CalendarView(vm: monthVM)
+            MonthsView(vm: monthVM)
         }
     }
 }

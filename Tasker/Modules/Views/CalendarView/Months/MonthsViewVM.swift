@@ -30,7 +30,7 @@ public final class MonthsViewVM: HashableNavigation {
     
     public var scrollID: Int? {
         didSet {
-            findNameForMonth()
+            checkIfUserScrolledFromSelectedDate()
         }
     }
     
@@ -39,8 +39,8 @@ public final class MonthsViewVM: HashableNavigation {
     //MARK: - UI State
     
     var viewStarted = false
-    var navigationTitle = ""
-    var navigationSubtitle = ""
+    //    var navigationTitle = ""
+    //    var navigationSubtitle = ""
     
     var imageForScrollBackButton = "chevron.up"
     
@@ -166,14 +166,25 @@ public final class MonthsViewVM: HashableNavigation {
         jumpToSelectedMonth()
         
         
-//        await dateManager.initializeMonth()
+        //        await dateManager.initializeMonth()
         
         // telemetry
         telemetryAction(.calendarAction(.backToTodayButtonTapped(.calendarView)))
     }
     
-    func backToSelectedDateButtonTapped() async {
-//        await dateManager.initializeMonth()
+    func backToSelectedDayButtonText() -> String {
+        let currentYear = calendar.component(.year, from: Date())
+        let selectedYear = calendar.component(.year, from: selectedDate)
+
+        if selectedYear == currentYear {
+            return selectedDate.formatted(.dateTime.month().day())
+        } else {
+            return selectedDate.formatted(.dateTime.month().day().year())
+        }
+    }
+    
+    func backToSelectedMonthButtonTapped() async {
+        //        await dateManager.initializeMonth()
         viewStarted = false
         jumpToSelectedMonth()
         viewStarted = true
@@ -188,7 +199,15 @@ public final class MonthsViewVM: HashableNavigation {
     func monthName(_ month: PeriodModel) -> String {
         guard let date = month.date.first else { return "" }
         
-        return date.formatted(.dateTime.month(.abbreviated))
+        let monthName = date.formatted(.dateTime.month(.wide))
+        
+        let year = calendar.component(.year, from: date)
+        
+        if year == calendar.component(.year, from: today) {
+            return monthName
+        } else {
+            return String("\(monthName) \(year)")
+        }
     }
     
     //MARK: - Back to MainView Button
@@ -213,20 +232,10 @@ public final class MonthsViewVM: HashableNavigation {
         }
     }
     
-    func findNameForMonth() {
-        guard let id = scrollID else { return }
-        let month = allMonths.first(where: { $0.id == id })
-        
-        guard let month else { return }
-        
-        navigationTitle = month.name ?? ""
-        navigationSubtitle = currentYear(month) ?? ""
-        
-        checkIfUserScrolledFromSelectedDate(month)
-    }
-    
-    func checkIfUserScrolledFromSelectedDate(_ month: PeriodModel) {
+    func checkIfUserScrolledFromSelectedDate() {
         guard viewStarted else { return }
+        
+        guard let month = allMonths.first(where: { $0.id == scrollID }) else { return }
         
         guard !month.date.contains(where: { calendar.isDate($0, inSameDayAs: selectedDate)}) else {
             scrolledFromCurrentMonth = false
@@ -244,7 +253,7 @@ public final class MonthsViewVM: HashableNavigation {
     
     func jumpToSelectedMonth() {
         scrollID = allMonths.first { $0.date.contains { calendar.isDate($0, inSameDayAs: selectedDate) }}?.id
-        scrollAnchor = .center
+        scrollAnchor = .top
     }
     
     @MainActor

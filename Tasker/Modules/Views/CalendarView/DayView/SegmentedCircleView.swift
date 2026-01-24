@@ -11,6 +11,7 @@ import Models
 
 //MARK: - Clock animation
 struct SegmentedCircleView: View {
+    @Environment(\.colorScheme) var colorScheme
     
     var vm: DayViewVM
     
@@ -56,7 +57,7 @@ struct SegmentedCircleView: View {
             } else {
                 let gradient = AngularGradient(colors: colors, center: .center)
                 
-                let baseOpacity = completed ? 0.26 : 0.00
+                let baseOpacity = completed ? colorScheme == .dark ? 0.26 : 0.36 : 0.00
                 
                 Circle()
                     .fill(gradient)

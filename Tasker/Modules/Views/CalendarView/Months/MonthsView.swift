@@ -22,57 +22,30 @@ public struct MonthsView: View {
         ZStack(alignment: .bottomTrailing) {
             appearanceManager.backgroundColor.ignoresSafeArea()
             
-            if #available(iOS 26, *) {
-                ScrollView {
-                    LazyVStack {
-                        ForEach(vm.allMonths) { month in
-                            
-                            MonthInfoView(month)
-                                .task {
-                                    await vm.handleMonthAppeared(month)
-                                }
-                            
-                            LazyVGrid(columns: vm.columns) {
-                                EmptyDays(month)
-                                
-                                MonthRowView(month.date)
+            ScrollView {
+                LazyVStack {
+                    ForEach(vm.allMonths) { month in
+                        
+                        MonthInfoView(month)
+                            .task {
+                                await vm.handleMonthAppeared(month)
                             }
+                        
+                        LazyVGrid(columns: vm.columns) {
+                            EmptyDays(month)
+                            
+                            MonthRowView(month.date)
                         }
                     }
-                    .scrollTargetLayout()
                 }
-                .scrollIndicators(.hidden)
-                .scrollPosition(id: $vm.scrollID, anchor: .top)
-                .navigationSubtitle(vm.navigationSubtitle)
-            } else {
-                ScrollView {
-                    LazyVStack {
-                        ForEach(vm.allMonths) { month in
-                            
-                            MonthInfoView(month)
-                                .task {
-                                    await vm.handleMonthAppeared(month)
-                                }
-                            
-                            LazyVGrid(columns: vm.columns) {
-                                EmptyDays(month)
-                                
-                                MonthRowView(month.date)
-                            }
-                        }
-                    }
-                    .scrollTargetLayout()
-                }
-                .scrollIndicators(.hidden)
-                .scrollPosition(id: $vm.scrollID, anchor: vm.scrollAnchor)
+                .scrollTargetLayout()
             }
+            .scrollIndicators(.hidden)
+            .scrollPosition(id: $vm.scrollID, anchor: vm.scrollAnchor)
             
             ScrollBackButton()
                 .padding(.trailing, 25)
                 .padding(.bottom, 20)
-        }
-        .task(id: vm.scrollID) {
-            await vm.downloadDaysVMs()
         }
         .task {
             await vm.onAppear()
@@ -80,17 +53,21 @@ public struct MonthsView: View {
         .onDisappear {
             vm.onDissapear()
         }
-        .navigationTitle(vm.navigationTitle)
         .navigationBarBackButtonHidden(osVersion.majorVersion > 25 ? true : false)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            if osVersion.majorVersion > 25 {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        vm.backToMainViewButtonTapped()
-                    } label: {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    vm.backToMainViewButtonTapped()
+                } label: {
+                    HStack {
                         Image(systemName: "chevron.left")
-                            .foregroundStyle(appearanceManager.accentColor)
+                            .font(.system(size: 17))
+                            .foregroundStyle(vm.appearanceManager.accentColor)
+                        
+                        Text("\(vm.backToSelectedDayButtonText())")
+                            .font(.system(.body, design: .rounded, weight: .medium))
+                            .foregroundStyle(vm.appearanceManager.accentColor)
                     }
                 }
             }
@@ -116,6 +93,7 @@ public struct MonthsView: View {
                 }
             }
         }
+        .navigationBarBackButtonHidden()
         .animation(.spring, value: vm.scrolledFromCurrentMonth)
         .animation(.default, value: vm.selectedDate)
     }
@@ -163,7 +141,7 @@ public struct MonthsView: View {
     
     @ViewBuilder
     private func MonthRowView(_ dates: [Date]) -> some View {
-        ForEach(dates, id: \.timeIntervalSince1970) { day in
+        ForEach(dates, id: \.self) { day in
             VStack {
                 Button {
                     vm.selectedDateChange(day)
@@ -178,12 +156,15 @@ public struct MonthsView: View {
                             DayView(vm: vm)
                         } else {
                             ProgressView()
+                                .task {
+                                    await vm.syncDayVM(for: day)
+                                }
                         }
                     }
                 }
             }
             .task {
-                await vm.syncDayVM(for: day)
+                await vm.downloadDaysVMs()
             }
             .frame(width: 45, height: 45)
             .padding(.vertical, 14)
@@ -198,7 +179,7 @@ public struct MonthsView: View {
             Button {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 Task {
-                    await vm.backToSelectedDateButtonTapped()
+                    await vm.backToSelectedMonthButtonTapped()
                 }
             } label: {
                 Image(systemName: vm.imageForScrollBackButton)

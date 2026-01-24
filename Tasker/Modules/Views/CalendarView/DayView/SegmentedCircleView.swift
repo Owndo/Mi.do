@@ -18,7 +18,7 @@ struct SegmentedCircleView: View {
         let visibleSegments = Array(vm.segmentedTasks.prefix(10))
         
         ZStack {
-            CircleBackgroundFill(colors: visibleSegments.map { $0.task.taskColor.color(for: .dark) },
+            CircleBackgroundFill(colors: visibleSegments.map { $0.color },
                                  completed: visibleSegments.allSatisfy { $0.isCompleted })
             .frame(width: 36, height: 36)
             
@@ -33,7 +33,7 @@ struct SegmentedCircleView: View {
         }
         .animation(.easeIn(duration: 0.3), value: vm.completedFlagsForToday)
         .frame(width: 36, height: 36)
-        .task(id: vm.day) {
+        .task(id: vm.appearanceManager.minimalProgressMode) {
             vm.segmentProgress = 0
             
             withAnimation(.easeOut(duration: 0.4)) {
@@ -48,18 +48,19 @@ struct SegmentedCircleView: View {
             Circle()
                 .fill(.clear)
         } else {
-            if vm.useTaskColors {
+            if vm.appearanceManager.minimalProgressMode {
+                let baseColor = completed ? vm.appearanceManager.accentColor.opacity(0.14) : .clear
+                
+                Circle()
+                    .fill(baseColor)
+            } else {
                 let gradient = AngularGradient(colors: colors, center: .center)
                 
-                let baseOpacity = completed ? 0.32 : 0.00
+                let baseOpacity = completed ? 0.26 : 0.00
                 
                 Circle()
                     .fill(gradient)
                     .opacity(baseOpacity)
-            } else {
-                let baseColor = completed ? vm.appearanceManager.accentColor.opacity(0.42) : .clear
-                Circle()
-                    .fill(baseColor)
             }
         }
     }
@@ -74,18 +75,40 @@ struct SegmentedCircleView: View {
         let startAngle = baseRotation + Double(index) * (segmentAngle + (count > 1 ? vm.gapAngle : 0))
         let dynamicEnd = startAngle + segmentAngle * vm.segmentProgress
         
-        let segmentColor = vm.useTaskColors
-        ? task.taskColor == .baseColor ? vm.appearanceManager.accentColor : task.taskColor.color(for: .dark)
-        : isCompleted ? vm.appearanceManager.accentColor : .separatorSecondary
-        
         let appear = min(vm.segmentProgress * 2, 1.0)
         let scale = 0.8 + 0.2 * appear
         
+        let segmentColor: Color = {
+            if vm.appearanceManager.minimalProgressMode {
+                if isCompleted {
+                    return vm.appearanceManager.accentColor
+                } else {
+                    return .separatorSecondary
+                }
+            } else {
+                if task.taskColor == .baseColor {
+                    return vm.appearanceManager.accentColor
+                } else {
+                    return task.taskColor.color(for: .dark)
+                }
+            }
+        }()
+        
+        let segmentOpacity: Double = {
+            if vm.appearanceManager.minimalProgressMode {
+                return isCompleted ? 0.8 : 1.0
+            }
+            
+            if task.taskColor == .baseColor {
+                return isCompleted ? 0.6 : 0.2
+            }
+            
+            return isCompleted ? 0.8 : 0.3
+        }()
+        
         AnimatedArcShape(startAngle: startAngle, endAngle: dynamicEnd)
             .stroke(
-                segmentColor.opacity(vm.useTaskColors ? task.taskColor != .baseColor
-                                     ? isCompleted ? 0.8 : 0.3 : isCompleted ? 0.6 : 0.2
-                                     : isCompleted ? 0.8 : 1),
+                segmentColor.opacity(segmentOpacity),
                 style: StrokeStyle(lineWidth: 3, lineCap: .round)
             )
             .scaleEffect(scale)

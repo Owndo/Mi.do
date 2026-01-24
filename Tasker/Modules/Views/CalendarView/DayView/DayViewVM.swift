@@ -6,10 +6,11 @@
 //
 
 import Foundation
-import Models
+import AppearanceManager
 import DateManager
 import TaskManager
-import AppearanceManager
+import Models
+import SwiftUI
 
 @Observable
 final class DayViewVM: HashableNavigation {
@@ -46,8 +47,8 @@ final class DayViewVM: HashableNavigation {
     }
     
     ///Property for segmented's color
-    var useTaskColors: Bool {
-        !appearanceManager.profileModel.settings.minimalProgressMode
+    var minimalProgressMode: Bool {
+        appearanceManager.profileModel.settings.minimalProgressMode
     }
     
     var calendar: Calendar {
@@ -179,12 +180,21 @@ final class DayViewVM: HashableNavigation {
             SegmentedTask(
                 id: $0.id,
                 task: $0,
-                isCompleted: $0.completeRecords.contains { $0.completedFor == timeKey }
+                isCompleted: $0.completeRecords.contains { $0.completedFor == timeKey },
+                color: returnColorForTask(task: $0)
             )
         }
 
         allCompleted = !segmentedTasks.isEmpty &&
                        segmentedTasks.allSatisfy { $0.isCompleted }
+    }
+    
+    func returnColorForTask(task: UITaskModel) -> Color {
+        if task.taskColor == .baseColor {
+            return appearanceManager.accentColor
+        } else {
+            return task.taskColor.color(for: .dark)
+        }
     }
 }
 
@@ -192,4 +202,5 @@ struct SegmentedTask: Identifiable, Equatable {
     let id: String
     let task: UITaskModel
     let isCompleted: Bool
+    let color: Color
 }

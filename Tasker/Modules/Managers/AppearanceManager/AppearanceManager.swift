@@ -17,6 +17,7 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     
     public var profileModel: UIProfileModel
     public var colorScheme: ColorScheme?
+    public var minimalProgressMode: Bool
     
     public var accentColor: Color = .green
     public var backgroundColor: Color = .white
@@ -24,7 +25,8 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     private init(profileManager: ProfileManagerProtocol) {
         self.profileManager = profileManager
         self.profileModel = profileManager.profileModel
-        self.colorScheme = profileModel.settings.colorScheme.colorScheme
+        self.colorScheme = profileManager.profileModel.settings.colorScheme.colorScheme
+        self.minimalProgressMode = profileManager.profileModel.settings.minimalProgressMode
     }
     
     //MARK: - Create Manager
@@ -77,6 +79,7 @@ final public class AppearanceManager: AppearanceManagerProtocol {
     public func changeProgressMode(_ value: Bool) async throws {
         profileModel.settings.minimalProgressMode = value
         try await profileManager.updateProfileModel()
+        minimalProgressMode = value
     }
     
     //MARK: - Default Task Color

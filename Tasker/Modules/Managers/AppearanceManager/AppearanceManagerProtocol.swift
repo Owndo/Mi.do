@@ -12,6 +12,7 @@ import Models
 public protocol AppearanceManagerProtocol {
     var profileModel: UIProfileModel { get }
     var colorScheme: ColorScheme? { get }
+    var minimalProgressMode: Bool { get }
     
     var accentColor: Color { get }
     var backgroundColor: Color { get }

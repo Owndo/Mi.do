@@ -49,9 +49,6 @@ struct DayView: View {
                         .scaleEffect(1.4)
                 }
             }
-            .task {
-                await vm.updateTasks()
-            }
             .animation(.default, value: vm.showSmallFire)
             .animation(.default, value: vm.segmentedTasks)
         }

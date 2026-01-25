@@ -16,29 +16,31 @@ struct SegmentedCircleView: View {
     var vm: DayViewVM
     
     var body: some View {
-        let visibleSegments = Array(vm.segmentedTasks.prefix(10))
-        
-        ZStack {
-            CircleBackgroundFill(colors: visibleSegments.map { $0.color },
-                                 completed: visibleSegments.allSatisfy { $0.isCompleted })
-            .frame(width: 36, height: 36)
+        if let segmentedTasks = vm.segmentedTasks {
+            let visibleSegments = Array(segmentedTasks.prefix(10))
             
-            ForEach(Array(visibleSegments.enumerated()), id: \.element.id) { index, segment in
-                CreateSegmentBorder(
-                    for: index,
-                    count: visibleSegments.count,
-                    task: segment.task,
-                    isCompleted: segment.isCompleted
-                )
+            ZStack {
+                CircleBackgroundFill(colors: visibleSegments.map { $0.color },
+                                     completed: visibleSegments.allSatisfy { $0.isCompleted })
+                .frame(width: 36, height: 36)
+                
+                ForEach(Array(visibleSegments.enumerated()), id: \.element.id) { index, segment in
+                    CreateSegmentBorder(
+                        for: index,
+                        count: visibleSegments.count,
+                        task: segment.task,
+                        isCompleted: segment.isCompleted
+                    )
+                }
             }
-        }
-        .animation(.easeIn(duration: 0.3), value: vm.completedFlagsForToday)
-        .frame(width: 36, height: 36)
-        .task(id: vm.appearanceManager.minimalProgressMode) {
-            vm.segmentProgress = 0
-            
-            withAnimation(.easeOut(duration: 0.4)) {
-                vm.segmentProgress = 1.0
+            .animation(.easeIn(duration: 0.3), value: vm.completedFlagsForToday)
+            .frame(width: 36, height: 36)
+            .task(id: vm.appearanceManager.minimalProgressMode) {
+                vm.segmentProgress = 0
+                
+                withAnimation(.easeOut(duration: 0.4)) {
+                    vm.segmentProgress = 1.0
+                }
             }
         }
     }

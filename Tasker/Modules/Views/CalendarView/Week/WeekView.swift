@@ -78,29 +78,27 @@ public struct WeekView: View {
                         Button {
                             vm.selectedDateButtonTapped(day)
                         } label: {
-                            if let vm = vm.returnDayVM(day) {
-                                DayView(vm: vm)
-                            } else {
-                                HStack {
+                            DayView(vm: vm.returnDayVM(day))
+//                                HStack {
                                     
-                                    Spacer()
+//                                    Spacer()
                                     
-                                    ProgressView()
+//                                    ProgressView()
                                     
-                                    Spacer()
-                                }
-                                .task {
-                                    await vm.syncDayVM(for: day)
-                                }
-                            }
+//                                    Spacer()
+//                                }
+//                                .task {
+//                                    await vm.syncDayVM(for: day)
+//                                }
+//                            }
                         }
                     }
                 }
             }
         }
-        .task(id: vm.indexForWeek) {
-            await vm.downloadDaysVMs()
-        }
+//        .task(id: vm.indexForWeek) {
+//            await vm.downloadDaysVMs()
+//        }
         .animation(.spring(response: 0.2, dampingFraction: 1.8, blendDuration: 0), value: vm.indexForWeek)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }

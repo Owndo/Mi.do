@@ -121,9 +121,10 @@ public final class WeekVM: HashableNavigation {
     //MARK: - Return DayVM
 
     @MainActor
-    func returnDayVM(_ day: Date) -> DayViewVM? {
-        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
-        return dayVMs[key]
+    func returnDayVM(_ day: Date) -> DayViewVM {
+        DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager, day: day)
+//        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+//        return dayVMs[key]
     }
     
     func selectedDateButtonTapped(_ day: Date) {

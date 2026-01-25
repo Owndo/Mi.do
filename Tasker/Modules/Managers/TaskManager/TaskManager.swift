@@ -70,7 +70,7 @@ public final actor TaskManager: TaskManagerProtocol {
     public static func createTaskManager(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol) async -> TaskManagerProtocol {
         let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         await manager.fetchTasksFromCAS()
-        await manager.retrieveWeekTasks(for: Date())
+//        await manager.retrieveMonthTasks(for: Date())
         await manager.createStreams()
         
         return manager
@@ -243,16 +243,23 @@ public final actor TaskManager: TaskManagerProtocol {
         if let cached = monthTasksCache[key] {
             return cached
         }
-        
-        let endOfMonth = dateManager.endOfMonth(for: date)
-        let end = endOfMonth.timeIntervalSince1970
-        
-        let monthTasks = tasks.values.filter { task in
-            task.notificationDate >= key && task.notificationDate < end
+
+        guard let dates = dateManager.allMonths.first(where: { dateManager.startOfMonth(for: $0.date.first!) == startOfMonth })?.date else {
+            return nil
         }
         
-        monthTasksCache[key] = monthTasks
-        return monthTasks
+        var setOfTasks = Set<UITaskModel>()
+        
+        for date in dates {
+            let tasks = self.tasks.values.filter { $0.isScheduledForDate(key, calendar: calendar) }
+            
+            for task in tasks {
+                setOfTasks.insert(task)
+            }
+        }
+        
+        monthTasksCache[key] = Array(setOfTasks)
+        return monthTasksCache[key]
     }
     
     //MARK: - Invalidate Tasks Cache

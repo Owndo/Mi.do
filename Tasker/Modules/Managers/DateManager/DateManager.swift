@@ -143,30 +143,11 @@ public final class DateManager: DateManagerProtocol {
     public func initializeMonth() async {
         allMonths.removeAll()
         
-        await withTaskGroup(of: PeriodModel.self) { group in
-            for id in 0...19 {
-                group.addTask {
-                    let offset = id - 10
-                    
-                    let monthDate = self.calendar.date(
-                        byAdding: .month,
-                        value: offset,
-                        to: self.selectedDate
-                    )!
-                    
-                    let newMonth = self.generateMonth(for: monthDate)
-                    let name = self.getMonthName(from: monthDate)
-                    
-                    return PeriodModel(id: id, date: newMonth, name: name)
-                }
-            }
-            
-            for await month in group {
-                allMonths.append(month)
-            }
+        allMonths = (-6...6).map { i in
+            let monthDate = calendar.date(byAdding: .month, value: i, to: selectedDate)!
+            let newMonth = generateMonth(for: monthDate)
+            return PeriodModel(id: i, date: newMonth)
         }
-        
-        allMonths.sort { $0.id < $1.id }
     }
     
     public func selectedDayIsToday() -> Bool {
@@ -205,24 +186,25 @@ public final class DateManager: DateManagerProtocol {
     
     //MARK: - Months
     
-    public func generatePreviousMonth() async {
+    public func generatePreviousMonth() {
         guard let firstDay = allMonths.first!.date.first else { return }
         let monthStart = calendar.date(byAdding: .month, value: -1, to: firstDay)!
         let newMonth = generateMonth(for: monthStart)
         let nameOfMonth = getMonthName(from: monthStart)
         let newId = allMonths.first!.id - 1
         
-        //        allMonths.removeLast()
+//        allMonths.removeLast()
         allMonths.insert(PeriodModel(id: newId, date: newMonth, name: nameOfMonth), at: 0)
     }
     
-    public func generateFeatureMonth() async {
+    public func generateFeatureMonth() {
         guard let lastMonthStart = allMonths.last?.date.first else { return }
         let monthStart = calendar.date(byAdding: .month, value: 1, to: lastMonthStart)!
         let newMonth = generateMonth(for: monthStart)
-        let nameOfMonth = getMonthName(from: monthStart)
         let nextID = (allMonths.last?.id ?? 0) + 1
-        allMonths.append(PeriodModel(id: nextID, date: newMonth, name: nameOfMonth))
+        
+//        allMonths.removeFirst()
+        allMonths.append(PeriodModel(id: nextID, date: newMonth))
     }
     
     public func appendMonthsBackward() async {
@@ -244,20 +226,14 @@ public final class DateManager: DateManagerProtocol {
     }
     
     private func generateMonth(for date: Date) -> [Date] {
-        var dates: [Date] = []
-        
         guard let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
               let range = calendar.range(of: .day, in: .month, for: startOfMonth) else {
             return []
         }
         
-        for day in range {
-            if let dayDate = calendar.date(byAdding: .day, value: day - 1, to: startOfMonth) {
-                dates.append(dayDate)
-            }
+        return (0..<range.count).map {
+            calendar.date(byAdding: .day, value: $0, to: startOfMonth)!
         }
-        
-        return dates
     }
     
     private func getMonthName(from date: Date) -> String {

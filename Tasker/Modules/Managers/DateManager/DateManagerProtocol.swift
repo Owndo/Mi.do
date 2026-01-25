@@ -35,9 +35,10 @@ public protocol DateManagerProtocol {
     func selectedDateChange(_ day: Date)
     func appendWeeksForward()
     func appendWeeksBackward()
-    func generatePreviousMonth() async
-    func generateFeatureMonth() async
-    func appendMonthsBackward() async
+    /// Generate one month to the past and remove last one from the future
+    func generatePreviousMonth()
+    /// Generate one month to the future and remove first one from the past
+    func generateFeatureMonth()
     /// Converte date to string
     func dateToString(for date: Date, useForWeekView: Bool) -> LocalizedStringKey
     func dateForDeadline(for date: Date) -> LocalizedStringKey

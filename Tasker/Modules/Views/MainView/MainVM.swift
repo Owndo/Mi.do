@@ -577,6 +577,7 @@ public final class MainVM: HashableNavigation {
     //MARK: - Calendar Button
     
     func calendarButtonTapped() async {
+        await calendarVM.startVM()
         path.append(.calendar(calendarVM))
         // telemetry
         telemetryAction(.mainViewAction(.calendarButtonTapped))

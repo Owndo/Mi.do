@@ -22,33 +22,60 @@ public struct MonthsView: View {
         ZStack(alignment: .bottomTrailing) {
             appearanceManager.backgroundColor.ignoresSafeArea()
             
-            ScrollView {
-                LazyVStack {
-                    ForEach(vm.allMonths) { month in
-                        
-                        MonthInfoView(month)
-                            .task {
-                                await vm.handleMonthAppeared(month)
+            if #available(iOS 18, *) {
+                ScrollView {
+                    LazyVStack {
+                        ForEach(vm.allMonths) { month in
+                            VStack(spacing: 0) {
+                                MonthInfoView(month)
+                                
+                                LazyVGrid(columns: vm.columns) {
+                                    EmptyDays(month)
+                                    
+                                    MonthRowView(month.date)
+                                }
                             }
-                        
-                        LazyVGrid(columns: vm.columns) {
-                            EmptyDays(month)
-                            
-                            MonthRowView(month.date)
+                            .id(month.id)
                         }
                     }
+                    .scrollTargetLayout()
                 }
-                .scrollTargetLayout()
+                .scrollIndicators(.hidden)
+                .scrollPosition(id: $vm.scrollID, anchor: vm.scrollAnchor)
+                .onScrollPhaseChange { _, newValue in
+                    switch newValue {
+                    case .idle:
+                        vm.ableToDownloadTasksColors = true
+                    default:
+                        vm.ableToDownloadTasksColors = false
+                    }
+                }
+            } else {
+                ScrollView {
+                    LazyVStack {
+                        ForEach(vm.allMonths) { month in
+                            
+                            MonthInfoView(month)
+                            
+                            LazyVGrid(columns: vm.columns) {
+                                EmptyDays(month)
+                                
+                                MonthRowView(month.date)
+                            }
+                        }
+                    }
+                    .scrollTargetLayout()
+                }
+                .scrollIndicators(.hidden)
+                .scrollPosition(id: $vm.scrollID, anchor: vm.scrollAnchor)
             }
-            .scrollIndicators(.hidden)
-            .scrollPosition(id: $vm.scrollID, anchor: vm.scrollAnchor)
             
             ScrollBackButton()
                 .padding(.trailing, 25)
                 .padding(.bottom, 20)
         }
-        .task {
-            await vm.onAppear()
+        .task(id: vm.scrollID) {
+            vm.handleMonthAppeared()
         }
         .onDisappear {
             vm.onDissapear()
@@ -142,31 +169,19 @@ public struct MonthsView: View {
     @ViewBuilder
     private func MonthRowView(_ dates: [Date]) -> some View {
         ForEach(dates, id: \.self) { day in
-            VStack {
-                Button {
-                    vm.selectedDateChange(day)
-                } label: {
-                    ZStack {
-                        if vm.isSelectedDay(day) {
-                            Circle()
-                                .fill(.backgroundTertiary)
-                        }
-                        
-                        if let vm = vm.returnDayVM(day) {
-                            DayView(vm: vm)
-                        } else {
-                            ProgressView()
-                                .task {
-                                    await vm.syncDayVM(for: day)
-                                }
-                        }
+            Button {
+                vm.selectedDateChange(day)
+            } label: {
+                ZStack {
+                    if vm.isSelectedDay(day) {
+                        Circle()
+                            .fill(.backgroundTertiary)
                     }
+                    
+                    DayView(vm: vm.returnDayVM(day))
+                        .frame(width: 45, height: 45)
                 }
             }
-            .task {
-                await vm.downloadDaysVMs()
-            }
-            .frame(width: 45, height: 45)
             .padding(.vertical, 14)
         }
     }

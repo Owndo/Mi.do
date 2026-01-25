@@ -19,12 +19,13 @@ final class DayViewVM: HashableNavigation {
     private let dateManager: DateManagerProtocol
     
     var day: Date
+    var ableToDownload = true
     
     var showSmallFire = false
     var flameAnimation = false
     
     /// For segmented view
-    var segmentedTasks: [SegmentedTask] = []
+    var segmentedTasks: [SegmentedTask]?
     
     private var isLoading = false
     
@@ -75,6 +76,10 @@ final class DayViewVM: HashableNavigation {
             taskManager: taskManager,
             day: day
         )
+        
+        Task {
+            await vm.updateTasks()
+        }
         
         return vm
     }
@@ -159,34 +164,38 @@ final class DayViewVM: HashableNavigation {
     
     @MainActor
     func updateTasks(update: Bool = false) async {
-        if update == true {
-            hasLoaded = false
-        }
-        
-        guard !hasLoaded else {
-            return
-        }
-        
-        defer {
-            hasLoaded = true
-        }
-
-        let tasks = await taskManager.retrieveDayTasks(for: day)
-            .sorted { $0.notificationDate < $1.notificationDate }
-
-        let timeKey = day.timeIntervalSince1970
-
-        segmentedTasks = tasks.map {
-            SegmentedTask(
-                id: $0.id,
-                task: $0,
-                isCompleted: $0.completeRecords.contains { $0.completedFor == timeKey },
-                color: returnColorForTask(task: $0)
-            )
-        }
-
-        allCompleted = !segmentedTasks.isEmpty &&
-                       segmentedTasks.allSatisfy { $0.isCompleted }
+//        guard ableToDownload else { return }
+//        
+//        if update == true {
+//            hasLoaded = false
+//        }
+//        
+//        guard !hasLoaded else {
+//            return
+//        }
+//        
+//        defer {
+//            hasLoaded = true
+//        }
+//        
+//        let tasks = await taskManager.retrieveDayTasks(for: day)
+//            .sorted { $0.notificationDate < $1.notificationDate }
+//        
+//        let timeKey = day.timeIntervalSince1970
+//        
+//        segmentedTasks = tasks.map {
+//            SegmentedTask(
+//                id: $0.id,
+//                task: $0,
+//                isCompleted: $0.completeRecords.contains { $0.completedFor == timeKey },
+//                color: returnColorForTask(task: $0)
+//            )
+//        }
+//        
+//        guard let segmentedTasks else { return }
+//        
+//        allCompleted = !segmentedTasks.isEmpty &&
+//        segmentedTasks.allSatisfy { $0.isCompleted }
     }
     
     func returnColorForTask(task: UITaskModel) -> Color {

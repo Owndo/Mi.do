@@ -22,6 +22,8 @@ public final class MonthsViewVM: HashableNavigation {
     
     private var dayVMStore: DayVMStore
     
+    var ableToDownloadTasksColors = false
+    
     private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
     var dayVMs: [TimeInterval: DayViewVM] = [:]
@@ -33,6 +35,9 @@ public final class MonthsViewVM: HashableNavigation {
             checkIfUserScrolledFromSelectedDate()
         }
     }
+    
+    var minPoint = -2
+    var maxPoint = 2
     
     public var scrollAnchor: UnitPoint = .top
     
@@ -81,8 +86,9 @@ public final class MonthsViewVM: HashableNavigation {
         dateManager: DateManagerProtocol,
         taskManager: TaskManagerProtocol,
         dayVMStore: DayVMStore
-    ) async  -> MonthsViewVM {
+    ) async -> MonthsViewVM {
         let vm = MonthsViewVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
+        await vm.startVM()
         
         return vm
     }
@@ -105,14 +111,13 @@ public final class MonthsViewVM: HashableNavigation {
         return vm
     }
     
-    //MARK: - On appear
+    //MARK: - Start VM
     
-    func onAppear() async {
-        await dateManager.initializeMonth()
-        jumpToSelectedMonth()
-        
-        try? await Task.sleep(for: .seconds(0.5))
-        viewStarted = true
+    @MainActor
+    public func startVM() async {
+        //        await dateManager.initializeMonth()
+        await jumpToSelectedMonth()
+        await downloadDaysVMs()
     }
     
     func onDissapear() {
@@ -163,7 +168,7 @@ public final class MonthsViewVM: HashableNavigation {
     func backToTodayButtonTapped() async {
         dateManager.backToToday()
         
-        jumpToSelectedMonth()
+        await jumpToSelectedMonth()
         
         
         //        await dateManager.initializeMonth()
@@ -175,7 +180,7 @@ public final class MonthsViewVM: HashableNavigation {
     func backToSelectedDayButtonText() -> String {
         let currentYear = calendar.component(.year, from: Date())
         let selectedYear = calendar.component(.year, from: selectedDate)
-
+        
         if selectedYear == currentYear {
             return selectedDate.formatted(.dateTime.month().day())
         } else {
@@ -184,9 +189,8 @@ public final class MonthsViewVM: HashableNavigation {
     }
     
     func backToSelectedMonthButtonTapped() async {
-        //        await dateManager.initializeMonth()
         viewStarted = false
-        jumpToSelectedMonth()
+        await jumpToSelectedMonth()
         viewStarted = true
         scrolledFromCurrentMonth = false
     }
@@ -221,20 +225,22 @@ public final class MonthsViewVM: HashableNavigation {
     
     //MARK: - Handle Month
     
-    func handleMonthAppeared(_ month: PeriodModel) async {
+    @MainActor
+    func handleMonthAppeared() {
+        guard let scrollID else { return }
         
-        guard viewStarted else { return }
+        if scrollID > maxPoint {
+            maxPoint += 1
+            dateManager.generateFeatureMonth()
+        }
         
-        if let first = allMonths.first, first == month {
-            await dateManager.generatePreviousMonth()
-        } else if let last = allMonths.last, last == month {
-            await dateManager.generateFeatureMonth()
+        if scrollID < minPoint {
+            minPoint -= 1
+            dateManager.generatePreviousMonth()
         }
     }
     
     func checkIfUserScrolledFromSelectedDate() {
-        guard viewStarted else { return }
-        
         guard let month = allMonths.first(where: { $0.id == scrollID }) else { return }
         
         guard !month.date.contains(where: { calendar.isDate($0, inSameDayAs: selectedDate)}) else {
@@ -251,9 +257,21 @@ public final class MonthsViewVM: HashableNavigation {
         }
     }
     
-    func jumpToSelectedMonth() {
-        scrollID = allMonths.first { $0.date.contains { calendar.isDate($0, inSameDayAs: selectedDate) }}?.id
+    //MARK: - Jump to selected month
+    
+    func jumpToSelectedMonth() async {
+        guard let id = allMonths.first(where: { $0.date.contains { calendar.isDate($0, inSameDayAs: selectedDate) }})?.id else {
+            await dateManager.initializeMonth()
+            minPoint = -2
+            maxPoint = 2
+            return
+        }
+        
+        minPoint = -2
+        maxPoint = 2
+        scrollID = id
         scrollAnchor = .top
+        
     }
     
     @MainActor
@@ -275,9 +293,14 @@ public final class MonthsViewVM: HashableNavigation {
     //MARK: - Return DayVM
     
     @MainActor
-    func returnDayVM(_ day: Date) -> DayViewVM? {
-        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
-        return dayVMs[key]
+    func returnDayVM(_ day: Date) -> DayViewVM {
+        let vm = DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager, day: day)
+        vm.ableToDownload = ableToDownloadTasksColors
+        
+        return vm
+        
+        //        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+        //        return dayVMs[key]
     }
     
     //MARK: Telemtry action

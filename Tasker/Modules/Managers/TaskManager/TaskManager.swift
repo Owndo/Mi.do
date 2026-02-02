@@ -244,19 +244,19 @@ public final actor TaskManager: TaskManagerProtocol {
             return cached
         }
 
-        guard let dates = dateManager.allMonths.first(where: { dateManager.startOfMonth(for: $0.date.first!) == startOfMonth })?.date else {
+        guard let dates = dateManager.allMonths.first(where: { dateManager.startOfMonth(for: $0.date) == startOfMonth })?.date else {
             return nil
         }
         
         var setOfTasks = Set<UITaskModel>()
         
-        for date in dates {
-            let tasks = self.tasks.values.filter { $0.isScheduledForDate(key, calendar: calendar) }
-            
-            for task in tasks {
-                setOfTasks.insert(task)
-            }
-        }
+//        for date in dates {
+//            let tasks = self.tasks.values.filter { $0.isScheduledForDate(key, calendar: calendar) }
+//            
+//            for task in tasks {
+//                setOfTasks.insert(task)
+//            }
+//        }
         
         monthTasksCache[key] = Array(setOfTasks)
         return monthTasksCache[key]

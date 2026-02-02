@@ -34,7 +34,7 @@ struct DayView: View {
                 }
                 
                 if !vm.lastDayForDeadline() || vm.lastDayForDeadline() && vm.showSmallFire {
-                    Text("\(vm.day, format: .dateTime.day())")
+                    Text("\(vm.day.date, format: .dateTime.day())")
                         .font(.system(size: 17, weight: vm.isDateInToday() ? .semibold : .regular, design: .default))
                         .foregroundStyle(!vm.isDateInToday() ? .labelQuaternary : .labelSecondary)
                         .frame(maxWidth: .infinity)

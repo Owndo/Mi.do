@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Models
 import UIComponents
 
 public struct WeekView: View {
@@ -50,7 +51,7 @@ public struct WeekView: View {
                         }
                     }
                     
-                    DayOfWeeksView()
+                    DayOfWeeksView(weeks: vm.weeks)
                 }
                 .padding(.top, 8)
             }
@@ -70,35 +71,23 @@ public struct WeekView: View {
     
     //MARK: - Day of week
     @ViewBuilder
-    private func DayOfWeeksView() -> some View {
+    private func DayOfWeeksView(weeks: [Week]) -> some View {
         TabView(selection: $vm.dateManager.indexForWeek) {
-            ForEach(vm.weeks) { week in
+            ForEach(weeks) { week in
                 HStack {
-                    ForEach(week.date, id: \.self) { day in
+                    ForEach(week.days) { day in
                         Button {
                             vm.selectedDateButtonTapped(day)
                         } label: {
                             DayView(vm: vm.returnDayVM(day))
-//                                HStack {
-                                    
-//                                    Spacer()
-                                    
-//                                    ProgressView()
-                                    
-//                                    Spacer()
-//                                }
-//                                .task {
-//                                    await vm.syncDayVM(for: day)
-//                                }
-//                            }
                         }
                     }
                 }
             }
         }
-//        .task(id: vm.indexForWeek) {
-//            await vm.downloadDaysVMs()
-//        }
+        //        .task(id: vm.indexForWeek) {
+        //            await vm.downloadDaysVMs()
+        //        }
         .animation(.spring(response: 0.2, dampingFraction: 1.8, blendDuration: 0), value: vm.indexForWeek)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }

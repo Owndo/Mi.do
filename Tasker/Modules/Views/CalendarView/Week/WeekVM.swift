@@ -51,7 +51,7 @@ public final class WeekVM: HashableNavigation {
         dateManager.indexForWeek
     }
     
-    var weeks: [PeriodModel] {
+    var weeks: [Week] {
         dateManager.allWeeks
     }
     
@@ -71,7 +71,7 @@ public final class WeekVM: HashableNavigation {
         dateManager: DateManagerProtocol,
         taskManager: TaskManagerProtocol,
         dayVMStore: DayVMStore
-    ) async -> WeekVM {
+    ) -> WeekVM {
         let vm = WeekVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
@@ -79,7 +79,7 @@ public final class WeekVM: HashableNavigation {
             dayVMStore: dayVMStore
         )
         
-        await vm.downloadDaysVMs()
+//        await vm.downloadDaysVMs()
         
         return vm
     }
@@ -121,14 +121,14 @@ public final class WeekVM: HashableNavigation {
     //MARK: - Return DayVM
 
     @MainActor
-    func returnDayVM(_ day: Date) -> DayViewVM {
+    func returnDayVM(_ day: Day) -> DayViewVM {
         DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager, day: day)
 //        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
 //        return dayVMs[key]
     }
     
-    func selectedDateButtonTapped(_ day: Date) {
-        dateManager.selectedDateChange(day)
+    func selectedDateButtonTapped(_ day: Day) {
+        dateManager.selectedDateChange(day.date)
         
         // telemetry
         telemetryAction(.calendarAction(.selectedDateButtonTapped(.mainView)))

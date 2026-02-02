@@ -14,7 +14,7 @@ import TelemetryManager
 import TaskManager
 
 @Observable
-public final class MonthsViewVM: HashableNavigation {
+public class MonthsViewVM: HashableNavigation {
     
     var appearanceManager: AppearanceManagerProtocol
     var dateManager: DateManagerProtocol
@@ -30,27 +30,45 @@ public final class MonthsViewVM: HashableNavigation {
     
     public var backToMainView: (() -> Void)?
     
-    public var scrollID: Int? {
-        didSet {
-            checkIfUserScrolledFromSelectedDate()
+    //MARK: - Scroll
+    
+    private var _scrollPositionStorage: Any?
+    
+    @available(iOS 18, *)
+    var scrollPosition: ScrollPosition {
+        get {
+            if let value = _scrollPositionStorage as? ScrollPosition {
+                return value
+            }
+            let initial = ScrollPosition()
+            _scrollPositionStorage = initial
+            return initial
+        }
+        set {
+            _scrollPositionStorage = newValue
         }
     }
     
-    var minPoint = -2
-    var maxPoint = 2
+    var scrollID: String?
+    var scrollAnchor: UnitPoint = .top
     
-    public var scrollAnchor: UnitPoint = .top
+    var isScrolling = false
+    var monthHeight: CGFloat = 500
+    
+    var imageForScrollBackButton = "chevron.up"
+    var scrolledFromCurrentMonth = false
+    
+    var isLoadingTop = false
+    var isLoadingBottom = false
+    var isResetting: Bool = true
     
     //MARK: - UI State
     
     var viewStarted = false
+    
+    var currentYear: String?
     //    var navigationTitle = ""
     //    var navigationSubtitle = ""
-    
-    var imageForScrollBackButton = "chevron.up"
-    
-    var isScrolling = false
-    var scrolledFromCurrentMonth = false
     
     var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
@@ -68,9 +86,7 @@ public final class MonthsViewVM: HashableNavigation {
         dateManager.currentTime
     }
     
-    var allMonths: [PeriodModel] {
-        dateManager.allMonths
-    }
+    var allMonths: [Month] = []
     
     private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, dayVMStore: DayVMStore) {
         self.appearanceManager = appearanceManager
@@ -88,7 +104,6 @@ public final class MonthsViewVM: HashableNavigation {
         dayVMStore: DayVMStore
     ) async -> MonthsViewVM {
         let vm = MonthsViewVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
-        await vm.startVM()
         
         return vm
     }
@@ -113,15 +128,12 @@ public final class MonthsViewVM: HashableNavigation {
     
     //MARK: - Start VM
     
-    @MainActor
-    public func startVM() async {
-        //        await dateManager.initializeMonth()
-        await jumpToSelectedMonth()
-        await downloadDaysVMs()
+    public func startVM() {
+        allMonths = dateManager.initializeMonth()
+        //        await downloadDaysVMs()
     }
     
     func onDissapear() {
-        scrollID = nil
         viewStarted = false
     }
     
@@ -137,22 +149,10 @@ public final class MonthsViewVM: HashableNavigation {
         telemetryAction(.calendarAction(.selectedDateButtonTapped(.calendarView)))
     }
     
-    func calculateEmptyDay(for month: PeriodModel) -> Int {
-        guard let firstDate = month.date.first else { return 0 }
-        let weekday = calendar.component(.weekday, from: firstDate)
-        
-        let shift = (weekday - calendar.firstWeekday + 7) % 7
-        return shift
-    }
-    
     func shiftedWeekdaySymbols() -> [String] {
         let symbols = calendar.veryShortWeekdaySymbols
         let weekdayIndex = calendar.firstWeekday - 1
         return Array(symbols[weekdayIndex...] + symbols[..<weekdayIndex])
-    }
-    
-    func isSameDay(_ day: Date) -> Bool {
-        calendar.isDate(day, inSameDayAs: today)
     }
     
     func isSelectedDay(_ day: Date) -> Bool {
@@ -170,12 +170,11 @@ public final class MonthsViewVM: HashableNavigation {
         
         await jumpToSelectedMonth()
         
-        
-        //        await dateManager.initializeMonth()
-        
         // telemetry
         telemetryAction(.calendarAction(.backToTodayButtonTapped(.calendarView)))
     }
+    
+    //MARK: - Text for Back Button
     
     func backToSelectedDayButtonText() -> String {
         let currentYear = calendar.component(.year, from: Date())
@@ -195,28 +194,10 @@ public final class MonthsViewVM: HashableNavigation {
         scrolledFromCurrentMonth = false
     }
     
-    func currentYear(_ month: PeriodModel) -> String? {
-        guard let day = month.date.first else { return nil }
-        return day.formatted(.dateTime.year())
-    }
-    
-    func monthName(_ month: PeriodModel) -> String {
-        guard let date = month.date.first else { return "" }
-        
-        let monthName = date.formatted(.dateTime.month(.wide))
-        
-        let year = calendar.component(.year, from: date)
-        
-        if year == calendar.component(.year, from: today) {
-            return monthName
-        } else {
-            return String("\(monthName) \(year)")
-        }
-    }
-    
     //MARK: - Back to MainView Button
     
     func backToMainViewButtonTapped() {
+        self.onDissapear()
         backToMainView?()
         
         // telemetry
@@ -226,58 +207,166 @@ public final class MonthsViewVM: HashableNavigation {
     //MARK: - Handle Month
     
     @MainActor
-    func handleMonthAppeared() {
-        guard let scrollID else { return }
-        
-        if scrollID > maxPoint {
-            maxPoint += 1
-            dateManager.generateFeatureMonth()
-        }
-        
-        if scrollID < minPoint {
-            minPoint -= 1
-            dateManager.generatePreviousMonth()
-        }
-    }
-    
-    func checkIfUserScrolledFromSelectedDate() {
-        guard let month = allMonths.first(where: { $0.id == scrollID }) else { return }
-        
-        guard !month.date.contains(where: { calendar.isDate($0, inSameDayAs: selectedDate)}) else {
-            scrolledFromCurrentMonth = false
+    func handleMonthAppeared(month: Month) {
+        guard viewStarted else {
             return
         }
         
-        scrolledFromCurrentMonth = true
+        if allMonths[1] == month {
+            loadPastMonth()
+        } else if allMonths.last == month {
+            loadPastMonth()
+        }
+    }
+    
+    //MARK: - Load past
+    
+    func loadPastMonth() {
+        isLoadingTop = true
         
-        if let first = month.date.first, first > selectedDate {
-            imageForScrollBackButton = "chevron.up"
-        } else {
-            imageForScrollBackButton = "chevron.down"
+        let month = dateManager.generatePreviousMonth(for: allMonths.first!.date)
+        allMonths.insert(month, at: 0)
+        
+        DispatchQueue.main.async {
+            self.isLoadingTop = false
+        }
+    }
+    
+    //MARK: - Load Future
+    
+    func loadFutureMonth() {
+        isLoadingBottom = true
+        
+        let month = dateManager.generateFeatureMonths(for: allMonths.last!.date)
+        allMonths.append(contentsOf: month)
+        
+        DispatchQueue.main.async {
+            self.isLoadingBottom = false
         }
     }
     
     //MARK: - Jump to selected month
     
     func jumpToSelectedMonth() async {
-        guard let id = allMonths.first(where: { $0.date.contains { calendar.isDate($0, inSameDayAs: selectedDate) }})?.id else {
-            await dateManager.initializeMonth()
-            minPoint = -2
-            maxPoint = 2
-            return
-        }
-        
-        minPoint = -2
-        maxPoint = 2
-        scrollID = id
+        scrollID = allMonths.first(where: { $0.date == dateManager.startOfMonth(for: selectedDate) })?.id
         scrollAnchor = .top
         
+        try? await Task.sleep(for: .seconds(0.5))
+        viewStarted = true
     }
     
+    //MARK: - iOS 18 section
+    
+    @available(iOS 18.0, *)
+    func jumpToSelectedMonth18iOS() async {
+        scrollPosition = ScrollPosition(
+            id: allMonths.first(
+                where: {
+                    $0.date == dateManager.startOfMonth(for: selectedDate)
+                })?.id,
+            anchor: .top
+        )
+        
+        try? await Task.sleep(for: .seconds(0.5))
+        viewStarted = true
+    }
+    
+    @available(iOS 18.0, *)
+    func backToTodayButton18iOS() async {
+        dateManager.backToToday()
+        allMonths = dateManager.initializeMonth()
+        await jumpToSelectedMonth18iOS()
+    }
+    
+    
+    //MARK: - Load past Months
+    
+    @available(iOS 18.0, *)
+    /// Load 10 past months #available only iOS18+
+    func loadPastMonths(info: ScrollInfo) {
+        isLoadingTop = true
+        
+        let months = dateManager.generatePreviousMonths(for: allMonths.first!.date).reversed()
+        allMonths.insert(contentsOf: months, at: 0)
+        
+        adjustScrollContentHeight(removesTop: false, info: info)
+        
+        DispatchQueue.main.async {
+            self.isLoadingTop = false
+        }
+    }
+    
+    //MARK: - Load future Months
+    
+    @available(iOS 18.0, *)
+    /// Load 10 future months #available only iOS18+
+    func loadFutureMonths(info: ScrollInfo) {
+        isLoadingBottom = true
+        
+        let month = dateManager.generateFeatureMonths(for: allMonths.last!.date)
+        allMonths.append(contentsOf: month)
+        
+        if allMonths.count > 30 {
+            adjustScrollContentHeight(removesTop: true, info: info)
+        }
+        
+        DispatchQueue.main.async {
+            self.isLoadingBottom = false
+        }
+    }
+    
+    //MARK: - Adjustment scroll
+    
+    @available(iOS 18.0, *)
+    func adjustScrollContentHeight(removesTop: Bool, info: ScrollInfo) {
+        let previousContentHeight = info.contentHeight
+        let previousOffset = info.offsetY
+        
+        let adjustmentHeight: CGFloat = monthHeight * 10
+        
+        if removesTop {
+            allMonths.removeFirst(10)
+        } else {
+            if allMonths.count > 30 {
+                allMonths.removeLast(10)
+            }
+        }
+        
+        let newContentHeight = previousContentHeight + (removesTop ? -adjustmentHeight : adjustmentHeight)
+        let newContentOffset = previousOffset + (newContentHeight - previousContentHeight)
+        
+        var transaction = Transaction()
+        transaction.scrollPositionUpdatePreservesVelocity = true
+        
+        withTransaction(transaction) {
+            scrollPosition.scrollTo(y: newContentOffset)
+        }
+    }
+    
+    //MARK: - Up/Down Button
+    
+    func checkIfUserScrolledFromSelectedDate() {
+        //        guard let month = allMonths.first(where: { $0.id == scrollID }) else { return }
+        //
+        //        guard !month.date.contains(where: { calendar.isDate($0, inSameDayAs: selectedDate)}) else {
+        //            scrolledFromCurrentMonth = false
+        //            return
+        //        }
+        //
+        //        scrolledFromCurrentMonth = true
+        //
+        //        if let first = month.date.first, first > selectedDate {
+        //            imageForScrollBackButton = "chevron.up"
+        //        } else {
+        //            imageForScrollBackButton = "chevron.down"
+        //        }
+    }
+    
+    //MARK: - Download DaysVM
     @MainActor
     func downloadDaysVMs() async {
         guard let scrollID else { return }
-        await dayVMStore.createMonthVMs(scrollID: scrollID)
+        //                await dayVMStore.createMonthVMs(scrollID: scrollID)
     }
     
     @MainActor
@@ -293,7 +382,7 @@ public final class MonthsViewVM: HashableNavigation {
     //MARK: - Return DayVM
     
     @MainActor
-    func returnDayVM(_ day: Date) -> DayViewVM {
+    func returnDayVM(_ day: Day) -> DayViewVM {
         let vm = DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager, day: day)
         vm.ableToDownload = ableToDownloadTasksColors
         

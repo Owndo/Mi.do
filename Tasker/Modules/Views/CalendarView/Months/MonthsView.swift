@@ -24,58 +24,75 @@ public struct MonthsView: View {
             
             if #available(iOS 18, *) {
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 0) {
                         ForEach(vm.allMonths) { month in
-                            VStack(spacing: 0) {
-                                MonthInfoView(month)
-                                
-                                LazyVGrid(columns: vm.columns) {
-                                    EmptyDays(month)
-                                    
-                                    MonthRowView(month.date)
-                                }
-                            }
-                            .id(month.id)
+                            MonthView(month: month, vm: vm)
+                                .frame(height: vm.monthHeight)
+                                .id(month.id)
                         }
                     }
-                    .scrollTargetLayout()
+                    
                 }
+                .onScrollGeometryChange(
+                    for: ScrollInfo.self,
+                    of: {
+                        let offsetY = $0.contentOffset.y + $0.contentInsets.top
+                        let contentHeight = $0.contentSize.height
+                        let containerHeight = $0.containerSize.height
+                        
+                        return .init(
+                            offsetY: offsetY,
+                            contentHeight: contentHeight,
+                            contentainerHeight: containerHeight
+                        )
+                    },
+                    action: { oldValue, newValue in
+                        guard vm.allMonths.count > 10 && vm.viewStarted else { return }
+                        
+                        let threshold: CGFloat = 100
+                        let offsetY = newValue.offsetY
+                        let contentHeight = newValue.contentHeight
+                        let frameHeight = newValue.contentainerHeight
+                        
+                        if offsetY > (contentHeight - frameHeight - threshold) && !vm.isLoadingBottom {
+                            vm.loadFutureMonths(info: newValue)
+                        }
+                        
+                        if offsetY < threshold && !vm.isLoadingTop {
+                            vm.loadPastMonths(info: newValue)
+                        }
+                    })
+                .scrollPosition($vm.scrollPosition)
+                .scrollBounceBehavior(.always)
                 .scrollIndicators(.hidden)
-                .scrollPosition(id: $vm.scrollID, anchor: vm.scrollAnchor)
-                .onScrollPhaseChange { _, newValue in
-                    switch newValue {
-                    case .idle:
-                        vm.ableToDownloadTasksColors = true
-                    default:
-                        vm.ableToDownloadTasksColors = false
-                    }
-                }
             } else {
                 ScrollView {
-                    LazyVStack {
+                    LazyVStack(spacing: 0) {
                         ForEach(vm.allMonths) { month in
-                            
-                            MonthInfoView(month)
-                            
-                            LazyVGrid(columns: vm.columns) {
-                                EmptyDays(month)
-                                
-                                MonthRowView(month.date)
-                            }
+                            MonthView(month: month, vm: vm)
+                                .frame(height: vm.monthHeight)
+                                .id(month.id)
+                                .task {
+                                    vm.handleMonthAppeared(month: month)
+                                }
                         }
                     }
-                    .scrollTargetLayout()
                 }
+                .scrollPosition(id: $vm.scrollID)
+                .scrollBounceBehavior(.always)
                 .scrollIndicators(.hidden)
-                .scrollPosition(id: $vm.scrollID, anchor: vm.scrollAnchor)
             }
             
             ScrollBackButton()
                 .padding(.trailing, 25)
                 .padding(.bottom, 20)
         }
-        .task(id: vm.scrollID) {
-            vm.handleMonthAppeared()
+        .task {
+            if #available(iOS 18, *) {
+                await vm.jumpToSelectedMonth18iOS()
+            } else {
+                await vm.jumpToSelectedMonth()
+            }
         }
         .onDisappear {
             vm.onDissapear()
@@ -103,7 +120,11 @@ public struct MonthsView: View {
                 if vm.selectedDayIsToday() {
                     Button {
                         Task {
-                            await vm.backToTodayButtonTapped()
+                            if #available(iOS 18, *) {
+                                await vm.backToTodayButton18iOS()
+                            } else {
+                                await vm.backToTodayButtonTapped()
+                            }
                         }
                     } label: {
                         HStack(spacing: 5) {
@@ -119,71 +140,29 @@ public struct MonthsView: View {
                     }
                 }
             }
+            
+            ToolbarItem(placement: .bottomBar) {
+                if vm.isScrolling {
+                    Text(vm.currentYear ?? "")
+                        .font(.system(.body, design: .rounded, weight: .medium))
+                        .foregroundStyle(vm.appearanceManager.accentColor)
+                        .monospacedDigit()
+                        .contentTransition(.numericText())
+                        .padding(.horizontal)
+                        .frame(maxWidth: .infinity)
+                        .fixedSize()
+                }
+            }
+            
+            if #available(iOS 26.0, *) {
+                ToolbarSpacer(.flexible, placement: .bottomBar)
+            }
         }
         .navigationBarBackButtonHidden()
         .animation(.spring, value: vm.scrolledFromCurrentMonth)
         .animation(.default, value: vm.selectedDate)
-    }
-    
-    @ViewBuilder
-    private func MonthInfoView(_ month: PeriodModel) -> some View {
-        VStack(spacing: 10) {
-            
-            HStack {
-                Text(vm.monthName(month))
-                    .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelSecondary)
-                
-                Spacer()
-            }
-            .padding(.leading, 16)
-            
-            HStack {
-                ForEach(Array(vm.shiftedWeekdaySymbols().enumerated()), id: \.offset) { index, symbol in
-                    Text(symbol)
-                        .font(.system(.body, design: .rounded, weight: .medium))
-                        .foregroundStyle(.labelTertiary)
-                        .frame(maxWidth: .infinity)
-                }
-            }
-            .padding(.top)
-        }
-        .padding(.top, 32)
-        .padding(.bottom, 12)
-    }
-    
-    
-    //MARK: - Empty Days
-    @ViewBuilder
-    private func EmptyDays(_ month: PeriodModel) -> some View {
-        let weekday = vm.calculateEmptyDay(for: month)
-        
-        ForEach(0..<weekday, id: \.self) { _ in
-            Text("")
-        }
-        .padding(.vertical, 14)
-    }
-    
-    //MARK: - Days at month
-    
-    @ViewBuilder
-    private func MonthRowView(_ dates: [Date]) -> some View {
-        ForEach(dates, id: \.self) { day in
-            Button {
-                vm.selectedDateChange(day)
-            } label: {
-                ZStack {
-                    if vm.isSelectedDay(day) {
-                        Circle()
-                            .fill(.backgroundTertiary)
-                    }
-                    
-                    DayView(vm: vm.returnDayVM(day))
-                        .frame(width: 45, height: 45)
-                }
-            }
-            .padding(.vertical, 14)
-        }
+        .animation(.default, value: vm.isScrolling)
+        .animation(.default, value: vm.scrollID)
     }
     
     //MARK: - ScrollBack Button
@@ -209,8 +188,98 @@ public struct MonthsView: View {
 }
 
 #Preview {
+    @Previewable
+    @State var vm: MonthsViewVM?
+    
     NavigationStack {
-        MonthsView(vm: MonthsViewVM.createPreviewVM())
+        if let vm = vm {
+            MonthsView(vm: vm)
+        } else {
+            ProgressView()
+                .task {
+                    vm = await MonthsViewVM.createPreviewVM()
+                }
+        }
+    }
+}
+
+//MARK: - Month View
+
+private struct MonthView: View {
+    var month: Month
+    
+    @Bindable var vm: MonthsViewVM
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            MonthInfoView(month: month, vm: vm)
+            
+            /// Weeks View
+            VStack(spacing: 0) {
+                ForEach(month.weeks) { week in
+                    
+                    /// Days view
+                    HStack(spacing: 0) {
+                        ForEach(week.days) { day in
+                            Button {
+                                vm.selectedDateChange(day.date)
+                            } label: {
+                                VStack {
+                                    if day.isPlaceholder {
+                                        Color.clear
+                                    } else {
+                                        DayView(vm: vm.returnDayVM(day))
+                                            .background(
+                                                Circle()
+                                                    .fill(vm.isSelectedDay(day.date) ? .backgroundTertiary : .clear)
+                                                    .scaledToFill()
+                                            )
+                                    }
+                                }
+                                .padding(.vertical, 25)
+                            }
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            }
+        }
+        
+    }
+}
+
+//MARK: - Month info
+
+private struct MonthInfoView: View {
+    
+    var month: Month
+    
+    @Bindable var vm: MonthsViewVM
+    
+    var body: some View {
+        VStack(spacing: 10) {
+            
+            HStack {
+                Text(month.name)
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(.labelSecondary)
+                
+                Spacer()
+            }
+            .padding(.leading, 16)
+            
+            HStack {
+                ForEach(Array(vm.shiftedWeekdaySymbols().enumerated()), id: \.offset) { index, symbol in
+                    Text(symbol)
+                        .font(.system(.body, design: .rounded, weight: .medium))
+                        .foregroundStyle(.labelTertiary)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .padding(.top)
+        }
+        .padding(.top, 32)
+        .padding(.bottom, 12)
     }
 }
 
@@ -223,4 +292,10 @@ extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
     public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return viewControllers.count > 1
     }
+}
+
+struct ScrollInfo: Equatable {
+    var offsetY: CGFloat = 0
+    var contentHeight: CGFloat = 0
+    var contentainerHeight: CGFloat = 0
 }

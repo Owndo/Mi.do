@@ -18,7 +18,7 @@ final class DayViewVM: HashableNavigation {
     private let taskManager: TaskManagerProtocol
     private let dateManager: DateManagerProtocol
     
-    var day: Date
+    var day: Day
     var ableToDownload = true
     
     var showSmallFire = false
@@ -60,7 +60,7 @@ final class DayViewVM: HashableNavigation {
     
     //MARK: - Private init
     
-    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, day: Date) {
+    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, day: Day) {
         self.appearanceManager = appearanceManager
         self.dateManager = dateManager
         self.taskManager = taskManager
@@ -69,17 +69,13 @@ final class DayViewVM: HashableNavigation {
     
     //MARK: - Create VM
     
-    static func createVM(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, appearanceManager: AppearanceManagerProtocol, day: Date) -> DayViewVM {
+    static func createVM(dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, appearanceManager: AppearanceManagerProtocol, day: Day) -> DayViewVM {
         let vm = DayViewVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
             taskManager: taskManager,
             day: day
         )
-        
-        Task {
-            await vm.updateTasks()
-        }
         
         return vm
     }
@@ -90,7 +86,7 @@ final class DayViewVM: HashableNavigation {
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let dateManager = DateManager.createPreviewManager()
         let taskManager = TaskManager.createMockTaskManager()
-        let day = Date()
+        let day = Day(date: Date())
         
         let vm = DayViewVM(
             appearanceManager: appearanceManager,
@@ -104,7 +100,7 @@ final class DayViewVM: HashableNavigation {
     
     
     func isDateInToday() -> Bool {
-        calendar.isDate(day, inSameDayAs: Date())
+        calendar.isDate(day.date, inSameDayAs: Date())
     }
     
     //MARK: - Deadline
@@ -119,15 +115,15 @@ final class DayViewVM: HashableNavigation {
                 continue
             }
             
-            if i.completeRecords.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: day) }) {
+            if i.completeRecords.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: day.date) }) {
                 return false
             }
             
-            if i.deleteRecords.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.deletedFor), inSameDayAs: day) }) {
+            if i.deleteRecords.contains(where: { calendar.isDate(Date(timeIntervalSince1970: $0.deletedFor), inSameDayAs: day.date) }) {
                 return false
             }
             
-            if calendar.isDate(Date(timeIntervalSince1970: endDate), inSameDayAs: day) {
+            if calendar.isDate(Date(timeIntervalSince1970: endDate), inSameDayAs: day.date) {
                 return true
             }
         }
@@ -152,7 +148,7 @@ final class DayViewVM: HashableNavigation {
             
             let deadlineDate = Date(timeIntervalSince1970: endDate)
             
-            if calendar.isDate(day, inSameDayAs: deadlineDate) && today > day {
+            if calendar.isDate(day.date, inSameDayAs: deadlineDate) && today > day.date {
                 return true
             }
         }

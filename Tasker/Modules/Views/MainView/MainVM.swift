@@ -382,6 +382,16 @@ public final class MainVM: HashableNavigation {
         //        profileModel = casManager.profileModel
     }
     
+    //MARK: - Calendar Button
+    
+    func calendarButtonTapped() async {
+        calendarVM.startVM()
+        path.append(.calendar(calendarVM))
+        // telemetry
+        telemetryAction(.mainViewAction(.calendarButtonTapped))
+    }
+    
+    
     //MARK: - Profile Button
     
     func profileViewButtonTapped() async {
@@ -573,16 +583,6 @@ public final class MainVM: HashableNavigation {
             telemetryAction(.mainViewAction(.addTaskButtonTapped))
         }
     }
-    
-    //MARK: - Calendar Button
-    
-    func calendarButtonTapped() async {
-        await calendarVM.startVM()
-        path.append(.calendar(calendarVM))
-        // telemetry
-        telemetryAction(.mainViewAction(.calendarButtonTapped))
-    }
-    
     
     //MARK: - Find tasks after notification
     private func extractBaseId(from fullId: String) -> String {

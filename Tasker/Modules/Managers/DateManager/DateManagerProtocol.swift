@@ -17,11 +17,11 @@ public protocol DateManagerProtocol {
     var currentTime: Date { get }
     var selectedDate: Date { get set }
     var indexForWeek: Int { get set }
-    var allWeeks: [PeriodModel] { get set }
-    var allMonths: [PeriodModel] { get set }
+    var allWeeks: [Week] { get set }
+    var allMonths: [Month] { get set }
     
     func initializeWeek()
-    func initializeMonth() async
+    func initializeMonth() -> [Month]
     /// Find start of the day for the date
     func startOfDay(for date: Date) -> Date
     /// Find start of week for the date
@@ -36,9 +36,13 @@ public protocol DateManagerProtocol {
     func appendWeeksForward()
     func appendWeeksBackward()
     /// Generate one month to the past and remove last one from the future
-    func generatePreviousMonth()
+    func generatePreviousMonth(for date: Date) -> Month
     /// Generate one month to the future and remove first one from the past
-    func generateFeatureMonth()
+    func generateFeatureMonth(for date: Date) -> Month
+    /// Generate 10 month to the past
+    func generatePreviousMonths(for date: Date) -> [Month]
+    /// Generate 10 month to the future
+    func generateFeatureMonths(for date: Date) -> [Month]
     /// Converte date to string
     func dateToString(for date: Date, useForWeekView: Bool) -> LocalizedStringKey
     func dateForDeadline(for date: Date) -> LocalizedStringKey
@@ -53,9 +57,9 @@ public protocol DateManagerProtocol {
     func backToToday()
     func selectedDayIsToday() -> Bool
     /// Next day after swipe to left
-    func addOneDay()
+//    func addOneDay()
     /// Previous day after swip to right
-    func subtractOneDay()
+//    func subtractOneDay()
     func thursday() -> Date
     func sunday() -> Date
 }

@@ -133,8 +133,9 @@ public class MonthsViewVM: HashableNavigation {
         //        await downloadDaysVMs()
     }
     
-    func onDissapear() {
+    func endVM() {
         viewStarted = false
+        allMonths.removeAll()
     }
     
     //MARK: - Go to selected date button
@@ -187,17 +188,28 @@ public class MonthsViewVM: HashableNavigation {
         }
     }
     
+    //MARK: - Back to month
+    
     func backToSelectedMonthButtonTapped() async {
-        viewStarted = false
-        await jumpToSelectedMonth()
-        viewStarted = true
-        scrolledFromCurrentMonth = false
+        if #available(iOS 18, *) {
+            if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: selectedDate))})?.id {
+                scrollPosition.scrollTo(id: id, anchor: .top)
+                scrolledFromCurrentMonth = false
+            } else {
+                allMonths = dateManager.initializeMonth()
+                await jumpToSelectedMonth18iOS()
+                scrolledFromCurrentMonth = false
+            }
+        } else {
+            await jumpToSelectedMonth()
+            scrolledFromCurrentMonth = false
+        }
     }
     
     //MARK: - Back to MainView Button
     
     func backToMainViewButtonTapped() {
-        self.onDissapear()
+        self.endVM()
         backToMainView?()
         
         // telemetry
@@ -248,6 +260,7 @@ public class MonthsViewVM: HashableNavigation {
     //MARK: - Jump to selected month
     
     func jumpToSelectedMonth() async {
+        viewStarted = false
         scrollID = allMonths.first(where: { $0.date == dateManager.startOfMonth(for: selectedDate) })?.id
         scrollAnchor = .top
         
@@ -259,15 +272,9 @@ public class MonthsViewVM: HashableNavigation {
     
     @available(iOS 18.0, *)
     func jumpToSelectedMonth18iOS() async {
-        scrollPosition = ScrollPosition(
-            id: allMonths.first(
-                where: {
-                    $0.date == dateManager.startOfMonth(for: selectedDate)
-                })?.id,
-            anchor: .top
-        )
+        scrollPosition.scrollTo(y: 3000)
         
-        try? await Task.sleep(for: .seconds(0.5))
+        try? await Task.sleep(for: .seconds(0.1))
         viewStarted = true
     }
     
@@ -345,21 +352,16 @@ public class MonthsViewVM: HashableNavigation {
     
     //MARK: - Up/Down Button
     
-    func checkIfUserScrolledFromSelectedDate() {
-        //        guard let month = allMonths.first(where: { $0.id == scrollID }) else { return }
-        //
-        //        guard !month.date.contains(where: { calendar.isDate($0, inSameDayAs: selectedDate)}) else {
-        //            scrolledFromCurrentMonth = false
-        //            return
-        //        }
-        //
-        //        scrolledFromCurrentMonth = true
-        //
-        //        if let first = month.date.first, first > selectedDate {
-        //            imageForScrollBackButton = "chevron.up"
-        //        } else {
-        //            imageForScrollBackButton = "chevron.down"
-        //        }
+    func checkIfUserScrolledFromSelectedDate(month: Month) {
+        if month.date > calendar.date(byAdding: .month, value: 2, to: selectedDate)! {
+            imageForScrollBackButton = "chevron.up"
+            scrolledFromCurrentMonth = true
+        } else if month.date < calendar.date(byAdding: .month, value: -3, to: selectedDate)! {
+            imageForScrollBackButton = "chevron.down"
+            scrolledFromCurrentMonth = true
+        } else {
+            scrolledFromCurrentMonth = false
+        }
     }
     
     //MARK: - Download DaysVM
@@ -383,7 +385,12 @@ public class MonthsViewVM: HashableNavigation {
     
     @MainActor
     func returnDayVM(_ day: Day) -> DayViewVM {
-        let vm = DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager, day: day)
+        let vm = DayViewVM.createVM(
+            dateManager: dateManager,
+            taskManager: taskManager,
+            appearanceManager: appearanceManager,
+            day: day
+        )
         vm.ableToDownload = ableToDownloadTasksColors
         
         return vm

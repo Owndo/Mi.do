@@ -82,10 +82,6 @@ public struct MonthsView: View {
                 .scrollBounceBehavior(.always)
                 .scrollIndicators(.hidden)
             }
-            
-            ScrollBackButton()
-                .padding(.trailing, 25)
-                .padding(.bottom, 20)
         }
         .task {
             if #available(iOS 18, *) {
@@ -95,7 +91,7 @@ public struct MonthsView: View {
             }
         }
         .onDisappear {
-            vm.onDissapear()
+            vm.endVM()
         }
         .navigationBarBackButtonHidden(osVersion.majorVersion > 25 ? true : false)
         .navigationBarTitleDisplayMode(.inline)
@@ -157,6 +153,12 @@ public struct MonthsView: View {
             if #available(iOS 26.0, *) {
                 ToolbarSpacer(.flexible, placement: .bottomBar)
             }
+            
+            ToolbarItem(placement: .bottomBar) {
+                if vm.scrolledFromCurrentMonth {
+                    ScrollBackButton()
+                }
+            }
         }
         .navigationBarBackButtonHidden()
         .animation(.spring, value: vm.scrolledFromCurrentMonth)
@@ -169,7 +171,6 @@ public struct MonthsView: View {
     
     @ViewBuilder
     private func ScrollBackButton() -> some View {
-        if vm.scrolledFromCurrentMonth {
             Button {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 Task {
@@ -180,10 +181,7 @@ public struct MonthsView: View {
                     .font(.title2.weight(.medium))
                     .contentTransition(.symbolEffect(.replace))
                     .foregroundStyle(appearanceManager.accentColor)
-                    .frame(width: 44, height: 44)
-                    .liquidIfAvailable(glass: .regular, isInteractive: true)
             }
-        }
     }
 }
 
@@ -244,7 +242,9 @@ private struct MonthView: View {
                 }
             }
         }
-        
+        .task {
+            vm.checkIfUserScrolledFromSelectedDate(month: month)
+        }
     }
 }
 

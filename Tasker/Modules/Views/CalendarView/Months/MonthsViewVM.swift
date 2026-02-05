@@ -190,7 +190,11 @@ public class MonthsViewVM: HashableNavigation {
     
     //MARK: - Back to month
     
+    var scrollDisabled = false
+    
     func backToSelectedMonthButtonTapped() async {
+        scrollDisabled = true
+        
         if #available(iOS 18, *) {
             if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: selectedDate))})?.id {
                 scrollPosition.scrollTo(id: id, anchor: .top)
@@ -204,6 +208,8 @@ public class MonthsViewVM: HashableNavigation {
             await jumpToSelectedMonth()
             scrolledFromCurrentMonth = false
         }
+        
+        scrollDisabled = false
     }
     
     //MARK: - Back to MainView Button

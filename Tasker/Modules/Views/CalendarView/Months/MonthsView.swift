@@ -31,7 +31,6 @@ public struct MonthsView: View {
                                 .id(month.id)
                         }
                     }
-                    
                 }
                 .onScrollGeometryChange(
                     for: ScrollInfo.self,
@@ -63,6 +62,7 @@ public struct MonthsView: View {
                         }
                     })
                 .scrollPosition($vm.scrollPosition)
+                .scrollDisabled(vm.scrollDisabled)
                 .scrollBounceBehavior(.always)
                 .scrollIndicators(.hidden)
             } else {
@@ -79,6 +79,7 @@ public struct MonthsView: View {
                     }
                 }
                 .scrollPosition(id: $vm.scrollID)
+                .scrollDisabled(vm.scrollDisabled)
                 .scrollBounceBehavior(.always)
                 .scrollIndicators(.hidden)
             }
@@ -171,17 +172,17 @@ public struct MonthsView: View {
     
     @ViewBuilder
     private func ScrollBackButton() -> some View {
-            Button {
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                Task {
-                    await vm.backToSelectedMonthButtonTapped()
-                }
-            } label: {
-                Image(systemName: vm.imageForScrollBackButton)
-                    .font(.title2.weight(.medium))
-                    .contentTransition(.symbolEffect(.replace))
-                    .foregroundStyle(appearanceManager.accentColor)
+        Button {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            Task {
+                await vm.backToSelectedMonthButtonTapped()
             }
+        } label: {
+            Image(systemName: vm.imageForScrollBackButton)
+                .font(.title2.weight(.medium))
+                .contentTransition(.symbolEffect(.replace))
+                .foregroundStyle(appearanceManager.accentColor)
+        }
     }
 }
 

@@ -286,9 +286,15 @@ public class MonthsViewVM: HashableNavigation {
     
     @available(iOS 18.0, *)
     func backToTodayButton18iOS() async {
-        dateManager.backToToday()
-        allMonths = dateManager.initializeMonth()
-        await jumpToSelectedMonth18iOS()
+        if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: Date()))})?.id {
+            dateManager.backToToday()
+            scrollPosition.scrollTo(id: id, anchor: .top)
+            scrolledFromCurrentMonth = false
+        } else {
+            dateManager.backToToday()
+            allMonths = dateManager.initializeMonth()
+            await jumpToSelectedMonth18iOS()
+        }
     }
     
     

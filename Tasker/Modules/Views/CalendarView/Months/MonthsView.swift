@@ -61,10 +61,19 @@ public struct MonthsView: View {
                             vm.loadPastMonths(info: newValue)
                         }
                     })
+                .onScrollPhaseChange { oldPhase, newPhase in
+                    switch newPhase {
+                    case .decelerating, .idle:
+                        vm.downloadDay = true
+                    default:
+                        vm.downloadDay = false
+                    }
+                }
                 .scrollPosition($vm.scrollPosition)
                 .scrollDisabled(vm.scrollDisabled)
                 .scrollBounceBehavior(.always)
                 .scrollIndicators(.hidden)
+                .toolbarBackgroundVisibility(.hidden, for: .navigationBar, .bottomBar)
             } else {
                 ScrollView {
                     LazyVStack(spacing: 0) {
@@ -94,8 +103,9 @@ public struct MonthsView: View {
         .onDisappear {
             vm.endVM()
         }
-        .navigationBarBackButtonHidden(osVersion.majorVersion > 25 ? true : false)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden()
+        //MARK: - Toolbar
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
@@ -103,7 +113,7 @@ public struct MonthsView: View {
                 } label: {
                     HStack {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 17))
+                            .font(.system(.body, design: .rounded, weight: .medium))
                             .foregroundStyle(vm.appearanceManager.accentColor)
                         
                         Text("\(vm.backToSelectedDayButtonText())")
@@ -139,15 +149,8 @@ public struct MonthsView: View {
             }
             
             ToolbarItem(placement: .bottomBar) {
-                if vm.isScrolling {
-                    Text(vm.currentYear ?? "")
-                        .font(.system(.body, design: .rounded, weight: .medium))
-                        .foregroundStyle(vm.appearanceManager.accentColor)
-                        .monospacedDigit()
-                        .contentTransition(.numericText())
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity)
-                        .fixedSize()
+                if vm.showYear {
+                    ScrollYear()
                 }
             }
             
@@ -161,27 +164,53 @@ public struct MonthsView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden()
         .animation(.spring, value: vm.scrolledFromCurrentMonth)
         .animation(.default, value: vm.selectedDate)
-        .animation(.default, value: vm.isScrolling)
+        .animation(.default, value: vm.showYear)
         .animation(.default, value: vm.scrollID)
+    }
+    
+    //MARK: - Scroll year
+    
+    private func ScrollYear() -> some View {
+        HStack {
+            
+            Text(vm.currentYear ?? "")
+                .font(.system(.body, design: .rounded, weight: .medium))
+                .foregroundStyle(vm.appearanceManager.accentColor)
+                .monospacedDigit()
+                .contentTransition(.numericText())
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity)
+                .fixedSize()
+            
+            
+            if osVersion.majorVersion < 26 {
+                Spacer()
+            }
+        }
     }
     
     //MARK: - ScrollBack Button
     
-    @ViewBuilder
     private func ScrollBackButton() -> some View {
-        Button {
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            Task {
-                await vm.backToSelectedMonthButtonTapped()
+        HStack {
+            if osVersion.majorVersion < 26 {
+                Spacer()
             }
-        } label: {
-            Image(systemName: vm.imageForScrollBackButton)
-                .font(.title2.weight(.medium))
-                .contentTransition(.symbolEffect(.replace))
-                .foregroundStyle(appearanceManager.accentColor)
+            
+            Button {
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                Task {
+                    await vm.backToSelectedMonthButtonTapped()
+                }
+            } label: {
+                Image(systemName: vm.imageForScrollBackButton)
+                    .font(.system(.body, design: .rounded, weight: .medium))
+                    .contentTransition(.symbolEffect(.replace))
+                    .foregroundStyle(appearanceManager.accentColor)
+                    .padding(.horizontal, osVersion.majorVersion < 26 ? 10 : 0)
+            }
         }
     }
 }
@@ -193,10 +222,13 @@ public struct MonthsView: View {
     NavigationStack {
         if let vm = vm {
             MonthsView(vm: vm)
+                .task {
+                    vm.startVM()
+                }
         } else {
             ProgressView()
                 .task {
-                    vm = await MonthsViewVM.createPreviewVM()
+                    vm = MonthsViewVM.createPreviewVM()
                 }
         }
     }
@@ -207,7 +239,7 @@ public struct MonthsView: View {
 private struct MonthView: View {
     var month: Month
     
-    @Bindable var vm: MonthsViewVM
+    var vm: MonthsViewVM
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -220,23 +252,7 @@ private struct MonthView: View {
                     /// Days view
                     HStack(spacing: 0) {
                         ForEach(week.days) { day in
-                            Button {
-                                vm.selectedDateChange(day.date)
-                            } label: {
-                                VStack {
-                                    if day.isPlaceholder {
-                                        Color.clear
-                                    } else {
-                                        DayView(vm: vm.returnDayVM(day))
-                                            .background(
-                                                Circle()
-                                                    .fill(vm.isSelectedDay(day.date) ? .backgroundTertiary : .clear)
-                                                    .scaledToFill()
-                                            )
-                                    }
-                                }
-                                .padding(.vertical, 25)
-                            }
+                            DayButton(day: day)
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -244,8 +260,50 @@ private struct MonthView: View {
             }
         }
         .task {
-            vm.checkIfUserScrolledFromSelectedDate(month: month)
+            await vm.checkIfUserScrolledFromSelectedDate(month: month)
         }
+    }
+    //MARK: - Day Button
+    
+    private func DayButton(day: Day) -> some View {
+        Button {
+            vm.selectedDateChange(day.date)
+        } label: {
+            if day.isPlaceholder {
+                Color.clear
+            } else {
+                if vm.downloadDay {
+                    RealDay(day: day)
+                } else {
+                    MockDay(day: day)
+                }
+            }
+        }
+    }
+    
+    //MARK: - Real day
+    
+    private func RealDay(day: Day) -> some View {
+        DayView(vm: vm.returnDayVM(day))
+            .background(
+                Circle()
+                    .fill(vm.isSelectedDay(day.date) ? .backgroundTertiary : .clear)
+                    .scaledToFill()
+            )
+    }
+    
+    //MARK: - Mock day
+    
+    private func MockDay(day: Day) -> some View {
+        Text("\(day.date, format: .dateTime.day())")
+            .font(.system(size: 17, weight: vm.isSelectedDay(day.date) ? .semibold : .regular, design: .default))
+            .foregroundStyle(!vm.isSelectedDay(day.date) ? .labelQuaternary : .labelSecondary)
+            .frame(maxWidth: .infinity)
+            .background(
+                Circle()
+                    .fill(vm.isSelectedDay(day.date) ? .backgroundTertiary : .clear)
+                    .scaledToFill()
+            )
     }
 }
 

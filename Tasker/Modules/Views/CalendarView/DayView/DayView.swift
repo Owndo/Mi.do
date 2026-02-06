@@ -18,29 +18,39 @@ struct DayView: View {
             ZStack {
                 SegmentedCircleView(vm: vm)
                     .frame(width: 40, height: 40)
-                    .task {
-                        vm.flameAnimation.toggle()
-                        try? await Task.sleep(for: .seconds(Int.random(in: 1...3)))
-                        vm.showSmallFire = true
+                    .onAppear {
+                        vm.onAppearSegmentedView()
                     }
                 
-                if vm.showSmallFire, vm.lastDayForDeadline() {
+                BaseContent()
+//                if vm.showSmallFire, vm.lastDayForDeadline() {
+//                
+//                }
+//                
+//                if !vm.lastDayForDeadline() || vm.lastDayForDeadline() && vm.showSmallFire {
+//                   
+//                }
+//                
+//                if vm.lastDayForDeadline(), vm.showSmallFire == false {
+//                 
+//                }
+            }
+            .animation(.default, value: vm.showSmallFire)
+            .animation(.default, value: vm.segmentedTasks)
+        }
+    }
+    
+    private func BaseContent() -> some View {
+        ZStack {
+            if vm.lastDayForDeadline() {
+                if vm.showSmallFire {
                     Image(systemName: "circle.fill")
                         .contentTransition(.symbolEffect(.replace))
                         .frame(width: 1, height: 1)
                         .scaleEffect(0.2)
                         .foregroundStyle(vm.isOverdue() ? .accentRed : vm.appearanceManager.accentColor)
                         .offset(x: 0, y: 9)
-                }
-                
-                if !vm.lastDayForDeadline() || vm.lastDayForDeadline() && vm.showSmallFire {
-                    Text("\(vm.day.date, format: .dateTime.day())")
-                        .font(.system(size: 17, weight: vm.isDateInToday() ? .semibold : .regular, design: .default))
-                        .foregroundStyle(!vm.isDateInToday() ? .labelQuaternary : .labelSecondary)
-                        .frame(maxWidth: .infinity)
-                }
-                
-                if vm.lastDayForDeadline(), vm.showSmallFire == false {
+                } else {
                     Image(systemName: "flame.circle.fill")
                         .font(.system(size: 17))
                         .foregroundStyle(vm.isOverdue() ? .accentRed : vm.appearanceManager.accentColor)
@@ -48,9 +58,12 @@ struct DayView: View {
                         .frame(maxWidth: .infinity)
                         .scaleEffect(1.4)
                 }
+            } else {
+                Text("\(vm.day.date, format: .dateTime.day())")
+                    .font(.system(size: 17, weight: vm.isDateInToday() ? .semibold : .regular, design: .default))
+                    .foregroundStyle(!vm.isDateInToday() ? .labelQuaternary : .labelSecondary)
+                    .frame(maxWidth: .infinity)
             }
-            .animation(.default, value: vm.showSmallFire)
-            .animation(.default, value: vm.segmentedTasks)
         }
     }
 }

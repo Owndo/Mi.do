@@ -27,6 +27,7 @@ public class MonthsViewVM: HashableNavigation {
     private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
     var dayVMs: [TimeInterval: DayViewVM] = [:]
+    var downloadDay = false
     
     public var backToMainView: (() -> Void)?
     
@@ -67,24 +68,22 @@ public class MonthsViewVM: HashableNavigation {
     var viewStarted = false
     
     var currentYear: String?
-    //    var navigationTitle = ""
-    //    var navigationSubtitle = ""
+    var showYear = false
     
     var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
     }
     
     var selectedDate: Date {
-        dateManager.selectedDate
+        
+        return dateManager.selectedDate
     }
     
     var calendar: Calendar {
         dateManager.calendar
     }
     
-    var today: Date {
-        dateManager.currentTime
-    }
+    var today: Date = Date()
     
     var allMonths: [Month] = []
     
@@ -143,7 +142,7 @@ public class MonthsViewVM: HashableNavigation {
     func selectedDateChange(_ day: Date) {
         dateManager.selectedDateChange(day)
         dateManager.initializeWeek()
-        
+//        
         backToMainView?()
         
         // telemetry
@@ -156,8 +155,11 @@ public class MonthsViewVM: HashableNavigation {
         return Array(symbols[weekdayIndex...] + symbols[..<weekdayIndex])
     }
     
+    // MARK: - Day is today
+    
     func isSelectedDay(_ day: Date) -> Bool {
-        calendar.isDate(day, inSameDayAs: selectedDate)
+//        print("here")
+        return calendar.isDate(day, inSameDayAs: selectedDate)
     }
     
     func selectedDayIsToday() -> Bool {
@@ -284,12 +286,15 @@ public class MonthsViewVM: HashableNavigation {
         viewStarted = true
     }
     
+    //MARK: - Back to today 18iOS
+    
     @available(iOS 18.0, *)
     func backToTodayButton18iOS() async {
         if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: Date()))})?.id {
+            scrolledFromCurrentMonth = false
+            showYear = false
             dateManager.backToToday()
             scrollPosition.scrollTo(id: id, anchor: .top)
-            scrolledFromCurrentMonth = false
         } else {
             dateManager.backToToday()
             allMonths = dateManager.initializeMonth()
@@ -362,9 +367,44 @@ public class MonthsViewVM: HashableNavigation {
         }
     }
     
+    //MARK: - Create ScrollInfo
+    
+    @available(iOS 18.0, *)
+    @MainActor
+    func createScrollInfo(_ value: ScrollGeometry) -> ScrollInfo {
+        let offsetY = value.contentOffset.y + value.contentInsets.top
+        let contentHeight = value.contentSize.height
+        let containerHeight = value.containerSize.height
+        
+        return .init(
+            offsetY: offsetY,
+            contentHeight: contentHeight,
+            contentainerHeight: containerHeight
+        )
+    }
+    
+    @available(iOS 18.0, *)
+    @MainActor
+    func handleScrollPosition(position: ScrollInfo) {
+        guard allMonths.count > 10 && viewStarted else { return }
+        
+        let threshold: CGFloat = 100
+        let offsetY = position.offsetY
+        let contentHeight = position.contentHeight
+        let frameHeight = position.contentainerHeight
+        
+        if offsetY > (contentHeight - frameHeight - threshold) && !isLoadingBottom {
+            loadFutureMonths(info: position)
+        }
+        
+        if offsetY < threshold && !isLoadingTop {
+            loadPastMonths(info: position)
+        }
+    }
+    
     //MARK: - Up/Down Button
     
-    func checkIfUserScrolledFromSelectedDate(month: Month) {
+    func checkIfUserScrolledFromSelectedDate(month: Month) async {
         if month.date > calendar.date(byAdding: .month, value: 2, to: selectedDate)! {
             imageForScrollBackButton = "chevron.up"
             scrolledFromCurrentMonth = true
@@ -373,6 +413,22 @@ public class MonthsViewVM: HashableNavigation {
             scrolledFromCurrentMonth = true
         } else {
             scrolledFromCurrentMonth = false
+        }
+        
+        await updateCurrentMonth(month: month)
+    }
+    
+    // MARK: - Current year text
+    func updateCurrentMonth(month: Month) async {
+        let currentYear = calendar.component(.year, from: Date())
+        let yearFromMonth = calendar.component(.year, from: month.date)
+        
+        if yearFromMonth != currentYear {
+            self.currentYear = "\(yearFromMonth)"
+            showYear = true
+        } else {
+            self.currentYear = nil
+            showYear = false
         }
     }
     

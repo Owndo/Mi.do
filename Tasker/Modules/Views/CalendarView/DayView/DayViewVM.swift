@@ -158,6 +158,14 @@ final class DayViewVM: HashableNavigation {
     
     //MARK: - Segmented Circle
     
+    func onAppearSegmentedView() {
+        Task {
+            flameAnimation.toggle()
+            try? await Task.sleep(for: .seconds(Int.random(in: 1...3)))
+            showSmallFire = true
+        }
+    }
+    
     @MainActor
     func updateTasks(update: Bool = false) async {
 //        guard ableToDownload else { return }

@@ -51,7 +51,7 @@ public struct WeekView: View {
                         }
                     }
                     
-                    DayOfWeeksView(weeks: vm.weeks)
+                    DayOfWeeksView()
                 }
                 .padding(.top, 8)
             }
@@ -71,9 +71,9 @@ public struct WeekView: View {
     
     //MARK: - Day of week
     @ViewBuilder
-    private func DayOfWeeksView(weeks: [Week]) -> some View {
+    private func DayOfWeeksView() -> some View {
         TabView(selection: $vm.dateManager.indexForWeek) {
-            ForEach(weeks) { week in
+            ForEach(vm.weeks) { week in
                 HStack {
                     ForEach(week.days) { day in
                         Button {
@@ -83,11 +83,9 @@ public struct WeekView: View {
                         }
                     }
                 }
+                .tag(week.index ?? 0)
             }
         }
-        //        .task(id: vm.indexForWeek) {
-        //            await vm.downloadDaysVMs()
-        //        }
         .animation(.spring(response: 0.2, dampingFraction: 1.8, blendDuration: 0), value: vm.indexForWeek)
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
@@ -122,4 +120,24 @@ public struct WeekView: View {
 
 #Preview {
     WeekView(vm: WeekVM.createPreviewVM())
+}
+
+struct CustomHorizontalPagingBehavior: ScrollTargetBehavior {
+    func updateTarget(_ target: inout ScrollTarget, context: TargetContext) {
+        // Current ScrollView width
+        let scrollViewWidth = context.containerSize.width
+        
+        // Adjust the target position based on scroll direction
+        if context.velocity.dx > 0 {
+            // Scroll right: target position = starting position + ScrollView width
+            target.rect.origin.x = context.originalTarget.rect.minX + scrollViewWidth
+        } else if context.velocity.dx < 0 {
+            // Scroll left: target position = starting position - ScrollView width
+            target.rect.origin.x = context.originalTarget.rect.minX - scrollViewWidth
+        }
+    }
+}
+
+extension ScrollTargetBehavior where Self == CustomHorizontalPagingBehavior {
+    static var horizontalPaging: CustomHorizontalPagingBehavior { .init() }
 }

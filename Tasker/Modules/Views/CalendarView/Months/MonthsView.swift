@@ -119,6 +119,7 @@ public struct MonthsView: View {
                         Text("\(vm.backToSelectedDayButtonText())")
                             .font(.system(.body, design: .rounded, weight: .medium))
                             .foregroundStyle(vm.appearanceManager.accentColor)
+                            .padding(.trailing, 5)
                     }
                 }
             }
@@ -289,6 +290,7 @@ private struct MonthView: View {
                 Circle()
                     .fill(vm.isSelectedDay(day.date) ? .backgroundTertiary : .clear)
                     .scaledToFill()
+                    .frame(width: 45, height: 45)
             )
     }
     
@@ -303,6 +305,7 @@ private struct MonthView: View {
                 Circle()
                     .fill(vm.isSelectedDay(day.date) ? .backgroundTertiary : .clear)
                     .scaledToFill()
+                    .frame(width: 45, height: 45)
             )
     }
 }

@@ -40,34 +40,15 @@ public final class DateManager: DateManagerProtocol {
         calendar.component(.weekday, from: selectedDate)
     }
     
-    public var indexForWeek = 0
-    //    {
-    //        didSet {
-    //            guard let week = allWeeks.first(where: { $0.id == indexForWeek }) else {
-    //                return
-    //            }
-    //
-    //            if let matchingDay = week.date.first(where: { calendar.component(.weekday, from: $0) == calendar.component(.weekday, from: selectedDate)}) {
-    //                selectedDateChange(matchingDay)
-    //            }
-    //
-    //            if indexForWeek == allWeeks.first?.id {
-    //                appendWeeksBackward()
-    //            } else if indexForWeek == allWeeks.count - 1 {
-    //                appendWeeksForward()
-    //            }
-    //        }
-    //        willSet {
-    //            // telemetry
-    //            if newValue > indexForWeek {
-    //                telemetryManager.logEvent(.calendarAction(.changeWeekScrolled(.forward)))
-    //            } else {
-    //                telemetryManager.logEvent(.calendarAction(.changeWeekScrolled(.backward)))
-    //            }
-    //        }
-    //    }
+    public var indexForWeek = 0 {
+        didSet {
+            weekIndexChanged()
+        }
+    }
     
-    //MARK: - Init
+    private var blockIndexUpdate = false
+    
+    //MARK: - Private init
     
     private init(telemetryManager: TelemetryManagerProtocol) {
         self.telemetryManager = telemetryManager
@@ -93,10 +74,6 @@ public final class DateManager: DateManagerProtocol {
         let dateManager = DateManager(telemetryManager: TelemetryManager.createTelemetryManager(mock: true))
         dateManager.initializeWeek()
         
-        Task {
-            await dateManager.initializeMonth()
-        }
-        
         return dateManager
     }
     
@@ -114,19 +91,110 @@ public final class DateManager: DateManagerProtocol {
         selectedDate = day
     }
     
-    //MARK: - Logic for week
-    public func initializeWeek() {
-        //        allWeeks.removeAll()
-        //
-        //        //MARK: Previous 4 weeks
-        
-        allWeeks = (-4...4).map { i in
-            let date = calendar.date(byAdding: .weekOfYear, value: -i, to: selectedDate)!
-            return generateWeek(for: date)
-            
+    //MARK: - Week Index changed
+    
+    private func weekIndexChanged() {
+        guard !blockIndexUpdate else {
+            return
         }
-        //        appendWeeksForward()
-        //        appendWeeksBackward()
+        
+        guard let week = allWeeks.first(where: { $0.index == indexForWeek }) else { return }
+        
+        let startOfSelectedWeek = startOfWeek(for: selectedDate)
+        let dayOffset = calendar.dateComponents([.day], from: startOfSelectedWeek, to: selectedDate).day ?? 0
+        let newDate = calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek(for: week.days.first!.date))!
+        
+        selectedDateChange(newDate)
+        
+        if let index = allWeeks.last {
+            if indexForWeek == index.index! {
+                appendWeeksForward()
+            }
+        }
+        
+        if indexForWeek == allWeeks.first!.index! {
+            Task {
+                try? await Task.sleep(for: .seconds(0.2))
+                appendWeeksBackward()
+            }
+        }
+    }
+    
+    //MARK: - Logic for week
+    
+    public func initializeWeek() {
+        allWeeks = (-8...8).map { i in
+            let date = calendar.date(byAdding: .weekOfYear, value: i, to: selectedDate)!
+            var week = generateWeek(for: date)
+            week.index = i
+            
+            return week
+        }
+    }
+    
+    //MARK: - Append Week Forward
+    
+    private func appendWeeksForward() {
+        guard
+            let lastWeek = allWeeks.last,
+            let index = lastWeek.index,
+            let day = lastWeek.days.first
+        else {
+            return
+        }
+        
+        let startOfWeek = startOfWeek(for: day.date)
+        
+        let newWeeks = (1...24).map { offSet in
+            let nextWeekDate = calendar.date(byAdding: .weekOfYear, value: offSet, to: startOfWeek)!
+            var newWeek = generateWeek(for: nextWeekDate)
+            newWeek.index = index + offSet
+            
+            return newWeek
+        }
+        
+        allWeeks.append(contentsOf: newWeeks)
+    }
+    
+    //MARK: - Append Week Backward
+    
+    private func appendWeeksBackward() {
+        guard
+            let firstWeek = allWeeks.first,
+            let index = firstWeek.index,
+            let day = firstWeek.days.first
+        else {
+            return
+        }
+        
+        let startOfWeek = startOfWeek(for: day.date)
+        
+        let newWeeks = (1...24).map { offSet in
+            let nextWeekDate = calendar.date(byAdding: .weekOfYear, value: -offSet, to: startOfWeek)!
+            var newWeek = generateWeek(for: nextWeekDate)
+            newWeek.index = index - offSet
+            
+            return newWeek
+        }.reversed()
+        
+        allWeeks.insert(contentsOf: newWeeks, at: 0)
+    }
+    
+    //MARK: - Generate week
+    
+    private func generateWeek(for date: Date) -> Week {
+        let startOfWeek = startOfWeek(for: date)
+        
+        let days: [Day] = (0..<7).compactMap { dayOffset in
+            let date = calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)!
+            let index = calendar.dateComponents([.day], from: date).day!
+            
+            return Day(value: index, date: date)
+        }
+        
+        let week = Week(days: days)
+        
+        return week
     }
     
     
@@ -165,7 +233,7 @@ public final class DateManager: DateManagerProtocol {
         return weeks
     }
     
-    //MARK: - Initialize months
+    //MARK: - Logic for months
     
     public func initializeMonth() -> [Month] {
         (-6...6).map { i in
@@ -179,49 +247,13 @@ public final class DateManager: DateManagerProtocol {
         }
     }
     
+    //MARK: - Selected Day is Today
+    
     public func selectedDayIsToday() -> Bool {
         calendar.isDate(selectedDate, inSameDayAs: currentTime)
     }
     
-    //MARK: - Append Week Forward
-    
-    public func appendWeeksForward() {
-        //        guard let lastWeekStart = allWeeks.last?.date.first else { return }
-        //
-        //        for i in 1...24 {
-        //            let weekStart = calendar.date(byAdding: .weekOfYear, value: i, to: lastWeekStart)!
-        //            let newWeek = generateWeek(for: weekStart)
-        //            allWeeks.append(PeriodModel(id: allWeeks.last!.id + 1, date: newWeek))
-        //        }
-    }
-    
-    //MARK: - Append Week Backward
-    
-    public func appendWeeksBackward() {
-        //        guard let firstWeekStart = allWeeks.first?.date.first else { return }
-        //        for i in (1...24) {
-        //            let weekStart = calendar.date(byAdding: .weekOfYear, value: -i, to: firstWeekStart)!
-        //            let newWeek = generateWeek(for: weekStart)
-        //            allWeeks.insert(PeriodModel(id: allWeeks.first!.id - 1, date: newWeek), at: 0)
-        //        }
-    }
-    
-    private func generateWeek(for date: Date) -> Week {
-        let startOfWeek = startOfWeek(for: date)
-        
-        let days: [Day] = (0..<7).compactMap { dayOffset in
-            let date = calendar.date(byAdding: .day, value: dayOffset, to: startOfWeek)!
-            let index = calendar.dateComponents([.day], from: date).day!
-            
-            return Day(value: index, date: date)
-        }
-        
-        let week = Week(days: days)
-        
-        return week
-    }
-    
-    //MARK: - Months
+    //MARK: - Generate previous months
     
     public func generatePreviousMonths(for date: Date) -> [Month] {
         return (1...10).map {
@@ -230,6 +262,8 @@ public final class DateManager: DateManagerProtocol {
         }
     }
     
+    //MARK: - Generate future months
+    
     public func generateFeatureMonths(for date: Date) -> [Month] {
         return (1...10).map {
             let date = calendar.date(byAdding: .month, value: $0, to: date)!
@@ -237,26 +271,16 @@ public final class DateManager: DateManagerProtocol {
         }
     }
     
+    //MARK: - Generate previous month
+    
     public func generatePreviousMonth(for date: Date) -> Month {
         return getOrCreateMonth(for: calendar.date(byAdding: .month, value: -1, to: date)!)
-        //        guard let firstDay = allMonths.first!.date.first else { return }
-        //        let monthStart = calendar.date(byAdding: .month, value: -1, to: firstDay)!
-        //        let newMonth = generateMonth(for: monthStart)
-        //        let nameOfMonth = getMonthName(from: monthStart)
-        //        let newId = allMonths.first!.id - 1
-        
-        //        allMonths.insert(PeriodModel(id: newId, date: newMonth, name: nameOfMonth), at: 0)
     }
     
-    public func generateFeatureMonth(for date: Date) -> Month {
+    //MARK: - Generate future months
+    
+    public func generateFutureMonth(for date: Date) -> Month {
         return getOrCreateMonth(for: calendar.date(byAdding: .month, value: 1, to: date)!)
-        //        guard let lastMonthStart = allMonths.last?.date.first else { return }
-        //        let monthStart = calendar.date(byAdding: .month, value: 1, to: lastMonthStart)!
-        //        let newMonth = generateMonth(for: monthStart)
-        //        let nextID = (allMonths.last?.id ?? 0) + 1
-        //
-        ////        allMonths.removeFirst()
-        //        allMonths.append(PeriodModel(id: nextID, date: newMonth))
     }
     
     //MARK: - Get or create for cahce
@@ -277,48 +301,7 @@ public final class DateManager: DateManagerProtocol {
         return month
     }
     
-    
-    public func appendMonthsBackward() async {
-        //        guard let firstMonthStart = allMonths.first?.date.first,
-        //              let firstID = allMonths.first?.id else { return }
-        //
-        //        var newMonths: [PeriodModel] = []
-        //
-        //        for i in (1...24).reversed() {
-        //            let offset = -i
-        //            let monthStart = calendar.date(byAdding: .month, value: offset, to: firstMonthStart)!
-        //            let newMonth = generateMonth(for: monthStart)
-        //            let nameOfMonth = getMonthName(from: monthStart)
-        //            let newID = firstID + offset
-        //            newMonths.append(PeriodModel(id: newID, date: newMonth, name: nameOfMonth))
-        //        }
-        //
-        //        allMonths.insert(contentsOf: newMonths, at: 0)
-    }
-    
-    //    private func generateMonth(for date: Date) -> [Date] {
-    //        guard let startOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
-    //              let range = calendar.range(of: .day, in: .month, for: startOfMonth) else {
-    //            return []
-    //        }
-    //
-    //        return range.map { day in
-    //            calendar.date(byAdding: .day, value: day - 1, to: startOfMonth)!
-    //        }
-    //    }
-    
-    private func getMonthName(from date: Date) -> String {
-        let currentYear = calendar.component(.year, from: Date())
-        let yearFromDate = calendar.component(.year, from: date)
-        
-        if currentYear == yearFromDate {
-            return date.formatted(.dateTime.month(.wide))
-        } else {
-            return date.formatted(.dateTime.month(.wide).year())
-        }
-    }
-    
-    //MARK: - Month for name
+    //MARK: - Name of month
     
     private func monthName(for date: Date) -> String {
         let currentYear = calendar.component(.year, from: Date())
@@ -453,50 +436,18 @@ public final class DateManager: DateManagerProtocol {
         }
     }
     
-    //    public func addOneDay() {
-    //        let currentDate = selectedDate
-    //        let newDate = calendar.date(byAdding: .day, value: 1, to: currentDate) ?? currentDate
-    //
-    //        //check if day last in week
-    //        if let lastDate = allWeeks.last?.date.last, newDate > lastDate {
-    //            //            appendWeeksForward()
-    //        }
-    //
-    //        selectedDateChange(newDate)
-    //
-    //        let currentWeek = calendar.component(.weekOfYear, from: currentDate)
-    //        let newWeek = calendar.component(.weekOfYear, from: newDate)
-    //
-    //        if newWeek != currentWeek {
-    //            //            updateWeekIndex(for: newDate)
-    //        }
-    //    }
-    
-    //    public func subtractOneDay() {
-    //        let currentDate = selectedDate
-    //        let newDate = calendar.date(byAdding: .day, value: -1, to: currentDate) ?? currentDate
-    //
-    //        if let firstDate = allWeeks.first?.date.first, newDate < firstDate {
-    //            appendWeeksBackward()
-    //        }
-    //
-    //        selectedDateChange(newDate)
-    //
-    //        let currentWeek = calendar.component(.weekOfYear, from: currentDate)
-    //        let newWeek = calendar.component(.weekOfYear, from: newDate)
-    //
-    //        if newWeek != currentWeek {
-    //            //                        updateWeekIndex(for: newDate)
-    //        }
-    //    }
-    
     //MARK: - Back to today
     
     public func backToToday() {
-        selectedDateChange(currentTime)
+        blockIndexUpdate = true
         
+        selectedDateChange(currentTime)
         initializeWeek()
-        indexForWeek = 0
+        
+        DispatchQueue.main.async {
+            self.indexForWeek = 0
+            self.blockIndexUpdate = false
+        }
     }
     
     //MARK: - Days of week

@@ -24,6 +24,7 @@ public struct Week: Identifiable, Equatable {
     public var id = UUID().uuidString
     public var days: [Day]
     public var isLast = false
+    public var index: Int?
     
     public init(days: [Day], isLast: Bool = false) {
         self.days = days

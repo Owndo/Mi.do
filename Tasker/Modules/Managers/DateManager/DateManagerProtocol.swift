@@ -33,12 +33,10 @@ public protocol DateManagerProtocol {
     /// Find end of month (start of next month)
     func endOfMonth(for date: Date) -> Date
     func selectedDateChange(_ day: Date)
-    func appendWeeksForward()
-    func appendWeeksBackward()
     /// Generate one month to the past and remove last one from the future
     func generatePreviousMonth(for date: Date) -> Month
     /// Generate one month to the future and remove first one from the past
-    func generateFeatureMonth(for date: Date) -> Month
+    func generateFutureMonth(for date: Date) -> Month
     /// Generate 10 month to the past
     func generatePreviousMonths(for date: Date) -> [Month]
     /// Generate 10 month to the future

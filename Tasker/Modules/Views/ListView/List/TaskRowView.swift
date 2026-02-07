@@ -192,15 +192,16 @@ struct TaskRowView: View {
                 .fill(colorScheme.invertedBackgroundTertiary(task))
             
             if task.audio != nil {
-                Image(systemName: vm.playButton(task: task) ? "pause.fill" : "play.fill")
-                    .foregroundStyle(.white)
-                    .animation(.default, value: vm.playing)
-                    .onTapGesture {
-                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                        Task {
-                            await vm.playButtonTapped(task: task)
-                        }
+                Button {
+                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                    Task {
+                        await vm.playButtonTapped(task: task)
                     }
+                } label: {
+                    Image(systemName: vm.playButton(task: task) ? "pause.fill" : "play.fill")
+                        .foregroundStyle(.white)
+                        .animation(.default, value: vm.playing)
+                }
             } else {
                 Image(systemName: "plus").bold()
                     .foregroundStyle(.white)
@@ -220,6 +221,7 @@ struct TaskRowView: View {
     }
     
     //MARK: - Menu Actions
+    
     private func DoneUndoAction(task: UITaskModel) -> UIAction {
         UIAction(
             title: vm.checkCompletedTaskForToday(task: task) ?

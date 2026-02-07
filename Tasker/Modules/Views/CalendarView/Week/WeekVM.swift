@@ -149,8 +149,8 @@ public final class WeekVM: HashableNavigation {
         telemetryAction(.calendarAction(.backToTodayButtonTapped(.mainView)))
     }
     
-    func isToday(_ date: Date) -> Bool {
-        calendar.isDate(date, inSameDayAs: dateManager.selectedDate)
+    func dayIsToday(_ date: Date) -> Bool {
+        calendar.isDate(date, inSameDayAs: dateManager.currentTime)
     }
     
     func selectedDayIsToday() -> Bool {

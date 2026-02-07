@@ -60,6 +60,7 @@ public struct WeekView: View {
             TodayButton()
                 .padding(.top, 8)
         }
+        .padding(.horizontal, 5)
         .task(id: vm.indexForWeek) {
             await vm.downloadDaysVMs()
         }
@@ -85,17 +86,13 @@ public struct WeekView: View {
                             if let vm = vm.returnDayVM(day) {
                                 DayView(vm: vm)
                             } else {
-                                HStack {
-                                    
-                                    Spacer()
-                                    
-                                    ProgressView()
-                                    
-                                    Spacer()
-                                }
-                                .task {
-                                    await vm.syncDayVM(for: day)
-                                }
+                                Text("\(day.date, format: .dateTime.day())")
+                                    .font(.system(size: 17, weight: vm.dayIsToday(day.date) ? .semibold : .regular, design: .default))
+                                    .foregroundStyle(!vm.dayIsToday(day.date) ? .labelQuaternary : .labelSecondary)
+                                    .frame(maxWidth: .infinity)
+                                    .task {
+                                        await vm.syncDayVM(for: day)
+                                    }
                             }
                         }
                     }

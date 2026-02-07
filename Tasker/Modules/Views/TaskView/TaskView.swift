@@ -195,7 +195,7 @@ public struct TaskView: View {
                     await vm.playButtonTapped()
                 }
             } label: {
-                Image(systemName: vm.isPlaying ? "pause" : "play")
+                Image(systemName: vm.isPlaying ? "pause.fill" : "play")
                     .font(.callout)
                     .foregroundStyle(vm.appearanceManager.accentColor)
                     .contentTransition(.symbolEffect(.replace))
@@ -378,6 +378,7 @@ public struct TaskView: View {
             } label: {
                 HStack(spacing: 13) {
                     Image(systemName: "calendar")
+                        .font(.system(.title3, design: .rounded, weight: .regular))
                         .foregroundStyle(vm.appearanceManager.accentColor)
                     
                     Text("Date", bundle: .module)
@@ -419,6 +420,7 @@ public struct TaskView: View {
             } label: {
                 HStack(spacing: 13) {
                     Image(systemName: "clock")
+                        .font(.system(.title3, design: .rounded, weight: .regular))
                         .foregroundStyle(vm.appearanceManager.accentColor)
                     
                     Text("Time", bundle: .module)
@@ -456,6 +458,7 @@ public struct TaskView: View {
         VStack(spacing: 0) {
             HStack {
                 Image(systemName: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
+                    .font(.system(.title3, design: .rounded, weight: .regular))
                     .foregroundStyle(vm.appearanceManager.accentColor)
                 
                 Text("Repeat", bundle: .module)
@@ -618,6 +621,7 @@ public struct TaskView: View {
                     vm.showDedalineButtonTapped()
                 } label: {
                     Image(systemName: "flame.fill")
+                        .font(.system(.title3, design: .rounded, weight: .regular))
                         .foregroundStyle(vm.appearanceManager.accentColor)
                     
                     Text("Deadline", bundle: .module)

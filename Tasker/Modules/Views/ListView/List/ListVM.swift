@@ -312,12 +312,20 @@ public final class ListVM: HashableNavigation {
     
     //MARK: Play sound function
     
+    @MainActor
     func playButtonTapped(task: UITaskModel) async {
+        guard playingTask != task else {
+            stopToPlay()
+            return
+        }
+        
         if !playing {
             playingTask = task
             await playerManager.playAudioFromData(task: task)
         } else {
             stopToPlay()
+            playingTask = task
+            await playerManager.playAudioFromData(task: task)
         }
         
         // telemetry

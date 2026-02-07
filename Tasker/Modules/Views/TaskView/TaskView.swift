@@ -12,7 +12,7 @@ import UIKit
 import PaywallView
 
 public struct TaskView: View {
-//    @Environment(\.appearanceManager) var appearanceManager
+    //    @Environment(\.appearanceManager) var appearanceManager
     @Environment(\.colorScheme) var colorScheme
     
     @Environment(\.dismiss) var dismissButton
@@ -36,7 +36,7 @@ public struct TaskView: View {
     public var body: some View {
         NavigationStack {
             ZStack {
-            BackgroundGradient()
+                BackgroundGradient()
                     .ignoresSafeArea()
                 
                 ScrollView {
@@ -163,7 +163,7 @@ public struct TaskView: View {
                 vm.appearanceManager.backgroundColor
             ],
             startPoint: .bottom, endPoint: .top)
-            .opacity(0.7)
+        .opacity(0.7)
     }
     
     //MARK: - Audio Section

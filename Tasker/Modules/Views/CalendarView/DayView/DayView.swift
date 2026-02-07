@@ -23,17 +23,9 @@ struct DayView: View {
                     }
                 
                 BaseContent()
-//                if vm.showSmallFire, vm.lastDayForDeadline() {
-//                
-//                }
-//                
-//                if !vm.lastDayForDeadline() || vm.lastDayForDeadline() && vm.showSmallFire {
-//                   
-//                }
-//                
-//                if vm.lastDayForDeadline(), vm.showSmallFire == false {
-//                 
-//                }
+                    .task {
+                        await vm.updateTasks()
+                    }
             }
             .animation(.default, value: vm.showSmallFire)
             .animation(.default, value: vm.segmentedTasks)

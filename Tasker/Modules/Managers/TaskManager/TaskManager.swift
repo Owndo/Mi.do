@@ -348,7 +348,7 @@ public final actor TaskManager: TaskManagerProtocol {
         invalidateTasksCache(task)
         
         continuation?.yield()
-        updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: task.notificationDate))
+        updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: selectedDate))
     }
     
     // MARK: - Delete task
@@ -361,7 +361,7 @@ public final actor TaskManager: TaskManagerProtocol {
             invalidateTasksCache(task)
             
             continuation?.yield()
-            updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: task.notificationDate))
+            updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: selectedDate))
         } else {
             task.deleteRecords = updateExistingTaskDeleted(task: task)
             try await saveTask(task)

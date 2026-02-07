@@ -32,7 +32,7 @@ public struct Week: Identifiable, Equatable {
     }
 }
 
-public struct Day: Identifiable, Hashable {
+public struct Day: Identifiable, Hashable, Equatable {
     public var id = UUID().uuidString
     public var value: Int?
     public var date: Date

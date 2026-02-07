@@ -71,15 +71,13 @@ public final class WeekVM: HashableNavigation {
         dateManager: DateManagerProtocol,
         taskManager: TaskManagerProtocol,
         dayVMStore: DayVMStore
-    ) -> WeekVM {
+    ) async -> WeekVM {
         let vm = WeekVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
             taskManager: taskManager,
             dayVMStore: dayVMStore
         )
-        
-//        await vm.downloadDaysVMs()
         
         return vm
     }
@@ -103,14 +101,18 @@ public final class WeekVM: HashableNavigation {
         return vm
     }
     
+    // MARK: - Download Day VMs
+    
     @MainActor
     func downloadDaysVMs() async {
         await dayVMStore.createWeekDayVMs()
     }
     
+    //MARK: - Sync Day VM
+    
     @MainActor
-    func syncDayVM(for day: Date) async {
-        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+    func syncDayVM(for day: Day) async {
+        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
         if dayVMs[key] != nil { return }
 
         if let vm = await dayVMStore.returnDayVM(day) {
@@ -121,10 +123,9 @@ public final class WeekVM: HashableNavigation {
     //MARK: - Return DayVM
 
     @MainActor
-    func returnDayVM(_ day: Day) -> DayViewVM {
-        DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager, day: day)
-//        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
-//        return dayVMs[key]
+    func returnDayVM(_ day: Day) -> DayViewVM? {
+        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
+        return dayVMs[key]
     }
     
     func selectedDateButtonTapped(_ day: Day) {

@@ -167,9 +167,15 @@ final class DayViewVM: HashableNavigation {
     }
     
     @MainActor
-    func updateTasks(update: Bool = false) async {
-//        guard ableToDownload else { return }
-//        
+    func loadIfNeeded() async {
+        guard !hasLoaded else { return }
+        await updateTasks()
+    }
+    
+    @MainActor
+    func updateTasks() async {
+        guard ableToDownload else { return }
+        
 //        if update == true {
 //            hasLoaded = false
 //        }
@@ -181,25 +187,25 @@ final class DayViewVM: HashableNavigation {
 //        defer {
 //            hasLoaded = true
 //        }
-//        
-//        let tasks = await taskManager.retrieveDayTasks(for: day)
-//            .sorted { $0.notificationDate < $1.notificationDate }
-//        
-//        let timeKey = day.timeIntervalSince1970
-//        
-//        segmentedTasks = tasks.map {
-//            SegmentedTask(
-//                id: $0.id,
-//                task: $0,
-//                isCompleted: $0.completeRecords.contains { $0.completedFor == timeKey },
-//                color: returnColorForTask(task: $0)
-//            )
-//        }
-//        
-//        guard let segmentedTasks else { return }
-//        
-//        allCompleted = !segmentedTasks.isEmpty &&
-//        segmentedTasks.allSatisfy { $0.isCompleted }
+        
+        let tasks = await taskManager.retrieveDayTasks(for: day.date)
+            .sorted { $0.notificationDate < $1.notificationDate }
+        
+        let timeKey = day.date.timeIntervalSince1970
+        
+        self.segmentedTasks = tasks.map {
+            SegmentedTask(
+                id: $0.id,
+                task: $0,
+                isCompleted: $0.completeRecords.contains { $0.completedFor == timeKey },
+                color: returnColorForTask(task: $0)
+            )
+        }
+        
+        guard let segmentedTasks else { return }
+        
+        allCompleted = !segmentedTasks.isEmpty &&
+        segmentedTasks.allSatisfy { $0.isCompleted }
     }
     
     func returnColorForTask(task: UITaskModel) -> Color {

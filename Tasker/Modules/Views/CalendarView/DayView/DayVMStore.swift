@@ -16,7 +16,7 @@ public final actor DayVMStore {
     private let dateManager: DateManagerProtocol
     private let taskManager: TaskManagerProtocol
     
-    private var dayVMs: [TimeInterval: DayViewVM] = [:]
+    var dayVMs: [TimeInterval: DayViewVM] = [:]
     
     private var asyncStreamTask: Task<Void, Never>?
     
@@ -56,7 +56,8 @@ public final actor DayVMStore {
         let key = dateManager.startOfDay(for: date).timeIntervalSince1970
         
         guard let day = dayVMs[key] else { return }
-        await day.updateTasks(update: true)
+        await day.updateTasks()
+        print("udate for \(day.day.date)")
     }
     
     //MARK: - Create Store
@@ -77,7 +78,35 @@ public final actor DayVMStore {
     }
     
     func createWeekDayVMs() {
-//        let weekMap = Dictionary(uniqueKeysWithValues: weeks.map { ($0.id, $0.date) })
+        let weekMap = Dictionary(uniqueKeysWithValues: weeks.map { ($0.index!, $0.days) })
+        
+        let days = [
+            weekMap[dateManager.indexForWeek - 2],
+            weekMap[dateManager.indexForWeek - 1],
+            weekMap[dateManager.indexForWeek],
+            weekMap[dateManager.indexForWeek + 1],
+            weekMap[dateManager.indexForWeek + 2]
+        ]
+            .compactMap { $0 }
+            .flatMap { $0 }
+        
+        for day in days {
+            let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
+            guard dayVMs[key] == nil else { continue }
+            
+            let vm = DayViewVM.createVM(
+                dateManager: dateManager,
+                taskManager: taskManager,
+                appearanceManager: appearanceManager,
+                day: day
+            )
+            
+            dayVMs[key] = vm
+        }
+    }
+    
+//    func createMonthDayVMs() {
+//        let weekMap = Dictionary(uniqueKeysWithValues: months.map { ($0, $0.date) })
 //        
 //        let days = [
 //            weekMap[dateManager.indexForWeek - 2],
@@ -90,7 +119,7 @@ public final actor DayVMStore {
 //            .flatMap { $0 }
 //        
 //        for day in days {
-//            let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+//            let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
 //            guard dayVMs[key] == nil else { continue }
 //            
 //            let vm = DayViewVM.createVM(
@@ -102,46 +131,15 @@ public final actor DayVMStore {
 //            
 //            dayVMs[key] = vm
 //        }
-    }
+//    }
     
-    func createMonthVMs(scrollID: Int?) {
-//        guard let scrollID else { return }
-//        
-//        let monthMap = Dictionary(uniqueKeysWithValues: months.map { ($0.id, $0.date) })
-//        
-//        let days = [
-//            monthMap[scrollID - 1],
-//            monthMap[scrollID],
-//            monthMap[scrollID + 1]
-//        ]
-//            .compactMap { $0 }
-//            .flatMap { $0 }
-//        
-//        let newDays = days.filter {
-//            let key = dateManager.startOfDay(for: $0).timeIntervalSince1970
-//            return dayVMs[key] == nil
-//        }
-//        
-//        guard !newDays.isEmpty else { return }
-//        
-//        let newVMs: [(TimeInterval, DayViewVM)] = newDays.map { day in
-//            let key = dateManager.startOfDay(for: day).timeIntervalSince1970
-//            let vm = DayViewVM.createVM(
-//                dateManager: dateManager,
-//                taskManager: taskManager,
-//                appearanceManager: appearanceManager,
-//                day: day
-//            )
-//            return (key, vm)
-//        }
-//        
-//        for (key, vm) in newVMs {
-//            dayVMs[key] = vm
-//        }
-    }
-    
-    func returnDayVM(_ day: Date) -> DayViewVM? {
-        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+    func returnDayVM(_ day: Day) -> DayViewVM? {
+        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
+        
+        guard dayVMs[key] != nil else {
+            return DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager, day: day)
+        }
+        
         return dayVMs[key]
     }
 }

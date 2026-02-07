@@ -56,33 +56,9 @@ public final class MainVM: HashableNavigation {
     
     var notesVM: NotesVM
     
-    
-    //    private let playerManager: PlayerManagerProtocol
-    
-    //    var onboardingManager: OnboardingManagerProtocol
-    
     //MARK: - Model
     
-    var mainModel: UIProfileModel?
-    
-    public var profileModel: UIProfileModel {
-        didSet {
-            print("Changed")
-        }
-    }
-    
-    //    let listVM = ListVM()
-    //    var taskVM: TaskVM?
-    
-    //    var sheetDestination: SheetDestination? {
-    //        didSet {
-    //            if sheetDestination == nil {
-    //                presentationPosition = .fraction(0.93)
-    //            } else {
-    //                presentationPosition = .fraction(1.0)
-    //            }
-    //        }
-    //    }
+    public var profileModel: UIProfileModel
     
     //MARK: - Async Stream
     
@@ -169,11 +145,7 @@ public final class MainVM: HashableNavigation {
         recorderManager.decibelLevel
     }
     
-    //    public var profileUpdateTrigger: Bool {
-    //        casManager.profileUpdateTriger
-    //    }
-    
-    //MARK: - Init
+    //MARK: - Private Init
     
     private init(
         appearanceManager: AppearanceManagerProtocol,
@@ -340,52 +312,22 @@ public final class MainVM: HashableNavigation {
         }
     }
     
-    //MARK: - Update notification
-    //    public func updateNotifications() async {
-    //        guard onboardingManager.onboardingComplete == true else {
-    //            return
-    //        }
-    //
-    //        try? await Task.sleep(for: .seconds(0.2))
-    //
-    //        //        await notificationManager.createNotification()
-    //    }
+   
+    // MARK: - Telemetry action
     
-    /// Only once time for ask notification reqest
-    //    @objc private func handleFirstTimeOpenDone() {
-    //        Task {
-    //            await updateNotifications()
-    //        }
-    //
-    //        NotificationCenter.default.removeObserver(
-    //            self,
-    //            name: NSNotification.Name("firstTimeOpenHasBeenDone"),
-    //            object: nil
-    //        )
-    //    }
+    func telemetryAction(_ event: EventType) {
+        telemetryManager.logEvent(event)
+    }
     
     public func mainScreenOpened() {
         telemetryManager.logEvent(.openView(.home(.open)))
     }
     
-    // MARK: - Telemetry action
-    func telemetryAction(_ event: EventType) {
-        telemetryManager.logEvent(event)
-    }
-    
-    //MARK: - Profile actions
-    func profileModelSave() {
-        //        casManager.saveProfileData(profileModel)
-    }
-    
-    private func downloadProfileModelFromCas() {
-        //        profileModel = casManager.profileModel
-    }
     
     //MARK: - Calendar Button
     
     func calendarButtonTapped() async {
-        calendarVM.startVM()
+        await calendarVM.startVM()
         path.append(.calendar(calendarVM))
         // telemetry
         telemetryAction(.mainViewAction(.calendarButtonTapped))
@@ -423,7 +365,6 @@ public final class MainVM: HashableNavigation {
     }
     
     func startAfterChek() async throws {
-        mainViewPaywall = true
         
         //        guard await subscriptionManager.hasSubscription() else {
         //            while showPaywall {
@@ -616,29 +557,6 @@ public final class MainVM: HashableNavigation {
     
     private func changeDisabledButton() {
         disabledButton.toggle()
-    }
-    
-    //MARK: - Onboarding
-    private func onboardingStart() async {
-        
-        //        while onboardingManager.sayHello {
-        //            try? await Task.sleep(for: .seconds(0.1))
-        //        }
-        //
-        //        // If first time - return
-        //        guard profileModel.onboarding.firstTimeOpen == false else {
-        //            return
-        //        }
-        
-        try? await Task.sleep(for: .seconds(0.8))
-        
-        //        guard casManager.completedTaskCount() >= 23 && profileModel.onboarding.requestedReview == false else {
-        //            return
-        //        }
-        
-        askReview = true
-        //        profileModel.onboarding.requestedReview = true
-        profileModelSave()
     }
     
     //MARK: Function before closeApp

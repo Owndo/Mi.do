@@ -60,6 +60,9 @@ public struct WeekView: View {
             TodayButton()
                 .padding(.top, 8)
         }
+        .task(id: vm.indexForWeek) {
+            await vm.downloadDaysVMs()
+        }
         .padding(.top, 5)
         .animation(.default, value: vm.indexForWeek)
         .animation(.default, value: vm.selectedDate)
@@ -79,7 +82,21 @@ public struct WeekView: View {
                         Button {
                             vm.selectedDateButtonTapped(day)
                         } label: {
-                            DayView(vm: vm.returnDayVM(day))
+                            if let vm = vm.returnDayVM(day) {
+                                DayView(vm: vm)
+                            } else {
+                                HStack {
+                                    
+                                    Spacer()
+                                    
+                                    ProgressView()
+                                    
+                                    Spacer()
+                                }
+                                .task {
+                                    await vm.syncDayVM(for: day)
+                                }
+                            }
                         }
                     }
                 }
@@ -120,24 +137,4 @@ public struct WeekView: View {
 
 #Preview {
     WeekView(vm: WeekVM.createPreviewVM())
-}
-
-struct CustomHorizontalPagingBehavior: ScrollTargetBehavior {
-    func updateTarget(_ target: inout ScrollTarget, context: TargetContext) {
-        // Current ScrollView width
-        let scrollViewWidth = context.containerSize.width
-        
-        // Adjust the target position based on scroll direction
-        if context.velocity.dx > 0 {
-            // Scroll right: target position = starting position + ScrollView width
-            target.rect.origin.x = context.originalTarget.rect.minX + scrollViewWidth
-        } else if context.velocity.dx < 0 {
-            // Scroll left: target position = starting position - ScrollView width
-            target.rect.origin.x = context.originalTarget.rect.minX - scrollViewWidth
-        }
-    }
-}
-
-extension ScrollTargetBehavior where Self == CustomHorizontalPagingBehavior {
-    static var horizontalPaging: CustomHorizontalPagingBehavior { .init() }
 }

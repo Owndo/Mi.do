@@ -127,9 +127,8 @@ public class MonthsViewVM: HashableNavigation {
     
     //MARK: - Start VM
     
-    public func startVM() {
+    public func startVM() async {
         allMonths = dateManager.initializeMonth()
-        //        await downloadDaysVMs()
     }
     
     func endVM() {
@@ -142,7 +141,7 @@ public class MonthsViewVM: HashableNavigation {
     func selectedDateChange(_ day: Date) {
         dateManager.selectedDateChange(day)
         dateManager.initializeWeek()
-//        
+        //
         backToMainView?()
         
         // telemetry
@@ -158,7 +157,6 @@ public class MonthsViewVM: HashableNavigation {
     // MARK: - Day is today
     
     func isSelectedDay(_ day: Date) -> Bool {
-//        print("here")
         return calendar.isDate(day, inSameDayAs: selectedDate)
     }
     
@@ -272,15 +270,17 @@ public class MonthsViewVM: HashableNavigation {
         scrollID = allMonths.first(where: { $0.date == dateManager.startOfMonth(for: selectedDate) })?.id
         scrollAnchor = .top
         
-        try? await Task.sleep(for: .seconds(0.5))
+        try? await Task.sleep(for: .seconds(0.3))
         viewStarted = true
     }
     
     //MARK: - iOS 18 section
     
     @available(iOS 18.0, *)
+    @MainActor
     func jumpToSelectedMonth18iOS() async {
-        scrollPosition.scrollTo(y: 3000)
+        let position = (CGFloat(allMonths.count / 2) * monthHeight)
+        scrollPosition.scrollTo(y: position)
         
         try? await Task.sleep(for: .seconds(0.1))
         viewStarted = true
@@ -289,14 +289,12 @@ public class MonthsViewVM: HashableNavigation {
     //MARK: - Back to today 18iOS
     
     @available(iOS 18.0, *)
+    @MainActor
     func backToTodayButton18iOS() async {
         if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: Date()))})?.id {
-            scrolledFromCurrentMonth = false
-            showYear = false
             dateManager.backToToday()
             scrollPosition.scrollTo(id: id, anchor: .top)
         } else {
-            dateManager.backToToday()
             allMonths = dateManager.initializeMonth()
             await jumpToSelectedMonth18iOS()
         }
@@ -432,16 +430,17 @@ public class MonthsViewVM: HashableNavigation {
         }
     }
     
+    
+    //TODO: - Cache
     //MARK: - Download DaysVM
     @MainActor
     func downloadDaysVMs() async {
-        guard let scrollID else { return }
-        //                await dayVMStore.createMonthVMs(scrollID: scrollID)
+        //        await dayVMStore.createMonthVMs()
     }
     
     @MainActor
-    func syncDayVM(for day: Date) async {
-        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
+    func syncDayVM(for day: Day) async {
+        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
         if dayVMs[key] != nil { return }
         
         if let vm = await dayVMStore.returnDayVM(day) {
@@ -453,18 +452,12 @@ public class MonthsViewVM: HashableNavigation {
     
     @MainActor
     func returnDayVM(_ day: Day) -> DayViewVM {
-        let vm = DayViewVM.createVM(
+        DayViewVM.createVM(
             dateManager: dateManager,
             taskManager: taskManager,
             appearanceManager: appearanceManager,
             day: day
         )
-        vm.ableToDownload = ableToDownloadTasksColors
-        
-        return vm
-        
-        //        let key = dateManager.startOfDay(for: day).timeIntervalSince1970
-        //        return dayVMs[key]
     }
     
     //MARK: Telemtry action

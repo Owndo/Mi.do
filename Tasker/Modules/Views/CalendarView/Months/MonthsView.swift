@@ -63,8 +63,10 @@ public struct MonthsView: View {
                     })
                 .onScrollPhaseChange { oldPhase, newPhase in
                     switch newPhase {
-                    case .decelerating, .idle:
+                    case .idle:
                         vm.downloadDay = true
+                    case .animating:
+                        break
                     default:
                         vm.downloadDay = false
                     }
@@ -224,7 +226,7 @@ public struct MonthsView: View {
         if let vm = vm {
             MonthsView(vm: vm)
                 .task {
-                    vm.startVM()
+                    await vm.startVM()
                 }
         } else {
             ProgressView()

@@ -43,7 +43,7 @@ public struct TaskView: View {
                     VStack(spacing: 28) {
                         
                         AudioSection()
-                            .hidden(preview)
+                            .padding(.top, preview ? 20 : 0)
                         
                         MainSection()
                         
@@ -53,9 +53,9 @@ public struct TaskView: View {
                             .hidden(preview)
                         
                         CreatedDate()
+                            .padding(.bottom, preview ? 0 : 120)
                     }
                 }
-                .fixedSize(horizontal: false, vertical: preview)
                 .ignoresSafeArea(edges: .bottom)
                 .scrollIndicators(.hidden)
                 .scrollDismissesKeyboard(.immediately)
@@ -97,6 +97,7 @@ public struct TaskView: View {
                 .animation(.easeInOut, value: vm.showTimePicker)
                 .animation(.easeInOut, value: vm.showDeadline)
                 .animation(.easeInOut, value: vm.showDayOfWeekSelector)
+                .animation(.default, value: vm.playerManager.currentTime)
                 .sheet(isPresented: $vm.shareViewIsShowing) {
                     ShareView(activityItems: [vm.task])
                         .presentationDetents([.medium])
@@ -175,6 +176,7 @@ public struct TaskView: View {
                 VoicePlaying()
                 
                 VoiceModeToogle()
+                    .hidden(preview)
             } else {
                 AddVoice()
             }
@@ -187,31 +189,26 @@ public struct TaskView: View {
     @ViewBuilder
     private func VoicePlaying() -> some View {
         HStack(spacing: 12) {
-            Image(systemName: vm.isPlaying ? "pause" : "play")
-                .frame(width: 21, height: 21)
-                .onTapGesture {
-                    Task {
-                        await vm.playButtonTapped()
-                    }
+            Button {
+                Task {
+                    sectionInFocus = nil
+                    await vm.playButtonTapped()
                 }
+            } label: {
+                Image(systemName: vm.isPlaying ? "pause" : "play")
+                    .font(.callout)
+                    .foregroundStyle(vm.appearanceManager.accentColor)
+                    .contentTransition(.symbolEffect(.replace))
+            }
+            
             
             Slider(
-                value: Binding(
-                    get: {
-                        vm.isDragging ? vm.sliderValue : vm.currentProgressTime
-                    },
-                    set: { newValue in
-                        vm.sliderValue = newValue
-                        if vm.isDragging {
-                            vm.seekAudio(newValue)
-                        } else {
-                            vm.seekAudio(newValue)
-                        }
-                    }
-                ),
+                value: $vm.playerManager.currentTime,
                 in: 0...vm.totalProgressTime,
-                onEditingChanged: { editing in
-                    vm.isDragging = editing
+                onEditingChanged: { isEditing in
+                    if !isEditing {
+                        vm.seekAudio()
+                    }
                 }
             )
             .tint(vm.appearanceManager.accentColor)
@@ -222,7 +219,7 @@ public struct TaskView: View {
                 .monospacedDigit()
                 .contentTransition(.numericText())
         }
-        .padding(.vertical, 11)
+        .padding(.vertical, 12)
         .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 26)
@@ -239,6 +236,7 @@ public struct TaskView: View {
     private func VoiceModeToogle() -> some View {
         HStack(spacing: 12) {
             Image(systemName: "bell")
+                .font(.title3)
                 .foregroundStyle(vm.appearanceManager.accentColor)
             
             Toggle(isOn: $vm.task.voiceMode) {
@@ -247,7 +245,7 @@ public struct TaskView: View {
                     .foregroundStyle(.labelPrimary)
             }
         }
-        .padding(.vertical, 11)
+        .padding(.vertical, 12.5)
         .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 26)
@@ -274,6 +272,7 @@ public struct TaskView: View {
             
             Button {
                 Task {
+                    sectionInFocus = nil
                     await vm.recordButtonTapped()
                 }
             } label: {

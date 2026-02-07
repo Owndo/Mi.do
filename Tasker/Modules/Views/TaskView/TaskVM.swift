@@ -33,7 +33,7 @@ public final class TaskVM: HashableNavigation {
     
     let dateManager: DateManagerProtocol
     
-    let playerManager: PlayerManagerProtocol
+    var playerManager: PlayerManagerProtocol
     
     let recorderManager: RecorderManagerProtocol
     
@@ -721,8 +721,8 @@ public final class TaskVM: HashableNavigation {
     
     //MARK: - Seek audio
     
-    func seekAudio(_ time: TimeInterval) {
-        playerManager.seekAudio(time)
+    func seekAudio() {
+        playerManager.seekAudio()
         
         // telemetry
         telemetryAction(.taskAction(.seekToTime))

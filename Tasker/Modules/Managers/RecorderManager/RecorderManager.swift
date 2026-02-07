@@ -34,7 +34,7 @@ public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable
     private var recognitionTask: SFSpeechRecognitionTask?
     private let speechRecognizer: SFSpeechRecognizer?
     
-    public let setting: [String: Any] = [
+    public let settings: [String: Any] = [
         AVFormatIDKey: Int(kAudioFormatLinearPCM),
         AVSampleRateKey: 44100,
         AVNumberOfChannelsKey: 1,
@@ -73,7 +73,7 @@ public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable
             try session.setCategory(.playAndRecord, mode: .default, options: [.allowAirPlay, .allowBluetoothHFP, .allowBluetoothA2DP, .duckOthers])
             try session.setActive(true)
             
-            avAudioRecorder = try AVAudioRecorder(url: fileName, settings: setting)
+            avAudioRecorder = try AVAudioRecorder(url: fileName, settings: settings)
             avAudioRecorder?.prepareToRecord()
             avAudioRecorder?.isMeteringEnabled = true
             avAudioRecorder?.record()

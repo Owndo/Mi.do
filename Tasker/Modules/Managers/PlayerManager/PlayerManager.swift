@@ -52,33 +52,34 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     
     // MARK: - Playback
     
+    @MainActor
     public func playAudioFromData(task: UITaskModel) async {
         self.task = task
         
+        guard let hash = task.audio else {
+            return
+        }
+        
         do {
-            try configureAudioSession()
-            
-            guard let audio = try await casManager.retrieve(task.audio ?? "") else {
+            guard let audio = try await casManager.retrieve(hash) else {
                 return
             }
             
-            await MainActor.run {
-                do {
-                    if pause != true {
-                        player = try AVAudioPlayer(data: audio)
-                    }
-                    player?.prepareToPlay()
-                    totalTime = player?.duration ?? 0
-                    player?.play()
-                    isPlaying = true
-                    pause = false
-                    startPlaybackTimer()
-                } catch {
-                    print("Failed to initialize player: \(error)")
-                }
+            try configureAudioSession()
+            
+            if pause != true {
+                player = try AVAudioPlayer(data: audio)
             }
+            
+            player?.prepareToPlay()
+            totalTime = player?.duration ?? 0
+            player?.currentTime = currentTime
+            player?.play()
+            isPlaying = true
+            pause = false
+            startPlaybackTimer()
         } catch {
-            print("Audio session setup failed: \(error)")
+            print("Failed to initialize player: \(error)")
         }
     }
     
@@ -96,21 +97,21 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         isPlaying = false
     }
     
-    public func seekAudio(_ time: TimeInterval) {
+    public func seekAudio() {
         guard let player else { return }
         
         seekTimer?.invalidate()
-        currentTime = time
         
         seekTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: false) { [weak self] _ in
             guard let self else { return }
             
             let wasPlaying = player.isPlaying
+            
             if wasPlaying {
                 player.pause()
             }
             
-            player.currentTime = time
+            player.currentTime = currentTime
             
             if wasPlaying {
                 player.play()
@@ -162,12 +163,13 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         try audioSession.setActive(true)
     }
     
+    @MainActor
     private func startPlaybackTimer() {
-        stopPlaybackTimer()
-        
-        playbackTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            guard let self, let player = self.player else { return }
-            
+        playbackTimer = Timer.scheduledTimer(
+            withTimeInterval: 0.1,
+            repeats: true
+        ) { [weak self] _ in
+            guard let self, let player else { return }
             self.currentTime = player.currentTime
             
             if !player.isPlaying {

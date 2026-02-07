@@ -91,6 +91,7 @@ public struct MainView: View {
             .toolbarBackground(osVersion.majorVersion >= 26 ? .visible : .hidden, for: .navigationBar)
             .animation(.default, value: vm.isRecording)
             .animation(.default, value: vm.backgroundAnimation)
+            .animation(.default, value: vm.hideRecordButtonTip)
             .sensoryFeedback(.selection, trigger: vm.sheetNavigation)
             .sensoryFeedback(.selection, trigger: vm.path)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
@@ -102,7 +103,7 @@ public struct MainView: View {
     private func MainViewBase(weekVM: WeekVM, listVM: ListVM) -> some View {
         ZStack {
             VStack(spacing: 0) {
-                    ListView(vm: listVM)
+                ListView(vm: listVM)
                     .presentationContentInteraction(.scrolls)
                 
                 Spacer()
@@ -179,7 +180,7 @@ public struct MainView: View {
         VStack {
             Spacer()
             
-            RecordButton(isRecording: $vm.isRecording, progress: vm.progress, countOfSec: vm.currentlyTime, decivelsLVL: vm.decibelLvl)
+            RecordButton(isRecording: $vm.isRecording, hideTip: vm.hideRecordButtonTip, progress: vm.progress, countOfSec: vm.currentlyTime, decivelsLVL: vm.decibelLvl)
                 .padding(20)
                 .contentShape(.circle)
                 .disabled(vm.disabledButton)

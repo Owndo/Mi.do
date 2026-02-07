@@ -468,6 +468,12 @@ public final class ListVM: HashableNavigation {
         }
     }
     
+    //MARK: - Empty Day
+    
+    public func emptyDay() -> Bool {
+        !activeTasks.isEmpty && !completedTasks.isEmpty
+    }
+    
     
     //MARK: - Date
     func backToTodayButtonTapped() {

@@ -12,6 +12,8 @@ public struct RecordButton: View {
     
     @Binding var isRecording: Bool
     
+    var hideTip = false
+    
     @State private var shadowXOffset: CGFloat = 0
     @State private var shadowYOffset: CGFloat = 0
     @State private var shadowRadius: CGFloat = 5
@@ -22,8 +24,9 @@ public struct RecordButton: View {
     var countOfSec: Double
     var decivelsLVL: Float
     
-    public init(isRecording: Binding<Bool>, progress: Double, countOfSec: Double, decivelsLVL: Float) {
+    public init(isRecording: Binding<Bool>, hideTip: Bool = false, progress: Double, countOfSec: Double, decivelsLVL: Float) {
         self._isRecording = isRecording
+        self.hideTip = hideTip
         self.progress = progress
         self.countOfSec = countOfSec
         self.decivelsLVL = decivelsLVL
@@ -48,7 +51,7 @@ public struct RecordButton: View {
     
     @ViewBuilder
     private func CustomPopOver() -> some View {
-        if isRecording == false {
+        if !hideTip && !isRecording {
             VStack {
                 Text("Start here", bundle: .module)
                     .font(.system(size: 17, weight: .bold, design: .rounded))

@@ -145,6 +145,11 @@ public final class MainVM: HashableNavigation {
         recorderManager.decibelLevel
     }
     
+    /// Check if current day doesen't have any tasks
+    var hideRecordButtonTip: Bool {
+        listVM.emptyDay()
+    }
+    
     //MARK: - Private Init
     
     private init(
@@ -383,8 +388,6 @@ public final class MainVM: HashableNavigation {
         //        }
         
         recordingState = .recording
-        //TODO: - Check if player manager will be stopped by default
-        //        playerManager.stopToPlay()
         
         // telemetry
         telemetryAction(.mainViewAction(.recordTaskButtonTapped(.tryRecording)))
@@ -417,6 +420,7 @@ public final class MainVM: HashableNavigation {
     }
     
     //MARK: - Stop after check
+    
     @MainActor
     func stopAfterCheck(_ newValue: Double?) async {
         guard let value = newValue, value >= 15.0 else { return }
@@ -425,12 +429,16 @@ public final class MainVM: HashableNavigation {
         telemetryAction(.mainViewAction(.recordTaskButtonTapped(.stopRecordingAfterTimeout)))
     }
     
+    //MARK: - Start record
+    
     func startRecord() async {
         isRecording = true
         await recorderManager.startRecording()
         // telemetry
         telemetryAction(.mainViewAction(.recordTaskButtonTapped(.startRecording)))
     }
+    
+    //MARK: - Stop record
     
     func stopRecord(isAutoStop: Bool = false) async {
         guard recordingState == .recording else {
@@ -453,7 +461,6 @@ public final class MainVM: HashableNavigation {
         }
         
         await createTask(with: hashOfAudio)
-        recorderManager.clearFileFromDirectory()
         
         // telemetry
         telemetryAction(.mainViewAction(.recordTaskButtonTapped(.stopRecording)))
@@ -502,6 +509,7 @@ public final class MainVM: HashableNavigation {
     }
     
     //MARK: - Recognize data
+    
     func defaultTitle() -> String? {
         guard recorderManager.recognizedText == "" else {
             return recorderManager.recognizedText
@@ -533,6 +541,7 @@ public final class MainVM: HashableNavigation {
     }
     
     //MARK: - Find tasks after notification
+    
     private func extractBaseId(from fullId: String) -> String {
         return fullId.components(separatedBy: ".").first ?? fullId
     }

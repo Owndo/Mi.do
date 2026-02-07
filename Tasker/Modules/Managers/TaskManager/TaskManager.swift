@@ -303,8 +303,6 @@ public final actor TaskManager: TaskManagerProtocol {
         task.completeRecords = updateExistingTaskCompletion(task: task)
         
         try await saveTask(task)
-        
-        await updateNotifications()
     }
     
     private func updateExistingTaskCompletion(task: UITaskModel) -> [CompleteRecord] {
@@ -349,6 +347,8 @@ public final actor TaskManager: TaskManagerProtocol {
         
         continuation?.yield()
         updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: selectedDate))
+        
+        await updateNotifications()
     }
     
     // MARK: - Delete task

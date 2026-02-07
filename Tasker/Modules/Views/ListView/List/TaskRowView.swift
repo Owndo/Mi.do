@@ -192,7 +192,7 @@ struct TaskRowView: View {
                 .fill(colorScheme.invertedBackgroundTertiary(task))
             
             if task.audio != nil {
-                Image(systemName: vm.playing ? "pause.fill" : "play.fill")
+                Image(systemName: vm.playButton(task: task) ? "pause.fill" : "play.fill")
                     .foregroundStyle(.white)
                     .animation(.default, value: vm.playing)
                     .onTapGesture {

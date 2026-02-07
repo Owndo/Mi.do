@@ -336,6 +336,10 @@ public final class ListVM: HashableNavigation {
         }
     }
     
+    func playButton(task: UITaskModel) -> Bool {
+        playing == true && playingTask?.id == task.id
+    }
+    
     //MARK: - Deadline
     func showDedalineButtonTapped(task: UITaskModel) {
         guard isTaskHasDeadline(task: task) else {

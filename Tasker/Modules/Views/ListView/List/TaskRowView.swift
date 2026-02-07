@@ -275,9 +275,9 @@ struct TaskViewPreview: View {
 extension View {
     func contextMenuWithPreview<Content: View>(menu: UIMenu, @ViewBuilder preview: @escaping () -> Content, isPressed: Binding<Bool>, action: @escaping () -> Void) -> some View {
         self
-            .scaleEffect(isPressed.wrappedValue ? 0.93 : 1)
+            .scaleEffect(isPressed.wrappedValue ? 0.95 : 1)
             .opacity(isPressed.wrappedValue ? 0.85 : 1)
-            .animation(.easeIn(duration: 0.3), value: isPressed.wrappedValue)
+            .animation(.easeIn(duration: 0.35), value: isPressed.wrappedValue)
             .overlay(
                 InteractionView(
                     preview: preview,

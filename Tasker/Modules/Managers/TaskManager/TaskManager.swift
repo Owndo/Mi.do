@@ -38,7 +38,7 @@ public final actor TaskManager: TaskManagerProtocol {
     
     private var dayTasksCache: [TimeInterval: [UITaskModel]] = [:]
     private var weekTasksCache: [TimeInterval: [UITaskModel]] = [:]
-    private var monthTasksCache: [TimeInterval: [UITaskModel]] = [:]
+    //    private var monthTasksCache: [TimeInterval: [UITaskModel]] = [:]
     
     //MARK: - AsyncStream
     
@@ -48,12 +48,6 @@ public final actor TaskManager: TaskManagerProtocol {
     public var updatedDayStream: AsyncStream<Date>?
     private var updatedDayStreamContinuation: AsyncStream<Date>.Continuation?
     
-    //    private var thisWeekCasheTasks: [UITaskModel] = []
-    //    private var cacheWeekStart: Double = 0
-    //    private var cacheWeekEnd: Double = 0
-    
-    //    private var dateObserverTask: Task<Void, Never>?
-    
     //MARK: - Init
     
     private init(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol, telemetryManager: TelemetryManagerProtocol? = nil) {
@@ -61,8 +55,6 @@ public final actor TaskManager: TaskManagerProtocol {
         self.dateManager = dateManager
         self.notificationManager = notificationManager
         self.telemetryManager = telemetryManager ?? TelemetryManager.createTelemetryManager()
-        
-        
     }
     
     //MARK: - Create
@@ -70,7 +62,7 @@ public final actor TaskManager: TaskManagerProtocol {
     public static func createTaskManager(casManager: CASManagerProtocol, dateManager: DateManagerProtocol, notificationManager: NotificationManagerProtocol) async -> TaskManagerProtocol {
         let manager = TaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         await manager.fetchTasksFromCAS()
-//        await manager.retrieveMonthTasks(for: Date())
+        //      await manager.retrieveMonthTasks(for: Date())
         await manager.createStreams()
         
         return manager
@@ -213,67 +205,76 @@ public final actor TaskManager: TaskManagerProtocol {
             return cached
         }
         
-        await retrieveMonthTasks(for: date)
+        let tasks = tasks.values.map { $0 }
         
-        let startOfMonth = dateManager.startOfMonth(for: date)
-        let monthKey = startOfMonth.timeIntervalSince1970
-        
-        let endOfWeek = dateManager.endOfWeek(for: date)
-        let weekEnd = endOfWeek.timeIntervalSince1970
-        
-        let monthTasks = monthTasksCache[monthKey] ?? []
-        
-        let weekTasks = monthTasks.filter { task in
-            task.notificationDate >= weekKey &&
-            task.notificationDate < weekEnd
+        let days: [Date] = (0..<7).compactMap {
+            calendar.date(byAdding: .day, value: $0, to: startOfWeek)
         }
+        
+        var weekTasksSet = Set<UITaskModel>()
+        
+        for day in days {
+            let dayKey = day.timeIntervalSince1970
+            
+            let tasksForDay = tasks.filter {
+                $0.isScheduledForDate(dayKey, calendar: calendar)
+            }
+            
+            for task in tasksForDay {
+                weekTasksSet.insert(task)
+            }
+        }
+        
+        let weekTasks = Array(weekTasksSet)
         
         weekTasksCache[weekKey] = weekTasks
         return weekTasks
     }
     
-    
-    //MARK: - Month Tasks
-    
-    @discardableResult
-    private func retrieveMonthTasks(for date: Date) async -> [UITaskModel]? {
-        let startOfMonth = dateManager.startOfMonth(for: date)
-        let key = startOfMonth.timeIntervalSince1970
-        
-        if let cached = monthTasksCache[key] {
-            return cached
-        }
-
-        guard let dates = dateManager.allMonths.first(where: { dateManager.startOfMonth(for: $0.date) == startOfMonth })?.date else {
-            return nil
-        }
-        
-        var setOfTasks = Set<UITaskModel>()
-        
-//        for date in dates {
-//            let tasks = self.tasks.values.filter { $0.isScheduledForDate(key, calendar: calendar) }
-//            
-//            for task in tasks {
-//                setOfTasks.insert(task)
-//            }
-//        }
-        
-        monthTasksCache[key] = Array(setOfTasks)
-        return monthTasksCache[key]
-    }
+    //    //MARK: - Month Tasks
+    //
+    //    @discardableResult
+    //    private func retrieveMonthTasks(for date: Date) async -> [UITaskModel]? {
+    //        let startOfMonth = dateManager.startOfMonth(for: date)
+    //        let key = startOfMonth.timeIntervalSince1970
+    //
+    //        if let cached = monthTasksCache[key] {
+    //            return cached
+    //        }
+    //
+    //        return tasks.values.map { $0 }
+    //
+    //
+    ////        for date in dates {
+    ////            let tasks = self.tasks.values.filter { $0.isScheduledForDate(key, calendar: calendar) }
+    ////
+    ////            for task in tasks {
+    ////                setOfTasks.insert(task)
+    ////            }
+    ////        }
+    //
+    ////        monthTasksCache[key] = Array(setOfTasks)
+    ////        return monthTasksCache[key]
+    //    }
     
     //MARK: - Invalidate Tasks Cache
     
-    private func invalidateTasksCache(_ date: Double) {
-        let startOfDate = dateManager.startOfDay(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970
-        let startOfWeek = dateManager.startOfWeek(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970
-        let startOfMonth = dateManager.startOfMonth(for: Date(timeIntervalSince1970: date)).timeIntervalSince1970
+    private func invalidateTasksCache(_ task: UITaskModel) {
+        guard task.repeatTask == .never else {
+            activeTasksCache.removeAll()
+            completedTasksCache.removeAll()
+            dayTasksCache.removeAll()
+            weekTasksCache.removeAll()
+            return
+        }
+        
+        let startOfDate = dateManager.startOfDay(for: Date(timeIntervalSince1970: task.notificationDate)).timeIntervalSince1970
+        let startOfWeek = dateManager.startOfWeek(for: Date(timeIntervalSince1970: task.notificationDate)).timeIntervalSince1970
         
         activeTasksCache.removeValue(forKey: startOfDate)
         completedTasksCache.removeValue(forKey: startOfDate)
         dayTasksCache.removeValue(forKey: startOfDate)
         weekTasksCache.removeValue(forKey: startOfWeek)
-        monthTasksCache.removeValue(forKey: startOfMonth)
     }
     
     private func isTaskInWeeksRange(_ task: UITaskModel, startDate: Double, endDate: Double) -> Bool {
@@ -344,7 +345,7 @@ public final actor TaskManager: TaskManagerProtocol {
         
         tasks[task.id] = task
         
-        invalidateTasksCache(task.notificationDate)
+        invalidateTasksCache(task)
         
         continuation?.yield()
         updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: task.notificationDate))
@@ -357,7 +358,7 @@ public final actor TaskManager: TaskManagerProtocol {
             try await casManager.deleteModel(task.model)
             tasks.removeValue(forKey: task.id)
             
-            invalidateTasksCache(task.notificationDate)
+            invalidateTasksCache(task)
             
             continuation?.yield()
             updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: task.notificationDate))

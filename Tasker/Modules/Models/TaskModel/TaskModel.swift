@@ -138,6 +138,11 @@ public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable {
         set { model.value.deadline = nilIfNeed(newValue, is: nil)}
     }
     
+    public var endDate: Double? {
+        get { model.value.endDate ?? nil }
+        set { model.value.endDate = nilIfNeed(newValue, is: nil)}
+    }
+    
     public var secondNotificationDate: Double {
         get { model.value.secondNotificationDate ?? 0.0 }
         set { model.value.secondNotificationDate = nilIfNeed(newValue, is: 0.0) }

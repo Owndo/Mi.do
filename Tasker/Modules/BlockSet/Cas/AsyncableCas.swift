@@ -20,6 +20,10 @@ public protocol AsyncableCas: Actor {
     
     /// Lists all stored identifiers.
     func allIdentifiers() async throws -> [String]
+    
+    
+    /// URL for HASH
+    func fileURL(forHash hash: String) async throws -> URL
 }
 
 extension AsyncableCas {

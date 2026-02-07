@@ -36,12 +36,14 @@ public final class StorageManager: StorageManagerProtocol {
     public func createFileInSoundsDirectory(hash: String) async -> URL? {
         let soundsDirectory = createSoundsDirectory()
         
+        
+        
         let tempUrl = soundsDirectory.appendingPathComponent(hash + ".wav")
         
         do {
-            let pathToAudio = URL(string: hash)!
+            let pathToAudio = try await casManager.pathToFile(hash)
             
-            guard FileManager.default.fileExists(atPath: hash) else {
+            guard FileManager.default.fileExists(atPath: pathToAudio.path()) else {
                 return tempUrl
             }
             

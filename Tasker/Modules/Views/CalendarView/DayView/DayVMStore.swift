@@ -57,7 +57,6 @@ public final actor DayVMStore {
         
         guard let day = dayVMs[key] else { return }
         await day.updateTasks()
-        print("udate for \(day.day.date)")
     }
     
     //MARK: - Create Store

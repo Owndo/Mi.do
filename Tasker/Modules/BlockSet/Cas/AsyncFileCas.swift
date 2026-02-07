@@ -41,7 +41,7 @@ public actor AsyncFileCas: AsyncableCas {
         try await dir.asyncList()
     }
 
-    private func fileURL(forHash hash: String) async throws -> URL {
+    public func fileURL(forHash hash: String) async throws -> URL {
         let (a, bc) = hash[...].split2()
         let (b, c) = bc.split2()
         return dir.appending(a, true).appending(b, true).appending(c, false)

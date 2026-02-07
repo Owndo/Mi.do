@@ -75,6 +75,12 @@ public final actor CASManager: CASManagerProtocol {
         try await cas.saveJSONModel(model)
     }
     
+    //MARK: Delete model
+    
+    public func deleteModel<T: Codable>(_ model: Model<T>) async throws {
+        try await cas.deleteModel(model)
+    }
+    
     //MARK: - Save audio
     
     public func storeAudio(_ audio: Data) async throws -> String? {
@@ -85,6 +91,12 @@ public final actor CASManager: CASManagerProtocol {
     
     public func storeImage(_ photo: Data) async throws -> String? {
         return try await cas.store(photo)
+    }
+    
+    //MARK: - Path to file
+    
+    public func pathToFile(_ hash: String) async throws -> URL {
+        try await cas.fileURL(forHash: hash)
     }
     
     //MARK: - Update CAS after work
@@ -126,17 +138,7 @@ public final actor CASManager: CASManagerProtocol {
     //        }.first ?? mockProfileData()
     //    }
     
-    //MARK: - Path to file
-    
-//    public func pathToFile(_ hash: String) async throws -> URL {
-//        try await cas.fileURL(forHash: hash)
-//    }
-    
-    //MARK: Delete model
-    
-    public func deleteModel<T: Codable>(_ model: Model<T>) async throws {
-        try await cas.deleteModel(model)
-    }
+
     
     //MARK: - iCloud
     

@@ -355,7 +355,14 @@ public final class MainVM: HashableNavigation {
         telemetryAction(.mainViewAction(.profileButtonTapped))
     }
     
+    //MARK: - Update title
+    
+    func profileModelSave() {
+            //        casManager.saveProfileData(profileModel)
+    }
+    
     //MARK: - Recording
+    
     func createTaskButtonHolding() async {
         guard isRecording else {
             return

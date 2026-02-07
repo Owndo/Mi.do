@@ -690,6 +690,7 @@ public final class TaskVM: HashableNavigation {
     }
     
     // MARK: - Playback
+    
     func playButtonTapped() async {
         playButtonTrigger.toggle()
         pause = false
@@ -707,9 +708,7 @@ public final class TaskVM: HashableNavigation {
         telemetryAction(.taskAction(.playVoiceButtonTapped(.taskView)))
     }
     
-    struct model: Codable {
-        var name: String
-    }
+    //MARK: - Stop Playing
     
     func stopPlaying() {
         if playerManager.isPlaying {
@@ -719,6 +718,8 @@ public final class TaskVM: HashableNavigation {
             telemetryAction(.taskAction(.stopPlayingVoiceButtonTapped(.taskView)))
         }
     }
+    
+    //MARK: - Seek audio
     
     func seekAudio(_ time: TimeInterval) {
         playerManager.seekAudio(time)

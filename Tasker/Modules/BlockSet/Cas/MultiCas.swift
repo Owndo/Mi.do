@@ -7,7 +7,7 @@
 
 import Foundation
 
-public actor MultiCas: AsyncableCas {
+public actor MultiCas {
     
     private var local: AsyncableCas
     private var remote: AsyncableCas
@@ -54,9 +54,16 @@ public actor MultiCas: AsyncableCas {
     }
     
     //MARK: - Remote CAS
+    
     public func listOfRemoteCAS() async throws -> [String] {
         try await remote.allIdentifiers()
     }
+    
+//    public func fileURL(forHash hash: String) async throws -> URL {
+//        let (a, bc) = hash[...].split2()
+//        let (b, c) = bc.split2()
+//        return dir.appending(a, true).appending(b, true).appending(c, false)
+//    }
     
     public func syncRemote() throws {
 //        try local.sync(remote)

@@ -197,7 +197,7 @@ public final class MainVM: HashableNavigation {
         let dateManager = await DateManager.createDateManager(profileManager: profileManager)
         
         let notificationManager = await NotificationManager.createNotificationManager(dateManager: dateManager, profileManager: profileManager, storageManager: storageManager)
-        let playerManager = PlayerManager.createPlayerManager(storageManager: storageManager)
+        let playerManager = PlayerManager.createPlayerManager(casManager: casManager)
         
         let taskManager = await TaskManager.createTaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)

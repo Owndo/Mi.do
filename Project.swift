@@ -151,7 +151,7 @@ let project = Project(
         
         //MARK: - Player
         .module(.playerManager,
-                dependencies: [.target(name: Modules.models.name), .target(name: Modules.storageManager.name)]
+                dependencies: [.target(name: Modules.models.name), .target(name: Modules.cas.name)]
                ),
         
         //MARK: - Appearance

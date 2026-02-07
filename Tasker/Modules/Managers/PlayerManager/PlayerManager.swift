@@ -9,12 +9,12 @@
 @preconcurrency import AVFoundation
 import Foundation
 import Models
-import StorageManager
+import CASManager
 
 @Observable
 public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     
-    var storageManager: StorageManagerProtocol
+    var casManager: CASManagerProtocol
     
     // MARK: - Public properties
     public var isPlaying = false
@@ -32,22 +32,22 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
     // Cash: [audioHash: URL]
     private var tempAudioCache: [String: URL] = [:]
     
-    private init(storageManager: StorageManagerProtocol) {
-        self.storageManager = storageManager
+    private init(casManager: CASManagerProtocol) {
+        self.casManager = casManager
     }
     
     //MARK: - Manager creator
     
-    public static func createPlayerManager(storageManager: StorageManagerProtocol) -> PlayerManagerProtocol {
-        return PlayerManager(storageManager: storageManager)
+    public static func createPlayerManager(casManager: CASManagerProtocol) -> PlayerManagerProtocol {
+        return PlayerManager(casManager: casManager)
     }
     
     //MARK: - Mock manager
     
     public static func createMockPlayerManager() -> PlayerManagerProtocol {
-        let storageManager = StorageManager.createMockStorageManager()
+        let casManager = MockCas.createMockManager()
         
-        return PlayerManager(storageManager: storageManager)
+        return PlayerManager(casManager: casManager)
     }
     
     // MARK: - Playback
@@ -58,16 +58,14 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         do {
             try configureAudioSession()
             
-            guard let audio = task.audio else {
+            guard let audio = try await casManager.retrieve(task.audio ?? "") else {
                 return
             }
-            
-            let audioURL = await getOrCreateTempAudioFile(audioHash: audio)
             
             await MainActor.run {
                 do {
                     if pause != true {
-                        player = try AVAudioPlayer(contentsOf: audioURL)
+                        player = try AVAudioPlayer(data: audio)
                     }
                     player?.prepareToPlay()
                     totalTime = player?.duration ?? 0
@@ -128,11 +126,14 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
         
         guard let audio = task.audio else { return 0 }
         
-        let audioURL = await getOrCreateTempAudioFile(audioHash: audio)
         
         do {
-            let tempPlayer = try AVAudioPlayer(contentsOf: audioURL)
-            return tempPlayer.duration
+            if let data = try await casManager.retrieve(audio) {
+                let tempPlayer = try AVAudioPlayer(data: data)
+                return tempPlayer.duration
+            } else {
+                return 0
+            }
         } catch {
             return 0
         }
@@ -159,10 +160,6 @@ public final class PlayerManager: PlayerManagerProtocol, @unchecked Sendable {
             options: [.allowAirPlay, .allowBluetoothHFP, .allowBluetoothA2DP, .duckOthers, .defaultToSpeaker]
         )
         try audioSession.setActive(true)
-    }
-    
-    private func getOrCreateTempAudioFile(audioHash: String) async -> URL {
-        await storageManager.createFileInSoundsDirectory(hash: audioHash)!
     }
     
     private func startPlaybackTimer() {

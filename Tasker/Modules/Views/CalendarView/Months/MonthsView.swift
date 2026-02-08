@@ -279,6 +279,7 @@ private struct MonthView: View {
                     RealDay(day: day)
                 } else {
                     MockDay(day: day)
+                        
                 }
             }
         }

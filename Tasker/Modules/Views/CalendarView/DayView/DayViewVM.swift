@@ -173,8 +173,17 @@ final class DayViewVM: HashableNavigation {
     }
     
     @MainActor
-    func updateTasks() async {
-        guard ableToDownload else { return }
+    func updateTasks(update: Bool = false) async {
+        
+        if update {
+            hasLoaded = false
+        }
+        
+        guard !hasLoaded else { return }
+        
+        defer {
+            hasLoaded = false
+        }
         
         let tasks = await taskManager.retrieveDayTasks(for: day.date)
         

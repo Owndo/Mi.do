@@ -59,13 +59,11 @@ public final actor DayVMStore {
     private func listenUpdatedDateStream() async {
         guard let stream = await taskManager.updatedDayStream else { return }
         
-        for await task in stream {
+        for await _ in stream {
             let week = dateManager.generateWeek(for: selectedDate)
             
             for day in week.days {
-                if task.isScheduledForDate(selectedDate.timeIntervalSince1970) {
-                    await updateOneDayVM(day.date)
-                }
+                await updateOneDayVM(day.date)
             }
         }
     }
@@ -74,7 +72,7 @@ public final actor DayVMStore {
         let key = dateManager.startOfDay(for: date).timeIntervalSince1970
         
         guard let day = dayVMs[key] else { return }
-        await day.updateTasks()
+        await day.updateTasks(update: true)
     }
     
     //MARK: - Create Store

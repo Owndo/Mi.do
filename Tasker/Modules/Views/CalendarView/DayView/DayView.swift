@@ -24,7 +24,7 @@ struct DayView: View {
                 
                 BaseContent()
                     .task {
-                        await vm.updateTasks()
+                        await vm.loadIfNeeded()
                     }
             }
             .animation(.default, value: vm.showSmallFire)

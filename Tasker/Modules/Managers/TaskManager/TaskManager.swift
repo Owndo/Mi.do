@@ -45,8 +45,8 @@ public final actor TaskManager: TaskManagerProtocol {
     public var tasksStream: AsyncStream<Void>?
     private var continuation: AsyncStream<Void>.Continuation?
     
-    public var updatedDayStream: AsyncStream<UITaskModel>?
-    private var updatedDayStreamContinuation: AsyncStream<UITaskModel>.Continuation?
+    public var updatedDayStream: AsyncStream<Void>?
+    private var updatedDayStreamContinuation: AsyncStream<Void>.Continuation?
     
     //MARK: - Init
     
@@ -95,7 +95,7 @@ public final actor TaskManager: TaskManagerProtocol {
         self.tasksStream = taskStream
         self.continuation = taskCont
         
-        let (updDayStream, updDayCont) = AsyncStream<UITaskModel>.makeStream()
+        let (updDayStream, updDayCont) = AsyncStream<Void>.makeStream()
         self.updatedDayStream = updDayStream
         self.updatedDayStreamContinuation = updDayCont
     }
@@ -260,10 +260,10 @@ public final actor TaskManager: TaskManagerProtocol {
     //MARK: - Invalidate Tasks Cache
     
     private func invalidateTasksCache() {
-            activeTasksCache.removeAll()
-            completedTasksCache.removeAll()
-            dayTasksCache.removeAll()
-            weekTasksCache.removeAll()
+        activeTasksCache.removeAll()
+        completedTasksCache.removeAll()
+        dayTasksCache.removeAll()
+        weekTasksCache.removeAll()
     }
     
     private func isTaskInWeeksRange(_ task: UITaskModel, startDate: Double, endDate: Double) -> Bool {
@@ -335,7 +335,7 @@ public final actor TaskManager: TaskManagerProtocol {
         invalidateTasksCache()
         
         continuation?.yield()
-        updatedDayStreamContinuation?.yield(task)
+        updatedDayStreamContinuation?.yield()
         
         await updateNotifications()
     }
@@ -350,7 +350,7 @@ public final actor TaskManager: TaskManagerProtocol {
             invalidateTasksCache()
             
             continuation?.yield()
-            updatedDayStreamContinuation?.yield(task)
+            updatedDayStreamContinuation?.yield()
         } else {
             task.deleteRecords = updateExistingTaskDeleted(task: task)
             try await saveTask(task)

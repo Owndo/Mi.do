@@ -20,8 +20,6 @@ public class MonthsViewVM: HashableNavigation {
     var dateManager: DateManagerProtocol
     var taskManager: TaskManagerProtocol
     
-    private var dayVMStore: DayVMStore
-    
     var ableToDownloadTasksColors = false
     
     private let telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
@@ -87,11 +85,10 @@ public class MonthsViewVM: HashableNavigation {
     
     var allMonths: [Month] = []
     
-    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, dayVMStore: DayVMStore) {
+    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
         self.appearanceManager = appearanceManager
         self.dateManager = dateManager
         self.taskManager = taskManager
-        self.dayVMStore = dayVMStore
     }
     
     //MARK: - CreateMonthVM
@@ -100,9 +97,8 @@ public class MonthsViewVM: HashableNavigation {
         appearanceManager: AppearanceManagerProtocol,
         dateManager: DateManagerProtocol,
         taskManager: TaskManagerProtocol,
-        dayVMStore: DayVMStore
     ) async -> MonthsViewVM {
-        let vm = MonthsViewVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager, dayVMStore: dayVMStore)
+        let vm = MonthsViewVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         
         return vm
     }
@@ -113,13 +109,11 @@ public class MonthsViewVM: HashableNavigation {
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let dateManager = DateManager.createPreviewManager()
         let taskManager = TaskManager.createMockTaskManager()
-        let dayStore = DayVMStore.createPreviewStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         
         let vm = MonthsViewVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
             taskManager: taskManager,
-            dayVMStore: dayStore
         )
         
         return vm
@@ -399,16 +393,16 @@ public class MonthsViewVM: HashableNavigation {
     @MainActor
     private func startDelayedDownload() {
         guard downloadTask == nil else { return }
-
+        
         downloadTask = Task { [weak self] in
             try? await Task.sleep(for: .milliseconds(300))
-
+            
             guard let self, !Task.isCancelled else { return }
-
+            
             self.downloadDay = true
         }
     }
-
+    
     @MainActor
     private func cancelDownloadTask() {
         downloadTask?.cancel()
@@ -447,23 +441,23 @@ public class MonthsViewVM: HashableNavigation {
     
     
     //TODO: - Cache
-    //MARK: - Download DaysVM
-    @MainActor
-    func downloadDaysVMs() async {
-        //        await dayVMStore.createMonthVMs()
-    }
+    //    MARK: - Download DaysVM
+    //    @MainActor
+    //    func downloadDaysVMs() async {
+    //        //        await dayVMStore.createMonthVMs()
+    //    }
     
-    @MainActor
-    func syncDayVM(for day: Day) async {
-        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
-        if dayVMs[key] != nil {
-            return
-        }
-        
-        if let vm = await dayVMStore.returnDayVM(day) {
-            dayVMs[key] = vm
-        }
-    }
+//    @MainActor
+//    func syncDayVM(for day: Day) async {
+//        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
+//        if dayVMs[key] != nil {
+//            return
+//        }
+//        
+//        if let vm = await dayVMStore.returnDayVM(day) {
+//            dayVMs[key] = vm
+//        }
+//    }
     
     //MARK: - Return DayVM
     

@@ -19,10 +19,11 @@ public final class WeekVM: HashableNavigation {
     var taskManager: TaskManagerProtocol
     var telemetryManager: TelemetryManagerProtocol = TelemetryManager.createTelemetryManager()
     
-    private var dayVMStore: DayVMStore
+    //    private var dayVMStore: DayVMStore
     
     private var dayVMs: [TimeInterval: DayViewVM] = [:]
-    private var taskForCache: Task<Void, Never>?
+    
+    private var asyncStreamTask: Task<Void, Never>?
     
     var scaleEffect: CGFloat = 1
     
@@ -58,11 +59,10 @@ public final class WeekVM: HashableNavigation {
     
     //MARK: - Private init
     
-    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol, dayVMStore: DayVMStore) {
+    private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
         self.appearanceManager = appearanceManager
         self.dateManager = dateManager
         self.taskManager = taskManager
-        self.dayVMStore = dayVMStore
     }
     
     //MARK: - Create VM
@@ -71,13 +71,11 @@ public final class WeekVM: HashableNavigation {
         appearanceManager: AppearanceManagerProtocol,
         dateManager: DateManagerProtocol,
         taskManager: TaskManagerProtocol,
-        dayVMStore: DayVMStore
     ) async -> WeekVM {
         let vm = WeekVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
-            taskManager: taskManager,
-            dayVMStore: dayVMStore
+            taskManager: taskManager
         )
         await vm.updateCache()
         
@@ -91,13 +89,12 @@ public final class WeekVM: HashableNavigation {
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let dateManager = DateManager.createPreviewManager()
         let taskManager = TaskManager.createMockTaskManager()
-        let dayStore = DayVMStore.createPreviewStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        //        let dayStore = DayVMStore.createPreviewStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         
         let vm = WeekVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
             taskManager: taskManager,
-            dayVMStore: dayStore
         )
         
         return vm
@@ -109,9 +106,8 @@ public final class WeekVM: HashableNavigation {
     func syncDayVM(for day: Day) async {
         let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
         
-        if let vm = await dayVMStore.returnDayVM(day) {
-            dayVMs[key] = vm
-        }
+        let vm = DayViewVM.createVM(dateManager: dateManager, taskManager: taskManager, appearanceManager: appearanceManager, day: day)
+        dayVMs[key] = vm
     }
     
     //MARK: - Return DayVM
@@ -176,19 +172,30 @@ public final class WeekVM: HashableNavigation {
     }
     
     private func updateCache() async {
-        taskForCache = Task { [weak self, stream = await dayVMStore.asyncStream] in
-            for await _ in stream {
-                guard let self else { break }
-                
-                let week = dateManager.generateWeek(for: selectedDate)
-                
-                for day in week.days {
-                    await updateOneDayVM(day.date)
-                }
-                
-                let validKeys = Set(week.days.map { $0.date.timeIntervalSince1970 })
-                dayVMs = dayVMs.filter { validKeys.contains($0.key) }
+        asyncStreamTask = Task { [weak self] in
+            guard let self else { return }
+            
+            async let updateCache: () = await streamListener()
+            
+            _ = await updateCache
+            
+        }
+    }
+    
+    //MARK: - Stream listener
+    
+    func streamListener() async {
+        guard let stream = await taskManager.updatedDayStream else { return }
+        
+        for await _ in stream {
+            let week = dateManager.generateWeek(for: selectedDate)
+            
+            for day in week.days {
+                await updateOneDayVM(day.date)
             }
+            
+            let validKeys = Set(week.days.map { $0.date.timeIntervalSince1970 })
+            dayVMs = dayVMs.filter { validKeys.contains($0.key) }
         }
     }
     

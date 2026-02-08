@@ -12,9 +12,8 @@ import CASManager
 public final class StorageManager: StorageManagerProtocol {
     public var casManager: CASManagerProtocol
     
-    public var baseDirectory: URL {
-        FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!.appending(path: "Sounds")
-    }
+    private var fileManager = FileManager.default
+    public var soundsDirectory = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!.appending(path: "Sounds")
     
     private init(casManager: CASManagerProtocol) {
         self.casManager = casManager
@@ -36,18 +35,16 @@ public final class StorageManager: StorageManagerProtocol {
     public func createFileInSoundsDirectory(hash: String) async -> URL? {
         let soundsDirectory = createSoundsDirectory()
         
-        let tempUrl = soundsDirectory.appendingPathComponent(hash + ".wav")
+        let tempUrl = soundsDirectory.appendingPathComponent(hash)
         
-        if FileManager.default.fileExists(atPath: tempUrl.path) {
-            print("file already exist")
+        if fileManager.fileExists(atPath: tempUrl.path) {
             return tempUrl
         }
         
         do {
             let pathToAudio = try await casManager.pathToFile(hash)
             
-            try FileManager.default.copyItem(at: pathToAudio, to: tempUrl)
-            print("File created")
+            try fileManager.copyItem(at: pathToAudio, to: tempUrl)
             
             return tempUrl
         } catch {
@@ -62,9 +59,9 @@ public final class StorageManager: StorageManagerProtocol {
         }
         
         let soundsDirectory = createSoundsDirectory()
-        let newFileURL = soundsDirectory.appendingPathComponent("\(hash).wav")
+        let newFileURL = soundsDirectory.appendingPathComponent("\(hash)")
         
-        guard FileManager.default.fileExists(atPath: newFileURL.path) else {
+        guard fileManager.fileExists(atPath: newFileURL.path) else {
             return
         }
         
@@ -75,9 +72,23 @@ public final class StorageManager: StorageManagerProtocol {
         }
     }
     
+    //MARK: - Clear Temporary Directory
+    
+    public func clearFileFromDirectory(url: URL) {
+        do {
+            if FileManager.default.fileExists(atPath: url.path) {
+                try FileManager.default.removeItem(at: url)
+            }
+        } catch {
+            print("Error while clearing temporary directory: \(error)")
+        }
+    }
+    
+    public func clearSoundsDirectory() {
+        try? fileManager.removeItem(at: soundsDirectory)
+    }
+    
     private func createSoundsDirectory() -> URL {
-        let soundsDirectory = baseDirectory
-        
         do {
             try FileManager.default.createDirectory(at: soundsDirectory, withIntermediateDirectories: true)
         } catch {

@@ -102,14 +102,12 @@ public struct ListView: View {
     
     @ViewBuilder
     private func CompletedTasks() -> some View {
-        //MARK: - For Each
-        
         if !vm.completedTasksHidden {
             ForEachRespresentable(vm.completedTasks)
         }
     }
     
-    //MARK: - For each representable
+    //MARK: - For Each representable
     
     @ViewBuilder
     private func ForEachRespresentable(_ tasks: [UITaskModel]) -> some View {

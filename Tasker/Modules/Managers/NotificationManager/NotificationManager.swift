@@ -66,6 +66,7 @@ public final class NotificationManager: NotificationManagerProtocol {
         
         removeAllEvents()
         var countOfDay = 0
+        storageManager.clearSoundsDirectory()
         
         while permissibleQuantity() && countOfDay < 365 {
             let tasks = tasksForSpecificDay(tasks: tasks, day: selectedDay)
@@ -160,7 +161,7 @@ public final class NotificationManager: NotificationManagerProtocol {
             if let audio = task.audio {
                 if await hasSubscription() {
                     _ = await storageManager.createFileInSoundsDirectory(hash: audio)
-                    notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio).wav"))
+                    notificationContent.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(audio)"))
                 } else {
                     notificationContent.sound = .default
                 }

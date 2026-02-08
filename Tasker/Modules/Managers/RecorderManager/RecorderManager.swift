@@ -25,6 +25,7 @@ public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable
     private var previousDecibelLevel: Float = 0.0
     
     // MARK: - Speech Recognition Properties
+    
     public var recognizedText = ""
     public var dateTimeFromtext: Date?
     public var wholeDescription: String?
@@ -66,7 +67,7 @@ public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable
     
     // MARK: - Start recording with speech recognition
     public func startRecording() async {
-        let fileName = baseDirectoryURL.appending(path: "\(UUID().uuidString).wav")
+        let fileName = baseDirectoryURL.appending(path: "\(UUID().uuidString)")
         let session = AVAudioSession.sharedInstance()
         
         do {
@@ -91,21 +92,8 @@ public final class RecorderManager: RecorderManagerProtocol, @unchecked Sendable
         }
     }
     
-    public func clearFileFromDirectory() {
-        guard let file = fileName else {
-            return
-        }
-        
-        do {
-            if FileManager.default.fileExists(atPath: file.path) {
-                try FileManager.default.removeItem(at: file)
-            }
-        } catch {
-            print("Error while clearing temporary directory: \(error)")
-        }
-    }
-    
     // MARK: - Stop recording and speech recognition
+    
     public func stopRecording() -> URL? {
         timer?.invalidate()
         timer = nil

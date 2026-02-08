@@ -147,7 +147,7 @@ public final class MainVM: HashableNavigation {
     
     /// Check if current day doesen't have any tasks
     var hideRecordButtonTip: Bool {
-        listVM.emptyDay()
+        !listVM.emptyDay()
     }
     
     //MARK: - Private Init
@@ -454,6 +454,7 @@ public final class MainVM: HashableNavigation {
             if let data = try? Data(contentsOf: audioURLString) {
                 do {
                     hashOfAudio = try await taskManager.storeAudio(data)
+                    storageManager.clearFileFromDirectory(url: audioURLString)
                 } catch {
                     print("Couldn't create audio hash - MainVM.363")
                 }

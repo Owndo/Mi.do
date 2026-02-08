@@ -89,10 +89,12 @@ public final class SettingsVM: HashableNavigation {
     
     func changeFirstDayOfWeek(_ firstDayOfWeek: FirstWeekDay) async {
         profileModel.settings.firstDayOfWeek = firstDayOfWeek.rawValue
+        
         do {
             try await profileModelSave()
             self.firstDayOfWeek = firstDayOfWeek
             dateManager.calendar.firstWeekday = firstDayOfWeek.rawValue
+            dateManager.initializeWeek()
         } catch {
             //TODO: - Add Some enum with error
             print("some error")

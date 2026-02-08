@@ -20,6 +20,9 @@ public final actor DayVMStore {
     
     private var asyncStreamTask: Task<Void, Never>?
     
+    var asyncStream: AsyncStream<Void>
+    var continuation: AsyncStream<Void>.Continuation
+    
     var weeks: [Week] {
         dateManager.allWeeks
     }
@@ -32,47 +35,16 @@ public final actor DayVMStore {
         dateManager.selectedDate
     }
     
+    //MARK: - Private init
+    
     private init(appearanceManager: AppearanceManagerProtocol, dateManager: DateManagerProtocol, taskManager: TaskManagerProtocol) {
         self.appearanceManager = appearanceManager
         self.dateManager = dateManager
         self.taskManager = taskManager
-    }
-    
-    func asyncUpdateDayVM() async {
-        asyncStreamTask = Task { [weak self] in
-            guard let self else { return }
-            
-            async let updDayStream: () = listenUpdatedDateStream()
-            
-            _ = await updDayStream
-        }
-    }
-    
-    //    private func listenUpdatedDateStream() async {
-    //        guard let stream = await taskManager.updatedDayStream else { return }
-    //
-    //        for await i in stream {
-    //            await updateOneDayVM(i)
-    //        }
-    //    }
-    
-    private func listenUpdatedDateStream() async {
-        guard let stream = await taskManager.updatedDayStream else { return }
         
-        for await _ in stream {
-            let week = dateManager.generateWeek(for: selectedDate)
-            
-            for day in week.days {
-                await updateOneDayVM(day.date)
-            }
-        }
-    }
-    
-    private func updateOneDayVM(_ date: Date) async {
-        let key = dateManager.startOfDay(for: date).timeIntervalSince1970
-        
-        guard let day = dayVMs[key] else { return }
-        await day.updateTasks(update: true)
+        let (stream, cont) = AsyncStream.makeStream(of: Void.self)
+        self.asyncStream = stream
+        self.continuation = cont
     }
     
     //MARK: - Create Store
@@ -90,6 +62,47 @@ public final actor DayVMStore {
         let vm = DayVMStore(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         
         return vm
+    }
+    
+    
+    //MARK: - Async update
+    
+    func asyncUpdateDayVM() async {
+        asyncStreamTask = Task { [weak self] in
+            guard let self else { return }
+            
+            async let updDayStream: () = listenUpdatedDateStream()
+            
+            _ = await updDayStream
+        }
+    }
+    
+    //MARK: - Async Listener
+    
+    private func listenUpdatedDateStream() async {
+        guard let stream = await taskManager.updatedDayStream else { return }
+        
+        for await _ in stream {
+            let week = dateManager.generateWeek(for: selectedDate)
+            
+            for day in week.days {
+                await updateOneDayVM(day.date)
+            }
+            
+            let validKeys = Set(week.days.map { $0.date.timeIntervalSince1970 })
+            dayVMs = dayVMs.filter { validKeys.contains($0.key) }
+            
+            continuation.yield()
+        }
+    }
+    
+    //MARK: - Update one dayVM
+    
+    private func updateOneDayVM(_ date: Date) async {
+        let key = dateManager.startOfDay(for: date).timeIntervalSince1970
+        
+        guard let day = dayVMs[key] else { return }
+        await day.updateTasks(update: true)
     }
     
     func createWeekDayVMs() {

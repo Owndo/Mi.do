@@ -22,6 +22,7 @@ public final class WeekVM: HashableNavigation {
     private var dayVMStore: DayVMStore
     
     private var dayVMs: [TimeInterval: DayViewVM] = [:]
+    private var taskForCache: Task<Void, Never>?
     
     var scaleEffect: CGFloat = 1
     
@@ -78,6 +79,7 @@ public final class WeekVM: HashableNavigation {
             taskManager: taskManager,
             dayVMStore: dayVMStore
         )
+        await vm.updateCache()
         
         return vm
     }
@@ -114,14 +116,14 @@ public final class WeekVM: HashableNavigation {
     func syncDayVM(for day: Day) async {
         let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
         if dayVMs[key] != nil { return }
-
+        
         if let vm = await dayVMStore.returnDayVM(day) {
             dayVMs[key] = vm
         }
     }
     
     //MARK: - Return DayVM
-
+    
     @MainActor
     func returnDayVM(_ day: Day) -> DayViewVM? {
         let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
@@ -179,5 +181,15 @@ public final class WeekVM: HashableNavigation {
     //MARK: Telemtry action
     private func telemetryAction(_ action: EventType) {
         telemetryManager.logEvent(action)
+    }
+    
+    private func updateCache() async {
+        taskForCache = Task { [weak self, stream = await dayVMStore.asyncStream] in
+            for await _ in stream {
+                guard let self else { break }
+                
+                dayVMs = await dayVMStore.dayVMs
+            }
+        }
     }
 }

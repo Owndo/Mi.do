@@ -61,9 +61,6 @@ public struct WeekView: View {
                 .padding(.top, 8)
         }
         .padding(.horizontal, 5)
-        .task(id: vm.indexForWeek) {
-            await vm.downloadDaysVMs()
-        }
         .padding(.top, 5)
         .animation(.default, value: vm.indexForWeek)
         .animation(.default, value: vm.selectedDate)
@@ -74,6 +71,7 @@ public struct WeekView: View {
     }
     
     //MARK: - Day of week
+    
     @ViewBuilder
     private func DayOfWeeksView() -> some View {
         TabView(selection: $vm.dateManager.indexForWeek) {

@@ -11,7 +11,7 @@ import TaskManager
 import AppearanceManager
 
 struct DayView: View {
-    var vm: DayViewVM
+    @State var vm: DayViewVM
     
     var body: some View {
         VStack {

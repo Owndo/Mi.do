@@ -87,6 +87,7 @@ public struct TaskView: View {
                     alert.alert
                 }
                 .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
+                .sensoryFeedback(.selection, trigger: vm.confirmationDialogIsPresented)
                 .sensoryFeedback(.selection, trigger: vm.notificationDate)
                 .sensoryFeedback(.selection, trigger: vm.showDeadline)
                 .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)

@@ -305,8 +305,10 @@ public final class ListVM: HashableNavigation {
         do {
             deletTaskButtonTrigger.toggle()
             try await taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
+            stopToPlay()
         } catch {
-            
+            //TODO: - Add error processing
+            print("Error deleting task")
         }
     }
     

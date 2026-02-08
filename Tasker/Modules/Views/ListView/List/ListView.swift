@@ -34,6 +34,7 @@ public struct ListView: View {
             .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.decrease, trigger: vm.deletTaskButtonTrigger)
+            .sensoryFeedback(.impact, trigger: vm.confirmationDialogIsPresented)
     }
     
     @ViewBuilder

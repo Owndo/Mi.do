@@ -681,11 +681,10 @@ public final class TaskVM: HashableNavigation {
     func deleteButtonTapped(deleteCompletely: Bool = false) async {
         do {
             try await taskManager.deleteTask(task: task, deleteCompletely: deleteCompletely)
-            if deleteCompletely {
-                storageManager.deleteAudiFromDirectory(hash: task.audio)
-            }
+            stopPlaying()
         } catch {
             //TODO: - Error
+            print("Error deleting task")
         }
     }
     

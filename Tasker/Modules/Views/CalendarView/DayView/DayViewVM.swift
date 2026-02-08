@@ -158,12 +158,10 @@ final class DayViewVM: HashableNavigation {
     
     //MARK: - Segmented Circle
     
-    func onAppearSegmentedView() {
-        Task {
-            flameAnimation.toggle()
-            try? await Task.sleep(for: .seconds(Int.random(in: 1...3)))
-            showSmallFire = true
-        }
+    func onAppearSegmentedView() async {
+        flameAnimation.toggle()
+        try? await Task.sleep(for: .seconds(Int.random(in: 1...3)))
+        showSmallFire = true
     }
     
     @MainActor
@@ -182,7 +180,7 @@ final class DayViewVM: HashableNavigation {
         guard !hasLoaded else { return }
         
         defer {
-            hasLoaded = false
+            hasLoaded = true
         }
         
         let tasks = await taskManager.retrieveDayTasks(for: day.date)

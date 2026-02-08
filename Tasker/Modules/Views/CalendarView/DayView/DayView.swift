@@ -18,13 +18,11 @@ struct DayView: View {
             ZStack {
                 SegmentedCircleView(vm: vm)
                     .frame(width: 40, height: 40)
-                    .onAppear {
-                        vm.onAppearSegmentedView()
-                    }
                 
                 BaseContent()
                     .task {
                         await vm.loadIfNeeded()
+                        await vm.onAppearSegmentedView()
                     }
             }
             .animation(.default, value: vm.showSmallFire)

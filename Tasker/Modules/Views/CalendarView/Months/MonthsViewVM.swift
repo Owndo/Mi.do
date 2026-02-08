@@ -193,7 +193,11 @@ public class MonthsViewVM: HashableNavigation {
     var scrollDisabled = false
     
     func backToSelectedMonthButtonTapped() async {
-        scrollDisabled = true
+        viewStarted = false
+        
+        defer {
+            viewStarted = true
+        }
         
         if #available(iOS 18, *) {
             if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: selectedDate))})?.id {
@@ -208,8 +212,6 @@ public class MonthsViewVM: HashableNavigation {
             await jumpToSelectedMonth()
             scrolledFromCurrentMonth = false
         }
-        
-        scrollDisabled = false
     }
     
     //MARK: - Back to MainView Button
@@ -279,6 +281,7 @@ public class MonthsViewVM: HashableNavigation {
     @available(iOS 18.0, *)
     @MainActor
     func jumpToSelectedMonth18iOS() async {
+        viewStarted = false
         let position = (CGFloat(allMonths.count / 2) * monthHeight)
         scrollPosition.scrollTo(y: position)
         
@@ -291,6 +294,12 @@ public class MonthsViewVM: HashableNavigation {
     @available(iOS 18.0, *)
     @MainActor
     func backToTodayButton18iOS() async {
+        viewStarted = false
+        
+        defer {
+            viewStarted = true
+        }
+        
         dateManager.backToToday()
         
         if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: Date()))})?.id {
@@ -366,39 +375,44 @@ public class MonthsViewVM: HashableNavigation {
         }
     }
     
-    //MARK: - Create ScrollInfo
+    //MARK: - HandleSchenePhase
+    
+    var downloadTask: Task<Void, Never>?
     
     @available(iOS 18.0, *)
     @MainActor
-    func createScrollInfo(_ value: ScrollGeometry) -> ScrollInfo {
-        let offsetY = value.contentOffset.y + value.contentInsets.top
-        let contentHeight = value.contentSize.height
-        let containerHeight = value.containerSize.height
+    func handleScrollPhase(_ phase: ScrollPhase) async {
+        guard viewStarted else { return }
         
-        return .init(
-            offsetY: offsetY,
-            contentHeight: contentHeight,
-            contentainerHeight: containerHeight
-        )
+        switch phase {
+        case .idle, .animating:
+            cancelDownloadTask()
+            downloadDay = true
+        case .interacting:
+            startDelayedDownload()
+        default:
+            cancelDownloadTask()
+            downloadDay = false
+        }
     }
     
-    @available(iOS 18.0, *)
     @MainActor
-    func handleScrollPosition(position: ScrollInfo) {
-        guard allMonths.count > 10 && viewStarted else { return }
-        
-        let threshold: CGFloat = 100
-        let offsetY = position.offsetY
-        let contentHeight = position.contentHeight
-        let frameHeight = position.contentainerHeight
-        
-        if offsetY > (contentHeight - frameHeight - threshold) && !isLoadingBottom {
-            loadFutureMonths(info: position)
+    private func startDelayedDownload() {
+        guard downloadTask == nil else { return }
+
+        downloadTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(300))
+
+            guard let self, !Task.isCancelled else { return }
+
+            self.downloadDay = true
         }
-        
-        if offsetY < threshold && !isLoadingTop {
-            loadPastMonths(info: position)
-        }
+    }
+
+    @MainActor
+    private func cancelDownloadTask() {
+        downloadTask?.cancel()
+        downloadTask = nil
     }
     
     //MARK: - Up/Down Button
@@ -442,7 +456,9 @@ public class MonthsViewVM: HashableNavigation {
     @MainActor
     func syncDayVM(for day: Day) async {
         let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
-        if dayVMs[key] != nil { return }
+        if dayVMs[key] != nil {
+            return
+        }
         
         if let vm = await dayVMStore.returnDayVM(day) {
             dayVMs[key] = vm
@@ -459,6 +475,9 @@ public class MonthsViewVM: HashableNavigation {
             appearanceManager: appearanceManager,
             day: day
         )
+        
+        //        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
+        //        return dayVMs[key]
     }
     
     //MARK: Telemtry action

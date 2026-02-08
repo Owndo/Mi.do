@@ -62,13 +62,8 @@ public struct MonthsView: View {
                         }
                     })
                 .onScrollPhaseChange { oldPhase, newPhase in
-                    switch newPhase {
-                    case .idle:
-                        vm.downloadDay = true
-                    case .animating:
-                        break
-                    default:
-                        vm.downloadDay = false
+                    Task {
+                        await vm.handleScrollPhase(newPhase)
                     }
                 }
                 .scrollPosition($vm.scrollPosition)
@@ -267,7 +262,7 @@ private struct MonthView: View {
         }
     }
     //MARK: - Day Button
-    
+    //TODO: Add dynamic update fro cache(ScrollView trouble)
     private func DayButton(day: Day) -> some View {
         Button {
             vm.selectedDateChange(day.date)
@@ -279,7 +274,6 @@ private struct MonthView: View {
                     RealDay(day: day)
                 } else {
                     MockDay(day: day)
-                        
                 }
             }
         }

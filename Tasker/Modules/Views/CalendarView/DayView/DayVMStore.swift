@@ -44,11 +44,23 @@ public final actor DayVMStore {
         }
     }
     
+//    private func listenUpdatedDateStream() async {
+//        guard let stream = await taskManager.updatedDayStream else { return }
+//        
+//        for await i in stream {
+//            await updateOneDayVM(i)
+//        }
+//    }
+    
     private func listenUpdatedDateStream() async {
         guard let stream = await taskManager.updatedDayStream else { return }
         
-        for await i in stream {
-            await updateOneDayVM(i)
+        for await date in stream {
+            let week = dateManager.generateWeek(for: date)
+            
+            for day in week.days {
+                await updateOneDayVM(day.date)
+            }
         }
     }
     

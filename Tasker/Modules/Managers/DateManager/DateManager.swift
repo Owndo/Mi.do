@@ -182,7 +182,7 @@ public final class DateManager: DateManagerProtocol {
     
     //MARK: - Generate week
     
-    private func generateWeek(for date: Date) -> Week {
+    public func generateWeek(for date: Date) -> Week {
         let startOfWeek = startOfWeek(for: date)
         
         let days: [Day] = (0..<7).compactMap { dayOffset in

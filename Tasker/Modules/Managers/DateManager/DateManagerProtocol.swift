@@ -21,6 +21,8 @@ public protocol DateManagerProtocol {
     var allMonths: [Month] { get set }
     
     func initializeWeek()
+    /// Generate current week
+    func generateWeek(for date: Date) -> Week
     func initializeMonth() -> [Month]
     /// Find start of the day for the date
     func startOfDay(for date: Date) -> Date

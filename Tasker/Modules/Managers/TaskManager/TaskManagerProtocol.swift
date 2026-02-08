@@ -15,7 +15,6 @@ public protocol TaskManagerProtocol: Actor {
     
     func activeTasks(for date: Date) async -> [UITaskModel]
     func completedTasks(for date: Date) async -> [UITaskModel]
-//    func retrieveWeekTasks(for date: Date) async -> [UITaskModel]
     
     /// Retrieve all tasks for date
     func retrieveDayTasks(for date: Date) async -> [UITaskModel]

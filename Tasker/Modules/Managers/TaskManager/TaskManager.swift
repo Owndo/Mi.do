@@ -259,22 +259,11 @@ public final actor TaskManager: TaskManagerProtocol {
     
     //MARK: - Invalidate Tasks Cache
     
-    private func invalidateTasksCache(_ task: UITaskModel) {
-        guard task.repeatTask == .never else {
+    private func invalidateTasksCache() {
             activeTasksCache.removeAll()
             completedTasksCache.removeAll()
             dayTasksCache.removeAll()
             weekTasksCache.removeAll()
-            return
-        }
-        
-        let startOfDate = dateManager.startOfDay(for: Date(timeIntervalSince1970: task.notificationDate)).timeIntervalSince1970
-        let startOfWeek = dateManager.startOfWeek(for: Date(timeIntervalSince1970: task.notificationDate)).timeIntervalSince1970
-        
-        activeTasksCache.removeValue(forKey: startOfDate)
-        completedTasksCache.removeValue(forKey: startOfDate)
-        dayTasksCache.removeValue(forKey: startOfDate)
-        weekTasksCache.removeValue(forKey: startOfWeek)
     }
     
     private func isTaskInWeeksRange(_ task: UITaskModel, startDate: Double, endDate: Double) -> Bool {
@@ -343,7 +332,7 @@ public final actor TaskManager: TaskManagerProtocol {
         
         tasks[task.id] = task
         
-        invalidateTasksCache(task)
+        invalidateTasksCache()
         
         continuation?.yield()
         updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: selectedDate))
@@ -358,7 +347,7 @@ public final actor TaskManager: TaskManagerProtocol {
             try await casManager.deleteModel(task.model)
             tasks.removeValue(forKey: task.id)
             
-            invalidateTasksCache(task)
+            invalidateTasksCache()
             
             continuation?.yield()
             updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: selectedDate))

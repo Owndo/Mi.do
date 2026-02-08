@@ -317,7 +317,7 @@ public final class MainVM: HashableNavigation {
         }
     }
     
-   
+    
     // MARK: - Telemetry action
     
     func telemetryAction(_ event: EventType) {
@@ -362,8 +362,8 @@ public final class MainVM: HashableNavigation {
     
     //MARK: - Update title
     
-    func profileModelSave() {
-            //        casManager.saveProfileData(profileModel)
+    func profileModelSave() async {
+        try? await profileManager.updateProfileModel()
     }
     
     //MARK: - Recording
@@ -594,7 +594,7 @@ public final class MainVM: HashableNavigation {
 //MARK: - Helpers not a VM
 enum PresentationMode: CGFloat, CaseIterable {
     case full = 1.00
-    case base = 0.95
+    case base = 0.96
     case bottom = 0.20
     
     var detent: PresentationDetent {

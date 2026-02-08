@@ -73,7 +73,9 @@ public struct MainView: View {
                         .foregroundStyle(.labelPrimary)
                         .multilineTextAlignment(.center)
                         .onSubmit {
-                            vm.profileModelSave()
+                            Task {
+                                await vm.profileModelSave()
+                            }
                         }
                 }
                 

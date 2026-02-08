@@ -90,9 +90,6 @@ public struct ProfileView: View {
             vm.navigationTriger.toggle()
             vm.gearAnimation.toggle()
         }
-        .onChange(of: colorScheme) { _, newValue in
-            vm.gearAnimation.toggle()
-        }
         .toolbarBackground(appearanceManager.backgroundColor, for: .navigationBar)
         .presentationCornerRadius(osVersion.majorVersion >= 26 ? nil : 26)
         .presentationDragIndicator(.visible)
@@ -100,6 +97,7 @@ public struct ProfileView: View {
         .animation(.bouncy, value: vm.selectedImage)
         .sensoryFeedback(.selection, trigger: vm.navigationTriger)
         .sensoryFeedback(.decrease, trigger: vm.gearAnimation)
+        .sensoryFeedback(.error, trigger: vm.showPaywall)
     }
     
     //MARK: - Scroll View
@@ -266,10 +264,10 @@ public struct ProfileView: View {
                 }
             }
         } label: {
-                Image(systemName: "ellipsis.circle.fill")
-                    .foregroundStyle(appearanceManager.accentColor)
-                    .font(.system(size: 28))
-                    .liquidIfAvailable(glass: .regular, isInteractive: true)
+            Image(systemName: "ellipsis.circle.fill")
+                .foregroundStyle(appearanceManager.accentColor)
+                .font(.system(size: 28))
+                .liquidIfAvailable(glass: .regular, isInteractive: true)
         }
         .padding(2)
         .background(
@@ -285,7 +283,7 @@ public struct ProfileView: View {
             
             Spacer()
             
-            StaticRow(count: vm.tasksState(of: .today), text: "Today's tasks")
+            StaticRow(count: vm.countOfTasks(of: .today), text: "Today's tasks")
                 .frame(maxWidth: .infinity)
             
             Spacer()
@@ -296,7 +294,7 @@ public struct ProfileView: View {
             
             Spacer()
             
-            StaticRow(count: vm.tasksState(of: .week), text: "Tasks this week")
+            StaticRow(count: vm.countOfTasks(of: .week), text: "Tasks this week")
                 .frame(maxWidth: .infinity)
             
             Spacer()
@@ -307,7 +305,7 @@ public struct ProfileView: View {
             
             Spacer()
             
-            StaticRow(count: vm.tasksState(of: .completed), text: "Completed")
+            StaticRow(count: vm.countOfTasks(of: .completed), text: "Completed")
                 .frame(maxWidth: .infinity)
             
             Spacer()

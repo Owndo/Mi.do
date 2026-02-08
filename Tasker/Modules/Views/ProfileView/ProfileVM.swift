@@ -65,6 +65,7 @@ public final class ProfileVM: HashableNavigation {
     )
     
     // MARK: - Photo
+    
     var photoPosition = CGSize.zero
     var selectedItems = [PhotosPickerItem]() {
         didSet {
@@ -89,9 +90,7 @@ public final class ProfileVM: HashableNavigation {
     
     var tasks: [UITaskModel]?
     
-    //    var showPaywall: Bool {
-    //        subscriptionManager.showPaywall
-    //    }
+    //MARK: - Private Init
     
     private init(
         profileManager: ProfileManagerProtocol,
@@ -144,7 +143,6 @@ public final class ProfileVM: HashableNavigation {
         vm.onAppear()
         vm.tasks = []
         vm.syncNavigation()
-//        vm.setUpProfile()
         
         return vm
     }
@@ -170,11 +168,11 @@ public final class ProfileVM: HashableNavigation {
     }
     
     func setUpProfile() async {
-                if let data = try? await getPhotoFromCAS() {
-                    if let uiImage = UIImage(data: data) {
-                        selectedImage = Image(uiImage: uiImage)
-                    }
-                }
+        if let data = try? await getPhotoFromCAS() {
+            if let uiImage = UIImage(data: data) {
+                selectedImage = Image(uiImage: uiImage)
+            }
+        }
         photoPosition = profileModel.photoPosition
         createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
     }
@@ -186,7 +184,7 @@ public final class ProfileVM: HashableNavigation {
     
     //MARK: - Subscription Button tapped
     func subscriptionButtonTapped() async {
-       await createPaywallVM()
+        await createPaywallVM()
     }
     
     //MARK: - Create PaywallVM
@@ -241,11 +239,11 @@ public final class ProfileVM: HashableNavigation {
         path.append(.history)
     }
     
-    //MARK: Task's statistics
+    //MARK: Count Of Tasks
     
-    func tasksState(of type: TypeOfTask) -> String {
+    func countOfTasks(of type: TypeOfTask) -> String {
         
-        var tasks = [UITaskModel]()
+        guard var tasks = tasks else { return "" }
         var count = 0
         
         switch type {
@@ -258,22 +256,22 @@ public final class ProfileVM: HashableNavigation {
             
             count = tasks.count
         case .week:
-            var daysFromStartOfWeek = dateManager.startOfWeek(for: today)
+            var startOfWeek = dateManager.startOfWeek(for: today)
             
             (0..<7).forEach { _ in
-                tasks = tasks
-                    .filter { $0.isScheduledForDate(daysFromStartOfWeek.timeIntervalSince1970, calendar: calendar) }
+                let tasks = tasks
+                    .filter { $0.isScheduledForDate(startOfWeek.timeIntervalSince1970, calendar: calendar) }
                 
                 count += tasks.count
-                daysFromStartOfWeek = calendar.date(byAdding: .day, value: 1, to: daysFromStartOfWeek)!
+                startOfWeek = calendar.date(byAdding: .day, value: 1, to: startOfWeek)!
             }
         case .completed:
+            tasks = tasks.filter { $0.completeRecords.isEmpty == false }
             count = tasks.count
         }
         
         if count >= 1000 {
-            let formatted = String(format: "%.1fK", Double(count) / 1000.0)
-            return formatted
+            return formatCount(count)
         } else {
             return "\(count)"
         }
@@ -285,7 +283,26 @@ public final class ProfileVM: HashableNavigation {
         case completed
     }
     
+    //MARK: Format count
+    
+    private func formatCount(_ count: Int) -> String {
+        let number = Double(count)
+        
+        switch number {
+        case 1_000_000_000...:
+            return String(format: "%.1fB", number / 1_000_000_000)
+        case 1_000_000...:
+            return String(format: "%.1fM", number / 1_000_000)
+        case 1_000...:
+            return String(format: "%.1fK", number / 1_000)
+        default:
+            return "\(count)"
+        }
+    }
+    
+    
     //MARK: - Avatar
+    
     func addPhotoButtonTapped() {
         showLibrary = true
         telemetryAction(action: .profileAction(.addPhotoButtonTapped))

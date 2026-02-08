@@ -24,13 +24,14 @@ struct SegmentedCircleView: View {
                                      completed: visibleSegments.allSatisfy { $0.isCompleted })
                 .frame(width: 36, height: 36)
                 
-                ForEach(Array(visibleSegments.enumerated()), id: \.element.id) { index, segment in
+                ForEach(Array(visibleSegments.enumerated()), id: \.offset) { index, segment in
                     CreateSegmentBorder(
                         for: index,
                         count: visibleSegments.count,
                         task: segment.task,
                         isCompleted: segment.isCompleted
                     )
+                    .zIndex(Double(index))
                 }
             }
             .animation(.easeIn(duration: 0.3), value: vm.completedFlagsForToday)

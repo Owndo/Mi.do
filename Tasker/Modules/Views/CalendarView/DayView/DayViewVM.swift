@@ -176,20 +176,7 @@ final class DayViewVM: HashableNavigation {
     func updateTasks() async {
         guard ableToDownload else { return }
         
-//        if update == true {
-//            hasLoaded = false
-//        }
-//        
-//        guard !hasLoaded else {
-//            return
-//        }
-//        
-//        defer {
-//            hasLoaded = true
-//        }
-        
         let tasks = await taskManager.retrieveDayTasks(for: day.date)
-            .sorted { $0.notificationDate < $1.notificationDate }
         
         let timeKey = day.date.timeIntervalSince1970
         
@@ -200,6 +187,8 @@ final class DayViewVM: HashableNavigation {
                 isCompleted: $0.completeRecords.contains { $0.completedFor == timeKey },
                 color: returnColorForTask(task: $0)
             )
+        }.sorted {
+            $0.task.notificationDate < $1.task.notificationDate
         }
         
         guard let segmentedTasks else { return }

@@ -45,8 +45,8 @@ public final actor TaskManager: TaskManagerProtocol {
     public var tasksStream: AsyncStream<Void>?
     private var continuation: AsyncStream<Void>.Continuation?
     
-    public var updatedDayStream: AsyncStream<Date>?
-    private var updatedDayStreamContinuation: AsyncStream<Date>.Continuation?
+    public var updatedDayStream: AsyncStream<UITaskModel>?
+    private var updatedDayStreamContinuation: AsyncStream<UITaskModel>.Continuation?
     
     //MARK: - Init
     
@@ -95,7 +95,7 @@ public final actor TaskManager: TaskManagerProtocol {
         self.tasksStream = taskStream
         self.continuation = taskCont
         
-        let (updDayStream, updDayCont) = AsyncStream<Date>.makeStream()
+        let (updDayStream, updDayCont) = AsyncStream<UITaskModel>.makeStream()
         self.updatedDayStream = updDayStream
         self.updatedDayStreamContinuation = updDayCont
     }
@@ -335,7 +335,7 @@ public final actor TaskManager: TaskManagerProtocol {
         invalidateTasksCache()
         
         continuation?.yield()
-        updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: selectedDate))
+        updatedDayStreamContinuation?.yield(task)
         
         await updateNotifications()
     }
@@ -350,7 +350,7 @@ public final actor TaskManager: TaskManagerProtocol {
             invalidateTasksCache()
             
             continuation?.yield()
-            updatedDayStreamContinuation?.yield(Date(timeIntervalSince1970: selectedDate))
+            updatedDayStreamContinuation?.yield(task)
         } else {
             task.deleteRecords = updateExistingTaskDeleted(task: task)
             try await saveTask(task)

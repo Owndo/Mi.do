@@ -103,19 +103,11 @@ public final class WeekVM: HashableNavigation {
         return vm
     }
     
-    // MARK: - Download Day VMs
-    
-    @MainActor
-    func downloadDaysVMs() async {
-        await dayVMStore.createWeekDayVMs()
-    }
-    
     //MARK: - Sync Day VM
     
     @MainActor
     func syncDayVM(for day: Day) async {
         let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
-        if dayVMs[key] != nil { return }
         
         if let vm = await dayVMStore.returnDayVM(day) {
             dayVMs[key] = vm
@@ -188,8 +180,24 @@ public final class WeekVM: HashableNavigation {
             for await _ in stream {
                 guard let self else { break }
                 
-                dayVMs = await dayVMStore.dayVMs
+                let week = dateManager.generateWeek(for: selectedDate)
+                
+                for day in week.days {
+                    await updateOneDayVM(day.date)
+                }
+                
+                let validKeys = Set(week.days.map { $0.date.timeIntervalSince1970 })
+                dayVMs = dayVMs.filter { validKeys.contains($0.key) }
             }
         }
+    }
+    
+    //MARK: - Update one dayVM
+    
+    private func updateOneDayVM(_ date: Date) async {
+        let key = dateManager.startOfDay(for: date).timeIntervalSince1970
+        
+        guard let day = dayVMs[key] else { return }
+        await day.updateTasks(update: true)
     }
 }

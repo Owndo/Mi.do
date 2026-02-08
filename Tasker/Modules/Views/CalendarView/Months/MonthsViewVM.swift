@@ -291,8 +291,9 @@ public class MonthsViewVM: HashableNavigation {
     @available(iOS 18.0, *)
     @MainActor
     func backToTodayButton18iOS() async {
+        dateManager.backToToday()
+        
         if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: Date()))})?.id {
-            dateManager.backToToday()
             scrollPosition.scrollTo(id: id, anchor: .top)
         } else {
             allMonths = dateManager.initializeMonth()

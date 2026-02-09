@@ -48,6 +48,7 @@ public enum Modules: String {
     case appearanceManager = "AppearanceManager"
     case appDelegate = "AppDelegate"
     case onboardingManager = "OnboardingManager"
+    case videoManager = "VideoManager"
     
     case customErrors = "CustomErrors"
     

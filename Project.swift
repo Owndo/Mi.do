@@ -167,6 +167,9 @@ let project = Project(
                 ]
                ),
         
+        //MARK: - VideoManager
+        .module(.videoManager),
+        
         //MARK: - Dependency
         .module(
             .dependencyManager,
@@ -331,7 +334,15 @@ let project = Project(
                         .target(name: Modules.uiComponents.name),
                     ]
                    ),
-        .moduleView(.appView, dependencies: [.target(name: Modules.mainView.name)])
+        
+        //MARK: - AppView
+        .moduleView(
+            .appView,
+            dependencies: [
+                .target(name: Modules.mainView.name),
+                .target(name: Modules.videoManager.name)
+            ]
+        )
     ],
     schemes: [
         Scheme.scheme(

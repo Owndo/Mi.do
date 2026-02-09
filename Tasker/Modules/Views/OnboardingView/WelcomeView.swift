@@ -12,7 +12,7 @@ struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
     
-    var vm: WelcomeToMidoVM
+    var vm: WelcomeVM
     
     var body: some View {
         ZStack {
@@ -64,7 +64,9 @@ struct WelcomeView: View {
             .padding(.bottom, 29)
         }
         .onDisappear {
-            vm.welcomeToMidoClose()
+            Task {
+                await vm.welcomeToMidoClose()
+            }
         }
     }
     
@@ -106,5 +108,5 @@ struct WelcomeView: View {
 }
 
 #Preview {
-    WelcomeView(vm: WelcomeToMidoVM.createPreviewVM())
+    WelcomeView(vm: WelcomeVM.createPreviewVM())
 }

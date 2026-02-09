@@ -65,67 +65,67 @@
         }
       }
     },
-    "Create tasks, reminders,\nnotes or voice recordings - we’ll\nsafe them and quietly remind you\nwhen it matters." : {
+    "Create tasks, reminders,\\nnotes or voice recordings - we’ll\\nsave and gently remind you\\nwhen it truly matters." : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstelle Aufgaben, Erinnerungen,\nNotizen und Sprachaufnahmen – wir\nbewahren sie sicher auf und erinnern dich\ngelegentlich an etwas Wichtiges."
+            "value" : "Erstelle Aufgaben, Erinnerungen,\\nNotizen oder Sprachaufnahmen —\\nwir speichern sie und erinnern dich\\nsanft, wenn es zählt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
+            "value" : "Crea tareas, recordatorios,\\nnotas o mensajes de voz —\\nlos guardamos y te recordamos\\ncon suavidad cuando importa."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
+            "value" : "Crea tareas, recordatorios,\\nnotas o mensajes de voz —\\nlos guardamos y te recordamos\\ncon suavidad cuando importa."
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tareas, recordatorios,\nnotas y grabaciones de voz – las\nguardaremos con cuidado y te recordaremos\nalgo importante de vez en cuando."
+            "value" : "Crea tareas, recordatorios,\\nnotas o mensajes de voz —\\nlos guardamos y te recordamos\\ncon suavidad cuando importa."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créez des tâches, rappels,\nnotes et enregistrements vocaux – nous\nles garderons précieusement et vous rappellerons\nde temps en temps quelque chose d'important."
+            "value" : "Créez des tâches, rappels,\\nnotes ou mémos vocaux —\\nnous les gardons et vous rappelons\\ndoucement quand c’est important."
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créez des tâches, rappels,\nnotes et enregistrements vocaux – nous\nles garderons précieusement et vous rappellerons\nde temps en temps quelque chose d'important."
+            "value" : "Créez des tâches, rappels,\\nnotes ou mémos vocaux —\\nnous les gardons et vous rappelons\\ndoucement quand c’est important."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea attività, promemoria,\nnote e registrazioni vocali – le\nconserveremo con cura e ti ricorderemo\nogni tanto qualcosa di importante."
+            "value" : "Crea attività, promemoria,\\nnote o memo vocali —\\nli salviamo e ti ricordiamo\\ndolcemente quando conta."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crie tarefas, lembretes,\nnotas e gravações de voz – vamos\nguardá-las com cuidado e lembrar você\nde algo importante de vez em quando."
+            "value" : "Crie tarefas, lembretes,\\nnotas ou áudios —\\nnós guardamos e lembramos\\ncom cuidado quando importa."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crie tarefas, lembretes,\nnotas e gravações de voz – vamos\nguardá-las com cuidado e lembrar você\nde algo importante de vez em quando."
+            "value" : "Crie tarefas, lembretes,\\nnotas ou áudios —\\nnós guardamos e lembramos\\ncom cuidado quando importa."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Создавайте задачи, напоминания,\nзаметки и голосовые записи - а мы бережно сохраним и иногда\nнапомним о чем - то важном."
+            "value" : "Создавай задачи, напоминания,\\nзаметки или голосовые записи —\\nмы сохраним и мягко напомним,\\nкогда это действительно важно."
           }
         }
       }
@@ -194,131 +194,67 @@
         }
       }
     },
-    "Done" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fertig"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hecho"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hecho"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hecho"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminé"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminé"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fatto"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Concluído"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Concluído"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Готово"
-          }
-        }
-      }
-    },
-    "Everything stays in your hands\nand never leaves your device.\nPlan your life with Mi.dō!" : {
+    "Everything stays in your hands\\nand never leaves your device.\\nYour life. Your data." : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alles bleibt in deinen Händen\nund verlässt niemals dein Gerät.\nPlane dein Leben mit Mi.dō!"
+            "value" : "Alles bleibt in deinen Händen\\nund verlässt nie dein Gerät.\\nDein Leben. Deine Daten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
+            "value" : "Todo queda en tus manos\\ny nunca sale de tu dispositivo.\\nTu vida. Tus datos."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
+            "value" : "Todo queda en tus manos\\ny nunca sale de tu dispositivo.\\nTu vida. Tus datos."
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo permanece en tus manos\ny nunca sale de tu dispositivo.\n¡Planea tu vida con Mi.dō!"
+            "value" : "Todo queda en tus manos\\ny nunca sale de tu dispositivo.\\nTu vida. Tus datos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout reste entre vos mains\net ne quitte jamais votre appareil.\nPlanifiez votre vie avec Mi.dō !"
+            "value" : "Tout reste entre vos mains\\net ne quitte jamais votre appareil.\\nVotre vie. Vos données."
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout reste entre vos mains\net ne quitte jamais votre appareil.\nPlanifiez votre vie avec Mi.dō !"
+            "value" : "Tout reste entre vos mains\\net ne quitte jamais votre appareil.\\nVotre vie. Vos données."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tutto rimane nelle tue mani\ne non lascia mai il tuo dispositivo.\nPianifica la tua vita con Mi.dō!"
+            "value" : "Tutto resta nelle tue mani\\ne non lascia mai il tuo dispositivo.\\nLa tua vita. I tuoi dati."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo permanece em suas mãos\ne nunca sai do seu dispositivo.\nPlaneje sua vida com Mi.dō!"
+            "value" : "Tudo fica em suas mãos\\ne nunca sai do seu dispositivo.\\nSua vida. Seus dados."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo permanece em suas mãos\ne nunca sai do seu dispositivo.\nPlaneje sua vida com Mi.dō!"
+            "value" : "Tudo fica em suas mãos\\ne nunca sai do seu dispositivo.\\nSua vida. Seus dados."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Все остается в ваших руках\nи не покидает устройство.\nПланируйте свою жизнь с Mi.dō!"
+            "value" : "Всё остаётся в твоих руках\\nи никогда не покидает устройство.\\nТвоя жизнь. Твои данные."
           }
         }
       }
@@ -388,70 +324,6 @@
         }
       }
     },
-    "Tap and add your notes here..." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tippen und fügen Sie hier Ihre Notizen hinzu..."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca y añade tus notas aquí..."
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca y añade tus notas aquí..."
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca y añade tus notas aquí..."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Touchez et ajoutez vos notes ici..."
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Touchez et ajoutez vos notes ici..."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca e aggiungi qui le tue note..."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque e adicione suas anotações aqui..."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque e adicione suas anotações aqui..."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нажмите тут, чтобы добавить заметку…"
-          }
-        }
-      }
-    },
     "Welcome to Mi.dō" : {
       "localizations" : {
         "de" : {
@@ -512,70 +384,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Добро пожаловать\nв Mi.dō"
-          }
-        }
-      }
-    },
-    "Write title 🎯" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Titel eingeben 🎯"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresa el título 🎯"
-          }
-        },
-        "es-419" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresa el título 🎯"
-          }
-        },
-        "es-US" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresa el título 🎯"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saisir le titre 🎯"
-          }
-        },
-        "fr-CA" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saisir le titre 🎯"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inserisci titolo 🎯"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insira o título 🎯"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Insira o título 🎯"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Напишите заголовок 🎯"
           }
         }
       }

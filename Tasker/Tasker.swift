@@ -14,17 +14,6 @@ struct Tasker: App {
     var body: some Scene {
         WindowGroup {
             AppView()
-            //            if self.paywallVM != nil {
-            //
-            //            } else {
-            //                ProgressView()
-            //                    .task {
-            //                        let subscription = await SubscriptionManager.createSubscriptionManager()
-            //                        self.paywallVM = await PaywallVM.createPaywallVM(subscription)
-            //                    }
-            //            }
-            
-            //                .preferredColorScheme(appearanceManager.selectedColorScheme)
             //                .onAppear {
             //                    if let pendingId = UserDefaults.standard.string(forKey: "pendingTaskID") {
             //                        mainVM.selectedTask(taskId: pendingId)

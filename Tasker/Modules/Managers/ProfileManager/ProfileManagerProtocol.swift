@@ -15,4 +15,5 @@ public protocol ProfileManagerProtocol {
     func deletePhoto() async throws
     func getPhoto() async throws -> Data?
     func updateProfileModel() async throws
+    func updateVersion(to version: String) async throws
 }

@@ -15,11 +15,8 @@ public struct SettingsModel: Codable, Equatable {
     public var accentColor: AccentBackgroundColor?
     public var background: AccentBackgroundColor?
     public var minimalProgressMode: Bool?
-    //    public var minimalProgressMode = true
     public var completedTasksHidden: Bool?
-    //    public var completedTasksHidden = false
     public var iCloudSyncEnabled: Bool?
-    //    public var iCloudSyncEnabled = true
 }
 
 public final class UISettingsModel {

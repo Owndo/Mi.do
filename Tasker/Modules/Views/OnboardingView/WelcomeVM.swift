@@ -10,9 +10,10 @@ import Foundation
 import SwiftUI
 import AppearanceManager
 import OnboardingManager
+import Models
 
 @Observable
-final class WelcomeVM {
+public final class WelcomeVM: HashableNavigation {
     var appearanceManager: AppearanceManagerProtocol
     var onboardingManager: OnboardingManagerProtocol
     

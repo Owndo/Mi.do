@@ -35,6 +35,11 @@ public struct MainView: View {
                 
                 NotesView(vm: vm.notesVM)
             }
+            .onAppear {
+                Task {
+                    await vm.checkWelcomeMido()
+                }
+            }
             .navigationDestination(for: MainViewNavigation.self) { destination in
                 destination.destination()
             }
@@ -42,14 +47,8 @@ public struct MainView: View {
                 MainViewBase(weekVM: vm.weekVM, listVM: vm.listVM)
                     .presentationBackground(appearanceManager.backgroundColor)
                     .sheet(item: $vm.sheetNavigation) { navigation in
-                        switch navigation {
-                        case .taskDetails(let taskVM):
-                            TaskView(taskVM: taskVM)
-                                .preferredColorScheme(colorScheme)
-                        case .profile(let profileVM):
-                            ProfileView(vm: profileVM)
-                                .preferredColorScheme(colorScheme)
-                        }
+                        navigation.destination()
+                            .preferredColorScheme(colorScheme)
                     }
             }
             //MARK: - Toolbar

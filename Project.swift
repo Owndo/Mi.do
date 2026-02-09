@@ -318,6 +318,7 @@ let project = Project(
                         .target(name: Modules.appDelegate.name),
                         .target(name: Modules.appearanceManager.name),
                         .target(name: Modules.dateManager.name),
+                        .target(name: Modules.onboardingManager.name),
                         .target(name: Modules.permissionManager.name),
                         .target(name: Modules.profileManager.name),
                         .target(name: Modules.recorderManager.name),
@@ -325,10 +326,12 @@ let project = Project(
                         .target(name: Modules.subscriptionManager.name),
                         .target(name: Modules.customErrors.name),
                         
-                            .target(name: Modules.paywallView.name),
+                        
                         .target(name: Modules.calendarView.name),
+                        .target(name: Modules.onboaringView.name),
                         .target(name: Modules.listView.name),
                         .target(name: Modules.notesView.name),
+                        .target(name: Modules.paywallView.name),
                         .target(name: Modules.profileView.name),
                         .target(name: Modules.taskView.name),
                         .target(name: Modules.uiComponents.name),

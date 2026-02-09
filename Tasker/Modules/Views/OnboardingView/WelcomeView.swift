@@ -8,13 +8,17 @@
 import SwiftUI
 import UIComponents
 
-struct WelcomeView: View {
+public struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
     
     var vm: WelcomeVM
     
-    var body: some View {
+    public init(vm: WelcomeVM) {
+        self.vm = vm
+    }
+    
+    public var body: some View {
         ZStack {
             vm.appearanceManager.backgroundColor
                 .ignoresSafeArea()

@@ -15,6 +15,8 @@ import Foundation
 import Models
 import NotesView
 import NotificationManager
+import OnboardingManager
+import OnboardingView
 import PaywallView
 import PermissionManager
 import PlayerManager
@@ -34,6 +36,7 @@ public final class MainVM: HashableNavigation {
     //MARK: - Depency
     public let appearanceManager: AppearanceManagerProtocol
     private let dateManager: DateManagerProtocol
+    private let onboardingManager: OnboardingManagerProtocol
     private let permissionManager: PermissionProtocol = PermissionManager.createPermissionManager()
     private let playerManager: PlayerManagerProtocol
     private let profileManager: ProfileManagerProtocol
@@ -155,6 +158,7 @@ public final class MainVM: HashableNavigation {
     private init(
         appearanceManager: AppearanceManagerProtocol,
         dateManager: DateManagerProtocol,
+        onboardingManager: OnboardingManagerProtocol,
         playerManager: PlayerManagerProtocol,
         profileManager: ProfileManagerProtocol,
         recorderManager: RecorderManagerProtocol,
@@ -172,6 +176,7 @@ public final class MainVM: HashableNavigation {
     ) {
         self.appearanceManager = appearanceManager
         self.dateManager = dateManager
+        self.onboardingManager = onboardingManager
         self.playerManager = playerManager
         self.profileManager = profileManager
         self.recorderManager = recorderManager
@@ -194,6 +199,9 @@ public final class MainVM: HashableNavigation {
     public static func createVM() async -> MainVM {
         // Managers
         
+        async let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
+        async let telemetryManager = TelemetryManager.createTelemetryManager()
+        
         let casManager = await CASManager.createCASManager()
         let profileManager = await ProfileManager.createManager(casManager: casManager)
         let storageManager = StorageManager.createStorageManager(casManager: casManager)
@@ -201,29 +209,30 @@ public final class MainVM: HashableNavigation {
         let appearanceManager = AppearanceManager.createAppearanceManager(profileManager: profileManager)
         let dateManager = await DateManager.createDateManager(profileManager: profileManager)
         
+        let onboardingManager = OnboardingManager.createManager(profileManager: profileManager)
+        
         let notificationManager = await NotificationManager.createNotificationManager(dateManager: dateManager, profileManager: profileManager, storageManager: storageManager)
         let playerManager = PlayerManager.createPlayerManager(casManager: casManager)
         
         let taskManager = await TaskManager.createTaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
         
-        let subscriptionManager = await SubscriptionManager.createSubscriptionManager()
-        let telemetryManager = TelemetryManager.createTelemetryManager()
-        
         // Models
         let profileModel = profileManager.profileModel
         
         // ViewModels
-        
         
         let calendarVM = await MonthsViewVM.createMonthVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         let weekVM = await WeekVM.createVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
         let listVM = await ListVM.createListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         let notesVM = NotesVM.createVM(appearanceManager: appearanceManager, profileManager: profileManager)
         
-        let vm = MainVM(
+      
+        
+        let vm = await MainVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
+            onboardingManager: onboardingManager,
             playerManager: playerManager,
             profileManager: profileManager,
             recorderManager: recorderManager,
@@ -238,7 +247,7 @@ public final class MainVM: HashableNavigation {
             weekVM: weekVM
         )
         
-        await vm.selectedTaskSheetSync()
+        vm.selectedTaskSheetSync()
         vm.syncNavigation()
         
         return vm
@@ -249,6 +258,7 @@ public final class MainVM: HashableNavigation {
     public static func createPreviewVM() -> MainVM {
         let appearanceManager = AppearanceManager.createMockAppearanceManager()
         let dateManager = DateManager.createPreviewManager()
+        let onboardingManager = OnboardingManager.createMockManager()
         let playerManager = PlayerManager.createMockPlayerManager()
         let profileManager = ProfileManager.createMockManager()
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
@@ -267,6 +277,7 @@ public final class MainVM: HashableNavigation {
         let vm = MainVM(
             appearanceManager: appearanceManager,
             dateManager: dateManager,
+            onboardingManager: onboardingManager,
             playerManager: playerManager,
             profileManager: profileManager,
             recorderManager: recorderManager,
@@ -286,6 +297,16 @@ public final class MainVM: HashableNavigation {
         return vm
     }
     
+    //MARK: - Welcome Mido
+    
+    func checkWelcomeMido() async {
+//        if onboardingManager.welcomeToMido() == nil {
+            let vm = WelcomeVM.createVM(appearacneManager: appearanceManager, onboardingManager: onboardingManager)
+                try? await Task.sleep(for: .seconds(0.1))
+                sheetNavigation = .welcomeView(vm)
+//        }
+    }
+    
     //MARK: - Sync navigation
     
     private func syncNavigation() {
@@ -297,7 +318,7 @@ public final class MainVM: HashableNavigation {
     
     //MARK: - Selected Task Sheet
     
-    private func selectedTaskSheetSync() async {
+    private func selectedTaskSheetSync() {
         selectedTaskTask = Task { [weak self, stream = listVM.selectedTaskStream] in
             guard let stream else { return }
             for await i in stream {
@@ -624,6 +645,7 @@ extension MainViewNavigation {
 //MARK: - Sheet Navigation
 
 enum SheetNavigation: Identifiable, Hashable, Equatable {
+    case welcomeView(WelcomeVM)
     case taskDetails(TaskVM)
     case profile(ProfileVM)
     
@@ -632,8 +654,10 @@ enum SheetNavigation: Identifiable, Hashable, Equatable {
 
 extension SheetNavigation {
     @ViewBuilder
-    func destination() -> some View {
+    public func destination() -> some View {
         switch self {
+        case .welcomeView(let welcomeVM):
+            WelcomeView(vm: welcomeVM)
         case .taskDetails(let taskVM):
             TaskView(taskVM: taskVM)
         case .profile(let profileVM):

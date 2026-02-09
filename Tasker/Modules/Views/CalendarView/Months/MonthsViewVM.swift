@@ -56,6 +56,8 @@ public class MonthsViewVM: HashableNavigation {
     
     var imageForScrollBackButton = "chevron.up"
     var scrolledFromCurrentMonth = false
+    var scrolledToTheFuture = false
+    var scrolledToThePast = false
     
     var isLoadingTop = false
     var isLoadingBottom = false
@@ -186,6 +188,7 @@ public class MonthsViewVM: HashableNavigation {
     
     var scrollDisabled = false
     
+    @MainActor
     func backToSelectedMonthButtonTapped() async {
         viewStarted = false
         
@@ -194,17 +197,25 @@ public class MonthsViewVM: HashableNavigation {
         }
         
         if #available(iOS 18, *) {
-            if let id = allMonths.first(where: { calendar.isDate($0.date, inSameDayAs: dateManager.startOfMonth(for: selectedDate))})?.id {
-                scrollPosition.scrollTo(id: id, anchor: .top)
-                scrolledFromCurrentMonth = false
+            if allMonths.contains(where: { $0.date == dateManager.startOfMonth(for: selectedDate)}) {
+                
+                //TODO: - Move from id position to y position
+                
+                if scrolledToThePast {
+                    if allMonths.count < 20 {
+                        scrollPosition.scrollTo(y: 3000)
+                    } else if allMonths.count > 20 {
+                        scrollPosition.scrollTo(y: 8000)
+                    }
+                } else if scrolledToTheFuture {
+                    scrollPosition.scrollTo(y: 3000)
+                }
             } else {
                 allMonths = dateManager.initializeMonth()
                 await jumpToSelectedMonth18iOS()
-                scrolledFromCurrentMonth = false
             }
         } else {
             await jumpToSelectedMonth()
-            scrolledFromCurrentMonth = false
         }
     }
     
@@ -279,7 +290,7 @@ public class MonthsViewVM: HashableNavigation {
         let position = (CGFloat(allMonths.count / 2) * monthHeight)
         scrollPosition.scrollTo(y: position)
         
-        try? await Task.sleep(for: .seconds(0.1))
+        try? await Task.sleep(for: .seconds(0.5))
         viewStarted = true
     }
     
@@ -411,18 +422,43 @@ public class MonthsViewVM: HashableNavigation {
     
     //MARK: - Up/Down Button
     
+    @MainActor
     func checkIfUserScrolledFromSelectedDate(month: Month) async {
         if month.date > calendar.date(byAdding: .month, value: 2, to: selectedDate)! {
-            imageForScrollBackButton = "chevron.up"
-            scrolledFromCurrentMonth = true
+            scrollToTheFuture()
         } else if month.date < calendar.date(byAdding: .month, value: -3, to: selectedDate)! {
-            imageForScrollBackButton = "chevron.down"
-            scrolledFromCurrentMonth = true
+            scrollToThePast()
         } else {
-            scrolledFromCurrentMonth = false
+            resetScrolledFlags()
         }
         
         await updateCurrentMonth(month: month)
+    }
+    
+    //MARK: - Go UP button show
+    
+    @MainActor
+    func scrollToTheFuture() {
+        imageForScrollBackButton = "chevron.up"
+        scrolledFromCurrentMonth = true
+        scrolledToTheFuture = true
+    }
+    
+    //MARK: - Go DOWN button show
+    
+    @MainActor
+    func scrollToThePast() {
+        imageForScrollBackButton = "chevron.down"
+        scrolledFromCurrentMonth = true
+        scrolledToThePast = true
+    }
+    
+    //MARK: - Reset Scrolled Flag
+    
+    func resetScrolledFlags() {
+        scrolledFromCurrentMonth = false
+        self.scrolledToTheFuture = false
+        scrolledToThePast = false
     }
     
     // MARK: - Current year text
@@ -447,17 +483,17 @@ public class MonthsViewVM: HashableNavigation {
     //        //        await dayVMStore.createMonthVMs()
     //    }
     
-//    @MainActor
-//    func syncDayVM(for day: Day) async {
-//        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
-//        if dayVMs[key] != nil {
-//            return
-//        }
-//        
-//        if let vm = await dayVMStore.returnDayVM(day) {
-//            dayVMs[key] = vm
-//        }
-//    }
+    //    @MainActor
+    //    func syncDayVM(for day: Day) async {
+    //        let key = dateManager.startOfDay(for: day.date).timeIntervalSince1970
+    //        if dayVMs[key] != nil {
+    //            return
+    //        }
+    //
+    //        if let vm = await dayVMStore.returnDayVM(day) {
+    //            dayVMs[key] = vm
+    //        }
+    //    }
     
     //MARK: - Return DayVM
     

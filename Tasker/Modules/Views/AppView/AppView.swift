@@ -7,31 +7,51 @@
 
 import SwiftUI
 import MainView
-import UIComponents
+import AVKit
 
 public struct AppView: View {
     @Environment(\.colorScheme) var colorScheme
-    @State private var vm: MainVM?
+    
+    @State private var vm = AppViewVM()
     
     public init() {}
     
     public var body: some View {
         VStack {
-            if let mainVM = vm {
+            if let mainVM = vm.mainViewVM {
                 MainView(vm: mainVM)
                     .preferredColorScheme(mainVM.appearanceManager.colorScheme)
                     .environment(\.appearanceManager, mainVM.appearanceManager)
             } else {
-                ProgressView()
+                launchScreen()
                     .task {
-                        vm = await MainVM.createVM()
+                        await vm.startVM()
                     }
             }
         }
+        .sensoryFeedback(vm.feedback(), trigger: vm.trigger)
+        .animation(.default, value: vm.player)
         .task(id: colorScheme) {
-            vm?.appearanceManager.updateColors()
+            vm.mainViewVM?.appearanceManager.updateColors()
         }
     }
+    
+    private func launchScreen() -> some View {
+        VStack {
+            if let player = vm.player {
+                VideoPlayer(player: player)
+                    .scaledToFill()
+                    .allowsHitTesting(false)
+                    .offset(x: -50)
+            }
+        }
+        .ignoresSafeArea()
+        .task {
+            await vm.startLaunchScreen(colorScheme: colorScheme)
+        }
+    }
+    
+    
 }
 
 #Preview {

@@ -1,5 +1,5 @@
 //
-//  SayHelloView.swift
+//  WelcomeView.swift
 //  BlockSet
 //
 //  Created by Rodion Akhmedov on 7/29/25.
@@ -8,15 +8,15 @@
 import SwiftUI
 import UIComponents
 
-struct SayHelloView: View {
+struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
     
-    @State private var vm = OnboardingVM()
+    var vm: WelcomeToMidoVM
     
     var body: some View {
         ZStack {
-            colorScheme.backgroundColor()
+            vm.appearanceManager.backgroundColor
                 .ignoresSafeArea()
             
             VStack(spacing: 28) {
@@ -53,9 +53,10 @@ struct SayHelloView: View {
                         .padding(.vertical, 14)
                         .frame(maxWidth: .infinity)
                         .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(colorScheme.accentColor())
+                            RoundedRectangle(cornerRadius: 26)
+                                .fill(vm.appearanceManager.accentColor)
                         )
+                        .liquidIfAvailable(glass: .regular, isInteractive: true)
                         .padding(.horizontal, 17)
                 }
             }
@@ -63,7 +64,7 @@ struct SayHelloView: View {
             .padding(.bottom, 29)
         }
         .onDisappear {
-            vm.continueButtontapped()
+            vm.welcomeToMidoClose()
         }
     }
     
@@ -74,7 +75,7 @@ struct SayHelloView: View {
             Image(systemName: image)
                 .font(.system(size: 22))
                 .frame(width: 40, height: 40)
-                .foregroundStyle(colorScheme.accentColor())
+                .foregroundStyle(vm.appearanceManager.accentColor)
             
             Text(text, bundle: .module)
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
@@ -105,5 +106,5 @@ struct SayHelloView: View {
 }
 
 #Preview {
-    SayHelloView()
+    WelcomeView(vm: WelcomeToMidoVM.createPreviewVM())
 }

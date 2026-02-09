@@ -32,7 +32,8 @@ public struct WelcomeView: View {
                     .font(.system(.title, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelPrimary)
                     .multilineTextAlignment(.center)
-                    .minimumScaleFactor(0.5)
+                    .minimumScaleFactor(0.8)
+                    .padding(.top)
                 
                 VStack(alignment: .leading, spacing: 14) {
                     Description(image: "road.lanes.curved.right", text: vm.description1)
@@ -41,6 +42,7 @@ public struct WelcomeView: View {
                     
                     Description(image: "hand.point.up.left.and.text", text: vm.description3)
                 }
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal, 16)
                 
                 CreatedDate()
@@ -88,7 +90,10 @@ public struct WelcomeView: View {
                 .foregroundStyle(.labelSecondary)
                 .multilineTextAlignment(.leading)
                 .minimumScaleFactor(0.5)
+            
+            Spacer()
         }
+        .padding(.leading)
     }
     
     //MARK: - Created Date

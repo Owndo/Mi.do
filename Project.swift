@@ -300,7 +300,12 @@ let project = Project(
                    ),
         
         //MARK: - OnboardingView
-        .moduleView(.onboaringView,dependencies: [.target(name: Modules.onboardingManager.name)]),
+        .moduleView(.onboaringView,
+                    dependencies: [
+                        .target(name: Modules.onboardingManager.name),
+                        .target(name: Modules.uiComponents.name)
+                    ]
+                   ),
         
         //MARK: - NotesView
         .moduleView(.notesView,

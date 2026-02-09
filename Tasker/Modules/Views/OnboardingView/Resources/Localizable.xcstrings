@@ -65,67 +65,67 @@
         }
       }
     },
-    "Create tasks, reminders,\\nnotes or voice recordings - we’ll\\nsave and gently remind you\\nwhen it truly matters." : {
+    "Create tasks, reminders, notes or voice recordings - we’ll save and gently remind you when it truly matters." : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstelle Aufgaben, Erinnerungen,\\nNotizen oder Sprachaufnahmen —\\nwir speichern sie und erinnern dich\\nsanft, wenn es zählt."
+            "value" : "Erstelle Aufgaben, Erinnerungen, Notizen oder Sprachaufnahmen - wir speichern sie und erinnern dich sanft, wenn es zählt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tareas, recordatorios,\\nnotas o mensajes de voz —\\nlos guardamos y te recordamos\\ncon suavidad cuando importa."
+            "value" : "Crea tareas, recordatorios, notas o mensajes de voz - los guardamos y te recordamos con suavidad cuando importa."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tareas, recordatorios,\\nnotas o mensajes de voz —\\nlos guardamos y te recordamos\\ncon suavidad cuando importa."
+            "value" : "Crea tareas, recordatorios, notas o mensajes de voz - los guardamos y te recordamos con suavidad cuando importa."
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea tareas, recordatorios,\\nnotas o mensajes de voz —\\nlos guardamos y te recordamos\\ncon suavidad cuando importa."
+            "value" : "Crea tareas, recordatorios, notas o mensajes de voz - los guardamos y te recordamos con suavidad cuando importa."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créez des tâches, rappels,\\nnotes ou mémos vocaux —\\nnous les gardons et vous rappelons\\ndoucement quand c’est important."
+            "value" : "Créez des tâches, rappels, notes ou mémos vocaux - nous les gardons et vous rappelons doucement quand c’est important."
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créez des tâches, rappels,\\nnotes ou mémos vocaux —\\nnous les gardons et vous rappelons\\ndoucement quand c’est important."
+            "value" : "Créez des tâches, rappels, notes ou mémos vocaux - nous les gardons et vous rappelons doucement quand c’est important."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea attività, promemoria,\\nnote o memo vocali —\\nli salviamo e ti ricordiamo\\ndolcemente quando conta."
+            "value" : "Crea attività, promemoria, note o memo vocali - li salviamo e ti ricordiamo dolcemente quando conta."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crie tarefas, lembretes,\\nnotas ou áudios —\\nnós guardamos e lembramos\\ncom cuidado quando importa."
+            "value" : "Crie tarefas, lembretes, notas ou áudios - nós guardamos e lembramos com cuidado quando importa."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crie tarefas, lembretes,\\nnotas ou áudios —\\nnós guardamos e lembramos\\ncom cuidado quando importa."
+            "value" : "Crie tarefas, lembretes, notas ou áudios - nós guardamos e lembramos com cuidado quando importa."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Создавай задачи, напоминания,\\nзаметки или голосовые записи —\\nмы сохраним и мягко напомним,\\nкогда это действительно важно."
+            "value" : "Создавай задачи, напоминания, заметки или голосовые записи - мы сохраним и мягко напомним, когда это действительно важно."
           }
         }
       }
@@ -194,67 +194,67 @@
         }
       }
     },
-    "Everything stays in your hands\\nand never leaves your device.\\nYour life. Your data." : {
+    "Everything stays in your hands and never leaves your device. Your life. Your data." : {
       "extractionState" : "manual",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alles bleibt in deinen Händen\\nund verlässt nie dein Gerät.\\nDein Leben. Deine Daten."
+            "value" : "Alles bleibt in deinen Händen und verlässt nie dein Gerät. Dein Leben. Deine Daten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo queda en tus manos\\ny nunca sale de tu dispositivo.\\nTu vida. Tus datos."
+            "value" : "Todo queda en tus manos y nunca sale de tu dispositivo. Tu vida. Tus datos."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo queda en tus manos\\ny nunca sale de tu dispositivo.\\nTu vida. Tus datos."
+            "value" : "Todo queda en tus manos y nunca sale de tu dispositivo. Tu vida. Tus datos."
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo queda en tus manos\\ny nunca sale de tu dispositivo.\\nTu vida. Tus datos."
+            "value" : "Todo queda en tus manos y nunca sale de tu dispositivo. Tu vida. Tus datos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout reste entre vos mains\\net ne quitte jamais votre appareil.\\nVotre vie. Vos données."
+            "value" : "Tout reste entre vos mains et ne quitte jamais votre appareil. Votre vie. Vos données."
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout reste entre vos mains\\net ne quitte jamais votre appareil.\\nVotre vie. Vos données."
+            "value" : "Tout reste entre vos mains et ne quitte jamais votre appareil. Votre vie. Vos données."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tutto resta nelle tue mani\\ne non lascia mai il tuo dispositivo.\\nLa tua vita. I tuoi dati."
+            "value" : "Tutto resta nelle tue mani e non lascia mai il tuo dispositivo. La tua vita. I tuoi dati."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo fica em suas mãos\\ne nunca sai do seu dispositivo.\\nSua vida. Seus dados."
+            "value" : "Tudo fica em suas mãos e nunca sai do seu dispositivo. Sua vida. Seus dados."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo fica em suas mãos\\ne nunca sai do seu dispositivo.\\nSua vida. Seus dados."
+            "value" : "Tudo fica em suas mãos e nunca sai do seu dispositivo. Sua vida. Seus dados."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Всё остаётся в твоих руках\\nи никогда не покидает устройство.\\nТвоя жизнь. Твои данные."
+            "value" : "Всё остаётся в твоих руках и никогда не покидает устройство. Твоя жизнь. Твои данные."
           }
         }
       }

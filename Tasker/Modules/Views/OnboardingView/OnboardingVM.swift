@@ -5,35 +5,46 @@
 //  Created by Rodion Akhmedov on 7/29/25.
 //
 
+import AppearanceManager
 import Foundation
-import Managers
+import OnboardingManager
 import Models
 import SwiftUI
 
 @Observable
 final class OnboardingVM {
-    @ObservationIgnored
-    @Injected(\.onboardingManager) var onboardingManager
-    @ObservationIgnored
-    @Injected(\.casManager) var casManager
+    var appearanceManager: AppearanceManagerProtocol
+    var onboardingManager: OnboardingManagerProtocol
     
-    var title = "Welcome to Mi.dō"
-    var createdDate = Date()
-    var closeTriger = false
+    //MARK: - Private init
     
-    var profileModel = mockProfileData()
+    private init(appearanceManager: AppearanceManagerProtocol, onboardingManager: OnboardingManagerProtocol) {
+        self.appearanceManager = appearanceManager
+        self.onboardingManager = onboardingManager
+    }
     
-    var description1: LocalizedStringKey = "Life isn’t a goal, it's a journey.\nWe’re happy to walk it with you."
-    var description2: LocalizedStringKey = "Create tasks, reminders,\nnotes or voice recordings - we’ll\nsafe them and quietly remind you\nwhen it matters."
-    var description3: LocalizedStringKey = "Everything stays in your hands\nand never leaves your device.\nPlan your life with Mi.dō!"
+    //MARK: - Create VM
     
-    init() {
-        profileModel = casManager.profileModel
-        createdDate = Date(timeIntervalSince1970: casManager.profileModel.onboarding.onboardingCreatedDate)
+    public static func createVM(
+        appearacneManager: AppearanceManagerProtocol,
+        onboardingManager: OnboardingManagerProtocol
+    ) -> OnboardingVM {
+        OnboardingVM(
+            appearanceManager: appearacneManager,
+            onboardingManager: onboardingManager
+        )
+    }
+    
+    //MARK: - Create previewVM
+    
+    static func createPreviewVM() -> OnboardingVM {
+        OnboardingVM(
+            appearanceManager: AppearanceManager.createEnvironmentManager(),
+            onboardingManager: OnboardingManager.createMockManager()
+        )
     }
     
     func continueButtontapped() {
-        closeTriger.toggle()
-        onboardingManager.firstTimeOpenDone()
+
     }
 }

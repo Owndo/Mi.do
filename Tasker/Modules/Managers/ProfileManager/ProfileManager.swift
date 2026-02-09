@@ -79,6 +79,13 @@ public final class ProfileManager: ProfileManagerProtocol {
     private func saveProfile() async throws {
         try await casManager.saveModel(profileModel.model)
     }
+    
+    //MARK: - Update version
+    
+    public func updateVersion(to version: String) async throws {
+        profileModel.onboarding.latestVersion = version
+        try await saveProfile()
+    }
 }
 
 public enum ProfileError: Error {

@@ -123,7 +123,6 @@ public struct MainView: View {
                 .frame(maxHeight: 60)
                 .offset(y: 20)
             }
-            .ignoresSafeArea()
             
             VStack {
                 Spacer()

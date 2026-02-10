@@ -27,7 +27,7 @@ public struct ListView: View {
     public var body: some View {
         ListBase()
             .padding(.horizontal, 8)
-            .ignoresSafeArea()
+            .ignoresSafeArea(edges: .vertical)
             .animation(.easeInOut, value: vm.completedTasksHidden)
             .animation(.default, value: vm.activeTasks)
             .animation(.default, value: vm.completedTasks)

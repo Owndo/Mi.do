@@ -205,7 +205,14 @@ public class MonthsViewVM: HashableNavigation {
                     if allMonths.count < 20 {
                         scrollPosition.scrollTo(y: 3000)
                     } else if allMonths.count > 20 {
-                        scrollPosition.scrollTo(y: 8000)
+                        let selectedMonth = dateManager.startOfMonth(for: selectedDate)
+                        let isInFirstTen = allMonths.prefix(10).contains { $0.date == selectedMonth }
+                        
+                        if isInFirstTen {
+                            scrollPosition.scrollTo(y: 3000)
+                        } else {
+                            scrollPosition.scrollTo(y: 8000)
+                        }
                     }
                 } else if scrolledToTheFuture {
                     scrollPosition.scrollTo(y: 3000)

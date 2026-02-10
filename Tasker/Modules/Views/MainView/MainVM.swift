@@ -319,7 +319,9 @@ public final class MainVM: HashableNavigation {
             try? await Task.sleep(for: .seconds(0.1))
             sheetNavigation = .welcomeView(vm)
         case .afterUpdate:
-            print("")
+            let vm = WhatsNewVM.createVM(appearacneManager: appearanceManager, welcomeManager: welcomeManager)
+            try? await Task.sleep(for: .seconds(0.1))
+            sheetNavigation = .whatsNew(vm)
             //TODO: - Update screen
         }
     }
@@ -663,7 +665,7 @@ extension MainViewNavigation {
 
 enum SheetNavigation: Identifiable, Hashable, Equatable {
     case welcomeView(FirstLaunchVM)
-    //    case whatsNew
+    case whatsNew(WhatsNewVM)
     case taskDetails(TaskVM)
     case profile(ProfileVM)
     
@@ -676,6 +678,8 @@ extension SheetNavigation {
         switch self {
         case .welcomeView(let welcomeVM):
             WelcomeView(vm: welcomeVM)
+        case .whatsNew(let whatsNewVM):
+            WelcomeView(vm: whatsNewVM)
         case .taskDetails(let taskVM):
             TaskView(taskVM: taskVM)
         case .profile(let profileVM):

@@ -14,12 +14,12 @@ public protocol WelcomeVMProtocol {
     var appearanceManager: AppearanceManagerProtocol { get }
     var welcomeManager: WelcomeManagerProtocol { get }
     
-    var title: String { get }
+    var title: LocalizedStringKey { get }
     var createdDate: Date { get }
     
-    var systemImage: String { get }
-    var systemImage1: String { get }
-    var systemImage2 : String { get }
+    var descriptionTitle: LocalizedStringKey { get }
+    var descriptionTitle1: LocalizedStringKey { get }
+    var descriptionTitle2: LocalizedStringKey { get }
     
     var description: LocalizedStringKey { get }
     var description1: LocalizedStringKey { get }

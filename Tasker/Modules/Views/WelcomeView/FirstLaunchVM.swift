@@ -24,17 +24,19 @@ public final class FirstLaunchVM: WelcomeVMProtocol, HashableNavigation {
         self.welcomeManager = welcomeManager
     }
     
-    //MARK: - Titlepublic
+    //MARK: - Title
     
     public var title = FirstLaunchVMResources.title
     
+    //MARK: - Created date
+    
     public var createdDate = FirstLaunchVMResources.createdDate
     
-    //MARK: - Images
+    //MARK: - Description title
     
-    public let systemImage = FirstLaunchVMResources.systemImage
-    public let systemImage1 = FirstLaunchVMResources.systemImage1
-    public let systemImage2 = FirstLaunchVMResources.systemImage2
+    public let descriptionTitle: LocalizedStringKey = FirstLaunchVMResources.descriptionTitle
+    public let descriptionTitle1: LocalizedStringKey = FirstLaunchVMResources.descriptionTitle1
+    public let descriptionTitle2: LocalizedStringKey = FirstLaunchVMResources.descriptionTitle2
     
     //MARK: - Description
     
@@ -53,6 +55,8 @@ public final class FirstLaunchVM: WelcomeVMProtocol, HashableNavigation {
     static func createPreviewVM() -> FirstLaunchVM {
         FirstLaunchVM(appearanceManager: AppearanceManager.createEnvironmentManager(), welcomeManager: WelcomeManager.createMockManager())
     }
+    
+    //MARK: - Welcome close
     
     public func welcomeToMidoClose() async {
         do {
@@ -76,17 +80,17 @@ struct FirstLaunchVMResources {
     //MARK: - Version 1.2
     
     //Title
-    static let title = "Welcome to Mi.dō"
+    static let title: LocalizedStringKey = "Welcome to Mi.dō"
     
     //Created date
     static let createdDate = Date(timeIntervalSince1970: 1753717500.0)
     
-    // Images
-    static let systemImage = "road.lanes.curved.right"
-    static let systemImage1 = "checkmark.square"
-    static let systemImage2 = "hand.point.up.left.and.text"
+    // Description title
+    static let descriptionTitle: LocalizedStringKey = "Your path"
+    static let descriptionTitle1: LocalizedStringKey = "Your focus"
+    static let descriptionTitle2: LocalizedStringKey = "Your data"
     
-    // Descriptions
+    // Description
     static let description: LocalizedStringKey = "Life isn’t a goal, it's a journey. We’re here to walk it with you."
     static let description1: LocalizedStringKey = "Create tasks, reminders, notes or voice recordings - we’ll save and gently remind you when it truly matters."
     static let description2: LocalizedStringKey = "Everything stays in your hands and never leaves your device. Your life. Your data."

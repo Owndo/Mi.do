@@ -15,10 +15,15 @@ import ConfigurationFile
 @Observable
 public final class WelcomeManager: WelcomeManagerProtocol {
     
-    private var profileManager: ProfileManagerProtocol
-    private var profileModel: UIProfileModel
+    //MARK: - Managers
     
-    //MARK: - Onboarding flow
+    private var dateManager: DateManagerProtocol
+    private var profileManager: ProfileManagerProtocol
+    private var taskManager: TaskManagerProtocol
+    
+    //MARK: - Profile model
+    
+    private var profileModel: UIProfileModel
     
     //MARK: - Private init
     
@@ -43,15 +48,23 @@ public final class WelcomeManager: WelcomeManagerProtocol {
     
     /// First time ever open
     public func appLaunchState() -> AppLaunchState? {
-        //        guard let storedVersion = profileModel.onboarding.latestVersion else {
-        return .welcome
-        //        }
+        guard let storedVersion = profileModel.onboarding.latestVersion else {
+            return .welcome
+        }
         
-        //        guard storedVersion == ConfigurationFile.appVersion else {
-        //            return .afterUpdate
-        //        }
+        guard let stored = majorMinor(from: storedVersion), let current = majorMinor(from: ConfigurationFile.appVersion) else {
+            return nil
+        }
         
-        //        return nil
+        if stored.major < current.major {
+            return .afterUpdate
+        }
+        
+        if stored.major == current.major && stored.minor < current.minor {
+            return .afterUpdate
+        }
+        
+        return nil
     }
     
     public func firstTimeOpenDone() async throws {
@@ -60,29 +73,39 @@ public final class WelcomeManager: WelcomeManagerProtocol {
     
     //MARK: - Create base Task
     
-    //    private func createBaseTasks() async throws {
-    //        guard profileModel.onboarding.latestVersion == nil else {
-    //            return
-    //        }
-    //
-    //        let factory = ModelsFactory(dateManager: dateManager)
-    //
-    //        try await taskManager.saveTask(factory.create(.bestApp))
-    //        try await taskManager.saveTask(factory.create(.planForTommorow, repeatTask: .weekly))
-    //        try await taskManager.saveTask(factory.create(.randomHours))
-    //        try await taskManager.saveTask(factory.create(.readSomething))
-    //
-    //
-    //        guard !dateManager.calendar.isDate(dateManager.currentTime, inSameDayAs: dateManager.sunday()) else {
-    //            return
-    //        }
-    //
-    //        try await taskManager.saveTask(factory.create(.planForTommorow))
-    //    }
+    private func createBaseTasks() async throws {
+        let factory = ModelsFactory(dateManager: dateManager)
+        
+        try await taskManager.saveTask(factory.create(.bestApp))
+        try await taskManager.saveTask(factory.create(.planForTommorow, repeatTask: .weekly))
+        try await taskManager.saveTask(factory.create(.randomHours))
+        try await taskManager.saveTask(factory.create(.readSomething))
+        
+        
+        //        guard !dateManager.calendar.isDate(dateManager.currentTime, inSameDayAs: dateManager.sunday()) else {
+        //            return
+        //        }
+        //
+        //        try await taskManager.saveTask(factory.create(.planForTommorow))
+    }
     
     private func profileModelSave() async throws {
         profileModel.onboarding.latestVersion = ConfigurationFile.appVersion
         try await profileManager.updateProfileModel()
+    }
+    
+    //MARK: - Convert Version
+    private func majorMinor(from version: String) -> (major: Int, minor: Int)? {
+        
+        let components = version.split(separator: ".")
+        
+        guard components.count >= 2,
+              let major = Int(components[0]),
+              let minor = Int(components[1]) else {
+            return nil
+        }
+        
+        return (major, minor)
     }
 }
 

@@ -17,7 +17,6 @@ struct DayView: View {
         VStack {
             ZStack {
                 SegmentedCircleView(vm: vm)
-                    .frame(width: 40, height: 40)
                 
                 BaseContent()
                     .task {

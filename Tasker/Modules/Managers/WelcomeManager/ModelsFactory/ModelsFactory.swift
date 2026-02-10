@@ -50,6 +50,7 @@ final class ModelsFactory {
             if let lang = locale.language.languageCode?.identifier, let value = localizations[lang] {
                 return value
             }
+            
             return defaultValue
         }
     }

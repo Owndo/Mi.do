@@ -83,6 +83,7 @@ public struct WeekView: View {
                         } label: {
                             if let vm = vm.returnDayVM(day) {
                                 DayView(vm: vm)
+                                    .frame(maxWidth: .infinity)
                             } else {
                                 Text("\(day.date, format: .dateTime.day())")
                                     .font(.system(size: 17, weight: vm.dayIsToday(day.date) ? .semibold : .regular, design: .default))

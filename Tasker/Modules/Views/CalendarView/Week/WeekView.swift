@@ -28,7 +28,7 @@ public struct WeekView: View {
     public var body: some View {
         VStack {
             ZStack {
-                HStack {
+                HStack(spacing: 0) {
                     ForEach(0..<7) { index in
                         if vm.isSelectedDayOfWeek(index) {
                             shape
@@ -41,7 +41,7 @@ public struct WeekView: View {
                 }
                 
                 VStack(spacing: 0) {
-                    HStack {
+                    HStack(spacing: 0) {
                         ForEach(0..<vm.orderedWeekdaySymbols().count, id: \.self) { symbol in
                             Text(vm.orderedWeekdaySymbols()[symbol])
                                 .font(.system(.subheadline, design: .rounded, weight: .medium))
@@ -76,7 +76,7 @@ public struct WeekView: View {
     private func DayOfWeeksView() -> some View {
         TabView(selection: $vm.dateManager.indexForWeek) {
             ForEach(vm.weeks) { week in
-                HStack {
+                HStack(spacing: 0) {
                     ForEach(week.days) { day in
                         Button {
                             vm.selectedDateButtonTapped(day)

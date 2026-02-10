@@ -68,7 +68,6 @@ public struct MonthsView: View {
                 }
                 .scrollPosition($vm.scrollPosition)
                 .scrollDisabled(vm.scrollDisabled)
-                .scrollBounceBehavior(.always)
                 .scrollIndicators(.hidden)
                 .toolbarBackgroundVisibility(.hidden, for: .navigationBar, .bottomBar)
             } else {

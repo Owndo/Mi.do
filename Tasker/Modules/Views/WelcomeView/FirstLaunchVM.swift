@@ -11,6 +11,7 @@ import SwiftUI
 import AppearanceManager
 import WelcomeManager
 import Models
+import UIComponents
 
 @Observable
 public final class FirstLaunchVM: WelcomeVMProtocol, HashableNavigation {
@@ -26,11 +27,17 @@ public final class FirstLaunchVM: WelcomeVMProtocol, HashableNavigation {
     
     //MARK: - Title
     
-    public var title = FirstLaunchVMResources.title
+    public let title = FirstLaunchVMResources.title
+    
+    public let createdText = FirstLaunchVMResources.createdText
     
     //MARK: - Created date
     
     public var createdDate = FirstLaunchVMResources.createdDate
+    
+    public let imageDescription = FirstLaunchVMResources.imageDescription
+    public let imageDescription1 = FirstLaunchVMResources.imageDescription1
+    public let imageDescription2 = FirstLaunchVMResources.imageDescription2
     
     //MARK: - Description title
     
@@ -82,8 +89,15 @@ struct FirstLaunchVMResources {
     //Title
     static let title: LocalizedStringKey = "Welcome to Mi.dō"
     
+    static let createdText: LocalizedStringKey = "Created:"
+    
     //Created date
     static let createdDate = Date(timeIntervalSince1970: 1753717500.0)
+    
+    // Image description
+    static let imageDescription: String = "road.lanes.curved.right"
+    static let imageDescription1: String = osVersion.majorVersion < 26 ? "checkmark.square" : "checkmark.app"
+    static let imageDescription2: String = "hand.point.up.left.and.text"
     
     // Description title
     static let descriptionTitle: LocalizedStringKey = "Your path"

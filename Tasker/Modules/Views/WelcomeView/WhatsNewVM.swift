@@ -27,9 +27,19 @@ public final class WhatsNewVM: WelcomeVMProtocol, HashableNavigation {
     
     public var title = WhatsNewVMResources.title
     
+    //MARK: - Created text
+    
+    public let createdText = WhatsNewVMResources.createdText
+    
     //MARK: - Created date
     
     public var createdDate = WhatsNewVMResources.createdDate
+    
+    //MARK: - Image description
+    
+    public let imageDescription = WhatsNewVMResources.imageDescription
+    public let imageDescription1 = WhatsNewVMResources.imageDescription1
+    public let imageDescription2 = WhatsNewVMResources.imageDescription2
     
     //MARK: - Description title
     
@@ -72,11 +82,18 @@ struct WhatsNewVMResources {
     //Title
     static let title: LocalizedStringKey = "What's New?"
     
-    
     //MARK: - Version 1.2
+    
+    // Created text
+    static let createdText: LocalizedStringKey = "Updated:"
     
     //Created date
     static let createdDate = Date(timeIntervalSince1970: 1753717500.0)
+    
+    // Image description
+    static let imageDescription: String = "drop.circle.fill"
+    static let imageDescription1: String = "calendar.badge.checkmark"
+    static let imageDescription2: String = "eye.fill"
     
     // Description title
     static let descriptionTitle: LocalizedStringKey = "Liquid Glass"

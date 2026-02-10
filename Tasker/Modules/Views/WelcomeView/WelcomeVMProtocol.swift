@@ -15,7 +15,13 @@ public protocol WelcomeVMProtocol {
     var welcomeManager: WelcomeManagerProtocol { get }
     
     var title: LocalizedStringKey { get }
+    
+    var createdText: LocalizedStringKey { get }
     var createdDate: Date { get }
+    
+    var imageDescription: String { get }
+    var imageDescription1: String { get }
+    var imageDescription2: String { get }
     
     var descriptionTitle: LocalizedStringKey { get }
     var descriptionTitle1: LocalizedStringKey { get }

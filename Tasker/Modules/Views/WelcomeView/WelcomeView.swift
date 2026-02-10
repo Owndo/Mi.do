@@ -12,6 +12,10 @@ public struct WelcomeView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismissButton
     
+    @State private var zeroImageEffect: Bool = false
+    @State private var firstImageEffect: Bool = false
+    @State private var secondImageEffect: Bool = false
+    
     var vm: WelcomeVMProtocol
     
     let isIPhoneSE = UIScreen.main.bounds.size.height <= 667
@@ -25,7 +29,7 @@ public struct WelcomeView: View {
             vm.appearanceManager.backgroundColor
                 .ignoresSafeArea()
             
-            VStack(spacing: !isIPhoneSE ? 28 : 14) {
+            ScrollView {
                 Image(uiImage: .onboarding)
                     .resizable()
                     .scaledToFit()
@@ -34,23 +38,41 @@ public struct WelcomeView: View {
                     .font(.system(.title, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelPrimary)
                     .multilineTextAlignment(.center)
-                    .minimumScaleFactor(0.8)
-                    .padding(.top)
+                    .minimumScaleFactor(0.5)
                 
                 VStack(alignment: .leading, spacing: 14) {
-                    Description(title: vm.descriptionTitle, text: vm.description)
-                    
-                    Description(title: vm.descriptionTitle1, text: vm.description1)
-                    
-                    Description(title: vm.descriptionTitle2, text: vm.description2)
+//                    if #available(iOS 26, *) {
+//                        Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
+//                            .symbolEffect(.drawOn.individually, isActive: !zeroImageEffect)
+//                        
+//                        Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
+//                            .symbolEffect(.drawOn.individually, isActive: !firstImageEffect)
+//                        
+//                        Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
+//                            .symbolEffect(.drawOn.individually, isActive: !secondImageEffect)
+//                    } else {
+                        Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
+                            .symbolEffect(.bounce, value: zeroImageEffect)
+                        
+                        Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
+                            .symbolEffect(.bounce, value: firstImageEffect)
+                        
+                        Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
+                            .symbolEffect(.bounce, value: secondImageEffect)
+//                    }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.horizontal, 16)
+                .padding(.top)
+                .padding(.horizontal)
                 
                 CreatedDate()
+                    .padding(.top, !isIPhoneSE ? 28 : 18)
+                    .padding(.bottom, 50)
                 
                 Spacer()
             }
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollIndicators(.hidden)
             
             VStack {
                 Spacer()
@@ -61,6 +83,14 @@ public struct WelcomeView: View {
             .padding(.top, 16)
             .padding(.bottom, 20)
         }
+        .task {
+            try? await Task.sleep(for: .seconds(0.5))
+            secondImageEffect = true
+            try? await Task.sleep(for: .seconds(0.2))
+            firstImageEffect = true
+            try? await Task.sleep(for: .seconds(0.2))
+            zeroImageEffect = true
+        }
         .onDisappear {
             Task {
                 await vm.welcomeToMidoClose()
@@ -70,24 +100,29 @@ public struct WelcomeView: View {
     
     //MARK: - Description
     
-    private func Description(title: LocalizedStringKey, text: LocalizedStringKey) -> some View {
+    private func Description(image: String, title: LocalizedStringKey, text: LocalizedStringKey) -> some View {
         HStack(spacing: 10) {
+            Image(systemName: image)
+                .font(.system(.title, design: .rounded, weight: .semibold))
+                .foregroundStyle(vm.appearanceManager.accentColor)
+                .frame(width: 40)
+            
             VStack(alignment: .leading) {
                 Text(title, bundle: .module)
-                    .font(.system(.title2, design: .rounded, weight: .bold))
+                    .font(.system(.title3, design: .rounded, weight: .bold))
                     .foregroundStyle(.labelPrimary)
-                    .minimumScaleFactor(0.9)
+                    .minimumScaleFactor(0.5)
                 
                 Text(text, bundle: .module)
                     .font(.system(.subheadline, design: .rounded, weight: .medium))
                     .foregroundStyle(.labelSecondary)
                     .multilineTextAlignment(.leading)
-                    .minimumScaleFactor(0.9)
+                    .minimumScaleFactor(0.5)
             }
             
             Spacer()
         }
-        .padding(.leading)
+        .padding(.horizontal)
     }
     
     //MARK: - Created Date
@@ -98,7 +133,7 @@ public struct WelcomeView: View {
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(.labelTertiary)
             
-            Text("Created:", bundle: .module)
+            Text(vm.createdText, bundle: .module)
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(.labelTertiary)
                 .minimumScaleFactor(0.7)
@@ -127,7 +162,7 @@ public struct WelcomeView: View {
                     RoundedRectangle(cornerRadius: 26)
                         .fill(vm.appearanceManager.accentColor)
                 )
-                .liquidIfAvailable(glass: .regular, isInteractive: true)
+                .liquidIfAvailable(glass: .clear, isInteractive: true)
                 .padding(.horizontal, 17)
         }
     }

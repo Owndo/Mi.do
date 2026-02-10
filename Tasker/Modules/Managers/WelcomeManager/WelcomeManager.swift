@@ -21,6 +21,8 @@ public final class WelcomeManager: WelcomeManagerProtocol {
     private var profileManager: ProfileManagerProtocol
     private var taskManager: TaskManagerProtocol
     
+    private var firstTimeLaunch = false
+    
     //MARK: - Profile model
     
     private var profileModel: UIProfileModel
@@ -51,6 +53,7 @@ public final class WelcomeManager: WelcomeManagerProtocol {
     /// First time ever open
     public func appLaunchState() -> AppLaunchState? {
         guard let storedVersion = profileModel.onboarding.latestVersion else {
+            firstTimeLaunch = true
             return .welcome
         }
         
@@ -71,6 +74,7 @@ public final class WelcomeManager: WelcomeManagerProtocol {
     
     public func firstTimeOpenDone() async throws {
         try await profileManager.updateVersion(to: ConfigurationFile.appVersion)
+        guard firstTimeLaunch else { return }
         try await createBaseTasks()
     }
     

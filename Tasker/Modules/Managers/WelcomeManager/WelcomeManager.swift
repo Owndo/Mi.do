@@ -27,21 +27,23 @@ public final class WelcomeManager: WelcomeManagerProtocol {
     
     //MARK: - Private init
     
-    private init(profileManager: ProfileManagerProtocol) {
+    private init(dateManager: DateManagerProtocol, profileManager: ProfileManagerProtocol, taskManager: TaskManagerProtocol) {
+        self.dateManager = dateManager
         self.profileManager = profileManager
+        self.taskManager = taskManager
         self.profileModel = profileManager.profileModel
     }
     
     //MARK: - Create Manager
     
-    public static func createManager(profileManager: ProfileManagerProtocol) -> WelcomeManagerProtocol {
-        let manager = WelcomeManager(profileManager: profileManager)
+    public static func createManager(dateManager: DateManagerProtocol, profileManager: ProfileManagerProtocol, taskManager: TaskManagerProtocol) -> WelcomeManagerProtocol {
+        let manager = WelcomeManager(dateManager: dateManager, profileManager: profileManager, taskManager: taskManager)
         
         return manager
     }
     
     public static func createMockManager() -> WelcomeManagerProtocol {
-        WelcomeManager(profileManager: ProfileManager.createMockManager())
+        WelcomeManager(dateManager: DateManager.createEmptyManager(), profileManager: ProfileManager.createMockManager(), taskManager: TaskManager.createMockTaskManager())
     }
     
     //MARK: - Say Hello
@@ -69,6 +71,7 @@ public final class WelcomeManager: WelcomeManagerProtocol {
     
     public func firstTimeOpenDone() async throws {
         try await profileManager.updateVersion(to: ConfigurationFile.appVersion)
+        try await createBaseTasks()
     }
     
     //MARK: - Create base Task
@@ -78,15 +81,14 @@ public final class WelcomeManager: WelcomeManagerProtocol {
         
         try await taskManager.saveTask(factory.create(.bestApp))
         try await taskManager.saveTask(factory.create(.planForTommorow, repeatTask: .weekly))
-        try await taskManager.saveTask(factory.create(.randomHours))
+        try await taskManager.saveTask(factory.create(.randomHours, repeatTask: .weekly))
         try await taskManager.saveTask(factory.create(.readSomething))
         
+        guard !dateManager.calendar.isDate(dateManager.currentTime, inSameDayAs: dateManager.sunday()) else {
+            return
+        }
         
-        //        guard !dateManager.calendar.isDate(dateManager.currentTime, inSameDayAs: dateManager.sunday()) else {
-        //            return
-        //        }
-        //
-        //        try await taskManager.saveTask(factory.create(.planForTommorow))
+        try await taskManager.saveTask(factory.create(.planForTommorow))
     }
     
     private func profileModelSave() async throws {

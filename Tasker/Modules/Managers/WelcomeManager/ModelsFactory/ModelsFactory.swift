@@ -58,6 +58,7 @@ final class ModelsFactory {
     // MARK: - Task Texts
     
     private enum TaskText {
+        //MARK: - Best App
         static let bestAppTitle = LocalizedString(
             defaultValue: "📱 Install the Best App",
             localizations: [
@@ -91,7 +92,7 @@ final class ModelsFactory {
                 "pt-PT": "Mega tarefa. Instale o app que governa todos. Então... você conseguiu."
             ]
         )
-        
+        //MARK: - Plan for tommorow title
         static let planTomorrowTitle = LocalizedString(
             defaultValue: "🗓️ Plan Tomorrow",
             localizations: [
@@ -109,6 +110,7 @@ final class ModelsFactory {
             ]
         )
         
+        //MARK: - Plan for tommorow description
         static let planTomorrowDescription = LocalizedString(
             defaultValue: "Maybe you'll save the world tomorrow. Might wanna write that down.",
             localizations: [
@@ -126,6 +128,7 @@ final class ModelsFactory {
             ]
         )
         
+        //MARK: - Random hours title
         static let randomHoursTitle = LocalizedString(
             defaultValue: "💡 Random Hour",
             localizations: [
@@ -143,6 +146,7 @@ final class ModelsFactory {
             ]
         )
         
+        //MARK: - Random hours description
         static let randomHoursDescription = LocalizedString(
             defaultValue: "Google something you don’t understand. Quantum foam? Why cats scream at 3 AM? Choose your adventure.",
             localizations: [
@@ -160,6 +164,7 @@ final class ModelsFactory {
             ]
         )
         
+        //MARK: - Read somthing title
         static let readSomethingTitle = LocalizedString(
             defaultValue: "📚 Read Something That’s Not a Screen",
             localizations: [
@@ -177,6 +182,7 @@ final class ModelsFactory {
             ]
         )
         
+        //MARK: - Read somthing description
         static let readSomethingDescription = LocalizedString(
             defaultValue: "A book, a newspaper, a cereal box. Touch paper. Absorb knowledge.",
             localizations: [
@@ -199,6 +205,8 @@ final class ModelsFactory {
     
     func create(_ model: Models, repeatTask: RepeatTask? = .never) -> UITaskModel {
         switch model {
+            
+            //MARK: - Best App
         case .bestApp:
             UITaskModel(
                 .initial(
@@ -213,6 +221,7 @@ final class ModelsFactory {
                 )
             )
             
+            //MARK: - Plan for tommorow
         case .planForTommorow:
             UITaskModel(
                 .initial(
@@ -232,6 +241,7 @@ final class ModelsFactory {
                 )
             )
             
+            //MARK: - Random hours
         case .randomHours:
             UITaskModel(
                 .initial(
@@ -244,12 +254,13 @@ final class ModelsFactory {
                             value: 19,
                             of: calendar.date(from: today)!
                         )!.timeIntervalSince1970),
-                        repeatTask: .never,
+                        repeatTask: repeatTask,
                         taskColor: .steelBlue
                     )
                 )
             )
             
+            //MARK: - Read something
         case .readSomething:
             UITaskModel(
                 .initial(

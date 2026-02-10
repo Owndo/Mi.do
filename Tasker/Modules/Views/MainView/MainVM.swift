@@ -221,7 +221,7 @@ public final class MainVM: HashableNavigation {
         let taskManager = await TaskManager.createTaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
         
-        let welcomeManager = WelcomeManager.createManager(profileManager: profileManager)
+        let welcomeManager = WelcomeManager.createManager(dateManager: dateManager, profileManager: profileManager, taskManager: taskManager)
         
         // Models
         let profileModel = profileManager.profileModel
@@ -272,7 +272,7 @@ public final class MainVM: HashableNavigation {
         let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
         let taskManager = TaskManager.createMockTaskManager()
         let telemetryManager = TelemetryManager.createTelemetryManager(mock: true)
-        let welcomeManager = WelcomeManager.createManager(profileManager: profileManager)
+        let welcomeManager = WelcomeManager.createMockManager()
         
         let profileModel = profileManager.profileModel
         

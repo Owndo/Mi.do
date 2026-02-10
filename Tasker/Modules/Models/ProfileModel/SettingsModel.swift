@@ -61,8 +61,8 @@ public final class UISettingsModel {
     }
     
     public var minimalProgressMode: Bool {
-        get { model.minimalProgressMode ?? true }
-        set { model.minimalProgressMode = nilIfNeed(newValue, is: true)}
+        get { model.minimalProgressMode ?? false }
+        set { model.minimalProgressMode = nilIfNeed(newValue, is: false)}
     }
     
     public var completedTasksHidden: Bool {
@@ -91,41 +91,9 @@ public final class UISettingsModel {
     }
 }
 
-
-
-
-//    private func currentSystemColorSchemeIsDark() -> ColorSchemeMode {
-//        if UITraitCollection.current.userInterfaceStyle == .dark {
-//            return .dark
-//        } else {
-//            return .light
-//        }
-////        return UITraitCollection.current.userInterfaceStyle == .dark
-//    }
-
-
-
-
-//    public init(
-//        colorScheme: ColorSchemeMode,
-//        accentColor: AccentBackgroundColor = AccentBackgroundColor(light: "#0EBC7C", dark: "#18C585"),
-//        background: AccentBackgroundColor = AccentBackgroundColor(light: "#F2F5EE", dark: "#202020"),
-//    ) {
-//        self.colorScheme = colorScheme
-//        self.accentColor = accentColor
-//        self.background = background
-//    }
-//
-
-//
-
-//    }
-
-
 func defaultSettingsModel() -> SettingsModel {
     SettingsModel()
 }
-
 
 public struct AccentBackgroundColor: Codable, Equatable, Sendable {
     public var light: String

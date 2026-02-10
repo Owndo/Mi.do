@@ -30,6 +30,8 @@ import TaskView
 import TelemetryManager
 import ListView
 import ProfileView
+import WelcomeManager
+import WelcomeView
 
 @Observable
 public final class MainVM: HashableNavigation {
@@ -43,9 +45,9 @@ public final class MainVM: HashableNavigation {
     private let recorderManager: RecorderManagerProtocol
     private let storageManager: StorageManagerProtocol
     private let subscriptionManager: SubscriptionManagerProtocol
-    
     private let taskManager: TaskManagerProtocol
     private let telemetryManager: TelemetryManagerProtocol
+    private let welcomeManager: WelcomeManagerProtocol
     
     
     //MARK: - ViewModels
@@ -166,6 +168,7 @@ public final class MainVM: HashableNavigation {
         subscriptionManager: SubscriptionManagerProtocol,
         taskManager: TaskManagerProtocol,
         telemetryManager: TelemetryManagerProtocol,
+        welcomeManager: WelcomeManagerProtocol,
         
         profileModel: UIProfileModel,
         
@@ -184,6 +187,7 @@ public final class MainVM: HashableNavigation {
         self.subscriptionManager = subscriptionManager
         self.taskManager = taskManager
         self.telemetryManager = telemetryManager
+        self.welcomeManager = welcomeManager
         
         self.profileModel = profileModel
         
@@ -217,6 +221,8 @@ public final class MainVM: HashableNavigation {
         let taskManager = await TaskManager.createTaskManager(casManager: casManager, dateManager: dateManager, notificationManager: notificationManager)
         let recorderManager = RecorderManager.createRecorderManager(dateManager: dateManager)
         
+        let welcomeManager = WelcomeManager.createManager(profileManager: profileManager)
+        
         // Models
         let profileModel = profileManager.profileModel
         
@@ -227,7 +233,6 @@ public final class MainVM: HashableNavigation {
         let listVM = await ListVM.createListVM(appearanceManager: appearanceManager, dateManager: dateManager, notificationManager: notificationManager, playerManager: playerManager, profileManager: profileManager, taskManager: taskManager)
         let notesVM = NotesVM.createVM(appearanceManager: appearanceManager, profileManager: profileManager)
         
-      
         
         let vm = await MainVM(
             appearanceManager: appearanceManager,
@@ -240,6 +245,7 @@ public final class MainVM: HashableNavigation {
             subscriptionManager: subscriptionManager,
             taskManager: taskManager,
             telemetryManager: telemetryManager,
+            welcomeManager: welcomeManager,
             profileModel: profileModel,
             calendarVM: calendarVM,
             listVM: listVM,
@@ -266,6 +272,7 @@ public final class MainVM: HashableNavigation {
         let subscriptionManager = SubscriptionManager.createMockSubscriptionManager()
         let taskManager = TaskManager.createMockTaskManager()
         let telemetryManager = TelemetryManager.createTelemetryManager(mock: true)
+        let welcomeManager = WelcomeManager.createManager(profileManager: profileManager)
         
         let profileModel = profileManager.profileModel
         
@@ -285,6 +292,7 @@ public final class MainVM: HashableNavigation {
             subscriptionManager: subscriptionManager,
             taskManager: taskManager,
             telemetryManager: telemetryManager,
+            welcomeManager: welcomeManager,
             profileModel: profileModel,
             calendarVM: calendarVM,
             listVM: listVM,
@@ -297,14 +305,23 @@ public final class MainVM: HashableNavigation {
         return vm
     }
     
-    //MARK: - Welcome Mido
+    //MARK: - Check Welcome Mido
     
     func checkWelcomeMido() async {
-//        if onboardingManager.welcomeToMido() == nil {
-            let vm = WelcomeVM.createVM(appearacneManager: appearanceManager, onboardingManager: onboardingManager)
-                try? await Task.sleep(for: .seconds(0.1))
-                sheetNavigation = .welcomeView(vm)
-//        }
+        
+        guard let state = welcomeManager.appLaunchState() else {
+            return
+        }
+        
+        switch state {
+        case .welcome:
+            let vm = FirstLaunchVM.createVM(appearacneManager: appearanceManager, welcomeManager: welcomeManager)
+            try? await Task.sleep(for: .seconds(0.1))
+            sheetNavigation = .welcomeView(vm)
+        case .afterUpdate:
+            print("")
+            //TODO: - Update screen
+        }
     }
     
     //MARK: - Sync navigation
@@ -645,7 +662,8 @@ extension MainViewNavigation {
 //MARK: - Sheet Navigation
 
 enum SheetNavigation: Identifiable, Hashable, Equatable {
-    case welcomeView(WelcomeVM)
+    case welcomeView(FirstLaunchVM)
+    //    case whatsNew
     case taskDetails(TaskVM)
     case profile(ProfileVM)
     

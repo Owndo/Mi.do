@@ -14,16 +14,12 @@ import ConfigurationFile
 
 @Observable
 public final class OnboardingManager: OnboardingManagerProtocol {
+    
     private var profileManager: ProfileManagerProtocol
     
     private var profileModel: UIProfileModel
     
     //MARK: - Onboarding flow
-    
-    
-//    public var sayHello = false
-    /// User has old version
-    public var showWhatsNew = false
     
     //MARK: - Private init
     
@@ -45,31 +41,10 @@ public final class OnboardingManager: OnboardingManagerProtocol {
     }
     
     private func startManager() {
-        guard let version = welcomeToMido() else {
-            return
-        }
-        
-        guard version != ConfigurationFile.appVersion else {
-            return
-        }
-        
-        print("Old version")
+      
     }
     
-    //MARK: - Say Hello
-    
-    /// First time ever open
-    public func welcomeToMido() -> String? {
-        guard let version = profileModel.onboarding.latestVersion else {
-            return nil
-        }
-        
-        return version
-    }
-    
-    public func firstTimeOpenDone() async throws {
-        try await profileManager.updateVersion(to: ConfigurationFile.appVersion)
-    }
+
     
     //MARK: - Onboarding flow
     
@@ -77,31 +52,7 @@ public final class OnboardingManager: OnboardingManagerProtocol {
         
     }
     
-    //MARK: - Create base Task
-    
-    //    private func createBaseTasks() async throws {
-    //        guard profileModel.onboarding.latestVersion == nil else {
-    //            return
-    //        }
-    //
-    //        let factory = ModelsFactory(dateManager: dateManager)
-    //
-    //        try await taskManager.saveTask(factory.create(.bestApp))
-    //        try await taskManager.saveTask(factory.create(.planForTommorow, repeatTask: .weekly))
-    //        try await taskManager.saveTask(factory.create(.randomHours))
-    //        try await taskManager.saveTask(factory.create(.readSomething))
-    //
-    //
-    //        guard !dateManager.calendar.isDate(dateManager.currentTime, inSameDayAs: dateManager.sunday()) else {
-    //            return
-    //        }
-    //
-    //        try await taskManager.saveTask(factory.create(.planForTommorow))
-    //    }
-    
     private func profileModelSave() async throws {
-        profileModel.onboarding.latestVersion = ConfigurationFile.appVersion
-        
-//        try await profileManager.updateProfileModel()
+        //        try await profileManager.updateProfileModel()
     }
 }

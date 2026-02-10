@@ -49,6 +49,7 @@ public enum Modules: String {
     case appDelegate = "AppDelegate"
     case onboardingManager = "OnboardingManager"
     case videoManager = "VideoManager"
+    case welcomeManager = "WelcomeManager"
     
     case customErrors = "CustomErrors"
     
@@ -68,6 +69,7 @@ public enum Modules: String {
     case profileView = "ProfileView"
     case listView = "ListView"
     case onboaringView = "OnboardingView"
+    case welcomeView = "WelcomeView"
     case notesView = "NotesView"
     case mainView = "MainView"
     case appView = "AppView"
@@ -92,6 +94,7 @@ public enum Modules: String {
              .profileView,
              .listView,
              .onboaringView,
+             .welcomeView,
              .notesView,
              .mainView,
              .appView:

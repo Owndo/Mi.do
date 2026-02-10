@@ -8,9 +8,5 @@
 import Foundation
 
 public protocol OnboardingManagerProtocol {
-    var showWhatsNew: Bool { get set }
-    
-    /// First time ever open
-    func welcomeToMido() -> String?
-    func firstTimeOpenDone() async throws
+
 }

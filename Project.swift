@@ -61,7 +61,7 @@ let project = Project(
         //MARK: - Delegate
             .module(.appDelegate),
         
-        //MARK: - Telemetry
+        //MARK: - Telemetry manager
         .module(.telemetry,
                 dependencies: [
                     .target(name: Modules.models.name),
@@ -75,7 +75,7 @@ let project = Project(
         //MARK: - Errors
         .module(.customErrors),
         
-        //MARK: - Permission
+        //MARK: - Permission manager
         .module(.permissionManager,
                 dependencies: [
                     .target(name: Modules.customErrors.name),
@@ -83,7 +83,7 @@ let project = Project(
                 ]
                ),
         
-        //MARK: - Subscription
+        //MARK: - Subscription manager
         .module(.subscriptionManager),
         
         //MARK: - Cas manager
@@ -126,7 +126,7 @@ let project = Project(
                 ]
                ),
         
-        //MARK: - Notification Manager
+        //MARK: - Notification manager
         .module(.notificationManager,
                 dependencies: [
                     .target(name: Modules.cas.name),
@@ -146,15 +146,15 @@ let project = Project(
                 ]
                ),
         
-        //MARK: - Magic
+        //MARK: - Magic manager
         .module(.magic, dependencies: [.target(name: Modules.dateManager.name)]),
         
-        //MARK: - Player
+        //MARK: - Player manager
         .module(.playerManager,
                 dependencies: [.target(name: Modules.models.name), .target(name: Modules.cas.name)]
                ),
         
-        //MARK: - Appearance
+        //MARK: - Appearance manager
         .module(.appearanceManager, dependencies: [.target(name: Modules.profileManager.name)]),
         
         //MARK: - Onboarding
@@ -167,7 +167,17 @@ let project = Project(
                 ]
                ),
         
-        //MARK: - VideoManager
+        //MARK: - Welcome manager
+        .module(.welcomeManager,
+                dependencies: [
+                    .target(name: Modules.config.name),
+                    .target(name: Modules.profileManager.name),
+                    .target(name: Modules.taskManager.name),
+                    .target(name: Modules.dateManager.name)
+                ]
+               ),
+        
+        //MARK: - Video manager
         .module(.videoManager),
         
         //MARK: - Dependency
@@ -307,6 +317,14 @@ let project = Project(
                     ]
                    ),
         
+        //MARK: - WelcomeView
+        .moduleView(.welcomeView,
+                    dependencies: [
+                        .target(name: Modules.welcomeManager.name),
+                        .target(name: Modules.uiComponents.name)
+                    ]
+                   ),
+        
         //MARK: - NotesView
         .moduleView(.notesView,
                     dependencies: [
@@ -320,8 +338,10 @@ let project = Project(
         //MARK: - MainView
         .moduleView(.mainView,
                     dependencies: [
+                        // Managers
                         .target(name: Modules.appDelegate.name),
                         .target(name: Modules.appearanceManager.name),
+                        .target(name: Modules.customErrors.name),
                         .target(name: Modules.dateManager.name),
                         .target(name: Modules.onboardingManager.name),
                         .target(name: Modules.permissionManager.name),
@@ -329,9 +349,9 @@ let project = Project(
                         .target(name: Modules.recorderManager.name),
                         .target(name: Modules.taskManager.name),
                         .target(name: Modules.subscriptionManager.name),
-                        .target(name: Modules.customErrors.name),
+                        .target(name: Modules.welcomeManager.name),
                         
-                        
+                        // Views
                         .target(name: Modules.calendarView.name),
                         .target(name: Modules.onboaringView.name),
                         .target(name: Modules.listView.name),
@@ -340,6 +360,7 @@ let project = Project(
                         .target(name: Modules.profileView.name),
                         .target(name: Modules.taskView.name),
                         .target(name: Modules.uiComponents.name),
+                        .target(name: Modules.welcomeView.name)
                     ]
                    ),
         

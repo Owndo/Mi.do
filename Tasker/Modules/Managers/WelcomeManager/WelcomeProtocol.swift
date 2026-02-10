@@ -7,6 +7,7 @@
 
 import Foundation
 
-protocol WelcomeManagerProtocol {
-    
+public protocol WelcomeManagerProtocol {
+    func appLaunchState() -> AppLaunchState?
+    func firstTimeOpenDone() async throws 
 }

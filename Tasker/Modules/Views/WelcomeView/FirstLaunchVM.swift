@@ -1,0 +1,93 @@
+//
+//  FirstLaunchVM.swift
+//  OnboardingView
+//
+//  Created by Rodion Akhmedov on 2/9/26.
+//
+
+
+import Foundation
+import SwiftUI
+import AppearanceManager
+import WelcomeManager
+import Models
+
+@Observable
+public final class FirstLaunchVM: WelcomeVMProtocol, HashableNavigation {
+    public var appearanceManager: AppearanceManagerProtocol
+    public var welcomeManager: WelcomeManagerProtocol
+    
+    //MARK: - Private init
+    
+    private init(appearanceManager: AppearanceManagerProtocol, welcomeManager: WelcomeManagerProtocol) {
+        self.appearanceManager = appearanceManager
+        self.welcomeManager = welcomeManager
+    }
+    
+    //MARK: - Titlepublic
+    
+    public var title = FirstLaunchVMResources.title
+    
+    public var createdDate = FirstLaunchVMResources.createdDate
+    
+    //MARK: - Images
+    
+    public let systemImage = FirstLaunchVMResources.systemImage
+    public let systemImage1 = FirstLaunchVMResources.systemImage1
+    public let systemImage2 = FirstLaunchVMResources.systemImage2
+    
+    //MARK: - Description
+    
+    public let description = FirstLaunchVMResources.description
+    public let description1 = FirstLaunchVMResources.description1
+    public let description2 = FirstLaunchVMResources.description2
+    
+    //MARK: - Create VM
+    
+    public static func createVM(appearacneManager: AppearanceManagerProtocol, welcomeManager: WelcomeManagerProtocol) -> FirstLaunchVM {
+        FirstLaunchVM(appearanceManager: appearacneManager, welcomeManager: welcomeManager)
+    }
+    
+    //MARK: - Create previewVM
+    
+    static func createPreviewVM() -> FirstLaunchVM {
+        FirstLaunchVM(appearanceManager: AppearanceManager.createEnvironmentManager(), welcomeManager: WelcomeManager.createMockManager())
+    }
+    
+    public func welcomeToMidoClose() async {
+        do {
+            try await welcomeManager.firstTimeOpenDone()
+        } catch {
+            //TODO: - Error
+            print("Error")
+        }
+    }
+}
+
+//MARK: - Resources
+
+struct FirstLaunchVMResources {
+    // Version 1.1.3
+    ///    var description1: LocalizedStringKey = "Life isn’t a goal, it's a journey.\nWe’re happy to walk it with you."
+    ///    var description2: LocalizedStringKey = "Create tasks, reminders,\nnotes or voice recordings - we’ll\nsafe them and quietly remind you\nwhen it matters."
+    ///    var description3: LocalizedStringKey = "Everything stays in your hands\nand never leaves your device.\nPlan your life with Mi.dō!"
+    
+    
+    //MARK: - Version 1.2
+    
+    //Title
+    static let title = "Welcome to Mi.dō"
+    
+    //Created date
+    static let createdDate = Date(timeIntervalSince1970: 1753717500.0)
+    
+    // Images
+    static let systemImage = "road.lanes.curved.right"
+    static let systemImage1 = "checkmark.square"
+    static let systemImage2 = "hand.point.up.left.and.text"
+    
+    // Descriptions
+    static let description: LocalizedStringKey = "Life isn’t a goal, it's a journey. We’re here to walk it with you."
+    static let description1: LocalizedStringKey = "Create tasks, reminders, notes or voice recordings - we’ll save and gently remind you when it truly matters."
+    static let description2: LocalizedStringKey = "Everything stays in your hands and never leaves your device. Your life. Your data."
+}

@@ -19,7 +19,6 @@ import AppearanceManager
 //TODO: - Keyboard ignore safe area
 public struct ProfileView: View {
     @Environment(\.appearanceManager) private var appearanceManager
-    @Environment(\.colorScheme) private var colorScheme
     
     @Bindable var vm: ProfileVM
     

@@ -322,6 +322,37 @@ public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
 #endif
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
 public extension UIComponentsColors.Color {
+    static var defaultBackground: UIComponentsColors.Color {
+        let bundle = Bundle.module
+        #if os(iOS) || os(tvOS) || os(visionOS)
+        return UIComponentsColors.Color(named: "Background/defaultBackground", in: bundle, compatibleWith: nil)!
+        #elseif os(macOS)
+        return UIComponentsColors.Color(named: NSColor.Name("Background/defaultBackground"), bundle: bundle)!
+        #elseif os(watchOS)
+        return UIComponentsColors.Color(named: "Background/defaultBackground")!
+        #endif
+    }
+}
+
+#if canImport(SwiftUI)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.Color {
+    static var defaultBackground: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("Background/defaultBackground", bundle: bundle)
+    }
+}
+
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, visionOS 1.0, *)
+public extension SwiftUI.ShapeStyle where Self == SwiftUI.Color {
+    static var defaultBackground: SwiftUI.Color {
+        let bundle = Bundle.module
+        return SwiftUI.Color("Background/defaultBackground", bundle: bundle)
+    }
+}
+#endif
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, macOS 10.13, visionOS 1.0, *)
+public extension UIComponentsColors.Color {
     static var tipsBackground: UIComponentsColors.Color {
         let bundle = Bundle.module
         #if os(iOS) || os(tvOS) || os(visionOS)

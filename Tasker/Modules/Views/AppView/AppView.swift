@@ -8,6 +8,7 @@
 import SwiftUI
 import MainView
 import AVKit
+import LaunchView
 
 public struct AppView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -23,14 +24,13 @@ public struct AppView: View {
                     .preferredColorScheme(mainVM.appearanceManager.colorScheme)
                     .environment(\.appearanceManager, mainVM.appearanceManager)
             } else {
-                //            launchScreen()
-                ProgressView()
-                .task {
-                    await vm.startVM()
-                }
+                LaunchView()
+                    .task {
+                        await vm.startVM()
+                    }
             }
         }
-        .sensoryFeedback(vm.feedback(), trigger: vm.trigger)
+        .animation(.default, value: vm.mainViewVM)
         .task(id: colorScheme) {
             vm.mainViewVM?.appearanceManager.updateColors()
         }

@@ -9,14 +9,14 @@ import SwiftUI
 import AVKit
 
 public struct VideoPlayerView: View {
-    var vm: VideoPlayerVM
+    var vm = VideoPlayerVM()
     var url: URL
     
     var backgroundColor: Color = .black
     
-    public init(vm: VideoPlayerVM, url: URL) {
-        self.vm = vm
+    public init(url: URL, backgroundColor: Color = .black) {
         self.url = url
+        self.backgroundColor = backgroundColor
     }
     
     public var body: some View {
@@ -34,7 +34,7 @@ public struct VideoPlayerView: View {
 }
 
 #Preview {
-    VideoPlayerView(vm: VideoPlayerVM(), url: URL(string: "")!)
+    VideoPlayerView(url: URL(string: "")!)
 }
 
 class PlayerUIView: UIView {

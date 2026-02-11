@@ -22,19 +22,10 @@ public final class VideoPlayerVM {
     
     func createPlayer(path: URL) {
         player = videoManager.createPlayer(with: path)
+        player?.play()
     }
     
     public func removePlayer() {
         player = nil
     }
-    
-    public func playVideo() {
-        player?.play()
-    }
-    
-    func pauseVideo() {
-        player?.pause()
-    }
-    
-    
 }

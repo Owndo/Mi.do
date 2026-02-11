@@ -20,10 +20,16 @@ public struct LaunchView: View {
         ZStack {
             Color.defaultBackground.ignoresSafeArea()
             
-            VideoPlayerView(
-                url: vm.urlToVideo(colorScheme: colorScheme),
-                backgroundColor: .defaultBackground
-            )
+            if let player = vm.player {
+                VideoPlayerView(player: player,backgroundColor: .defaultBackground)
+            }
+        }
+        .animation(.default, value: vm.player)
+        .task {
+            vm.createPlayer(colorScheme: colorScheme)
+        }
+        .onDisappear {
+            vm.removeManager()
         }
     }
 }

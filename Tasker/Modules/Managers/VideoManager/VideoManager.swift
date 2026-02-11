@@ -8,30 +8,40 @@
 import Foundation
 import AVKit
 
-//MARK: - Manager only for launch screen video
-
 public final class VideoManager {
     
-    private init() {
-        disableAudioSessionCompletely()
-    }
+    var avPlayer: AVPlayer?
     
     //MARK: - Create Manager
     
     public static func createManager() -> VideoManager {
-         VideoManager()
+        let manager = VideoManager()
+        manager.disableAudioSessionCompletely()
+        
+        return manager
     }
+    
+    //MARK: - Create player
     
     public func createPlayer(with url: URL) -> AVPlayer {
         disableAudioSessionCompletely()
         
-        let avPlayer = AVPlayer(url: url)
-        return avPlayer
+        avPlayer = AVPlayer(url: url)
+        return avPlayer!
     }
+    
+    //MARK: - Invalidete player
+    
+    public func removeManager() {
+        avPlayer = nil
+    }
+    
+    //MARK: - Session setUp
     
     private func disableAudioSessionCompletely() {
         let session = AVAudioSession.sharedInstance()
         do {
+            // let to play video without interraption other audio/video affects
             try session.setCategory(.ambient)
         } catch {
             print(error)

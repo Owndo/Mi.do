@@ -9,32 +9,19 @@ import SwiftUI
 import AVKit
 
 public struct VideoPlayerView: View {
-    var vm = VideoPlayerVM()
-    var url: URL
+    var avPlayer: AVPlayer
     
     var backgroundColor: Color = .black
     
-    public init(url: URL, backgroundColor: Color = .black) {
-        self.url = url
+    public init(player: AVPlayer, backgroundColor: Color = .black) {
+        self.avPlayer = player
         self.backgroundColor = backgroundColor
     }
     
     public var body: some View {
-        ZStack {
-            if let player = vm.player {
-                PlayerView(player: player, color: backgroundColor)
-                    .allowsHitTesting(false)
-            }
-        }
-        .animation(.default, value: vm.player)
-        .task {
-            vm.createPlayer(path: url)
-        }
+        PlayerView(player: avPlayer, color: backgroundColor)
+            .allowsHitTesting(false)
     }
-}
-
-#Preview {
-    VideoPlayerView(url: URL(string: "")!)
 }
 
 class PlayerUIView: UIView {

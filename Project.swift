@@ -371,6 +371,7 @@ let project = Project(
                    ),
         .moduleView(.launchView,
                     dependencies: [
+                        .target(name: Modules.videoManager.name),
                         .target(name: Modules.videoPlayerView.name),
                         .target(name: Modules.uiComponents.name)
                     ]

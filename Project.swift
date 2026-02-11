@@ -317,6 +317,12 @@ let project = Project(
                     ]
                    ),
         
+            .moduleView(.videoPlayerView,
+                        dependencies: [
+                            .target(name: Modules.videoManager.name)
+            ]
+                       ),
+        
         //MARK: - WelcomeView
         .moduleView(.welcomeView,
                     dependencies: [
@@ -369,7 +375,8 @@ let project = Project(
             .appView,
             dependencies: [
                 .target(name: Modules.mainView.name),
-                .target(name: Modules.videoManager.name)
+                .target(name: Modules.videoPlayerView.name),
+              
             ]
         )
     ],

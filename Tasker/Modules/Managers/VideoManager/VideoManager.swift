@@ -12,7 +12,9 @@ import AVKit
 
 public final class VideoManager {
     
-    private init() {}
+    private init() {
+        disableAudioSessionCompletely()
+    }
     
     //MARK: - Create Manager
     

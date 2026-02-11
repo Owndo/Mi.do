@@ -96,6 +96,7 @@ public struct MainView: View {
             .sensoryFeedback(.selection, trigger: vm.sheetNavigation)
             .sensoryFeedback(.selection, trigger: vm.path)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
+            .sensoryFeedback(.error, trigger: vm.paywallVM)
         }
     }
     
@@ -154,6 +155,10 @@ public struct MainView: View {
                     )
                 
                 Spacer()
+            }
+            
+            if let vm = vm.paywallVM {
+                PaywallView(vm: vm)
             }
         }
         .overlay(

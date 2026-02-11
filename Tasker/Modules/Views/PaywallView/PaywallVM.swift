@@ -9,9 +9,10 @@ import Foundation
 import StoreKit
 import SwiftUI
 import SubscriptionManager
+import Models
 
 @Observable
-public final class PaywallVM {
+public final class PaywallVM: HashableNavigation {
     private let subscriptionManager: SubscriptionManagerProtocol
     
     //MARK: - Texts

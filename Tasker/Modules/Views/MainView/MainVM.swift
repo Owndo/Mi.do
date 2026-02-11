@@ -56,6 +56,8 @@ public final class MainVM: HashableNavigation {
     private var profileVM: ProfileVM?
     private var taskViewVM: TaskVM?
     
+    var paywallVM: PaywallVM?
+    
     var weekVM: WeekVM
     var listVM: ListVM
     
@@ -125,6 +127,10 @@ public final class MainVM: HashableNavigation {
     var presentationPosition: PresentationDetent = PresentationMode.base.detent {
         didSet {
             backgroundAnimation.toggle()
+        }
+        willSet {
+            disabledButton = false
+            paywallVM = nil
         }
     }
     
@@ -400,6 +406,19 @@ public final class MainVM: HashableNavigation {
         telemetryAction(.mainViewAction(.profileButtonTapped))
     }
     
+    //MARK: - Create PaywallVM
+    
+    private func createPaywallVM() async {
+        paywallVM = await PaywallVM.createPaywallVM(subscriptionManager: subscriptionManager)
+        disabledButton = true
+        
+        paywallVM?.closePaywall = { [weak self] in
+            guard let self else { return }
+            self.paywallVM = nil
+            self.disabledButton = false
+        }
+    }
+    
     //MARK: - Update title
     
     func profileModelSave() async {
@@ -418,14 +437,10 @@ public final class MainVM: HashableNavigation {
     
     func startAfterChek() async throws {
         
-        //        guard await subscriptionManager.hasSubscription() else {
-        //            while showPaywall {
-        //                try await Task.sleep(for: .seconds(0.1))
-        //            }
-        //
-        //            mainViewPaywall = false
-        //            return
-        //        }
+        guard await subscriptionManager.hasSubscription() else {
+            await createPaywallVM()
+            return
+        }
         
         recordingState = .recording
         

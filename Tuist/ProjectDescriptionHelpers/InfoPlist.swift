@@ -13,7 +13,8 @@ public extension InfoPlist {
         .extendingDefault(
             with: [
                 "UILaunchStoryboardName": "LaunchScreen",
-                "CFBundleDisplayName": "Mi.dō",
+                "CFBundleDisplayName": "$(DISPLAY_NAME)",
+                "CFBundleName": "$(DISPLAY_NAME)",
                 "CFBundleShortVersionString": "\(App.version)",
                 "NSUserNotificationsUsageDescription": "Notifications may include alerts, sounds, or badges. Can be adjusted anytime in Settings.",
                 "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",

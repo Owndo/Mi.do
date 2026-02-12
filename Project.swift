@@ -11,8 +11,10 @@ let project = Project(
                 "SWIFT_VERSION": "5.0"
             ]
         ),
-        debug: SettingsDictionary().setProjectVersions(),
-        release: SettingsDictionary().setProjectVersions(),
+        configurations: [
+            .debug(name: "Debug", settings: SettingsDictionary().setProjectVersions()),
+            .release(name: "Release", settings: SettingsDictionary().setProjectVersions())
+        ],
         defaultSettings: .recommended
     ),
     targets: [
@@ -36,15 +38,11 @@ let project = Project(
             settings: .settings(
                 base: [:],
                 configurations: [
-                    .debug(name: "Test",
-                           settings: [
-                            "PRODUCT_BUNDLE_IDENTIFIER": "mido.test"
-                           ]
-                          ),
                     .debug(
                         name: "Debug",
                         settings: [
-                            "PRODUCT_BUNDLE_IDENTIFIER": "mido.debug"
+                            "PRODUCT_BUNDLE_IDENTIFIER": "mido.debug",
+                            "DISPLAY_NAME": "Mi.Debug"
                         ]
                     ),
                     .release(
@@ -415,19 +413,6 @@ let project = Project(
                     .runAction(
                         configuration: .debug,
                         attachDebugger: true,
-                        options: .options(storeKitConfigurationPath: "Mi.do/Modules/Managers/SubscriptionManager/Mi.storekit"),
-                        expandVariableFromTarget: .target("Mi.do"),
-                        launchStyle: .automatically
-                    )
-        ),
-        Scheme.scheme(
-            name: "Test",
-            shared: true,
-            buildAction: .buildAction(targets: ["Mi.do"]),
-            runAction:
-                    .runAction(
-                        configuration: .release,
-                        attachDebugger: false,
                         options: .options(storeKitConfigurationPath: "Mi.do/Modules/Managers/SubscriptionManager/Mi.storekit"),
                         expandVariableFromTarget: .target("Mi.do"),
                         launchStyle: .automatically

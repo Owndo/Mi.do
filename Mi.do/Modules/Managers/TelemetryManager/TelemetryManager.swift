@@ -24,15 +24,15 @@ public final class TelemetryManager: TelemetryManagerProtocol {
     //MARK: - Manager creator
     
     public static func createTelemetryManager(mock: Bool = false) -> TelemetryManagerProtocol {
-        #if targetEnvironment(simulator) || DEBUG
+#if targetEnvironment(simulator) || DEBUG
         return MockTelemetryManager()
-        #else
+#else
         guard mock else {
             return TelemetryManager()
         }
         
         return MockTelemetryManager()
-        #endif
+#endif
     }
     
     //MARK: - Open screen actions

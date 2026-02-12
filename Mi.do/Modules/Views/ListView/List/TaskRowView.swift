@@ -190,18 +190,27 @@ struct TaskRowView: View {
     
     @ViewBuilder
     private func NotificationDeadlineDate(task: UITaskModel) -> some View {
-        if vm.taskForShowDeadline.contains(task) {
-            Text(LocalizedStringKey(vm.timeRemainingString(task: task)), bundle: .module)
-                .font(.system(.subheadline, design: .rounded, weight: .regular))
-                .foregroundStyle(vm.isTaskOverdue(task: task) ? .accentRed : colorScheme.invertedTertiaryLabel(task))
-                .underline(true, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
-        } else {
-            Text(Date(timeIntervalSince1970: task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
+        ZStack {
+            if vm.taskForShowDeadline.contains(task) {
+                Text(LocalizedStringKey(vm.timeRemainingString(task: task)), bundle: .module)
+                    .font(.system(.subheadline, design: .rounded, weight: .regular))
+                    .foregroundStyle(vm.isTaskOverdue(task: task) ? .accentRed : colorScheme.invertedTertiaryLabel(task))
+                    .underline(true, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
+                    .transition(.opacity.combined(with: .blurReplace))
+            }
+            
+            if !vm.taskForShowDeadline.contains(task) {
+                Text(Date(timeIntervalSince1970: task.notificationDate),
+                     format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
                 .foregroundStyle(colorScheme.invertedTertiaryLabel(task))
-                .underline(vm.isTaskHasDeadline(task: task) ? true : false, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
+                .underline(vm.isTaskHasDeadline(task: task),
+                           pattern: .dot,
+                           color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
                 .padding(.leading, 6)
                 .lineLimit(1)
+                .transition(.opacity.combined(with: .blurReplace))
+            }
         }
     }
     

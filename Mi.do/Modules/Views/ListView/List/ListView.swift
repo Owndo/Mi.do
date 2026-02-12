@@ -31,6 +31,7 @@ public struct ListView: View {
             .animation(.easeInOut, value: vm.completedTasksHidden)
             .animation(.default, value: vm.activeTasks)
             .animation(.default, value: vm.completedTasks)
+            .animation(.easeInOut(duration: 0.25), value: vm.taskForShowDeadline)
             .sensoryFeedback(.impact, trigger: vm.completedTasksHidden)
             .sensoryFeedback(.success, trigger: vm.taskDoneTrigger)
             .sensoryFeedback(.decrease, trigger: vm.deletTaskButtonTrigger)

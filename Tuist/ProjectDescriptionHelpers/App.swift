@@ -9,7 +9,7 @@ import Foundation
 import ProjectDescription
 
 public struct App {
-    public static let name = "Tasker"
+    public static let name = "Mi.do"
     public static let destinations: ProjectDescription.Destinations = .iOS
     public static let bundleId = "mido.robocode"
     public static let teamId = "5M63H38ZMF"

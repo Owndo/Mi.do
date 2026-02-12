@@ -16,13 +16,13 @@ public enum ModuleKind: String {
     var folder: String {
         switch self {
         case .feature:
-            return "Tasker/Modules"
+            return "Mi.do/Modules"
         case .manager:
-            return "Tasker/Modules/Managers"
+            return "Mi.do/Modules/Managers"
         case .view:
-            return "Tasker/Modules/Views"
+            return "Mi.do/Modules/Views"
         case .tests:
-            return "Tasker/Tests"
+            return "Mi.do/Tests"
         }
     }
 }

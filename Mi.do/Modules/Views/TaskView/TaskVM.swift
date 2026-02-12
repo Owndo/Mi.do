@@ -371,13 +371,13 @@ public final class TaskVM: HashableNavigation {
     private func setUpTime() async {
         sourseDateOfNotification = Date(timeIntervalSince1970: task.notificationDate)
         
-        guard let data = await firstTimeCreateTask(task) else {
+        guard let date = await firstTimeCreateTask(task) else {
             notificationDate = createNotificationDateFromExistTask()
             dateHasBeenChanged = false
             return
         }
         
-        notificationDate = data
+        notificationDate = date
         dateHasBeenChanged = false
     }
     
@@ -575,10 +575,9 @@ public final class TaskVM: HashableNavigation {
     //MARK: - First time check
     
     private func firstTimeCreateTask(_ task: UITaskModel) async -> Date? {
-        //        guard await taskManager.activeTasks.contains(where: { $0.id == task.id }) else {
-        //            defaultTimeHasBeenSet = true
-        //            return recorderManager.dateTimeFromtext ?? dateManager.combineDateAndTime(timeComponents: originalNotificationTimeComponents)
-        //        }
+        if await !taskManager.tasks.contains(where: { $0.value.id == task.id }) {
+            return Date(timeIntervalSince1970: task.notificationDate)
+        }
         
         return nil
     }

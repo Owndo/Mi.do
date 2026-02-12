@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(
-    name: "Tasker",
+    name: "Mi.do",
     settings: .settings(
         base: .init().automaticCodeSigning(devTeam: App.teamId).merging(
             [
@@ -24,27 +24,33 @@ let project = Project(
             deploymentTargets: .iOS("17.0"),
             infoPlist: .infoPlist(),
             sources: [.glob(
-                "Tasker/**",
+                "Mi.do/**",
                 excluding: [
-                    "Tasker/Modules/**",
-                    "Tasker/Tests/**",
+                    "Mi.do/Modules/**",
+                    "Mi.do/Tests/**",
                 ]
             )],
-            resources: [.glob(pattern: "Tasker/Resources/**", excluding: ["Tasker/Resources/Info.plist"])],
-            entitlements: .file(path: "Tasker/Tasker.entitlements"),
+            resources: [.glob(pattern: "Mi.do/Resources/**", excluding: ["Mi.do/Resources/Info.plist"])],
+            entitlements: .file(path: "Mi.do/Mi.do.entitlements"),
             dependencies: [.target(name: Modules.appView.name),],
             settings: .settings(
                 base: [:],
                 configurations: [
+                    .debug(name: "Test",
+                           settings: [
+                            "PRODUCT_BUNDLE_IDENTIFIER": "mido.test"
+                           ]
+                          ),
                     .debug(
                         name: "Debug",
                         settings: [
-                            "PRODUCT_BUNDLE_IDENTIFIER": "mido.robocode.debug"
+                            "PRODUCT_BUNDLE_IDENTIFIER": "mido.debug"
                         ]
                     ),
                     .release(
                         name: "Release",
                         settings: [
+                            // Impossible to change after first realease =(
                             "PRODUCT_BUNDLE_IDENTIFIER": "mido.robocode"
                         ]
                     )
@@ -389,34 +395,47 @@ let project = Project(
     ],
     schemes: [
         Scheme.scheme(
-            name: "Tasker",
+            name: "Mi.do",
             shared: true,
-            buildAction: .buildAction(targets: ["Tasker"]),
+            buildAction: .buildAction(targets: ["Mi.do"]),
             runAction:
                     .runAction(
                         configuration: .release,
                         attachDebugger: false,
-                        options: .options(storeKitConfigurationPath: "Tasker/Modules/Managers/SubscriptionManager/Mi.storekit"),
-                        expandVariableFromTarget: .target("Tasker"),
+                        options: .options(storeKitConfigurationPath: "Mi.do/Modules/Managers/SubscriptionManager/Mi.storekit"),
+                        expandVariableFromTarget: .target("Mi.do"),
                         launchStyle: .automatically
                     )
         ),
         Scheme.scheme(
             name: "Debug",
             shared: true,
-            buildAction: .buildAction(targets: ["Tasker"]),
+            buildAction: .buildAction(targets: ["Mi.do"]),
             runAction:
                     .runAction(
                         configuration: .debug,
                         attachDebugger: true,
-                        options: .options(storeKitConfigurationPath: "Tasker/Modules/Managers/SubscriptionManager/Mi.storekit"),
-                        expandVariableFromTarget: .target("Tasker"),
+                        options: .options(storeKitConfigurationPath: "Mi.do/Modules/Managers/SubscriptionManager/Mi.storekit"),
+                        expandVariableFromTarget: .target("Mi.do"),
                         launchStyle: .automatically
                     )
-        )
+        ),
+        Scheme.scheme(
+            name: "Test",
+            shared: true,
+            buildAction: .buildAction(targets: ["Mi.do"]),
+            runAction:
+                    .runAction(
+                        configuration: .release,
+                        attachDebugger: false,
+                        options: .options(storeKitConfigurationPath: "Mi.do/Modules/Managers/SubscriptionManager/Mi.storekit"),
+                        expandVariableFromTarget: .target("Mi.do"),
+                        launchStyle: .automatically
+                    )
+        ),
     ],
     additionalFiles: [
-        "Tasker/Tasker.entitlements"
+        "Mi.do/Mi.do.entitlements"
     ],
     resourceSynthesizers: [
         .custom(

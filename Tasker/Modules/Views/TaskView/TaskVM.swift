@@ -85,6 +85,15 @@ public final class TaskVM: HashableNavigation {
     var disabledButton = false
     var defaultTimeHasBeenSet = false
     
+    // Scroll Id
+    var scrollId: String?
+    var anchor: UnitPoint = .top
+    
+    var mainSectionID = "TitleSectionID"
+    var dateSectionID = "DateSectionID"
+    var timeSectionID = "TimeSectionID"
+    var deadlineSectionID = "DeadlineSectionID"
+    
     var taskCompletedforToday = false
     
     var initing = false
@@ -92,7 +101,6 @@ public final class TaskVM: HashableNavigation {
     //MARK: - Show paywall
     
     var showPaywall = false
-    var paywallHapticFeedback = false
     
     // MARK: - Confirmation dialog
     
@@ -110,12 +118,23 @@ public final class TaskVM: HashableNavigation {
         }
     }
     
+    //MARK: - Deadline Toggle
+    
+    var deadlineToggle = false {
+        willSet {
+            Task {
+                await checkSubscriptionAfterToggle(newValue)
+            }
+        }
+    }
+    
+    var showDeadlineDates = false
+    
     var hasDeadline = false {
         didSet {
             if hasDeadline {
                 Task {
                     await checkSubscriptionForDeadline()
-                    showDeadline = true
                 }
             } else {
                 removeDeadlineFromTask()
@@ -324,7 +343,6 @@ public final class TaskVM: HashableNavigation {
     }
     
     private func createPaywallVM() async {
-        paywallHapticFeedback.toggle()
         paywallVM = await PaywallVM.createPaywallVM(subscriptionManager: subscriptionManager)
         
         paywallVM?.closePaywall = {
@@ -396,6 +414,11 @@ public final class TaskVM: HashableNavigation {
     // MARK: - Actions
     func selectDateButtonTapped() {
         showDatePicker.toggle()
+        if showDatePicker {
+            scrollToDate()
+        } else {
+            scrollToMainContent()
+        }
         
         // telemetry
         telemetryAction(.taskAction(.selectDateButtonTapped))
@@ -403,6 +426,11 @@ public final class TaskVM: HashableNavigation {
     
     func selectTimeButtonTapped() {
         showTimePicker.toggle()
+        if showTimePicker {
+            scrollToTime()
+        } else {
+            scrollToMainContent()
+        }
         
         // telemetry
         telemetryAction(.taskAction(.selectTimeButtonTapped))
@@ -571,6 +599,8 @@ public final class TaskVM: HashableNavigation {
         showDatePicker = false
         showTimePicker = false
         showDeadline = false
+        
+        scrollToMainContent()
     }
     
     private func checkTimeAfterSelected() {
@@ -609,8 +639,12 @@ public final class TaskVM: HashableNavigation {
         hasDeadline = true
     }
     
-    func showDedalineButtonTapped() {
-        showDeadline.toggle()
+    func showDedalineDatesButtonTapped() async {
+        guard await subscriptionManager.hasSubscription() else {
+            return
+        }
+        
+        showDeadlineDates.toggle()
     }
     
     func removeDeadlineFromTask() {
@@ -629,6 +663,7 @@ public final class TaskVM: HashableNavigation {
     }
     
     //MARK: - Auto close functionality
+    
     private func checkTimeAfterDeadlineSelected() {
         guard initing == false else {
             return
@@ -861,10 +896,76 @@ public final class TaskVM: HashableNavigation {
         }
     }
     
+    //MARK: - Deadline Toggle Logic
+    
+    func checkSubscriptionAfterToggle(_ newValue: Bool) async {
+        
+        // If false - invalidate deadline
+        guard newValue else {
+            scrollToMainContent()
+            showDeadlineDates = false
+            task.deadline = nil
+            return
+        }
+        
+        // Check Subscription and wait update
+        guard await subscriptionManager.hasSubscription() else {
+            try? await Task.sleep(for: .seconds(0.3))
+            
+            await createPaywallVM()
+            
+            //TODO: After user pay it has to be opened
+            while paywallVM != nil  {
+                try? await Task.sleep(for: .seconds(0.3))
+            }
+            
+            if await subscriptionManager.hasSubscription() {
+                // If user bought - pen deadline dates
+                showDeadlineDates = true
+                deadlineToggle = true
+                scrollToDeadlineDates()
+            } else {
+                // If user close paywall
+                deadlineToggle = false
+            }
+            
+            return
+        }
+        
+        scrollToDeadlineDates()
+        showDeadlineDates = true
+    }
+    
+    //MARK: - Scroll to main content
+    
+    private func scrollToMainContent() {
+        scrollId = mainSectionID
+        anchor = .center
+    }
+    
+    //MARK: - Scroll to date
+    
+    private func scrollToDate() {
+        scrollId = dateSectionID
+        anchor = .center
+    }
+    
+    private func scrollToTime() {
+        scrollId = timeSectionID
+        anchor = .center
+    }
+    
+    //MARK: - Scroll to deadline
+    
+    private func scrollToDeadlineDates() {
+        scrollId = deadlineSectionID
+        anchor = .center
+    }
     
     
     
     //MARK: - Telemetry action
+    
     private func telemetryAction(_ action: EventType) {
         telemetryManager.logEvent(action)
     }

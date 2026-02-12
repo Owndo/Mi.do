@@ -26,6 +26,7 @@ public final actor SubscriptionManager: SubscriptionManagerProtocol {
     public static func createSubscriptionManager() async -> SubscriptionManagerProtocol {
         let subscriptionManager = SubscriptionManager()
         subscriptionManager.updatePurchase = await subscriptionManager.backgroundTransactionUpdate()
+        await subscriptionManager.updatePurchase()
         
         return subscriptionManager
     }

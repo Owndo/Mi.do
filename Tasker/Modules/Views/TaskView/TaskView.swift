@@ -46,6 +46,7 @@ public struct TaskView: View {
                             .padding(.top, preview ? 20 : 0)
                         
                         MainSection()
+                            .id(vm.mainSectionID)
                         
                         SetupSection()
                         
@@ -56,11 +57,13 @@ public struct TaskView: View {
                             .padding(.bottom, preview ? 0 : 120)
                     }
                 }
-                .ignoresSafeArea(edges: .bottom)
+                .scrollPosition(id: $vm.scrollId, anchor: vm.anchor)
                 .scrollIndicators(.hidden)
+                .scrollBounceBehavior(.basedOnSize)
                 .scrollDismissesKeyboard(.immediately)
                 .disabled(vm.showPaywall)
                 .padding(.horizontal, 16)
+                .ignoresSafeArea(edges: .bottom)
                 .safeAreaInset(edge: .bottom) {
                     SaveButton()
                         .disabled(vm.paywallVM != nil)
@@ -92,11 +95,11 @@ public struct TaskView: View {
                 .sensoryFeedback(.selection, trigger: vm.showDeadline)
                 .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)
                 .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.isRecording)
-                .sensoryFeedback(.error, trigger: vm.paywallHapticFeedback)
+                .sensoryFeedback(.error, trigger: vm.paywallVM)
                 .animation(.default, value: vm.task.audio)
                 .animation(.easeInOut, value: vm.showDatePicker)
                 .animation(.easeInOut, value: vm.showTimePicker)
-                .animation(.easeInOut, value: vm.showDeadline)
+                .animation(.easeInOut, value: vm.showDeadlineDates)
                 .animation(.easeInOut, value: vm.showDayOfWeekSelector)
                 .animation(.default, value: vm.playerManager.currentTime)
                 .sheet(isPresented: $vm.shareViewIsShowing) {
@@ -353,12 +356,15 @@ public struct TaskView: View {
     private func SetupSection() -> some View {
         VStack(spacing: 0) {
             DateSelection()
+                .id(vm.dateSectionID)
             
             TimeSelection()
+                .id(vm.timeSectionID)
             
             RepeatSelection()
             
             Deadline()
+                .id(vm.deadlineSectionID)
         }
         .background(
             RoundedRectangle(cornerRadius: 26)
@@ -619,7 +625,9 @@ public struct TaskView: View {
         VStack {
             HStack {
                 Button {
-                    vm.showDedalineButtonTapped()
+                    Task {
+                        await vm.showDedalineDatesButtonTapped()
+                    }
                 } label: {
                     Image(systemName: "flame.fill")
                         .font(.system(.title3, design: .rounded, weight: .regular))
@@ -638,7 +646,7 @@ public struct TaskView: View {
                             .foregroundStyle(colorScheme.invertedSecondaryLabel(vm.task))
                     }
                     
-                    Toggle(isOn: $vm.hasDeadline) {}
+                    Toggle(isOn: $vm.deadlineToggle) {}
                         .tint(vm.appearanceManager.accentColor)
                         .padding(.trailing, 2)
                         .fixedSize()
@@ -647,20 +655,13 @@ public struct TaskView: View {
             .padding(.leading, 17)
             .padding(.trailing, 14)
             
-            if vm.showDeadline {
+            if vm.showDeadlineDates {
                 DatePicker("", selection: $vm.deadLineDate, in: vm.notificationDate..., displayedComponents: .date, )
                     .datePickerStyle(.graphical)
                     .id(vm.deadLineDate)
                     .tint(vm.appearanceManager.accentColor)
             }
         }
-        //        .onChange(of: vm.hasDeadline) { oldValue, newValue in
-        //            Task {
-        //                if newValue {
-        //                    await vm.checkSubscriptionForDeadline()
-        //                }
-        //            }
-        //        }
         .clipped()
     }
     

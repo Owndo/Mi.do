@@ -120,6 +120,7 @@ public final class PaywallVM: HashableNavigation {
         do {
             try await subscriptionManager.makePurchase(selecetedProduct)
             pending = false
+            closePaywall?()
         } catch {
             alert = .purchaseFailed
             showAlert = true

@@ -56,6 +56,8 @@ public final class ProfileVM: HashableNavigation {
     
     var settingsScreenIsPresented = false
     
+    var hasSubscription = false
+    
     // Animation
     var gearAnimation = false
     var rotationAngle: Double = 0
@@ -173,13 +175,14 @@ public final class ProfileVM: HashableNavigation {
                 selectedImage = Image(uiImage: uiImage)
             }
         }
+        
         photoPosition = profileModel.photoPosition
         createdDate = Date(timeIntervalSince1970: profileModel.createdProfile)
+        await hasSubscription()
     }
     
-    func isnotActiveSubscription() -> Bool {
-        true
-        //        !subscriptionManager.subscribed
+    func hasSubscription() async {
+        self.hasSubscription = await subscriptionManager.hasSubscription()
     }
     
     //MARK: - Subscription Button tapped
@@ -330,14 +333,12 @@ public final class ProfileVM: HashableNavigation {
             return false
         }
         return true
-        //        casManager.getData(profileModel.photo) != nil
     }
     
     private func addPhotoToProfile(image: Data) async {
         try? await profileManager.updatePhoto(image)
         photoPosition = .zero
         profileModel.photoPosition = photoPosition
-        //        casManager.saveProfileData(profileModel)
         selectedItems.removeAll()
     }
     

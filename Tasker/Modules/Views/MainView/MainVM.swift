@@ -631,7 +631,12 @@ public final class MainVM: HashableNavigation {
         disabledButton.toggle()
     }
     
+    public func updateSubscriptions() async {
+        await subscriptionManager.updatePurchase()
+    }
+    
     //MARK: Function before closeApp
+    
     public func closeApp() async {
         //        let backgroundManager = BackgroundManager()
         //        casManager.updateCASAfterWork()
@@ -640,6 +645,7 @@ public final class MainVM: HashableNavigation {
     }
     
     //MARK: - Background update
+    
     public func backgroundUpdate() async {
         //        let backgroundManager = BackgroundManager()
         

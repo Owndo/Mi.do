@@ -347,7 +347,7 @@ public struct ProfileView: View {
                 vm.taskHistoryButtonTapped()
             }
             
-            if vm.isnotActiveSubscription() {
+            if !vm.hasSubscription {
                 CustomDivider()
                     .frame(height: 1)
                     .padding(.leading, 38)

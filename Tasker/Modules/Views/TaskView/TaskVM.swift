@@ -128,30 +128,26 @@ public final class TaskVM: HashableNavigation {
         }
     }
     
+    /// Only for toogle
+    var deadlineDateSelected = false
+    
     var showDeadlineDates = false
     
-    var hasDeadline = false {
-        didSet {
-            if hasDeadline {
-                Task {
-                    await checkSubscriptionForDeadline()
-                }
-            } else {
-                removeDeadlineFromTask()
-            }
-            //            if hasDeadline == true {
-            //                guard !initing else {
-            //                    return
-            //                }
-            //                showDeadline = true
-            //            } else {
-            //                removeDeadlineFromTask()
-            //            }
+    //    var hasDeadline = false
+    
+    var resettingDeadline = false {
+        willSet {
+            print(newValue)
         }
     }
     
-    
     var deadLineDate = Date() {
+        willSet {
+            if !resettingDeadline {
+                task.deadline = newValue.timeIntervalSince1970
+            }
+        }
+        
         didSet {
             checkTimeAfterDeadlineSelected()
             setUpDeadlineDate()
@@ -365,9 +361,8 @@ public final class TaskVM: HashableNavigation {
     private func preSetTask() {
         setUpRepeat()
         
-        if let endDate = task.deadline {
-            hasDeadline = true
-            deadLineDate = Date(timeIntervalSince1970: endDate)
+        if let deadlineDate = task.deadline {
+            deadLineDate = Date(timeIntervalSince1970: deadlineDate)
         }
     }
     
@@ -608,8 +603,6 @@ public final class TaskVM: HashableNavigation {
             return
         }
         
-        isDeadlineInCorrectDate()
-        
         debounceTimer?.invalidate()
         lastChangeTime = Date()
         
@@ -625,32 +618,6 @@ public final class TaskVM: HashableNavigation {
                     self.dateHasBeenSelected()
                 }
             }
-        }
-    }
-    
-    //MARK: - Deadline
-    func setUpDeadlineDate() {
-        task.deadline = deadLineDate.timeIntervalSince1970
-        
-        if task.repeatTask == .never {
-            task.repeatTask = .daily
-        }
-        
-        hasDeadline = true
-    }
-    
-    func removeDeadlineFromTask() {
-        showDeadline = false
-        //        task.deadline = nil
-    }
-    
-    func isDeadlineInCorrectDate() {
-        guard hasDeadline else {
-            return
-        }
-        
-        if notificationDate.timeIntervalSince1970 > deadLineDate.timeIntervalSince1970 {
-            deadLineDate = notificationDate
         }
     }
     
@@ -859,6 +826,22 @@ public final class TaskVM: HashableNavigation {
         disabledButton.toggle()
     }
     
+    //MARK: - Set Up Deadline
+    
+    func setUpDeadlineDate() {
+        guard task.deadline != nil else {
+            return
+        }
+        
+        deadlineDateSelected = true
+        
+        showDeadlineDates = false
+        deadlineToggle = true
+        
+        scrollToMainContent()
+    }
+    
+    
     //MARK: - Show deadline dates
     
     func showDedalineDatesButtonTapped() async {
@@ -871,10 +854,9 @@ public final class TaskVM: HashableNavigation {
                 
                 if await subscriptionManager.hasSubscription() {
                     showDeadlineDates = true
+                    resettingDeadline = false
+                    
                     scrollToDeadlineDates()
-                } else {
-                    showDeadlineDates = false
-                    scrollToMainContent()
                 }
             }
             
@@ -883,31 +865,17 @@ public final class TaskVM: HashableNavigation {
         
         if showDeadlineDates {
             showDeadlineDates = false
+            
+            if task.deadline == nil {
+                deadlineToggle = false
+            }
+            
             scrollToMainContent()
         } else {
             showDeadlineDates = true
+            resettingDeadline = false
+            
             scrollToDeadlineDates()
-        }
-    }
-    
-    //MARK: Subscription for deadline
-    
-    func checkSubscriptionForDeadline() async {
-        if await !subscriptionManager.hasSubscription() {
-            try? await Task.sleep(for: .seconds(0.3))
-            
-            await createPaywallVM()
-            
-            //TODO: After user pay it has to be opened
-            while paywallVM != nil  {
-                try? await Task.sleep(for: .seconds(0.3))
-            }
-            
-            if await subscriptionManager.hasSubscription() {
-                hasDeadline = true
-            } else {
-                hasDeadline = false
-            }
         }
     }
     
@@ -917,7 +885,14 @@ public final class TaskVM: HashableNavigation {
         
         // If false - invalidate deadline
         guard newValue else {
-            deadlineToggleOff()
+            showDeadlineDates = false
+            task.deadline = nil
+            deadlineDateSelected = false
+            resettingDeadline = true
+            return
+        }
+        
+        guard !deadlineDateSelected else {
             return
         }
         
@@ -936,6 +911,8 @@ public final class TaskVM: HashableNavigation {
                 // If user bought - pen deadline dates
                 showDeadlineDates = true
                 deadlineToggle = true
+                resettingDeadline = false
+                
                 scrollToDeadlineDates()
             } else {
                 // If user close paywall
@@ -945,14 +922,10 @@ public final class TaskVM: HashableNavigation {
             return
         }
         
-        scrollToDeadlineDates()
         showDeadlineDates = true
-    }
-    
-    private func deadlineToggleOff() {
-        scrollToMainContent()
-        showDeadlineDates = false
-        task.deadline = nil
+        resettingDeadline = false
+        
+        scrollToDeadlineDates()
     }
     
     //MARK: - Scroll to main content
@@ -968,6 +941,8 @@ public final class TaskVM: HashableNavigation {
         scrollId = dateSectionID
         anchor = .center
     }
+    
+    //MARK: - Scroll to time
     
     private func scrollToTime() {
         scrollId = timeSectionID

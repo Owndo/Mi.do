@@ -128,18 +128,11 @@ public final class TaskVM: HashableNavigation {
         }
     }
     
-    /// Only for toogle
-    var deadlineDateSelected = false
-    
     var showDeadlineDates = false
     
-    //    var hasDeadline = false
-    
-    var resettingDeadline = false {
-        willSet {
-            print(newValue)
-        }
-    }
+    /// Only for toogle
+    var deadlineDateSelected = false
+    var resettingDeadline = false
     
     var deadLineDate = Date() {
         willSet {
@@ -889,6 +882,7 @@ public final class TaskVM: HashableNavigation {
             task.deadline = nil
             deadlineDateSelected = false
             resettingDeadline = true
+            deadLineDate = Date()
             return
         }
         

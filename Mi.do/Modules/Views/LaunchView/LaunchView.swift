@@ -24,9 +24,10 @@ public struct LaunchView: View {
                 VideoPlayerView(player: player,backgroundColor: .defaultBackground)
             }
         }
+        .sensoryFeedback(vm.feedback(), trigger: vm.trigger)
         .animation(.default, value: vm.player)
         .task {
-            vm.createPlayer(colorScheme: colorScheme)
+            await vm.createPlayer(colorScheme: colorScheme)
         }
         .onDisappear {
             vm.removeManager()

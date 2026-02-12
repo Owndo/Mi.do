@@ -20,10 +20,19 @@ final class LaunchViewVM {
     /// Triger only for haptic feedback
     var trigger = 0
     
-    func createPlayer(colorScheme: ColorScheme) {
+    @MainActor
+    func createPlayer(colorScheme: ColorScheme) async {
         if let url = Bundle.module.url(forResource: colorScheme == .dark ? "Mido_Dark" : "Mido_Light", withExtension: "mp4") {
             player = manager.createPlayer(with: url)
             player?.play()
+        }
+        
+        try? await Task.sleep(for: .seconds(0.25))
+        trigger += 1
+        
+        while trigger < 4 {
+            try? await Task.sleep(for: .seconds(0.5))
+                trigger += 1
         }
     }
     

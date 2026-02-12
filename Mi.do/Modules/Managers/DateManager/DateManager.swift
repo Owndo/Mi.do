@@ -409,10 +409,8 @@ public final class DateManager: DateManagerProtocol {
         switch hour {
         case 0..<9:
             return dateAt(currentTime, hour: 9)
-        case 9..<18:
+        case 9...21:
             return dateAt(currentTime, hour: hour + 1)
-        case 18...21:
-            return dateAt(currentTime, hour: 21)
         default:
             let tomorrow = calendar.date(byAdding: .day, value: 1, to: currentTime)!
             return dateAt(tomorrow, hour: 9)

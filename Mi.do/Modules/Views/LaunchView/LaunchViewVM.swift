@@ -30,9 +30,9 @@ final class LaunchViewVM {
         try? await Task.sleep(for: .seconds(0.25))
         trigger += 1
         
-        while trigger < 4 {
+        while trigger < 3 {
             try? await Task.sleep(for: .seconds(0.5))
-                trigger += 1
+            trigger += 1
         }
     }
     

@@ -160,6 +160,10 @@ public final class TaskVM: HashableNavigation {
         }
     }
     
+    //MARK: - New Task
+    
+    var newTask = false
+    
     /// First notification Date for task with repeat
     var sourseDateOfNotification = Date()
     
@@ -377,6 +381,8 @@ public final class TaskVM: HashableNavigation {
             return
         }
         
+        newTask = true
+        titleFocused = true
         notificationDate = date
         dateHasBeenChanged = false
     }
@@ -512,6 +518,10 @@ public final class TaskVM: HashableNavigation {
     
     
     private func changeNotificationTime() -> Double {
+        if newTask == true {
+            return notificationDate.timeIntervalSince1970
+        }
+        
         guard dateHasBeenChanged else {
             return sourseDateOfNotification.timeIntervalSince1970
         }

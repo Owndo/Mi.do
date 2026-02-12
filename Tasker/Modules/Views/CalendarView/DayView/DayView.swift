@@ -31,8 +31,13 @@ struct DayView: View {
     
     private func BaseContent() -> some View {
         ZStack {
-            if vm.lastDayForDeadline() {
+            if vm.lastDayForDeadline {
                 if vm.showSmallFire {
+                    Text("\(vm.day.date, format: .dateTime.day())")
+                        .font(.system(size: 17, weight: vm.isDateInToday() ? .semibold : .regular, design: .default))
+                        .foregroundStyle(!vm.isDateInToday() ? .labelQuaternary : .labelSecondary)
+                        .frame(maxWidth: .infinity)
+                    
                     Image(systemName: "circle.fill")
                         .contentTransition(.symbolEffect(.replace))
                         .frame(width: 1, height: 1)
@@ -46,6 +51,9 @@ struct DayView: View {
                         .symbolEffect(.bounce, options: .repeat(10).speed(0.8), value: vm.flameAnimation)
                         .frame(maxWidth: .infinity)
                         .scaleEffect(1.4)
+                        .task {
+                            vm.flameAnimation.toggle()
+                        }
                 }
             } else {
                 Text("\(vm.day.date, format: .dateTime.day())")

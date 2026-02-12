@@ -21,6 +21,7 @@ final class DayViewVM: HashableNavigation {
     var day: Day
     var ableToDownload = true
     
+    var lastDayForDeadline = false
     var showSmallFire = false
     var flameAnimation = false
     
@@ -105,7 +106,7 @@ final class DayViewVM: HashableNavigation {
     
     //MARK: - Deadline
     
-    func lastDayForDeadline() -> Bool {
+    func checkLastDayForDeadline() -> Bool {
         guard let tasks else {
             return false
         }
@@ -184,6 +185,8 @@ final class DayViewVM: HashableNavigation {
         }
         
         let tasks = await taskManager.retrieveDayTasks(for: day.date)
+        self.tasks = tasks
+        lastDayForDeadline = checkLastDayForDeadline()
         
         let timeKey = day.date.timeIntervalSince1970
         

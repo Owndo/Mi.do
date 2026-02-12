@@ -93,6 +93,7 @@ public struct TaskView: View {
                 .sensoryFeedback(.selection, trigger: vm.confirmationDialogIsPresented)
                 .sensoryFeedback(.selection, trigger: vm.notificationDate)
                 .sensoryFeedback(.selection, trigger: vm.showDeadline)
+                .sensoryFeedback(.selection, trigger: vm.showDeadlineDates)
                 .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.playButtonTrigger)
                 .sensoryFeedback(.impact(flexibility: .soft), trigger: vm.isRecording)
                 .sensoryFeedback(.error, trigger: vm.paywallVM)

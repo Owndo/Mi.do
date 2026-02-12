@@ -639,14 +639,6 @@ public final class TaskVM: HashableNavigation {
         hasDeadline = true
     }
     
-    func showDedalineDatesButtonTapped() async {
-        guard await subscriptionManager.hasSubscription() else {
-            return
-        }
-        
-        showDeadlineDates.toggle()
-    }
-    
     func removeDeadlineFromTask() {
         showDeadline = false
         //        task.deadline = nil
@@ -863,16 +855,39 @@ public final class TaskVM: HashableNavigation {
         playButtonTrigger.toggle()
     }
     
-    //    private func createTempAudioFile(audioHash: String?) async {
-    //        guard let audioHash else {
-    //            return
-    //        }
-    //        //TODO: - Todo
-    //        await storageManager.createFileInSoundsDirectory(hash: audioHash)
-    //    }
-    
     private func changeDisabledButton() {
         disabledButton.toggle()
+    }
+    
+    //MARK: - Show deadline dates
+    
+    func showDedalineDatesButtonTapped() async {
+        guard await subscriptionManager.hasSubscription() else {
+            await createPaywallVM()
+            
+            //TODO: After user pay it has to be opened
+            while paywallVM != nil  {
+                try? await Task.sleep(for: .seconds(0.25))
+                
+                if await subscriptionManager.hasSubscription() {
+                    showDeadlineDates = true
+                    scrollToDeadlineDates()
+                } else {
+                    showDeadlineDates = false
+                    scrollToMainContent()
+                }
+            }
+            
+            return
+        }
+        
+        if showDeadlineDates {
+            showDeadlineDates = false
+            scrollToMainContent()
+        } else {
+            showDeadlineDates = true
+            scrollToDeadlineDates()
+        }
     }
     
     //MARK: Subscription for deadline
@@ -902,9 +917,7 @@ public final class TaskVM: HashableNavigation {
         
         // If false - invalidate deadline
         guard newValue else {
-            scrollToMainContent()
-            showDeadlineDates = false
-            task.deadline = nil
+            deadlineToggleOff()
             return
         }
         
@@ -936,6 +949,12 @@ public final class TaskVM: HashableNavigation {
         showDeadlineDates = true
     }
     
+    private func deadlineToggleOff() {
+        scrollToMainContent()
+        showDeadlineDates = false
+        task.deadline = nil
+    }
+    
     //MARK: - Scroll to main content
     
     private func scrollToMainContent() {
@@ -961,8 +980,6 @@ public final class TaskVM: HashableNavigation {
         scrollId = deadlineSectionID
         anchor = .center
     }
-    
-    
     
     //MARK: - Telemetry action
     

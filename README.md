@@ -1,6 +1,6 @@
 # Mi.Dō – Legal Documents
 
-This repository contains the official legal documents for the **Mi.Dō** mobile application, developed by **RobocodeLLC**.
+This repository contains the official legal documents for the **Mi.Dō** mobile application, developed by **Owndo LLC**.
 
 ## 📄 Documents
 
@@ -19,8 +19,20 @@ These documents describe how Mi.Dō handles data and outlines the terms by which
 - Optional paid subscriptions  
 - No ads
 
+## 🌍 Philosophy
+
+At Owndo, we believe software should serve people — not track them.
+
+Mi.Dō is designed around:
+- Local-first architecture  
+- User-owned identity  
+- No surveillance business models  
+- No data harvesting  
+
+Own what you do.
+
 ## 🔗 License
 
-All content in this repository is © 2025 RobocodeLLC.  
+© 2025–2026 Owndo LLC. All rights reserved.
 You may reference or link to these documents, but modification or reuse without permission is not allowed.
 

@@ -21,34 +21,45 @@ struct TaskRowView: View {
     var body: some View {
         if #available(iOS 26, *) {
             HStack(spacing: 0) {
-                HStack(spacing: 12) {
-                    TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task), task: task) {
-                        Task {
-                            await vm.checkMarkTapped(task: task)
+                ZStack {
+                    HStack(spacing: 12) {
+                        TaskCheckMark(complete: vm.checkCompletedTaskForToday(task: task), task: task) {
+                            Task {
+                                await vm.checkMarkTapped(task: task)
+                            }
                         }
-                    }
-                    
-                    HStack {
+                        
                         Text(LocalizedStringKey(vm.taskTitle(task: task)), bundle: .module)
                             .font(.system(.body, design: .rounded, weight: .regular))
-                            .multilineTextAlignment(.leading)
                             .foregroundStyle(colorScheme.invertedPrimaryLabel(task))
-                            .font(.callout)
                             .lineLimit(1)
+                            .font(.callout)
+                            .padding(.vertical, 15)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.trailing, 95)
                         
                         Spacer()
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-                
-                HStack(spacing: 12) {
-                    NotificationDeadlineDate(task: task)
-                        .allowsHitTesting(vm.isTaskHasDeadline(task: task))
-                        .onTapGesture {
-                            vm.showDedalineButtonTapped(task: task)
-                        }
                     
-                    PlayButton(task: task)
+                    //MARK: - Context menu
+                    .contextMenuWithPreview(
+                        menu: CustomMenu(),
+                        preview: {
+                            TaskViewPreview(listVM: vm, task: task)
+                        },
+                        isPressed: $isPressed,
+                        padding: vm.isTaskHasDeadline(task: task),
+                        action: {
+                            vm.taskTapped(task)
+                        })
+                    
+                    HStack(spacing: 12) {
+                        Spacer()
+                        
+                        TaskTimeButton()
+                        
+                        PlayButton(task: task)
+                    }
                 }
             }
             
@@ -57,7 +68,6 @@ struct TaskRowView: View {
             .taskDeleteDialog(isPresented: vm.dialogBinding(for: task), task: task) { value in
                 await vm.deleteButtonTapped(task: task, deleteCompletely: value)
             }
-            .padding(.vertical, 12)
             .padding(.horizontal, 11)
             .background(
                 withAnimation {
@@ -67,19 +77,10 @@ struct TaskRowView: View {
                         )
                 }
             )
-            
-            //MARK: - Context menu
-            
-            .contextMenuWithPreview(
-                menu: CustomMenu(),
-                preview: {
-                    TaskViewPreview(listVM: vm, task: task)
-                },
-                isPressed: $isPressed,
-                action: {
-                    vm.taskTapped(task)
-                })
-            .frame(height: 52)
+            //MARK: - Context menu effects
+            .scaleEffect(isPressed ? 0.95 : 1)
+            .opacity(isPressed ? 0.85 : 1)
+            .animation(.easeIn(duration: 0.35), value: isPressed)
         } else {
             HStack(spacing: 0) {
                 HStack(spacing: 12) {
@@ -164,11 +165,32 @@ struct TaskRowView: View {
         }
     }
     
+    //MARK: - TaskTime Button
+    
+    @ViewBuilder
+    private func TaskTimeButton() -> some View {
+        if vm.isTaskHasDeadline(task: task) {
+            Button {
+                vm.showDedalineButtonTapped(task: task)
+            } label: {
+                NotificationDeadlineDate(task: task)
+                    .padding(.vertical, 10)
+            }
+        } else {
+            Text(Date(timeIntervalSince1970: task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
+                .font(.system(.subheadline, design: .rounded, weight: .regular))
+                .foregroundStyle(colorScheme.invertedTertiaryLabel(task))
+                .underline(vm.isTaskHasDeadline(task: task) ? true : false, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
+                .padding(.leading, 6)
+                .lineLimit(1)
+        }
+    }
+    
     //MARK: - Notification/Deadline date
     
     @ViewBuilder
     private func NotificationDeadlineDate(task: UITaskModel) -> some View {
-        if vm.showDeadlinePicker {
+        if vm.taskForShowDeadline.contains(task) {
             Text(LocalizedStringKey(vm.timeRemainingString(task: task)), bundle: .module)
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
                 .foregroundStyle(vm.isTaskOverdue(task: task) ? .accentRed : colorScheme.invertedTertiaryLabel(task))
@@ -275,11 +297,14 @@ struct TaskViewPreview: View {
 }
 
 extension View {
-    func contextMenuWithPreview<Content: View>(menu: UIMenu, @ViewBuilder preview: @escaping () -> Content, isPressed: Binding<Bool>, action: @escaping () -> Void) -> some View {
+    func contextMenuWithPreview<Content: View>(
+        menu: UIMenu,
+        @ViewBuilder preview: @escaping () -> Content,
+        isPressed: Binding<Bool>,
+        padding: Bool = false,
+        action: @escaping () -> Void,
+    ) -> some View {
         self
-            .scaleEffect(isPressed.wrappedValue ? 0.95 : 1)
-            .opacity(isPressed.wrappedValue ? 0.85 : 1)
-            .animation(.easeIn(duration: 0.35), value: isPressed.wrappedValue)
             .overlay(
                 InteractionView(
                     preview: preview,
@@ -288,7 +313,7 @@ extension View {
                     didTapPreview: action
                 )
                 .ignoresSafeArea(edges: .vertical)
-                .padding(.horizontal, 40)
+                .padding(.horizontal, 35)
             )
     }
 }

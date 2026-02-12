@@ -45,6 +45,7 @@ public final class ListVM: HashableNavigation {
     
     /// For task Row
     var playingTask: UITaskModel?
+    var taskForShowDeadline = Set<UITaskModel>()
     
     var showDeadlinePicker = false
     var taskDoneTrigger = false
@@ -351,12 +352,17 @@ public final class ListVM: HashableNavigation {
     }
     
     //MARK: - Deadline
+    
     func showDedalineButtonTapped(task: UITaskModel) {
         guard isTaskHasDeadline(task: task) else {
             return
         }
         
-        showDeadlinePicker.toggle()
+        if taskForShowDeadline.contains(task) {
+            taskForShowDeadline.remove(task)
+        } else {
+            taskForShowDeadline.insert(task)
+        }
     }
     
     //MARK: - Is task has deadline

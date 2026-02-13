@@ -457,14 +457,8 @@ public final class ListVM: HashableNavigation {
     
     //MARK: - Empty Day
     
-    public func emptyDay() -> Bool {
-        if activeTasks.isEmpty && completedTasks.isEmpty {
-            return true
-        } else if (activeTasks.count + completedTasks.count) < 5 {
-            return true
-        } else {
-            return false
-        }
+    public func countOfTodayTasks() -> Int {
+        activeTasks.count + completedTasks.count
     }
     
     

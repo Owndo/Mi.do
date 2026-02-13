@@ -41,25 +41,25 @@ public struct WelcomeView: View {
                     .minimumScaleFactor(0.5)
                 
                 VStack(alignment: .leading, spacing: 14) {
-//                    if #available(iOS 26, *) {
-//                        Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
-//                            .symbolEffect(.drawOn.individually, isActive: !zeroImageEffect)
-//                        
-//                        Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
-//                            .symbolEffect(.drawOn.individually, isActive: !firstImageEffect)
-//                        
-//                        Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
-//                            .symbolEffect(.drawOn.individually, isActive: !secondImageEffect)
-//                    } else {
-                        Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
-                            .symbolEffect(.bounce, value: zeroImageEffect)
-                        
-                        Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
-                            .symbolEffect(.bounce, value: firstImageEffect)
-                        
-                        Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
-                            .symbolEffect(.bounce, value: secondImageEffect)
-//                    }
+                    //                    if #available(iOS 26, *) {
+                    //                        Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
+                    //                            .symbolEffect(.drawOn.individually, isActive: !zeroImageEffect)
+                    //
+                    //                        Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
+                    //                            .symbolEffect(.drawOn.individually, isActive: !firstImageEffect)
+                    //
+                    //                        Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
+                    //                            .symbolEffect(.drawOn.individually, isActive: !secondImageEffect)
+                    //                    } else {
+                    Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
+                        .symbolEffect(.bounce, value: zeroImageEffect)
+                    
+                    Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
+                        .symbolEffect(.bounce, value: firstImageEffect)
+                    
+                    Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
+                        .symbolEffect(.bounce, value: secondImageEffect)
+                    //                    }
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top)

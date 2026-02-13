@@ -92,7 +92,7 @@ public struct MainView: View {
             .toolbarBackground(osVersion.majorVersion >= 26 ? .visible : .hidden, for: .navigationBar)
             .animation(.default, value: vm.isRecording)
             .animation(.default, value: vm.backgroundAnimation)
-            .animation(.default, value: vm.hideRecordButtonTip)
+            .animation(.default, value: vm.countOfTodayTasks)
             .sensoryFeedback(.selection, trigger: vm.sheetNavigation)
             .sensoryFeedback(.selection, trigger: vm.path)
             .sensoryFeedback(.warning, trigger: vm.isRecording)
@@ -185,7 +185,7 @@ public struct MainView: View {
         VStack {
             Spacer()
             
-            RecordButton(isRecording: $vm.isRecording, hideTip: vm.hideRecordButtonTip, progress: vm.progress, countOfSec: vm.currentlyTime, decivelsLVL: vm.decibelLvl)
+            RecordButton(isRecording: $vm.isRecording, countOfTodayTasks: vm.countOfTodayTasks, progress: vm.progress, countOfSec: vm.currentlyTime, decivelsLVL: vm.decibelLvl)
                 .padding(20)
                 .contentShape(.circle)
                 .disabled(vm.disabledButton)

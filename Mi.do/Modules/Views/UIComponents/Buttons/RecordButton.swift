@@ -8,11 +8,11 @@
 import SwiftUI
 
 public struct RecordButton: View {
-    @Environment(\.appearanceManager) var appearanceManager 
+    @Environment(\.appearanceManager) var appearanceManager
     
     @Binding var isRecording: Bool
     
-    var hideTip = false
+    var countOfTodayTasks = 0
     
     @State private var shadowXOffset: CGFloat = 0
     @State private var shadowYOffset: CGFloat = 0
@@ -24,9 +24,11 @@ public struct RecordButton: View {
     var countOfSec: Double
     var decivelsLVL: Float
     
-    public init(isRecording: Binding<Bool>, hideTip: Bool = false, progress: Double, countOfSec: Double, decivelsLVL: Float) {
+    let isIPhoneSE = UIScreen.main.bounds.size.height <= 667
+    
+    public init(isRecording: Binding<Bool>, countOfTodayTasks: Int = 0, progress: Double, countOfSec: Double, decivelsLVL: Float) {
         self._isRecording = isRecording
-        self.hideTip = hideTip
+        self.countOfTodayTasks = countOfTodayTasks
         self.progress = progress
         self.countOfSec = countOfSec
         self.decivelsLVL = decivelsLVL
@@ -39,10 +41,10 @@ public struct RecordButton: View {
             
             VStack {
                 if isRecording {
-                        StopRecording()
-                            .liquidIfAvailable(glass: .regular, isInteractive: true)
-                    } else {
-                        StartRecording()
+                    StopRecording()
+                        .liquidIfAvailable(glass: .regular, isInteractive: true)
+                } else {
+                    StartRecording()
                         .liquidIfAvailable(glass: .regular, isInteractive: true)
                 }
             }
@@ -51,19 +53,19 @@ public struct RecordButton: View {
     
     @ViewBuilder
     private func CustomPopOver() -> some View {
-        if !hideTip && !isRecording {
+        if !hidePopover() && !isRecording {
             VStack {
                 Text("Start here", bundle: .module)
                     .font(.system(size: 17, weight: .bold, design: .rounded))
                     .foregroundStyle(.labelPrimary)
                 
-                Text("Hold or tap the plus button\n to create", bundle: .module)
+                Text("Hold to speak. Tap to create.", bundle: .module)
                     .font(.system(size: 15, weight: .medium, design: .rounded))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.labelTertiary)
             }
             .padding(12)
-            .padding(.bottom, 10)
+            .padding(.bottom)
             .background(
                 PopoverBubbleShape()
                     .fill(Color(.tipsBackground))
@@ -156,6 +158,14 @@ public struct RecordButton: View {
                 .animation(.easeOut(duration: 0.3).delay(0.1), value: decivelsLVL)
                 .shadow(color: appearanceManager.accentColor, radius: 1)
         }
+    }
+    
+    private func hidePopover() -> Bool {
+        if isIPhoneSE {
+            return countOfTodayTasks > 2
+        }
+        
+        return countOfTodayTasks > 4
     }
 }
 

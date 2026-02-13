@@ -156,9 +156,11 @@ public final class MainVM: HashableNavigation {
         recorderManager.decibelLevel
     }
     
+    //MARK: - Count of today tasks
+    
     /// Check if current day doesen't have any tasks
-    var hideRecordButtonTip: Bool {
-        !listVM.emptyDay()
+    var countOfTodayTasks: Int {
+        listVM.countOfTodayTasks()
     }
     
     //MARK: - Private Init

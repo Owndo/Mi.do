@@ -63,8 +63,7 @@ public struct TaskView: View {
                 .scrollDismissesKeyboard(.immediately)
                 .disabled(vm.showPaywall)
                 .padding(.horizontal, 16)
-                .ignoresSafeArea(edges: .bottom)
-                .safeAreaInset(edge: .bottom) {
+                .customSafeAreaInset(edge: .bottom) {
                     SaveButton()
                         .disabled(vm.paywallVM != nil)
                         .hidden(preview)

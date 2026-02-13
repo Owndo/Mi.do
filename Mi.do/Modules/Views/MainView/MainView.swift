@@ -48,6 +48,7 @@ public struct MainView: View {
                     .presentationBackground(appearanceManager.backgroundColor)
                     .sheet(item: $vm.sheetNavigation) { navigation in
                         navigation.destination()
+                            .presentationBackground(appearanceManager.backgroundColor)
                             .preferredColorScheme(colorScheme)
                     }
             }

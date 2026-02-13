@@ -25,63 +25,53 @@ public struct WelcomeView: View {
     }
     
     public var body: some View {
-        ZStack {
-            vm.appearanceManager.backgroundColor
-                .ignoresSafeArea()
+        ScrollView {
+            Image(uiImage: .onboarding)
+                .resizable()
+                .scaledToFit()
             
-            ScrollView {
-                Image(uiImage: .onboarding)
-                    .resizable()
-                    .scaledToFit()
+            Text(vm.title, bundle: .module)
+                .font(.system(.title, design: .rounded, weight: .bold))
+                .foregroundStyle(.labelPrimary)
+                .multilineTextAlignment(.center)
+                .minimumScaleFactor(0.5)
+            
+            VStack(alignment: .leading, spacing: 14) {
+                //                    if #available(iOS 26, *) {
+                //                        Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
+                //                            .symbolEffect(.drawOn.individually, isActive: !zeroImageEffect)
+                //
+                //                        Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
+                //                            .symbolEffect(.drawOn.individually, isActive: !firstImageEffect)
+                //
+                //                        Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
+                //                            .symbolEffect(.drawOn.individually, isActive: !secondImageEffect)
+                //                    } else {
+                Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
+                    .symbolEffect(.bounce, value: zeroImageEffect)
                 
-                Text(vm.title, bundle: .module)
-                    .font(.system(.title, design: .rounded, weight: .bold))
-                    .foregroundStyle(.labelPrimary)
-                    .multilineTextAlignment(.center)
-                    .minimumScaleFactor(0.5)
+                Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
+                    .symbolEffect(.bounce, value: firstImageEffect)
                 
-                VStack(alignment: .leading, spacing: 14) {
-                    //                    if #available(iOS 26, *) {
-                    //                        Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
-                    //                            .symbolEffect(.drawOn.individually, isActive: !zeroImageEffect)
-                    //
-                    //                        Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
-                    //                            .symbolEffect(.drawOn.individually, isActive: !firstImageEffect)
-                    //
-                    //                        Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
-                    //                            .symbolEffect(.drawOn.individually, isActive: !secondImageEffect)
-                    //                    } else {
-                    Description(image: vm.imageDescription, title: vm.descriptionTitle, text: vm.description)
-                        .symbolEffect(.bounce, value: zeroImageEffect)
-                    
-                    Description(image: vm.imageDescription1, title: vm.descriptionTitle1, text: vm.description1)
-                        .symbolEffect(.bounce, value: firstImageEffect)
-                    
-                    Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
-                        .symbolEffect(.bounce, value: secondImageEffect)
-                    //                    }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top)
-                .padding(.horizontal)
-                
-                CreatedDate()
-                    .padding(.top, !isIPhoneSE ? 28 : 18)
-                    .padding(.bottom, 50)
-                
-                Spacer()
+                Description(image: vm.imageDescription2, title: vm.descriptionTitle2, text: vm.description2)
+                    .symbolEffect(.bounce, value: secondImageEffect)
+                //                    }
             }
-            .scrollBounceBehavior(.basedOnSize)
-            .scrollIndicators(.hidden)
+            .frame(maxWidth: .infinity)
+            .padding(.top)
+            .padding(.horizontal)
             
-            VStack {
-                Spacer()
-                
-                ContinueButton()
-            }
+            CreatedDate()
+                .padding(.top, !isIPhoneSE ? 28 : 18)
+                .padding(.bottom, 50)
             
-            .padding(.top, 16)
-            .padding(.bottom, 20)
+            Spacer()
+        }
+        .scrollBounceBehavior(.basedOnSize)
+        .scrollIndicators(.hidden)
+        .customSafeAreaInset(edge: .bottom) {
+            ContinueButton()
+                .padding([.horizontal, .bottom])
         }
         .task {
             try? await Task.sleep(for: .seconds(0.7))

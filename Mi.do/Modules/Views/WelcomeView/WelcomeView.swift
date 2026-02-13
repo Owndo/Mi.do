@@ -84,7 +84,7 @@ public struct WelcomeView: View {
             .padding(.bottom, 20)
         }
         .task {
-            try? await Task.sleep(for: .seconds(0.5))
+            try? await Task.sleep(for: .seconds(0.7))
             secondImageEffect = true
             try? await Task.sleep(for: .seconds(0.2))
             firstImageEffect = true

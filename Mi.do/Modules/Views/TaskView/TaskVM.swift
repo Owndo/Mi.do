@@ -134,6 +134,9 @@ public final class TaskVM: HashableNavigation {
     var deadlineDateSelected = false
     var resettingDeadline = false
     
+    
+    //MARK: - Deadline Date
+    
     var deadLineDate = Date() {
         willSet {
             if !resettingDeadline {
@@ -490,9 +493,6 @@ public final class TaskVM: HashableNavigation {
         
         task.notificationDate = changeNotificationTime()
         
-        print("notification - \(task.notificationDate)")
-        print("dedline - \(task.deadline)")
-        
         do {
             try await taskManager.saveTask(task)
         } catch {
@@ -835,6 +835,12 @@ public final class TaskVM: HashableNavigation {
     func setUpDeadlineDate() {
         guard task.deadline != nil else {
             return
+        }
+        
+        if !calendar.isDate(notificationDate, inSameDayAs: deadLineDate) {
+            if repeatTask == .never {
+                repeatTask = .daily
+            }
         }
         
         deadlineDateSelected = true

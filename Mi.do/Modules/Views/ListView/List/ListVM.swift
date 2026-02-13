@@ -454,7 +454,6 @@ public final class ListVM: HashableNavigation {
         
         return nil
     }
-
     
     //MARK: - Empty Day
     

@@ -33,7 +33,7 @@ let project = Project(
                 ]
             )],
             resources: [.glob(pattern: "Mi.do/Resources/**", excluding: ["Mi.do/Resources/Info.plist"])],
-            entitlements: .file(path: "Mi.do/Mi.do.entitlements"),
+//            entitlements: .file(path: "Mi.do/Mi.do.entitlements"),
             dependencies: [.target(name: Modules.appView.name),],
             settings: .settings(
                 base: [:],
@@ -419,9 +419,10 @@ let project = Project(
                     )
         ),
     ],
-    additionalFiles: [
-        "Mi.do/Mi.do.entitlements"
-    ],
+    //TODO: - Add to iCloud
+//    additionalFiles: [
+//        "Mi.do/Mi.do.entitlements"
+//    ],
     resourceSynthesizers: [
         .custom(
             name: "UI",

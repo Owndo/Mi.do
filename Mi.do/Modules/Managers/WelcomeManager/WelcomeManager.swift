@@ -53,6 +53,10 @@ public final class WelcomeManager: WelcomeManagerProtocol {
     /// First time ever open
     public func appLaunchState() -> AppLaunchState? {
         guard let storedVersion = profileModel.onboarding.latestVersion else {
+            if profileModel.onboarding.onboardingCreatedDate != nil {
+                return .afterUpdate
+            }
+            
             firstTimeLaunch = true
             return .welcome
         }

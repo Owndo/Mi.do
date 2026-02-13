@@ -15,7 +15,7 @@ public struct OnboardingModel: Codable, Equatable {
     public var requestedReview: Bool?
     
     /// At this time onboarding has been created
-    public var onboardingCreatedDate: Double = 1753717500.0
+    public var onboardingCreatedDate: Double?
 }
 
 @Observable
@@ -44,7 +44,7 @@ public final class UIOnboardingModel {
         set { model.requestedReview = newValue ? true : nil }
     }
     
-    public var onboardingCreatedDate: Double { model.onboardingCreatedDate }
+    public var onboardingCreatedDate: Double? { model.onboardingCreatedDate }
 }
 
 func defaultOnboardingModel() -> OnboardingModel {

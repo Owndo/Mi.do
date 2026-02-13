@@ -101,6 +101,7 @@ public class MonthsViewVM: HashableNavigation {
         taskManager: TaskManagerProtocol,
     ) async -> MonthsViewVM {
         let vm = MonthsViewVM(appearanceManager: appearanceManager, dateManager: dateManager, taskManager: taskManager)
+        await vm.startVM()
         
         return vm
     }
@@ -294,10 +295,13 @@ public class MonthsViewVM: HashableNavigation {
     @MainActor
     func jumpToSelectedMonth18iOS() async {
         viewStarted = false
+        try? await Task.sleep(for: .seconds(0.1))
+        
         let position = (CGFloat(allMonths.count / 2) * monthHeight)
         scrollPosition.scrollTo(y: position)
         
         try? await Task.sleep(for: .seconds(0.5))
+        downloadDay = true
         viewStarted = true
     }
     

@@ -20,20 +20,20 @@ public extension InfoPlist {
                 "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",
                 "NSSpeechRecognitionUsageDescription": "Speech recognize access is needed to fill your tasks.",
                 "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery.",
-                // Background mode
-                "UIBackgroundModes": ["fetch", "processing", "remote-notification"],
-                "BGTaskSchedulerPermittedIdentifiers": [
-                    "mido.robocode.updateNotificationsAndSync"
-                ],
-                // iCloud
-                "NSUbiquitousContainers": [
-                    "iCloud.com.mido.robocode": [
-                        "NSUbiquitousContainerIsDocumentScopePublic": true,
-                        "NSUbiquitousContainerSupportedFolderLevels": ["ANY"],
-                        "NSUbiquitousContainerName": "Mi.dō",
-                        "NSUbiquitousContainerIdentifier": "$(TeamIdentifierPrefix)$(CFBundleIdentifier)"
-                    ]
-                ],
+                //                // Background mode
+                //                "UIBackgroundModes": ["fetch", "processing", "remote-notification"],
+                //                "BGTaskSchedulerPermittedIdentifiers": [
+                //                    "mido.robocode.updateNotificationsAndSync"
+                //                ],
+                //                // iCloud
+                //                "NSUbiquitousContainers": [
+                //                    "iCloud.com.mido.robocode": [
+                //                        "NSUbiquitousContainerIsDocumentScopePublic": true,
+                //                        "NSUbiquitousContainerSupportedFolderLevels": ["ANY"],
+                //                        "NSUbiquitousContainerName": "Mi.dō",
+                //                        "NSUbiquitousContainerIdentifier": "$(TeamIdentifierPrefix)$(CFBundleIdentifier)"
+                //                    ]
+                //                ],
                 "CFBundleLocalizations": [
                     "en",
                     "ru",

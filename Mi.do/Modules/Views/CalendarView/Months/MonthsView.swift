@@ -31,6 +31,9 @@ public struct MonthsView: View {
                                 .id(month.id)
                         }
                     }
+                    .task {
+                        await vm.jumpToSelectedMonth18iOS()
+                    }
                 }
                 .onScrollGeometryChange(
                     for: ScrollInfo.self,
@@ -83,18 +86,14 @@ public struct MonthsView: View {
                                 }
                         }
                     }
+                    .task {
+                        await vm.jumpToSelectedMonth()
+                    }
                 }
                 .scrollPosition(id: $vm.scrollID)
                 .scrollDisabled(vm.scrollDisabled)
                 .scrollBounceBehavior(.always)
                 .scrollIndicators(.hidden)
-            }
-        }
-        .task {
-            if #available(iOS 18, *) {
-                await vm.jumpToSelectedMonth18iOS()
-            } else {
-                await vm.jumpToSelectedMonth()
             }
         }
         .onDisappear {

@@ -388,7 +388,7 @@ public final class ListVM: HashableNavigation {
         return true
     }
     
-    func timeRemainingString(task: UITaskModel) -> String {
+    func timeRemainingString(task: UITaskModel) -> LocalizedStringKey {
         guard !task.completeRecords.contains(where: { dateManager.calendar.isDate(Date(timeIntervalSince1970: $0.completedFor), inSameDayAs: dateManager.selectedDate) }) else {
             return "Completed"
         }
@@ -405,75 +405,43 @@ public final class ListVM: HashableNavigation {
             return "Overdue"
         }
         
-        guard let lastDay = dayUntillDeadLine(task) else {
+        guard let lastDay = timeUntilDeadLine(task) else {
             return ""
         }
         
-        return "\(lastDay) days left"
+        return lastDay
     }
     
     
     //MARK: Deadline logic
     
-    public func dayUntillDeadLine(_ task: UITaskModel) -> Int? {
-        guard task.deadline != nil else {
-            return nil
+    public func timeUntilDeadLine(_ task: UITaskModel) -> LocalizedStringKey? {
+        guard let deadline = task.deadline else { return nil }
+        
+        let now = dateManager.currentTime
+        let deadlineDate = Date(timeIntervalSince1970: deadline)
+        
+        let diff = Int(deadlineDate.timeIntervalSince(now))
+        if diff <= 0 { return "Overdue" }
+        
+        let minute = 60
+        let hour = 60 * minute
+        let day = 24 * hour
+        let year = 365 * day
+        
+        if diff >= year {
+            return "\(diff / year)y"
         }
         
-        guard task.repeatTask != .never else {
-            return nil
+        if diff >= 2 * day {
+            return "\(diff / day)d"
         }
         
-        let today = dateManager.currentTime
-        let notificationDate = Date(timeIntervalSince1970: task.notificationDate)
-        
-        var day: Date
-        var lastActualDay: Date
-        
-        if calendar.isDate(notificationDate, inSameDayAs: today) || notificationDate <= today {
-            day = today
-            lastActualDay = today
-            
-            while task.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) {
-                lastActualDay = day
-                
-                if task.repeatTask == .weekly {
-                    day = calendar.date(byAdding: .day, value: 7, to: day)!
-                } else if task.repeatTask == .monthly {
-                    day = calendar.date(byAdding: .month, value: 1, to: day)!
-                } else if task.repeatTask == .yearly {
-                    day = calendar.date(byAdding: .year, value: 1, to: day)!
-                } else {
-                    day = calendar.date(byAdding: .day, value: 1, to: day)!
-                }
-            }
-            
-            let difference = calendar.dateComponents([.day], from: today, to: lastActualDay)
-            return difference.day ?? 0
-            
-        } else {
-            day = notificationDate
-            lastActualDay = notificationDate
-            
-            while task.isScheduledForDate(day.timeIntervalSince1970, calendar: calendar) {
-                lastActualDay = day
-                
-                if task.repeatTask == .weekly {
-                    day = calendar.date(byAdding: .day, value: 7, to: day)!
-                } else if task.repeatTask == .monthly {
-                    day = calendar.date(byAdding: .month, value: 1, to: day)!
-                } else if task.repeatTask == .yearly {
-                    day = calendar.date(byAdding: .year, value: 1, to: day)!
-                } else {
-                    day = calendar.date(byAdding: .day, value: 1, to: day)!
-                }
-            }
-            
-            let todayToNotification = calendar.dateComponents([.day], from: today, to: notificationDate)
-            let notificationToLast = calendar.dateComponents([.day], from: notificationDate, to: lastActualDay)
-            
-            return (todayToNotification.day ?? 0) + (notificationToLast.day ?? 0)
+        if diff >= hour {
+            return "\(diff / hour)h"
         }
+        
+        return "\(max(1, diff / minute))min"
     }
     
     //MARK: - Empty Day

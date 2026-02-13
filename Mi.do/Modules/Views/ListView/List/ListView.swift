@@ -59,7 +59,7 @@ public struct ListView: View {
             } header: {
                 if !vm.completedTasks.isEmpty {
                     HStack {
-                        Text("Completed task", bundle: .module)
+                        Text("Completed tasks", bundle: .module)
                             .font(.system(.subheadline, design: .rounded, weight: .semibold))
                             .foregroundStyle(.labelTertiary)
                         

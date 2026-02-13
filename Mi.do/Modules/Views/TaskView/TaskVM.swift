@@ -490,9 +490,11 @@ public final class TaskVM: HashableNavigation {
         
         task.notificationDate = changeNotificationTime()
         
+        print("notification - \(task.notificationDate)")
+        print("dedline - \(task.deadline)")
+        
         do {
             try await taskManager.saveTask(task)
-            //            createTempAudioFile(audioHash: task.audio)
         } catch {
             //TODO: - Error
         }
@@ -841,6 +843,24 @@ public final class TaskVM: HashableNavigation {
         deadlineToggle = true
         
         scrollToMainContent()
+    }
+    
+    //MARK: - Combined Date
+    func combineDateWithNotificationTime(_ date: Date) -> Date {
+        let calendar = Calendar.current
+        
+        let day = calendar.dateComponents([.year, .month, .day], from: date)
+        let time = calendar.dateComponents([.hour, .minute, .second], from: notificationDate)
+        
+        var components = DateComponents()
+        components.year = day.year
+        components.month = day.month
+        components.day = day.day
+        components.hour = time.hour
+        components.minute = time.minute
+        components.second = time.second
+        
+        return calendar.date(from: components) ?? date
     }
     
     

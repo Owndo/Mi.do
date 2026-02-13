@@ -134,9 +134,36 @@ public class UITaskModel: TaskModelWrapper<TaskModel>, Hashable {
     }
     
     public var deadline: Double? {
-        get { model.value.deadline ?? nil }
-        set { model.value.deadline = nilIfNeed(newValue, is: nil)}
+        get { model.value.deadline }
+        set {
+            guard let newValue else {
+                model.value.deadline = nil
+                return
+            }
+            
+            let calendar = Calendar.current
+            
+            let selectedDate = Date(timeIntervalSince1970: newValue)
+            let notification = Date(timeIntervalSince1970: notificationDate)
+            
+            let day = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+            
+            let time = calendar.dateComponents([.hour, .minute, .second], from: notification)
+            
+            var components = DateComponents()
+            components.year = day.year
+            components.month = day.month
+            components.day = day.day
+            components.hour = time.hour
+            components.minute = time.minute
+            components.second = time.second
+            
+            let finalDate = calendar.date(from: components) ?? selectedDate
+            
+            model.value.deadline = finalDate.timeIntervalSince1970
+        }
     }
+
     
     public var endDate: Double? {
         get { model.value.endDate ?? nil }

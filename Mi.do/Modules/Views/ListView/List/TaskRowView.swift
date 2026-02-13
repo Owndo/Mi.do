@@ -192,21 +192,21 @@ struct TaskRowView: View {
     private func NotificationDeadlineDate(task: UITaskModel) -> some View {
         ZStack {
             if vm.taskForShowDeadline.contains(task) {
-                Text(LocalizedStringKey(vm.timeRemainingString(task: task)), bundle: .module)
+                Text(vm.timeRemainingString(task: task), bundle: .module)
                     .font(.system(.subheadline, design: .rounded, weight: .regular))
                     .foregroundStyle(vm.isTaskOverdue(task: task) ? .accentRed : colorScheme.invertedTertiaryLabel(task))
+                    .monospacedDigit()
                     .underline(true, pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
                     .transition(.opacity.combined(with: .blurReplace))
+                    .frame(minWidth: 50, alignment: .trailing)
             }
             
             if !vm.taskForShowDeadline.contains(task) {
-                Text(Date(timeIntervalSince1970: task.notificationDate),
-                     format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
+                Text(Date(timeIntervalSince1970: task.notificationDate), format: .dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
                 .font(.system(.subheadline, design: .rounded, weight: .regular))
                 .foregroundStyle(colorScheme.invertedTertiaryLabel(task))
-                .underline(vm.isTaskHasDeadline(task: task),
-                           pattern: .dot,
-                           color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
+                .monospacedDigit()
+                .underline(vm.isTaskHasDeadline(task: task), pattern: .dot, color: vm.isTaskOverdue(task: task) ? .accentRed : .labelQuaternary)
                 .padding(.leading, 6)
                 .lineLimit(1)
                 .transition(.opacity.combined(with: .blurReplace))

@@ -421,28 +421,40 @@ public final class ListVM: HashableNavigation {
         let now = dateManager.currentTime
         let deadlineDate = Date(timeIntervalSince1970: deadline)
         
-        let diff = Int(deadlineDate.timeIntervalSince(now))
-        if diff <= 0 { return "Overdue" }
-        
-        let minute = 60
-        let hour = 60 * minute
-        let day = 24 * hour
-        let year = 365 * day
-        
-        if diff >= year {
-            return "\(diff / year)y"
+        let diff = deadlineDate.timeIntervalSince(now)
+        if diff <= 0 {
+            return "Overdue"
         }
         
-        if diff >= 2 * day {
-            return "\(diff / day)d"
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.maximumUnitCount = 1
+        formatter.zeroFormattingBehavior = .dropAll
+        
+        let day: TimeInterval = 24 * 60 * 60
+        
+        if diff >= 365 * day {
+            formatter.allowedUnits = [.year]
+        } else if diff >= 2 * day {
+            formatter.allowedUnits = [.day]
+        } else if diff >= 60 * 60 {
+            formatter.allowedUnits = [.hour]
+        } else {
+            formatter.allowedUnits = [.minute]
         }
         
-        if diff >= hour {
-            return "\(diff / hour)h"
+        if let result = formatter.string(from: diff) {
+            let spaced = result.replacingOccurrences(
+                of: #"(\d+)(\D+)"#,
+                with: "$1 $2",
+                options: .regularExpression
+            )
+            return LocalizedStringKey(spaced)
         }
         
-        return "\(max(1, diff / minute))min"
+        return nil
     }
+
     
     //MARK: - Empty Day
     

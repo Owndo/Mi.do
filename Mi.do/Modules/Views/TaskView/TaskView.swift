@@ -21,6 +21,8 @@ public struct TaskView: View {
     
     @FocusState var sectionInFocus: SectionInFocus?
     
+    @State private var description = ""
+    
     var preview = false
     
     public enum SectionInFocus: Hashable {
@@ -333,21 +335,27 @@ public struct TaskView: View {
             
             TextField("", text: $vm.task.description, prompt: Text("Add more information", bundle: .module), axis: .vertical)
                 .font(.system(.body, design: .rounded, weight: .regular))
-                .frame(minHeight: 70, alignment: .top)
+                .frame(minHeight: 70, maxHeight: 250, alignment: .top)
+                .scrollIndicators(.visible)
                 .tint(vm.appearanceManager.accentColor)
                 .foregroundStyle(.labelPrimary)
                 .padding(.vertical, 13)
                 .padding(.horizontal, 16)
                 .focused($sectionInFocus, equals: .description)
+                .id("descriptionID")
+        }
+        .onChange(of: sectionInFocus) { _, newVlue in
+            if newVlue == .description {
+                vm.scrollId = "descriptionID"
+                vm.anchor = UnitPoint(x: 0.5, y: 0.25)
+            }
         }
         .onChange(of: vm.showDatePicker) { newValue, oldValue in
             sectionInFocus = nil
         }
         .background(
             RoundedRectangle(cornerRadius: 26)
-                .fill(
-                    .backgroundTertiary
-                )
+                .fill(.backgroundTertiary)
         )
     }
     

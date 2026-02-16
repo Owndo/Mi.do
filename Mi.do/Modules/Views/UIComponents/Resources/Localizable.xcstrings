@@ -525,61 +525,61 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Halten zum Sprechen. Tippen zum Erstellen."
+            "value" : "Halten zum Sprechen.\nTippen zum Erstellen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantén pulsado para hablar. Toca para crear."
+            "value" : "Mantén pulsado para hablar.\nToca para crear."
           }
         },
         "es-419" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantén pulsado para hablar. Toca para crear."
+            "value" : "Mantén pulsado para hablar.\nToca para crear."
           }
         },
         "es-US" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantén pulsado para hablar. Toca para crear."
+            "value" : "Mantén pulsado para hablar.\nToca para crear."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maintenez pour parler. Touchez pour créer."
+            "value" : "Maintenez pour parler.\nTouchez pour créer."
           }
         },
         "fr-CA" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maintenez pour parler. Touchez pour créer."
+            "value" : "Maintenez pour parler.\nTouchez pour créer."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tieni premuto per parlare. Tocca per creare."
+            "value" : "Tieni premuto per parlare.\nTocca per creare."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Segure para falar. Toque para criar."
+            "value" : "Segure para falar.\nToque para criar."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Segure para falar. Toque para criar."
+            "value" : "Segure para falar.\nToque para criar."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Удерживайте, чтобы говорить. Нажмите, чтобы создать."
+            "value" : "Удерживайте, чтобы говорить.\nНажмите, чтобы создать."
           }
         }
       }

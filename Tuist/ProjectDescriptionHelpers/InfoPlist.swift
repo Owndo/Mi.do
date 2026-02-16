@@ -14,12 +14,12 @@ public extension InfoPlist {
             with: [
                 "UILaunchStoryboardName": "LaunchScreen",
                 "CFBundleDisplayName": "$(DISPLAY_NAME)",
-                "CFBundleName": "$(DISPLAY_NAME)",
+                "CFBundleName": "Mi.dō",
                 "CFBundleShortVersionString": "\(App.version)",
                 "NSUserNotificationsUsageDescription": "Notifications may include alerts, sounds, or badges. Can be adjusted anytime in Settings.",
                 "NSMicrophoneUsageDescription": "Microphone access is needed to record voice.",
                 "NSSpeechRecognitionUsageDescription": "Speech recognize access is needed to fill your tasks.",
-//                "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery.",
+                //                "NSPhotoLibraryUsageDescription": "Photo library access allows adding images from the device gallery.",
                 //                // Background mode
                 //                "UIBackgroundModes": ["fetch", "processing", "remote-notification"],
                 //                "BGTaskSchedulerPermittedIdentifiers": [

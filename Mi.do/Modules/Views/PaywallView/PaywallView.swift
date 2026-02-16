@@ -45,7 +45,7 @@ public struct PaywallView: View {
             case .purchaseFailed:
                 return PaywallAlerts.makeAlert(.purchaseFailed)
             case .none:
-                return Alert(title: Text("Something went wrong"), message: Text("Official complaine to developer will be sent"), dismissButton: .cancel(Text("Forgiven")))
+                return Alert(title: Text("Something went wrong"), message: Text("Developer will be notified"), dismissButton: .cancel(Text("Thank you")))
             }
         }
         .animation(.default, value: vm.textForButton)

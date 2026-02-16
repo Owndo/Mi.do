@@ -215,7 +215,6 @@ public struct MainView: View {
                 }
                 .padding(.bottom, 15)
         }
-        .frame(maxWidth: .infinity)
         .blendMode(colorScheme == .dark ? .normal : colorScheme == .light ? .darken : .normal)
         .ignoresSafeArea(.keyboard)
     }

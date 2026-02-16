@@ -604,28 +604,29 @@ public final class MainVM: HashableNavigation {
         return fullId.components(separatedBy: ".").first ?? fullId
     }
     
-    public func selectedTask(by notification: Notification? = nil, taskId: String? = nil) {
+    public func selectedTask(by notification: Notification? = nil, taskId: String? = nil) async {
         guard taskId == nil else {
             let baseSearchId = extractBaseId(from: taskId!)
-            //            let task = casManager.models.values.first { task in
-            //                extractBaseId(from: task.id) == baseSearchId
-            //            }
+            let task = await taskManager.tasks.values.first { task in
+                extractBaseId(from: task.id) == baseSearchId
+            }
             
-            //            if let task {
-            //                mainModel = task
-            //            }
+            if let task {
+                await createTaskVM(task)
+            }
             
             return
         }
         
-        if let taskId = notification?.userInfo?["taskId"] as? String {
+        if let taskId = notification?.userInfo?["taskID"] as? String {
             let baseSearchId = extractBaseId(from: taskId)
-            //            let task = casManager.models.values.first { task in
-            //                extractBaseId(from: task.id) == baseSearchId
-            //            }
-            //            if let task {
-            //                mainModel = task
-            //            }
+            let task = await taskManager.tasks.values.first { task in
+                extractBaseId(from: task.id) == baseSearchId
+            }
+            
+            if let task {
+                await createTaskVM(task)
+            }
         }
     }
     

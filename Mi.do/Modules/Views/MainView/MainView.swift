@@ -187,7 +187,6 @@ public struct MainView: View {
             Spacer()
             
             RecordButton(isRecording: $vm.isRecording, countOfTodayTasks: vm.countOfTodayTasks, progress: vm.progress, countOfSec: vm.currentlyTime, decivelsLVL: vm.decibelLvl)
-                .padding(20)
                 .contentShape(.circle)
                 .disabled(vm.disabledButton)
                 .onTapGesture {
@@ -213,8 +212,8 @@ public struct MainView: View {
                         }
                     }
                 }
-                .padding(.bottom, 15)
         }
+        .padding(.bottom, 15)
         .blendMode(colorScheme == .dark ? .normal : colorScheme == .light ? .darken : .normal)
         .ignoresSafeArea(.keyboard)
     }

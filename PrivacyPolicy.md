@@ -4,7 +4,7 @@
 
 ## 1. General Information
 
-This Privacy Policy explains how **Robocode LLC** ("Developer") handles data within the **Mi.Dō** mobile application ("App").  
+This Privacy Policy explains how **Owndo LLC** ("Developer") handles data within the **Mi.Dō** mobile application ("App").  
 We respect your privacy and aim to keep all data secure.
 
 ## 2. Data Collection
@@ -37,4 +37,4 @@ We may update this Privacy Policy periodically. The current version will always 
 
 ## 8. Contact
 
-For privacy-related questions, please contact: **robocodellc@icloud.com**
+For privacy-related questions, please contact: **admin@owndo.io**

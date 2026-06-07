@@ -4,7 +4,7 @@
 
 ## 1. General Provisions
 
-These Terms of Service ("Terms") govern your use of the **Mi.Dō** mobile application (the "App"), developed by **Robocode LLC** ("Developer").  
+These Terms of Service ("Terms") govern your use of the **Mi.Dō** mobile application (the "App"), developed by **Owndo LLC** ("Developer").  
 By installing or using the App, you confirm that you have read and agree to these Terms.
 
 ## 2. Use of the App
@@ -35,4 +35,4 @@ The Developer reserves the right to modify these Terms. The updated version will
 
 ## 7. Contact
 
-If you have any questions about these Terms, please contact us at: **robocodellc@icloud.com**
+If you have any questions about these Terms, please contact us at: **admin@owndo.io**
